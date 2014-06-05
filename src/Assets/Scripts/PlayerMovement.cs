@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class PlayerMovement : MonoBehaviour {
 
-	private Transform _tower;
+	//private Transform _tower;
 	private Transform _groundCheck;
+
+	public bool canMove = false;
 
 	public float maxSpeed = 6.0f;
 	public bool facingRight = true;
@@ -14,7 +16,7 @@ public class PlayerMovement : MonoBehaviour {
 	public bool grounded = false;
 	public bool forcePushed = false;
 	public float rotationSpeed = 10.0f;
-	public bool shouldRotate = true;
+	//public bool shouldRotate = true;
 	public int boundaryForce = 100;
 
 	public LayerMask whatIsGround;
@@ -22,7 +24,7 @@ public class PlayerMovement : MonoBehaviour {
 	void Awake()
 	{
 		_groundCheck = GameObject.Find("GroundCheck").transform;
-		_tower = GameObject.Find("Tower").transform;
+		//_tower = GameObject.Find("Tower").transform;
 	}
 	
 	// Use this for physics updates
@@ -32,8 +34,10 @@ public class PlayerMovement : MonoBehaviour {
 		// move player
 		if (!forcePushed) 
 		{
-			this.shouldRotate = true;
-			rigidbody.velocity = new Vector2(this.moveDirection * this.maxSpeed, rigidbody.velocity.y);
+			//this.shouldRotate = true;
+			rigidbody.velocity = (canMove) 
+				? new Vector2(this.moveDirection * this.maxSpeed, rigidbody.velocity.y) 
+				: new Vector2(0, rigidbody.velocity.y);
 		}
 
 		// draw ray near the head of the player
@@ -54,7 +58,7 @@ public class PlayerMovement : MonoBehaviour {
 
 			if (hit.transform.tag == "Stoppable")
 			{
-				this.shouldRotate = false;
+				//this.shouldRotate = false;
 				rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
 			}
 		}
@@ -86,13 +90,13 @@ public class PlayerMovement : MonoBehaviour {
 			rigidbody.AddForce(new Vector2(0, jumpSpeed));
 		}
 
-		if (Input.GetKey(KeyCode.RightArrow) && shouldRotate) {
+		/*if (Input.GetKey(KeyCode.RightArrow) && shouldRotate) {
 			_tower.Rotate(Vector3.up * this.rotationSpeed * Time.deltaTime);
 		}
 
 		if (Input.GetKey(KeyCode.LeftArrow) && shouldRotate) {
 			_tower.Rotate(-Vector3.up * this.rotationSpeed * Time.deltaTime);
-		}
+		}*/
 	}
 
 	void OnCollisionEnter(Collision collision) 
@@ -104,7 +108,7 @@ public class PlayerMovement : MonoBehaviour {
 			rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
 			rigidbody.AddForce(Vector3.right * this.boundaryForce);
 			forcePushed = true;
-			shouldRotate = false;
+			//shouldRotate = false;
 		}
 
 		if (collision.transform.name == "RightBoundary" && !grounded)
@@ -113,7 +117,7 @@ public class PlayerMovement : MonoBehaviour {
 			rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
 			rigidbody.AddForce(Vector3.left * this.boundaryForce);
 			forcePushed = true;
-			shouldRotate = false;
+			//shouldRotate = false;
 		}
 
 		if (collision.transform.gameObject.layer == 8)
