@@ -36,30 +36,29 @@ public class Rotator : MonoBehaviour {
 			
 			// store mouse
 			_pointerReference = Input.mousePosition;
-			Debug.Log(platform.gameObject.name + " is rotating. Current rotation: " + platform.rotation.y);
+			Debug.Log(platform.gameObject.name + " is rotating.");
 		}
 	}
 
-	void SelectPlatform()
+	private void SelectPlatform()
 	{
 		if (Input.GetMouseButtonDown(0))
 		{
-			Debug.Log("Mouse is down");
-			
 			RaycastHit hitInfo = new RaycastHit();
 			bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
 			if (hit) 
 			{
 				Debug.Log("Hit " + hitInfo.transform.gameObject.name);
-				if (hitInfo.transform.gameObject.tag == "Platform")
+				if (hitInfo.transform.gameObject.tag == "Rotatable")
 				{
-					Debug.Log ("It's active");
+					//Debug.Log ("It's active");
 					this.platform = hitInfo.transform;
-				} else {
-					Debug.Log ("nopz");
 				}
-			} else {
-				Debug.Log("No hit");
+				if (hitInfo.transform.gameObject.tag == "Stoppable")
+				{
+					Debug.Log("Hit child, rotate parent: " + hitInfo.transform.parent.name);
+					this.platform = hitInfo.transform.parent;
+				}
 			}
 		}
 	}

@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour {
 	public float jumpSpeed = 600.0f;
 	public bool grounded = false;
 	public bool forcePushed = false;
-	public float rotationSpeed = 10.0f;
+	//public float rotationSpeed = 10.0f;
 	//public bool shouldRotate = true;
 	public int boundaryForce = 100;
 
@@ -42,10 +42,10 @@ public class PlayerMovement : MonoBehaviour {
 
 		// draw ray near the head of the player
 		Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.35f, transform.position.z);
-		Debug.DrawRay(headRay, Vector3.right, Color.white);
+		/*Debug.DrawRay(headRay, Vector3.right, Color.white);
 		Debug.DrawRay(headRay, Vector3.left, Color.white);
 		Debug.DrawRay(transform.position, Vector3.right, Color.white);
-		Debug.DrawRay(transform.position, Vector3.left, Color.white);
+		Debug.DrawRay(transform.position, Vector3.left, Color.white);*/
 
 		// stop player from sticking to colliders in mid-air
 		RaycastHit hit;
@@ -54,9 +54,8 @@ public class PlayerMovement : MonoBehaviour {
 		    || Physics.Raycast(headRay, Vector3.left, out hit, 0.3f)
 		    || Physics.Raycast(transform.position, Vector3.left, out hit, 0.3f)) 
 		{
-			//Debug.Log("Hit " + hit.transform.gameObject.name);
-
-			if (hit.transform.tag == "Stoppable")
+			// the "walkable" layer
+			if (hit.transform.gameObject.layer == 8)
 			{
 				//this.shouldRotate = false;
 				rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
@@ -89,14 +88,6 @@ public class PlayerMovement : MonoBehaviour {
 		{
 			rigidbody.AddForce(new Vector2(0, jumpSpeed));
 		}
-
-		/*if (Input.GetKey(KeyCode.RightArrow) && shouldRotate) {
-			_tower.Rotate(Vector3.up * this.rotationSpeed * Time.deltaTime);
-		}
-
-		if (Input.GetKey(KeyCode.LeftArrow) && shouldRotate) {
-			_tower.Rotate(-Vector3.up * this.rotationSpeed * Time.deltaTime);
-		}*/
 	}
 
 	void OnCollisionEnter(Collision collision) 
@@ -104,26 +95,28 @@ public class PlayerMovement : MonoBehaviour {
 		// left and right boundary behaviour
 		if (collision.transform.name == "LeftBoundary" && !grounded)
 		{
-			//Debug.Log("Force push");
-			rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
-			rigidbody.AddForce(Vector3.right * this.boundaryForce);
-			forcePushed = true;
-			//shouldRotate = false;
+			BounceBack("left");
 		}
-
 		if (collision.transform.name == "RightBoundary" && !grounded)
 		{
-			//Debug.Log("Force push");
-			rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
-			rigidbody.AddForce(Vector3.left * this.boundaryForce);
-			forcePushed = true;
-			//shouldRotate = false;
+			BounceBack("right");
 		}
 
+		// restore control when bounce back is finished
 		if (collision.transform.gameObject.layer == 8)
 		{
 			forcePushed = false;
 		}
+	}
+
+	void BounceBack(string direction)
+	{
+		rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
+		rigidbody.AddForce(
+			(direction == "right") ? -boundaryForce : boundaryForce, 
+			boundaryForce, 
+			0);
+		forcePushed = true;
 	}
 	
 	void Flip()

@@ -2,9 +2,8 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rotator.cs">
     <Files>
-      <File FileName="Assets/Scripts/Rotator.cs" Line="22" Column="13" />
-      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="37" Column="16" />
-      <File FileName="Assets/Scripts/Rotator.cs" Line="22" Column="13" />
+      <File FileName="Assets/Scripts/RotationSelection.cs" Line="29" Column="4" />
+      <File FileName="Assets/Scripts/Rotator.cs" Line="32" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
