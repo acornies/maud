@@ -1,5 +1,7 @@
 using UnityEngine;
+using System;
 using System.Collections;
+using TouchScript.Gestures;
 
 public class PlayerMovement : MonoBehaviour {
 
@@ -31,14 +33,7 @@ public class PlayerMovement : MonoBehaviour {
 	void FixedUpdate ()
 	{
 
-		// move player
-		if (!forcePushed) 
-		{
-			//this.shouldRotate = true;
-			rigidbody.velocity = (canMove) 
-				? new Vector2(this.moveDirection * this.maxSpeed, rigidbody.velocity.y) 
-				: new Vector2(0, rigidbody.velocity.y);
-		}
+		Move();
 
 		// draw ray near the head of the player
 		Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.35f, transform.position.z);
@@ -86,7 +81,7 @@ public class PlayerMovement : MonoBehaviour {
 		
 		if (this.grounded && Input.GetButtonDown("Jump"))
 		{
-			rigidbody.AddForce(new Vector2(0, jumpSpeed));
+			Jump();
 		}
 	}
 
@@ -109,6 +104,18 @@ public class PlayerMovement : MonoBehaviour {
 		}
 	}
 
+	private void Move()
+	{
+		// move player
+		if (!forcePushed) 
+		{
+			//this.shouldRotate = true;
+			rigidbody.velocity = (canMove) 
+				? new Vector2(this.moveDirection * this.maxSpeed, rigidbody.velocity.y) 
+					: new Vector2(0, rigidbody.velocity.y);
+		}
+	}
+
 	void BounceBack(string direction)
 	{
 		rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
@@ -124,4 +131,34 @@ public class PlayerMovement : MonoBehaviour {
 		this.facingRight = !facingRight;
 		transform.Rotate(Vector3.up, 180.0f, Space.World);
 	}
+
+	void Jump()
+	{
+		rigidbody.AddForce(new Vector2(0, jumpSpeed));
+	}
+
+	private void OnEnable()
+	{
+		// subscribe to gesture's Tapped event
+		GetComponent<TapGesture>().Tapped += TappedHandler;
+		//GetComponent<PressGesture>().Pressed += PressedHandler;
+		//GetComponent<ReleaseGesture>().Released += ReleaseHandler;
+	}
+	
+	private void OnDisable()
+	{
+		// don't forget to unsubscribe
+		GetComponent<TapGesture>().Tapped -= TappedHandler;
+		//GetComponent<PressGesture>().Pressed -= PressedHandler;
+		//GetComponent<ReleaseGesture>().Released -= ReleaseHandler;
+	}
+
+	private void TappedHandler(object sender, EventArgs e) 
+	{
+		if (this.grounded)
+		{
+			Jump();
+		}
+	}
+
 }
