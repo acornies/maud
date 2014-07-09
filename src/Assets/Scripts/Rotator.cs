@@ -36,7 +36,7 @@ public class Rotator : MonoBehaviour {
 			
 			// store mouse
 			_pointerReference = Input.mousePosition;
-			Debug.Log(platform.gameObject.name + " is rotating.");
+			//Debug.Log(platform.gameObject.name + " is rotating.");
 		}
 	}
 
@@ -48,7 +48,7 @@ public class Rotator : MonoBehaviour {
 			bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hitInfo);
 			if (hit) 
 			{
-				Debug.Log("Hit " + hitInfo.transform.gameObject.name);
+				//Debug.Log("Hit " + hitInfo.transform.gameObject.name);
 				if (hitInfo.transform.gameObject.tag == "Rotatable")
 				{
 					//Debug.Log ("It's active");
@@ -56,7 +56,7 @@ public class Rotator : MonoBehaviour {
 				}
 				if (hitInfo.transform.gameObject.tag == "Stoppable")
 				{
-					Debug.Log("Hit child, rotate parent: " + hitInfo.transform.parent.name);
+					//Debug.Log("Hit child, rotate parent: " + hitInfo.transform.parent.name);
 					this.platform = hitInfo.transform.parent;
 				}
 			}

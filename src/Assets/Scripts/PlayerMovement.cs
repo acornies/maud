@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using TouchScript.Gestures;
+//using TouchScript.Gestures;
 
 public class PlayerMovement : MonoBehaviour {
 
@@ -132,33 +132,8 @@ public class PlayerMovement : MonoBehaviour {
 		transform.Rotate(Vector3.up, 180.0f, Space.World);
 	}
 
-	void Jump()
+	public void Jump()
 	{
 		rigidbody.AddForce(new Vector2(0, jumpSpeed));
 	}
-
-	private void OnEnable()
-	{
-		// subscribe to gesture's Tapped event
-		GetComponent<TapGesture>().Tapped += TappedHandler;
-		//GetComponent<PressGesture>().Pressed += PressedHandler;
-		//GetComponent<ReleaseGesture>().Released += ReleaseHandler;
-	}
-	
-	private void OnDisable()
-	{
-		// don't forget to unsubscribe
-		GetComponent<TapGesture>().Tapped -= TappedHandler;
-		//GetComponent<PressGesture>().Pressed -= PressedHandler;
-		//GetComponent<ReleaseGesture>().Released -= ReleaseHandler;
-	}
-
-	private void TappedHandler(object sender, EventArgs e) 
-	{
-		if (this.grounded)
-		{
-			Jump();
-		}
-	}
-
 }
