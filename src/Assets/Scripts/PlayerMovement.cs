@@ -22,6 +22,27 @@ public class PlayerMovement : MonoBehaviour {
 	public int boundaryForce = 100;
 
 	public LayerMask whatIsGround;
+
+	// Subscribe to events
+	void OnEnable(){
+		EasyJoystick.On_JoystickTap += On_JoystickTap;
+		EasyJoystick.On_JoystickMove += On_JoystickMove;
+		EasyJoystick.On_JoystickMoveEnd += On_JoystickMoveEnd;
+	}
+	
+	void OnDisable(){
+		UnsubscribeEvent();
+	}
+	
+	void OnDestroy(){
+		UnsubscribeEvent();
+	}
+	
+	void UnsubscribeEvent(){
+		EasyJoystick.On_JoystickTap -= On_JoystickTap;
+		EasyJoystick.On_JoystickMove -= On_JoystickMove;
+		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMoveEnd;
+	}
 	
 	void Awake()
 	{
@@ -77,7 +98,7 @@ public class PlayerMovement : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
-		this.moveDirection = Input.GetAxis("Horizontal");
+		//this.moveDirection = Input.GetAxis("Horizontal");
 		
 		if (Input.GetButtonDown("Jump"))
 		{
@@ -104,6 +125,21 @@ public class PlayerMovement : MonoBehaviour {
 		}
 	}
 
+	void On_JoystickMove(MovingJoystick movingStick)
+	{
+		moveDirection = movingStick.joystickAxis.x;
+	}
+
+	void On_JoystickMoveEnd(MovingJoystick movingStick)
+	{
+		moveDirection = movingStick.joystickAxis.x;
+	}
+
+	void On_JoystickTap(MovingJoystick movingStick)
+	{
+		Jump();
+	}
+
 	private void Move()
 	{
 		// move player
@@ -121,8 +157,7 @@ public class PlayerMovement : MonoBehaviour {
 		rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
 		rigidbody.AddForce(
 			(direction == "right") ? -boundaryForce : boundaryForce, 
-			boundaryForce, 
-			0);
+			boundaryForce, 0);
 		forcePushed = true;
 	}
 	

@@ -13,13 +13,12 @@ public class RotationControl : MonoBehaviour {
 
 	// Subscribe to events
 	void OnEnable(){
-		EasyTouch.On_TouchStart += On_TouchStart;
 		EasyTouch.On_Swipe += On_Swipe;
 		EasyTouch.On_SwipeStart += On_SwipeStart;
 		EasyTouch.On_SwipeEnd += On_SwipeEnd;
-		//EasyTouch.On_Drag += On_Drag;
-		//EasyTouch.On_DragStart += On_DragStart;
-		//EasyTouch.On_DragEnd += On_DragEnd;
+		EasyJoystick.On_JoystickMoveStart += On_JoystickMoveStart;
+		EasyJoystick.On_JoystickMove += On_JoystickMoveStart;
+		EasyJoystick.On_JoystickMoveEnd += On_JoystickMoveEnd;
 	}
 
 	void OnDisable(){
@@ -31,13 +30,12 @@ public class RotationControl : MonoBehaviour {
 	}
 	
 	void UnsubscribeEvent(){
-		EasyTouch.On_TouchStart -= On_TouchStart;
 		EasyTouch.On_Swipe -= On_Swipe;
 		EasyTouch.On_SwipeStart -= On_SwipeStart;
 		EasyTouch.On_SwipeEnd -= On_SwipeEnd;
-		//EasyTouch.On_Drag -= On_Drag;
-		//EasyTouch.On_DragStart -= On_DragStart;
-		//EasyTouch.On_DragEnd -= On_DragEnd;
+		EasyJoystick.On_JoystickMoveStart -= On_JoystickMoveStart;
+		EasyJoystick.On_JoystickMove -= On_JoystickMoveStart;
+		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMoveEnd;
 	}
 
 	void On_SwipeStart(Gesture gesture)
@@ -88,24 +86,13 @@ public class RotationControl : MonoBehaviour {
 		platform = null;
 	}
 
-	void On_TouchStart(Gesture gesture)
+	void On_JoystickMoveStart (MovingJoystick move)
 	{
-		//Debug.Log( "Touch in " + gesture.position);
-	}
-
-	void On_DragStart(Gesture gesture)
-	{
-		//Debug.Log (gesture.pickObject.name);
-		Debug.Log ("start dragging: " + gesture.pickObject.name);
+		shouldRotate = false;
 	}
 	
-	void On_Drag(Gesture gesture)
+	void On_JoystickMoveEnd (MovingJoystick move)
 	{
-		Debug.Log ("dragging: " + gesture.pickObject.name);
-	}
-	
-	void On_DragEnd(Gesture gesture)
-	{
-		Debug.Log ("end dragging: " + gesture.pickObject.name);
+		shouldRotate = true;
 	}
 }
