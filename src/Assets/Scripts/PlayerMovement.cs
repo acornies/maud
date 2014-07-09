@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour {
 	{
 		this.moveDirection = Input.GetAxis("Horizontal");
 		
-		if (this.grounded && Input.GetButtonDown("Jump"))
+		if (Input.GetButtonDown("Jump"))
 		{
 			Jump();
 		}
@@ -134,6 +134,10 @@ public class PlayerMovement : MonoBehaviour {
 
 	public void Jump()
 	{
-		rigidbody.AddForce(new Vector2(0, jumpSpeed));
+		if (this.grounded) 
+		{
+			rigidbody.AddForce(new Vector2(0, jumpSpeed));
+		}
+
 	}
 }
