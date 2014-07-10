@@ -62,7 +62,7 @@ public class RotationControl : MonoBehaviour {
 
 	void On_Swipe(Gesture gesture)
 	{
-		Debug.Log("swiping... isRotating is: " + shouldRotate);
+		//Debug.Log("swiping... isRotating is: " + shouldRotate);
 		if(shouldRotate && platform != null)
 		{
 			// offset

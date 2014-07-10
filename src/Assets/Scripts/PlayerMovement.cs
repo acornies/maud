@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour {
 	//public float rotationSpeed = 10.0f;
 	//public bool shouldRotate = true;
 	public int boundaryForce = 100;
+	public float stickyBuffer = 0.4f;
 
 	public LayerMask whatIsGround;
 
@@ -53,30 +54,8 @@ public class PlayerMovement : MonoBehaviour {
 	// Use this for physics updates
 	void FixedUpdate ()
 	{
-
+		HandleStickPhysics();
 		Move();
-
-		// draw ray near the head of the player
-		Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.35f, transform.position.z);
-		/*Debug.DrawRay(headRay, Vector3.right, Color.white);
-		Debug.DrawRay(headRay, Vector3.left, Color.white);
-		Debug.DrawRay(transform.position, Vector3.right, Color.white);
-		Debug.DrawRay(transform.position, Vector3.left, Color.white);*/
-
-		// stop player from sticking to colliders in mid-air
-		RaycastHit hit;
-		if (Physics.Raycast(headRay, Vector3.right, out hit, 0.3f)
-		    || Physics.Raycast(transform.position, Vector3.right, out hit, 0.3f)
-		    || Physics.Raycast(headRay, Vector3.left, out hit, 0.3f)
-		    || Physics.Raycast(transform.position, Vector3.left, out hit, 0.3f)) 
-		{
-			// the "walkable" layer
-			if (hit.transform.gameObject.layer == 8)
-			{
-				//this.shouldRotate = false;
-				rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
-			}
-		}
 
 		// handle jumping
 		var groundColliders = Physics.OverlapSphere(_groundCheck.position, 0.20f, whatIsGround);
@@ -138,6 +117,40 @@ public class PlayerMovement : MonoBehaviour {
 	void On_JoystickTap(MovingJoystick movingStick)
 	{
 		Jump();
+	}
+
+	void HandleStickPhysics()
+	{
+		canMove = true;
+
+		// draw ray near the head of the player
+		Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
+		Vector3 midRay = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
+		Vector3 footRay = new Vector3(transform.position.x, transform.position.y + 0.15f, transform.position.z);
+		Debug.DrawRay(midRay, Vector3.right, Color.white);
+		Debug.DrawRay(midRay, Vector3.left, Color.white);
+		Debug.DrawRay(footRay, Vector3.right, Color.white);
+		Debug.DrawRay(footRay, Vector3.left, Color.white);
+		Debug.DrawRay(headRay, Vector3.right, Color.white);
+		Debug.DrawRay(headRay, Vector3.left, Color.white);
+		
+		// stop player from sticking to colliders in mid-air
+		RaycastHit hit;
+		if (Physics.Raycast(midRay, Vector3.right, out hit, stickyBuffer)
+		    || Physics.Raycast(footRay, Vector3.right, out hit, stickyBuffer)
+		    || Physics.Raycast(midRay, Vector3.left, out hit, stickyBuffer)
+		    || Physics.Raycast(footRay, Vector3.left, out hit, stickyBuffer)
+		    || Physics.Raycast(headRay, Vector3.right, out hit, stickyBuffer)
+		    || Physics.Raycast(headRay, Vector3.left, out hit, stickyBuffer)) 
+		{
+			//Debug.Log("Stop movement 1!!!");
+			// the "walkable" layer
+			if (hit.transform.gameObject.layer == 8)
+			{
+				//Debug.Log("Stop movement 2!!!");
+				canMove = false;
+			}
+		}
 	}
 
 	private void Move()
