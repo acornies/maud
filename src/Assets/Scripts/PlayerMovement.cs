@@ -9,26 +9,22 @@ public class PlayerMovement : MonoBehaviour {
 	private Transform _groundCheck;
 
 	public bool canMove = false;
-
 	public float maxSpeed = 6.0f;
 	public bool facingRight = true;
 	public float moveDirection;
-
 	public float jumpSpeed = 600.0f;
 	public bool grounded = false;
 	public bool forcePushed = false;
-	//public float rotationSpeed = 10.0f;
-	//public bool shouldRotate = true;
 	public int boundaryForce = 100;
 	public float stickyBuffer = 0.4f;
-
 	public LayerMask whatIsGround;
 
 	// Subscribe to events
 	void OnEnable(){
 		EasyJoystick.On_JoystickTap += On_JoystickTap;
 		EasyJoystick.On_JoystickMove += On_JoystickMove;
-		EasyJoystick.On_JoystickMoveEnd += On_JoystickMoveEnd;
+		EasyJoystick.On_JoystickMoveEnd += On_JoystickMove;
+		//EasyJoystick.On_JoystickTouchUp += On_JoystickTap;
 	}
 	
 	void OnDisable(){
@@ -42,7 +38,8 @@ public class PlayerMovement : MonoBehaviour {
 	void UnsubscribeEvent(){
 		EasyJoystick.On_JoystickTap -= On_JoystickTap;
 		EasyJoystick.On_JoystickMove -= On_JoystickMove;
-		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMoveEnd;
+		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMove;
+		//EasyJoystick.On_JoystickTouchUp -= On_JoystickTap;
 	}
 	
 	void Awake()
@@ -79,10 +76,10 @@ public class PlayerMovement : MonoBehaviour {
 	{
 		//this.moveDirection = Input.GetAxis("Horizontal");
 		
-		if (Input.GetButtonDown("Jump"))
+		/*if (Input.GetButtonDown("Jump"))
 		{
 			Jump();
-		}
+		}*/
 	}
 
 	void OnCollisionEnter(Collision collision) 
@@ -104,12 +101,19 @@ public class PlayerMovement : MonoBehaviour {
 		}
 	}
 
-	void On_JoystickMove(MovingJoystick movingStick)
+	void OnTriggerEnter(Collider collider)
 	{
-		moveDirection = movingStick.joystickAxis.x;
+		// handle orbit object force
+		if (collider.gameObject.name == "Sphere") {
+			var dir = (transform.position.x - collider.transform.position.x);
+			//if (!forcePushed) {
+				rigidbody.AddForce(dir * collider.gameObject.GetComponent<Orbit>().artificialForce, 0, 0);
+				forcePushed = true;
+			//}
+		}
 	}
 
-	void On_JoystickMoveEnd(MovingJoystick movingStick)
+	void On_JoystickMove(MovingJoystick movingStick)
 	{
 		moveDirection = movingStick.joystickAxis.x;
 	}
@@ -121,8 +125,6 @@ public class PlayerMovement : MonoBehaviour {
 
 	void HandleStickPhysics()
 	{
-		canMove = true;
-
 		// draw ray near the head of the player
 		Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
 		Vector3 midRay = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
@@ -150,6 +152,14 @@ public class PlayerMovement : MonoBehaviour {
 				//Debug.Log("Stop movement 2!!!");
 				canMove = false;
 			}
+			else 
+			{
+				canMove = true;
+			}
+		}
+		else
+		{
+			canMove = true;
 		}
 	}
 

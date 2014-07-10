@@ -12,3 +12,4 @@
 /*.pidb
 /*.booproj
 .DS_Store
+/src/build

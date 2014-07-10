@@ -99,6 +99,7 @@
      <Compile Include="Assets\ScreenStream.cs" />
      <Compile Include="Assets\Scripts\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
+     <Compile Include="Assets\Scripts\Orbit.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />
      <Compile Include="Assets\Scripts\RotationControl.cs" />
      <Compile Include="Assets\Utils.cs" />
