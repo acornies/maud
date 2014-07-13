@@ -19,6 +19,9 @@ public class PlayerMovement : MonoBehaviour {
 	public float stickyBuffer = 0.4f;
 	public LayerMask whatIsGround;
 
+	public delegate void ReachedPlatformAction(Transform platform);
+	public static event ReachedPlatformAction On_PlatformReached;
+
 	// Subscribe to events
 	void OnEnable(){
 		EasyJoystick.On_JoystickTap += On_JoystickTap;
@@ -98,6 +101,21 @@ public class PlayerMovement : MonoBehaviour {
 		if (collision.transform.gameObject.layer == 8)
 		{
 			forcePushed = false;
+			if (grounded)
+			{
+				On_PlatformReached(collision.transform); // trigger event for finding current platform
+			}
+		}
+	}
+
+	void OnCollisionStay(Collision collision)
+	{
+		if (collision.transform.gameObject.layer == 8)
+		{
+			if (grounded)
+			{
+				On_PlatformReached(collision.transform); // trigger event for finding current platform
+			}
 		}
 	}
 
