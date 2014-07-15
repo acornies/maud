@@ -13,6 +13,7 @@ public class PlatformSpawnControl : MonoBehaviour {
 	public int maxPlatformsForLevel = 100;
 	public int checkpointInterval = 3;
 	public float startingYAxisValue = 1.0f;
+	public int platformPlayerBuffer = 3;
 
 	// Subscribe to events
 	void OnEnable(){
@@ -42,13 +43,20 @@ public class PlatformSpawnControl : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		//var currentLevel = Application.loadedLevelName;
-		Debug.Log (_currentLevel);
-		GameObject firstPlatform = (GameObject)Instantiate(Resources.Load<GameObject>("Prefabs/ProtoPlatformStandard"), 
-		                                                   new Vector3 (0, startingYAxisValue, 0), Quaternion.identity);
-		firstPlatform.name = "Platform_1";
-		_levelPlatforms.Add (firstPlatform.name, firstPlatform);
-		//Debug.Log (_levelPlatforms);
+		// spawn initial platforms on start
+		float yAxisMultiplier = startingYAxisValue;
+		for (int i=1; i<=platformPlayerBuffer; i++) 
+		{
+
+			GameObject initialPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/ProtoPlatformStandard"), 
+			                                                      new Vector3 (0, 0, 0), Quaternion.identity);
+
+			initialPlatform.transform.Translate(initialPlatform.transform.position.x, yAxisMultiplier, initialPlatform.transform.position.z);
+			yAxisMultiplier += initialPlatform.transform.localScale.y + 2.1f;
+
+			initialPlatform.name = string.Format("Platform_{0}", i);
+			_levelPlatforms.Add (initialPlatform.name, initialPlatform);
+		}
 	}
 	
 	// Update is called once per frame
@@ -57,23 +65,27 @@ public class PlatformSpawnControl : MonoBehaviour {
 		SpawnPlatforms ();
 	}
 
+	// Spawn platforms based on player location
 	void SpawnPlatforms()
 	{
-		//Debug.Log (_currentPlatformInstance);
-		var nextPlatform = _currentPlatform + 1;
-		GameObject newPlatform;
-		if (!_levelPlatforms.TryGetValue (string.Format ("Platform_{0}", nextPlatform), out newPlatform)) 
-		{
-			//Debug.Log("Spawn next platform");
-			float currentPlatformY = _currentPlatformObject.position.y;
-			float yAxisMultiplier = _currentPlatformObject.localScale.y + 2.1f;
-			newPlatform = (GameObject)Instantiate(Resources.Load<GameObject>("Prefabs/ProtoPlatformStandard"), 
-			                                      new Vector3 (0, currentPlatformY + yAxisMultiplier, 0), Quaternion.identity);
-			newPlatform.name = string.Format("Platform_{0}", nextPlatform);
+		if (_levelPlatforms.Count == maxPlatformsForLevel) return;
 
-			_levelPlatforms.Add(string.Format("Platform_{0}", nextPlatform), newPlatform);
-		}
+		//for (int i=_currentPlatform; i<=_currentPlatform + platformPlayerBuffer; i++) {
 
+			var nextPlatform = _currentPlatform + 1;
+			GameObject newPlatform;
+			if (!_levelPlatforms.TryGetValue (string.Format ("Platform_{0}", nextPlatform), out newPlatform)) 
+			{
+				//Debug.Log("Spawn platform: " + nextPlatform);
+				float currentPlatformY = _currentPlatformObject.position.y;
+				float yAxisMultiplier = _currentPlatformObject.localScale.y + 2.1f;
+				newPlatform = (GameObject)Instantiate(Resources.Load<GameObject>("Prefabs/ProtoPlatformStandard"), 
+				                                      new Vector3 (0, currentPlatformY + yAxisMultiplier, 0), Quaternion.identity);
+				newPlatform.name = string.Format("Platform_{0}", nextPlatform);
+				
+				_levelPlatforms.Add(string.Format("Platform_{0}", nextPlatform), newPlatform);
+			}
+		//}
 	}
 
 	void HandlePlatformReached(Transform platform)
@@ -83,20 +95,8 @@ public class PlatformSpawnControl : MonoBehaviour {
 		{
 			_currentPlatformObject = _levelPlatforms[platform.parent.name].transform;
 			_currentPlatform = int.Parse(platform.parent.name.Split('_')[1]);
+			//Debug.Log ("Current platform:" + _currentPlatform);
+
 		}
-		//reachedPlatform = _levelPlatforms[platform.transform.parent.name].name;
-		//Debug.Log (reachedPlatform);
-		//print (_levelPlatforms);
-		/*GameObject platform;
-		if (_levelPlatforms.TryGetValue(platformInstance, out platform))
-		{
-			Debug.Log("got key");
-			reachedPlatform = platform.GetInstanceID();
-		}
-		else 
-		{
-			Debug.Log("doh");
-		}*/
-		//currentReachedPlatform = platform..
 	}
 }

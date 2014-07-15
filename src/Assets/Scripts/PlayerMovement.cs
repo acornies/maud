@@ -54,11 +54,11 @@ public class PlayerMovement : MonoBehaviour {
 	// Use this for physics updates
 	void FixedUpdate ()
 	{
-		HandleStickPhysics();
+		HandleStickyPhysics();
 		Move();
 
 		// handle jumping
-		var groundColliders = Physics.OverlapSphere(_groundCheck.position, 0.20f, whatIsGround);
+		var groundColliders = Physics.OverlapSphere(_groundCheck.position, 0.10f, whatIsGround);
 		if (groundColliders != null){
 			this.grounded = groundColliders.Length > 0 ? true : false;
 		}
@@ -98,20 +98,20 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		// restore control when bounce back is finished
-		if (collision.transform.gameObject.layer == 8)
-		{
-			forcePushed = false;
-			if (grounded)
-			{
-				On_PlatformReached(collision.transform); // trigger event for finding current platform
-			}
-		}
+		HandlePlatformLanding (collision);
 	}
 
 	void OnCollisionStay(Collision collision)
 	{
+		HandlePlatformLanding (collision);
+	}
+
+	void HandlePlatformLanding(Collision collision)
+	{
+		// restore control when bounce back is finished
 		if (collision.transform.gameObject.layer == 8)
 		{
+			forcePushed = false;
 			if (grounded)
 			{
 				On_PlatformReached(collision.transform); // trigger event for finding current platform
@@ -124,10 +124,8 @@ public class PlayerMovement : MonoBehaviour {
 		// handle orbit object force
 		if (collider.gameObject.name == "Sphere") {
 			var dir = (transform.position.x - collider.transform.position.x);
-			//if (!forcePushed) {
-				rigidbody.AddForce(dir * collider.gameObject.GetComponent<Orbit>().artificialForce, 0, 0);
-				forcePushed = true;
-			//}
+			rigidbody.AddForce(dir * collider.gameObject.GetComponent<Orbit>().artificialForce, 0, 0);
+			forcePushed = true;
 		}
 	}
 
@@ -141,7 +139,7 @@ public class PlayerMovement : MonoBehaviour {
 		Jump();
 	}
 
-	void HandleStickPhysics()
+	void HandleStickyPhysics()
 	{
 		// draw ray near the head of the player
 		Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
