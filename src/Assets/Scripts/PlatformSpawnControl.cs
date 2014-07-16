@@ -9,7 +9,7 @@ public class PlatformSpawnControl : MonoBehaviour {
 	private Transform _currentPlatformObject;
 	private int _currentPlatform;
 
-	public static PlatformSpawnControl Controller;
+	public static PlatformSpawnControl Instance { get; private set;}
 	public IDictionary<int, GameObject> levelPlatforms { get; private set;}
 	public int maxPlatformsForLevel = 100;
 	public int checkpointBuffer = 3;
@@ -41,12 +41,12 @@ public class PlatformSpawnControl : MonoBehaviour {
 
 	void Awake()
 	{
-		if (Controller == null)
+		if (Instance == null)
 		{
 			//DontDestroyOnLoad(gameObject);
-			Controller = this;
+			Instance = this;
 		}
-		else if (Controller != this)
+		else if (Instance != this)
 		{
 			Destroy(gameObject);
 		}

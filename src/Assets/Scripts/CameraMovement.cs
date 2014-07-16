@@ -3,7 +3,6 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour
 {
-	
 	public float XMargin = 1.0f;
 	public float YMargin = 1.0f;
 	
@@ -14,6 +13,10 @@ public class CameraMovement : MonoBehaviour
 	public Vector2 MinXandY;
 	
 	public Transform CameraTarget;
+	public float killBoxBuffer = 5.0f;
+
+	public delegate void UpdatedCameraMinY(float yPosition);
+	public static event UpdatedCameraMinY On_CameraUpdatedMinY;
 
 	// Subscribe to events
 	void OnEnable(){
@@ -79,19 +82,21 @@ public class CameraMovement : MonoBehaviour
 
 	void UpdateMinYFromCheckpoint(int checkpointPlatform)
 	{
-		var levelPlatforms = PlatformSpawnControl.Controller.levelPlatforms;
+		var levelPlatforms = PlatformSpawnControl.Instance.levelPlatforms;
 		if (levelPlatforms != null && levelPlatforms.Count > 0) 
 		{
 			//Debug.Log ("New checkpoint is: " + checkpointPlatform);
-			if (checkpointPlatform > PlatformSpawnControl.Controller.checkpointBuffer)
+			if (checkpointPlatform > PlatformSpawnControl.Instance.checkpointBuffer)
 			{
 				float newCameraMinY = levelPlatforms[checkpointPlatform].transform.position.y;
 
-				// update only if platform is greater than previous since platforms will be destroyed underneath 
+				// update only if height is greater than previous since platforms will be destroyed underneath 
 				if (newCameraMinY > MinXandY.y)
 				{
 					Debug.Log("Update camera min y to: " + newCameraMinY);
 					MinXandY = new Vector2(MinXandY.x, newCameraMinY);
+
+					On_CameraUpdatedMinY(newCameraMinY - killBoxBuffer);
 				}
 			}
 		}

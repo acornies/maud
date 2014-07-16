@@ -6,15 +6,51 @@ public class BoundaryControl : MonoBehaviour {
 
 	private GameObject _leftBoundary;
 	private GameObject _rightBoundary;
+	private GameObject _killBox;
 
+	//public static BoundaryControl Instance { get; private set;}
 	public float leftBoundaryX = -4.0f;
 	public float rightBoundaryX = 4.0f;
 	public float verticalBoundaryY = -2.8f;
 	public float boundaryHeight;
 
+	// Subscribe to events
+	void OnEnable()
+	{
+		CameraMovement.On_CameraUpdatedMinY += UpdateKillBoxPosition;
+	}
+	
+	void OnDisable()
+	{
+		UnsubscribeEvent();
+	}
+	
+	void OnDestroy(){
+		UnsubscribeEvent();
+	}
+	
+	void UnsubscribeEvent()
+	{
+		CameraMovement.On_CameraUpdatedMinY -= UpdateKillBoxPosition;
+	}
+
+	void Awake()
+	{
+		/*if (Instance == null)
+		{
+			//DontDestroyOnLoad(gameObject);
+			Instance = this;
+		}
+		else if (Instance != this)
+		{
+			Destroy(gameObject);
+		}*/
+	}
+
 	// Use this for initialization
 	void Start () {
 
+		// create left and right boundary objects
 		GameObject leftBoundary = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/Boundary"), 
 		                                       new Vector3 (leftBoundaryX, 0, verticalBoundaryY), Quaternion.identity);
 		leftBoundary.name = "LeftBoundary";
@@ -28,6 +64,15 @@ public class BoundaryControl : MonoBehaviour {
 		_leftBoundary = leftBoundary;
 		_rightBoundary = rightBoundary;
 
+		// create kill box
+
+		GameObject killBox = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/Boundary"), 
+		                                                    new Vector3 (0, -10.0f, verticalBoundaryY), Quaternion.identity);
+		killBox.name = "KillBox";
+		killBox.collider.isTrigger = true;
+		killBox.transform.localScale = new Vector3(20.0f, 1.0f, 1.0f);
+
+		_killBox = killBox;
 	}
 	
 	// Update is called once per frame
@@ -37,7 +82,7 @@ public class BoundaryControl : MonoBehaviour {
 
 	void UpdateVerticalBoundaries()
 	{
-		var levelPlatforms = PlatformSpawnControl.Controller.levelPlatforms;
+		var levelPlatforms = PlatformSpawnControl.Instance.levelPlatforms;
 		if (levelPlatforms != null && levelPlatforms.Count > 0) 
 		{
 			GameObject highestPlatform = levelPlatforms [levelPlatforms.Count];
@@ -50,5 +95,11 @@ public class BoundaryControl : MonoBehaviour {
 			_leftBoundary.transform.position = new Vector3(_leftBoundary.transform.position.x, boundaryHeight / 2, _leftBoundary.transform.position.z);
 			_rightBoundary.transform.position = new Vector3(_rightBoundary.transform.position.x, boundaryHeight / 2, _rightBoundary.transform.position.z);
 		}
+	}
+
+	public void UpdateKillBoxPosition(float newYPosition)
+	{
+		Debug.Log ("New kill box position: " + newYPosition);
+		_killBox.transform.position = new Vector3 (_killBox.transform.position.x, newYPosition, _killBox.transform.position.z);
 	}
 }
