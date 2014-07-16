@@ -30,15 +30,18 @@ public class PlayerMovement : MonoBehaviour {
 		//EasyJoystick.On_JoystickTouchUp += On_JoystickTap;
 	}
 	
-	void OnDisable(){
+	void OnDisable()
+	{
 		UnsubscribeEvent();
 	}
 	
-	void OnDestroy(){
+	void OnDestroy()
+	{
 		UnsubscribeEvent();
 	}
 	
-	void UnsubscribeEvent(){
+	void UnsubscribeEvent()
+	{
 		EasyJoystick.On_JoystickTap -= On_JoystickTap;
 		EasyJoystick.On_JoystickMove -= On_JoystickMove;
 		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMove;

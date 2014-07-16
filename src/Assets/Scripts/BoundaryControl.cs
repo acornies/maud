@@ -6,33 +6,12 @@ public class BoundaryControl : MonoBehaviour {
 
 	private GameObject _leftBoundary;
 	private GameObject _rightBoundary;
-	private GameObject _killBox;
 
 	//public static BoundaryControl Instance { get; private set;}
 	public float leftBoundaryX = -4.0f;
 	public float rightBoundaryX = 4.0f;
 	public float verticalBoundaryY = -2.8f;
 	public float boundaryHeight;
-
-	// Subscribe to events
-	void OnEnable()
-	{
-		CameraMovement.On_CameraUpdatedMinY += UpdateKillBoxPosition;
-	}
-	
-	void OnDisable()
-	{
-		UnsubscribeEvent();
-	}
-	
-	void OnDestroy(){
-		UnsubscribeEvent();
-	}
-	
-	void UnsubscribeEvent()
-	{
-		CameraMovement.On_CameraUpdatedMinY -= UpdateKillBoxPosition;
-	}
 
 	void Awake()
 	{
@@ -72,7 +51,7 @@ public class BoundaryControl : MonoBehaviour {
 		killBox.collider.isTrigger = true;
 		killBox.transform.localScale = new Vector3(20.0f, 1.0f, 1.0f);
 
-		_killBox = killBox;
+		killBox.AddComponent<KillBox> ();
 	}
 	
 	// Update is called once per frame
@@ -95,11 +74,5 @@ public class BoundaryControl : MonoBehaviour {
 			_leftBoundary.transform.position = new Vector3(_leftBoundary.transform.position.x, boundaryHeight / 2, _leftBoundary.transform.position.z);
 			_rightBoundary.transform.position = new Vector3(_rightBoundary.transform.position.x, boundaryHeight / 2, _rightBoundary.transform.position.z);
 		}
-	}
-
-	public void UpdateKillBoxPosition(float newYPosition)
-	{
-		Debug.Log ("New kill box position: " + newYPosition);
-		_killBox.transform.position = new Vector3 (_killBox.transform.position.x, newYPosition, _killBox.transform.position.z);
 	}
 }

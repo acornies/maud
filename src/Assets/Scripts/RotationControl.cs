@@ -12,7 +12,8 @@ public class RotationControl : MonoBehaviour {
 	public bool shouldRotate;
 
 	// Subscribe to events
-	void OnEnable(){
+	void OnEnable()
+	{
 		EasyTouch.On_Swipe += On_Swipe;
 		EasyTouch.On_SwipeStart += On_SwipeStart;
 		EasyTouch.On_SwipeEnd += On_SwipeEnd;
@@ -21,15 +22,18 @@ public class RotationControl : MonoBehaviour {
 		EasyJoystick.On_JoystickMoveEnd += On_JoystickMoveEnd;
 	}
 
-	void OnDisable(){
+	void OnDisable()
+	{
 		UnsubscribeEvent();
 	}
 	
-	void OnDestroy(){
+	void OnDestroy()
+	{
 		UnsubscribeEvent();
 	}
 	
-	void UnsubscribeEvent(){
+	void UnsubscribeEvent()
+	{
 		EasyTouch.On_Swipe -= On_Swipe;
 		EasyTouch.On_SwipeStart -= On_SwipeStart;
 		EasyTouch.On_SwipeEnd -= On_SwipeEnd;

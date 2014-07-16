@@ -1,16 +1,18 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/PlatformSpawnControl.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/BoundaryControl.cs">
     <Files>
-      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="188" Column="24" />
-      <File FileName="Assets/Scripts/PlatformSpawnControl.cs" Line="83" Column="48" />
+      <File FileName="Assets/Scripts/PlatformSpawnControl.cs" Line="21" Column="65" />
+      <File FileName="Assets/Scripts/BoundaryControl.cs" Line="92" Column="13" />
+      <File FileName="Assets/Scripts/CameraMovement.cs" Line="36" Column="2" />
+      <File FileName="Assets/Scripts/GameController.cs" Line="17" Column="18" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Scripts" expanded="True">
-              <Node name="PlatformSpawnControl.cs" selected="True" />
+              <Node name="BoundaryControl.cs" selected="True" />
             </Node>
           </Node>
         </State>

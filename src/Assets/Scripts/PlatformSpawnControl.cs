@@ -21,21 +21,23 @@ public class PlatformSpawnControl : MonoBehaviour {
 	public static event ReachedNextCheckpoint On_ReachedCheckpoint;
 
 	// Subscribe to events
-	void OnEnable(){
-		//EasyJoystick.On_JoystickTouchUp += On_JoystickTap;
+	void OnEnable()
+	{
 		PlayerMovement.On_PlatformReached += HandlePlatformReached;
 	}
 	
-	void OnDisable(){
+	void OnDisable()
+	{
 		UnsubscribeEvent();
 	}
 	
-	void OnDestroy(){
+	void OnDestroy()
+	{
 		UnsubscribeEvent();
 	}
 	
-	void UnsubscribeEvent(){
-		//EasyJoystick.On_JoystickTouchUp -= On_JoystickTap;
+	void UnsubscribeEvent()
+	{
 		PlayerMovement.On_PlatformReached -= HandlePlatformReached;
 	}
 

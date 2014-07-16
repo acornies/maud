@@ -19,29 +19,28 @@ public class CameraMovement : MonoBehaviour
 	public static event UpdatedCameraMinY On_CameraUpdatedMinY;
 
 	// Subscribe to events
-	void OnEnable(){
-		//EasyJoystick.On_JoystickTouchUp += On_JoystickTap;
-		//PlayerMovement.On_PlatformReached += HandlePlatformReached;
+	void OnEnable()
+	{
 		PlatformSpawnControl.On_ReachedCheckpoint += UpdateMinYFromCheckpoint;
 	}
 	
-	void OnDisable(){
+	void OnDisable()
+	{
 		UnsubscribeEvent();
 	}
 	
-	void OnDestroy(){
+	void OnDestroy()
+	{
 		UnsubscribeEvent();
 	}
 	
-	void UnsubscribeEvent(){
-		//EasyJoystick.On_JoystickTouchUp -= On_JoystickTap;
-		//PlayerMovement.On_PlatformReached -= HandlePlatformReached;
+	void UnsubscribeEvent()
+	{
 		PlatformSpawnControl.On_ReachedCheckpoint -= UpdateMinYFromCheckpoint;
 	}
 	
 	void Awake ()
 	{
-		this.CameraTarget = GameObject.FindGameObjectWithTag("CameraTarget").transform;
 	}
 	
 	bool CheckXMargin()
