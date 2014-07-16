@@ -49,7 +49,7 @@ public class BoundaryControl : MonoBehaviour {
 		                                                    new Vector3 (0, -10.0f, verticalBoundaryY), Quaternion.identity);
 		killBox.name = "KillBox";
 		killBox.collider.isTrigger = true;
-		killBox.transform.localScale = new Vector3(20.0f, 1.0f, 1.0f);
+		killBox.transform.localScale = new Vector3(20.0f, 1.0f, 10.0f);
 
 		killBox.AddComponent<KillBox> ();
 	}

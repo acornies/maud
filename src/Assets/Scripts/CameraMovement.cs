@@ -15,7 +15,7 @@ public class CameraMovement : MonoBehaviour
 	public Transform CameraTarget;
 	public float killBoxBuffer = 5.0f;
 
-	public delegate void UpdatedCameraMinY(float yPosition);
+	public delegate void UpdatedCameraMinY(float yPosition, int checkpointPlatform);
 	public static event UpdatedCameraMinY On_CameraUpdatedMinY;
 
 	// Subscribe to events
@@ -59,24 +59,26 @@ public class CameraMovement : MonoBehaviour
 	
 	void TrackPlayer()
 	{
-		var targetX = transform.position.x;
-		var targetY = transform.position.y;
-		
-		if (this.CheckXMargin())
+		if (CameraTarget != null)
 		{
-			targetX = Mathf.Lerp(transform.position.x, this.CameraTarget.position.x, this.XSmooth * Time.deltaTime);
-		}
-		
-		if (this.CheckYMargin())
-		{
-			targetY = Mathf.Lerp(transform.position.y, this.CameraTarget.position.y, this.YSmooth * Time.deltaTime);
-		}
-		
-		targetX = Mathf.Clamp(targetX, this.MinXandY.x, this.MaxXandY.x);
-		targetY = Mathf.Clamp(targetY, this.MinXandY.y, this.MaxXandY.y);
-		
-		transform.position = new Vector3(targetX, targetY, transform.position.z);
-		
+			var targetX = transform.position.x;
+			var targetY = transform.position.y;
+			
+			if (this.CheckXMargin())
+			{
+				targetX = Mathf.Lerp(transform.position.x, this.CameraTarget.position.x, this.XSmooth * Time.deltaTime);
+			}
+			
+			if (this.CheckYMargin())
+			{
+				targetY = Mathf.Lerp(transform.position.y, this.CameraTarget.position.y, this.YSmooth * Time.deltaTime);
+			}
+			
+			targetX = Mathf.Clamp(targetX, this.MinXandY.x, this.MaxXandY.x);
+			targetY = Mathf.Clamp(targetY, this.MinXandY.y, this.MaxXandY.y);
+			
+			transform.position = new Vector3(targetX, targetY, transform.position.z);
+		}	
 	}
 
 	void UpdateMinYFromCheckpoint(int checkpointPlatform)
@@ -95,7 +97,7 @@ public class CameraMovement : MonoBehaviour
 					Debug.Log("Update camera min y to: " + newCameraMinY);
 					MinXandY = new Vector2(MinXandY.x, newCameraMinY);
 
-					On_CameraUpdatedMinY(newCameraMinY - killBoxBuffer);
+					On_CameraUpdatedMinY(newCameraMinY - killBoxBuffer, checkpointPlatform);
 				}
 			}
 		}
