@@ -13,7 +13,7 @@ public class PlatformSpawnControl : MonoBehaviour {
 	public int maxPlatformsForLevel = 100;
 	public int checkpointInterval = 3;
 	public float startingYAxisValue = 1.0f;
-	public int platformBuffer = 3;
+	public int platformSpawnBuffer = 3;
 	public float platformSpacing = 2.1f;
 
 	// Subscribe to events
@@ -44,20 +44,7 @@ public class PlatformSpawnControl : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		// spawn initial platforms on start
-		float yAxisMultiplier = startingYAxisValue;
-		for (int i=1; i<=3; i++) 
-		{
 
-			GameObject initialPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/ProtoPlatformStandard"), 
-			                                                      new Vector3 (0, 0, 0), Quaternion.identity);
-
-			initialPlatform.transform.Translate(initialPlatform.transform.position.x, yAxisMultiplier, initialPlatform.transform.position.z);
-			yAxisMultiplier += initialPlatform.transform.localScale.y + platformSpacing;
-
-			initialPlatform.name = string.Format("Platform_{0}", i);
-			_levelPlatforms.Add (i, initialPlatform);
-		}
 	}
 	
 	// Update is called once per frame
@@ -71,18 +58,29 @@ public class PlatformSpawnControl : MonoBehaviour {
 	{
 		if (_levelPlatforms.Count == maxPlatformsForLevel) return;
 
-		if (_currentPlatform + platformBuffer >= _levelPlatforms.Count + 1) 
+		if (_currentPlatform + platformSpawnBuffer >= _levelPlatforms.Count) 
 		{
-			var nextPlatform = _levelPlatforms.Count + 1;
-			var highestPlatform = _levelPlatforms [_levelPlatforms.Count].transform;
-			float yAxisMultiplier = highestPlatform.position.y + highestPlatform.localScale.y + platformSpacing;
-			int toRange = nextPlatform + platformBuffer;
+			int nextPlatform = _levelPlatforms.Count + 1;
+			//GameObject highestPlatformObj;
+			GameObject highestPlatform = null;
+			float yAxisMultiplier;
+			if (_levelPlatforms.TryGetValue(_levelPlatforms.Count, out highestPlatform))
+			{
+				//= _levelPlatforms [_levelPlatforms.Count].transform;
+				yAxisMultiplier = highestPlatform.transform.position.y + highestPlatform.transform.localScale.y + platformSpacing;
+			}
+			else
+			{
+				yAxisMultiplier = startingYAxisValue;
+			}
+			
+			int toRange = nextPlatform + platformSpawnBuffer;
 			for (int i=nextPlatform; i<=toRange; i++) {
 
 				GameObject newPlatform;
 
 				if (!_levelPlatforms.TryGetValue (i, out newPlatform)) {
-						Debug.Log ("Spawn platforms: " + i + ", " + toRange);
+						Debug.Log ("Spawn platform: " + i + " of " + toRange);
 						newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/ProtoPlatformStandard"), 
 	                                              new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);
 
@@ -104,7 +102,7 @@ public class PlatformSpawnControl : MonoBehaviour {
 			_currentPlatform = int.Parse(platform.parent.name.Split('_')[1]);
 			_currentPlatformObject = _levelPlatforms[_currentPlatform].transform;
 
-			Debug.Log ("Current platform:" + _currentPlatform);
+			Debug.Log ("Current platform: " + _currentPlatform);
 
 		}
 	}
