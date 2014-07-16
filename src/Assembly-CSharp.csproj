@@ -97,6 +97,7 @@
      <Compile Include="Assets\EasyTouch\Plugins\_C#-Event-Template\C_EasyTouchTemplate.cs" />
      <Compile Include="Assets\RemoteConnection.cs" />
      <Compile Include="Assets\ScreenStream.cs" />
+     <Compile Include="Assets\Scripts\BoundaryControl.cs" />
      <Compile Include="Assets\Scripts\CameraMovement.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\Orbit.cs" />

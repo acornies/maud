@@ -6,10 +6,11 @@ public class PlatformSpawnControl : MonoBehaviour {
 
 	private Transform _playerObject;
 	private string _currentLevel;
-	private IDictionary<int, GameObject> _levelPlatforms;
 	private Transform _currentPlatformObject;
 	private int _currentPlatform;
 
+	public static PlatformSpawnControl Controller;
+	public IDictionary<int, GameObject> levelPlatforms { get; private set;}
 	public int maxPlatformsForLevel = 100;
 	public int checkpointInterval = 3;
 	public float startingYAxisValue = 1.0f;
@@ -37,9 +38,19 @@ public class PlatformSpawnControl : MonoBehaviour {
 
 	void Awake()
 	{
+		if (Controller == null)
+		{
+			//DontDestroyOnLoad(gameObject);
+			Controller = this;
+		}
+		else if (Controller != this)
+		{
+			Destroy(gameObject);
+		}
+
 		_playerObject = GameObject.Find ("Player").transform;
 		_currentLevel = Application.loadedLevelName;
-		_levelPlatforms = new Dictionary<int, GameObject>();
+		levelPlatforms = new Dictionary<int, GameObject>();
 	}
 
 	// Use this for initialization
@@ -56,15 +67,15 @@ public class PlatformSpawnControl : MonoBehaviour {
 	// Spawn platforms based on player location
 	void SpawnPlatforms()
 	{
-		if (_levelPlatforms.Count == maxPlatformsForLevel) return;
+		if (levelPlatforms.Count == maxPlatformsForLevel) return;
 
-		if (_currentPlatform + platformSpawnBuffer >= _levelPlatforms.Count) 
+		if (_currentPlatform + platformSpawnBuffer >= levelPlatforms.Count) 
 		{
-			int nextPlatform = _levelPlatforms.Count + 1;
+			int nextPlatform = levelPlatforms.Count + 1;
 			//GameObject highestPlatformObj;
 			GameObject highestPlatform = null;
 			float yAxisMultiplier;
-			if (_levelPlatforms.TryGetValue(_levelPlatforms.Count, out highestPlatform))
+			if (levelPlatforms.TryGetValue(levelPlatforms.Count, out highestPlatform))
 			{
 				//= _levelPlatforms [_levelPlatforms.Count].transform;
 				yAxisMultiplier = highestPlatform.transform.position.y + highestPlatform.transform.localScale.y + platformSpacing;
@@ -79,7 +90,7 @@ public class PlatformSpawnControl : MonoBehaviour {
 
 				GameObject newPlatform;
 
-				if (!_levelPlatforms.TryGetValue (i, out newPlatform)) {
+				if (!levelPlatforms.TryGetValue (i, out newPlatform)) {
 						Debug.Log ("Spawn platform: " + i + " of " + toRange);
 						newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/ProtoPlatformStandard"), 
 	                                              new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);
@@ -88,7 +99,7 @@ public class PlatformSpawnControl : MonoBehaviour {
 						yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
 
 						newPlatform.name = string.Format ("Platform_{0}", i);
-						_levelPlatforms.Add (i, newPlatform);
+						levelPlatforms.Add (i, newPlatform);
 				}
 			}
 		}
@@ -100,7 +111,7 @@ public class PlatformSpawnControl : MonoBehaviour {
 		if (platform.parent != null) 
 		{
 			_currentPlatform = int.Parse(platform.parent.name.Split('_')[1]);
-			_currentPlatformObject = _levelPlatforms[_currentPlatform].transform;
+			_currentPlatformObject = levelPlatforms[_currentPlatform].transform;
 
 			Debug.Log ("Current platform: " + _currentPlatform);
 

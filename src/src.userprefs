@@ -2,8 +2,8 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/PlatformSpawnControl.cs">
     <Files>
-      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="61" Column="74" />
-      <File FileName="Assets/Scripts/PlatformSpawnControl.cs" Line="71" Column="17" />
+      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="188" Column="24" />
+      <File FileName="Assets/Scripts/PlatformSpawnControl.cs" Line="83" Column="48" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
