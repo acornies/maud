@@ -14,6 +14,27 @@ public class CameraMovement : MonoBehaviour
 	public Vector2 MinXandY;
 	
 	public Transform CameraTarget;
+
+	// Subscribe to events
+	void OnEnable(){
+		//EasyJoystick.On_JoystickTouchUp += On_JoystickTap;
+		//PlayerMovement.On_PlatformReached += HandlePlatformReached;
+		PlatformSpawnControl.On_ReachedCheckpoint += UpdateMinYFromCheckpoint;
+	}
+	
+	void OnDisable(){
+		UnsubscribeEvent();
+	}
+	
+	void OnDestroy(){
+		UnsubscribeEvent();
+	}
+	
+	void UnsubscribeEvent(){
+		//EasyJoystick.On_JoystickTouchUp -= On_JoystickTap;
+		//PlayerMovement.On_PlatformReached -= HandlePlatformReached;
+		PlatformSpawnControl.On_ReachedCheckpoint -= UpdateMinYFromCheckpoint;
+	}
 	
 	void Awake ()
 	{
@@ -31,7 +52,7 @@ public class CameraMovement : MonoBehaviour
 	}
 	
 	void FixedUpdate () {
-		this.TrackPlayer();
+		TrackPlayer();
 	}
 	
 	void TrackPlayer()
@@ -53,6 +74,27 @@ public class CameraMovement : MonoBehaviour
 		targetY = Mathf.Clamp(targetY, this.MinXandY.y, this.MaxXandY.y);
 		
 		transform.position = new Vector3(targetX, targetY, transform.position.z);
+		
+	}
+
+	void UpdateMinYFromCheckpoint(int checkpointPlatform)
+	{
+		var levelPlatforms = PlatformSpawnControl.Controller.levelPlatforms;
+		if (levelPlatforms != null && levelPlatforms.Count > 0) 
+		{
+			//Debug.Log ("New checkpoint is: " + checkpointPlatform);
+			if (checkpointPlatform > PlatformSpawnControl.Controller.checkpointBuffer)
+			{
+				float newCameraMinY = levelPlatforms[checkpointPlatform].transform.position.y;
+
+				// update only if platform is greater than previous since platforms will be destroyed underneath 
+				if (newCameraMinY > MinXandY.y)
+				{
+					Debug.Log("Update camera min y to: " + newCameraMinY);
+					MinXandY = new Vector2(MinXandY.x, newCameraMinY);
+				}
+			}
+		}
 		
 	}
 }

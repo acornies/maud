@@ -12,10 +12,13 @@ public class PlatformSpawnControl : MonoBehaviour {
 	public static PlatformSpawnControl Controller;
 	public IDictionary<int, GameObject> levelPlatforms { get; private set;}
 	public int maxPlatformsForLevel = 100;
-	public int checkpointInterval = 3;
+	public int checkpointBuffer = 3;
 	public float startingYAxisValue = 1.0f;
 	public int platformSpawnBuffer = 3;
 	public float platformSpacing = 2.1f;
+
+	public delegate void ReachedNextCheckpoint(int platform);
+	public static event ReachedNextCheckpoint On_ReachedCheckpoint;
 
 	// Subscribe to events
 	void OnEnable(){
@@ -114,6 +117,8 @@ public class PlatformSpawnControl : MonoBehaviour {
 			_currentPlatformObject = levelPlatforms[_currentPlatform].transform;
 
 			Debug.Log ("Current platform: " + _currentPlatform);
+
+			On_ReachedCheckpoint(_currentPlatform - checkpointBuffer);
 
 		}
 	}

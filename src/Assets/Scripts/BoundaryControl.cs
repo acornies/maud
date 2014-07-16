@@ -44,7 +44,7 @@ public class BoundaryControl : MonoBehaviour {
 			float highestPlatformY = highestPlatform.transform.position.y;
 			//Debug.Log("Highest platform y: " + highestPlatformY);
 			boundaryHeight = highestPlatformY + (highestPlatform.transform.localScale.y / 2);
-			Debug.Log(boundaryHeight);
+			//Debug.Log(boundaryHeight);
 			_leftBoundary.transform.localScale = new Vector3(_leftBoundary.transform.localScale.x, boundaryHeight, _leftBoundary.transform.localScale.z);
 			_rightBoundary.transform.localScale = new Vector3(_rightBoundary.transform.localScale.x, boundaryHeight, _rightBoundary.transform.localScale.z);
 			_leftBoundary.transform.position = new Vector3(_leftBoundary.transform.position.x, boundaryHeight / 2, _leftBoundary.transform.position.z);
