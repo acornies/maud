@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -23,8 +24,9 @@ public class PlatformSpawnControl : MonoBehaviour {
 	void OnEnable()
 	{
 		PlayerMovement.On_PlatformReached += HandlePlatformReached;
+		CameraMovement.On_DestroyLowerPlatforms += HandleDestroyLowerPlatforms;
 	}
-	
+
 	void OnDisable()
 	{
 		UnsubscribeEvent();
@@ -38,6 +40,7 @@ public class PlatformSpawnControl : MonoBehaviour {
 	void UnsubscribeEvent()
 	{
 		PlayerMovement.On_PlatformReached -= HandlePlatformReached;
+		CameraMovement.On_DestroyLowerPlatforms -= HandleDestroyLowerPlatforms;
 	}
 
 	void Awake()
@@ -72,13 +75,18 @@ public class PlatformSpawnControl : MonoBehaviour {
 	{
 		if (levelPlatforms.Count == maxPlatformsForLevel) return;
 
-		if (_currentPlatform + platformSpawnBuffer >= levelPlatforms.Count) 
+		var highestPlatformIndex = (levelPlatforms.Keys.Count > 0) ? levelPlatforms.Keys.Max() : 0;
+		//Debug.Log("Highest platform is: " + highestPlatformIndex);
+
+		if (_currentPlatform + platformSpawnBuffer >= highestPlatformIndex) 
 		{
-			int nextPlatform = levelPlatforms.Count + 1;
 			//GameObject highestPlatformObj;
 			GameObject highestPlatform = null;
 			float yAxisMultiplier;
-			if (levelPlatforms.TryGetValue(levelPlatforms.Count, out highestPlatform))
+			levelPlatforms.OrderBy(p => p.Key);
+
+			int nextPlatform = highestPlatformIndex + 1;
+			if (levelPlatforms.TryGetValue(highestPlatformIndex, out highestPlatform))
 			{
 				//= _levelPlatforms [_levelPlatforms.Count].transform;
 				yAxisMultiplier = highestPlatform.transform.position.y + highestPlatform.transform.localScale.y + platformSpacing;
@@ -119,7 +127,29 @@ public class PlatformSpawnControl : MonoBehaviour {
 			Debug.Log ("Current platform: " + _currentPlatform);
 
 			On_ReachedCheckpoint(_currentPlatform - checkpointBuffer);
-
 		}
+	}
+
+	void HandleDestroyLowerPlatforms(int platformIndex)
+	{
+		//Debug.Log ("Destroy platforms under: " + platformIndex);
+
+		var buffer = new List<int> ();
+		foreach (var platform in levelPlatforms) 
+		{
+			if (platform.Key <= platformIndex) 
+			{
+				buffer.Add(platform.Key);
+			}
+		}
+
+		foreach (var item in buffer) 
+		{
+			levelPlatforms.Remove(item);
+			Destroy(GameObject.Find("Platform_" + item));
+			Debug.Log("Removed Platform_" + item);
+		}
+
+
 	}
 }

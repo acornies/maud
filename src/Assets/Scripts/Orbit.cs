@@ -11,12 +11,14 @@ public class Orbit : MonoBehaviour {
 	public int artificialForce = 2000;
 
 	// Use this for initialization
-	void Start () {
+	void Start () 
+	{
 		transform.position = (transform.position - center.position).normalized * radius + center.position;
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
+	void FixedUpdate () 
+	{
 		transform.RotateAround (center.position, axis, rotationSpeed * Time.deltaTime);
 		var desiredPosition = (transform.position - center.position).normalized * radius + center.position;
 		transform.position = Vector3.MoveTowards(transform.position, desiredPosition, Time.deltaTime * radiusSpeed);

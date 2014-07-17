@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 
 public class BoundaryControl : MonoBehaviour {
@@ -27,8 +28,8 @@ public class BoundaryControl : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Start () {
-
+	void Start () 
+	{
 		// create left and right boundary objects
 		GameObject leftBoundary = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/Boundary"), 
 		                                       new Vector3 (leftBoundaryX, 0, verticalBoundaryY), Quaternion.identity);
@@ -55,7 +56,8 @@ public class BoundaryControl : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () 
+	{
 		UpdateVerticalBoundaries ();
 	}
 
@@ -64,7 +66,7 @@ public class BoundaryControl : MonoBehaviour {
 		var levelPlatforms = PlatformSpawnControl.Instance.levelPlatforms;
 		if (levelPlatforms != null && levelPlatforms.Count > 0) 
 		{
-			GameObject highestPlatform = levelPlatforms [levelPlatforms.Count];
+			GameObject highestPlatform = levelPlatforms [levelPlatforms.Keys.Last()];
 			float highestPlatformY = highestPlatform.transform.position.y;
 			//Debug.Log("Highest platform y: " + highestPlatformY);
 			boundaryHeight = highestPlatformY + (highestPlatform.transform.localScale.y / 2);

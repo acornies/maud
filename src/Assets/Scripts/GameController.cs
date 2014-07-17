@@ -52,7 +52,15 @@ public class GameController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-	
+		if (lives <= -1) 
+		{
+			Restart();
+		}
+	}
+
+	void Restart()
+	{
+		Application.LoadLevel (0);
 	}
 
 	void HandleOn_PlayerDeath (float spawnYPosition)

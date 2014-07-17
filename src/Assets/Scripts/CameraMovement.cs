@@ -13,10 +13,12 @@ public class CameraMovement : MonoBehaviour
 	public Vector2 MinXandY;
 	
 	public Transform CameraTarget;
-	public float killBoxBuffer = 5.0f;
 
 	public delegate void UpdatedCameraMinY(float yPosition, int checkpointPlatform);
 	public static event UpdatedCameraMinY On_CameraUpdatedMinY;
+
+	public delegate void DestroyLowerPlatforms(int platformNumber);
+	public static event DestroyLowerPlatforms On_DestroyLowerPlatforms;
 
 	// Subscribe to events
 	void OnEnable()
@@ -97,7 +99,9 @@ public class CameraMovement : MonoBehaviour
 					Debug.Log("Update camera min y to: " + newCameraMinY);
 					MinXandY = new Vector2(MinXandY.x, newCameraMinY);
 
-					On_CameraUpdatedMinY(newCameraMinY - killBoxBuffer, checkpointPlatform);
+					On_CameraUpdatedMinY(newCameraMinY, checkpointPlatform);
+
+					On_DestroyLowerPlatforms(checkpointPlatform - PlatformSpawnControl.Instance.checkpointBuffer - PlatformSpawnControl.Instance.platformSpawnBuffer);
 				}
 			}
 		}

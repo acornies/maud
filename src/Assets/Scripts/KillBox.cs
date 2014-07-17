@@ -5,6 +5,8 @@ public class KillBox : MonoBehaviour {
 
 	private GameObject _checkpointPlatform;
 
+	public float cameraPositionBuffer = 9.0f;
+
 	public delegate void PlayerDeath(float spawnPosition);
 	public static event PlayerDeath On_PlayerDeath; 
 
@@ -70,7 +72,7 @@ public class KillBox : MonoBehaviour {
 	void UpdateKillBoxAndCheckpointPosition(float newYPosition, int checkpointPlatform)
 	{
 		Debug.Log ("New kill box position: " + newYPosition);
-		transform.position = new Vector3 (transform.position.x, newYPosition, transform.position.z);
+		transform.position = new Vector3 (transform.position.x, newYPosition - cameraPositionBuffer, transform.position.z);
 
 		var levelPlatforms = PlatformSpawnControl.Instance.levelPlatforms;
 
