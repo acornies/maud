@@ -20,6 +20,9 @@ public class PlatformSpawnControl : MonoBehaviour {
 	public delegate void ReachedNextCheckpoint(int platform);
 	public static event ReachedNextCheckpoint On_ReachedCheckpoint;
 
+	public delegate void NewPlatform(float yPosition);
+	public static event NewPlatform On_NewPlatform;
+
 	// Subscribe to events
 	void OnEnable()
 	{
@@ -101,16 +104,19 @@ public class PlatformSpawnControl : MonoBehaviour {
 
 				GameObject newPlatform;
 
-				if (!levelPlatforms.TryGetValue (i, out newPlatform)) {
-						Debug.Log ("Spawn platform: " + i + " of " + toRange);
-						newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/ProtoPlatformStandard"), 
-	                                              new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);
+				if (!levelPlatforms.TryGetValue (i, out newPlatform)) 
+				{
+					Debug.Log ("Spawn platform: " + i + " of " + toRange);
+					newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/ProtoPlatformStandard"), 
+                                              new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);
 
-						//newPlatform.transform.Translate (newPlatform.transform.position.x, yAxisMultiplier, newPlatform.transform.position.z);
-						yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
+					//newPlatform.transform.Translate (newPlatform.transform.position.x, yAxisMultiplier, newPlatform.transform.position.z);
+					yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
 
-						newPlatform.name = string.Format ("Platform_{0}", i);
-						levelPlatforms.Add (i, newPlatform);
+					newPlatform.name = string.Format ("Platform_{0}", i);
+					levelPlatforms.Add (i, newPlatform);
+
+					On_NewPlatform(newPlatform.transform.position.y);
 				}
 			}
 		}

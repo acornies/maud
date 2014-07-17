@@ -24,8 +24,9 @@ public class CameraMovement : MonoBehaviour
 	void OnEnable()
 	{
 		PlatformSpawnControl.On_ReachedCheckpoint += UpdateMinYFromCheckpoint;
+		PlatformSpawnControl.On_NewPlatform += HandleNewPlatform;
 	}
-	
+
 	void OnDisable()
 	{
 		UnsubscribeEvent();
@@ -39,6 +40,7 @@ public class CameraMovement : MonoBehaviour
 	void UnsubscribeEvent()
 	{
 		PlatformSpawnControl.On_ReachedCheckpoint -= UpdateMinYFromCheckpoint;
+		PlatformSpawnControl.On_NewPlatform -= HandleNewPlatform;
 	}
 	
 	void Awake ()
@@ -106,5 +108,11 @@ public class CameraMovement : MonoBehaviour
 			}
 		}
 		
+	}
+
+	void HandleNewPlatform (float yPosition)
+	{
+		//Debug.Log ("Increase max y to: " + yPosition);
+		MaxXandY = new Vector2 (MaxXandY.x, yPosition);
 	}
 }
