@@ -66,7 +66,7 @@ public class BoundaryControl : MonoBehaviour {
 		var levelPlatforms = PlatformSpawnControl.Instance.levelPlatforms;
 		if (levelPlatforms != null && levelPlatforms.Count > 0) 
 		{
-			GameObject highestPlatform = levelPlatforms [levelPlatforms.Keys.Last()];
+			GameObject highestPlatform = levelPlatforms [levelPlatforms.Keys.Max()];
 			float highestPlatformY = highestPlatform.transform.position.y;
 			//Debug.Log("Highest platform y: " + highestPlatformY);
 			boundaryHeight = highestPlatformY + (highestPlatform.transform.localScale.y / 2);

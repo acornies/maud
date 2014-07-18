@@ -5,7 +5,7 @@ public class KillBox : MonoBehaviour {
 
 	private GameObject _checkpointPlatform;
 
-	public float cameraPositionBuffer = 9.0f;
+	public float cameraPositionBuffer = 8.0f;
 
 	public delegate void PlayerDeath(float spawnPosition);
 	public static event PlayerDeath On_PlayerDeath; 

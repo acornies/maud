@@ -48,10 +48,24 @@ public class GameController : MonoBehaviour {
 	{
 		_player = GameObject.Find ("Player").transform;
 	}
+
+	void OnGUI()
+	{
+		GUI.Label(new Rect(Screen.width - 110, 10, 100, 25), highestPoint + "m", new GUIStyle(){ alignment = TextAnchor.UpperRight});
+		GUI.Label(new Rect(10, 10, 100, 25), "<3 x " + lives, new GUIStyle(){ alignment = TextAnchor.UpperLeft});
+	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
+
+		if (_player.position.y > highestPoint)
+		{
+			highestPoint = Mathf.Round(_player.position.y);
+		}
+
+		//Debug.Log ("Highest point is: " + highestPoint);
+
 		if (lives <= -1) 
 		{
 			Restart();
@@ -65,14 +79,8 @@ public class GameController : MonoBehaviour {
 
 	void HandleOn_PlayerDeath (float spawnYPosition)
 	{
-		//Debug.Log ("Spawn another player at:" + spawnPosition);
-		// TODO: pass a Vector3 for the spawn position
-		/*GameObject newPlayer = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/Player"), 
-		                                                new Vector3 (0, spawnYPosition, -2.8f), Quaternion.identity);
-		newPlayer.name = "Player";*/
-
 		lives--;
-		Debug.Log ("Lives: " + lives);
+		//Debug.Log ("Lives: " + lives);
 
 		_player.transform.position = new Vector3 (0, spawnYPosition, -2.8f);
 	}
