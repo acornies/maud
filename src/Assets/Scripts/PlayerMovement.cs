@@ -150,6 +150,8 @@ public class PlayerMovement : MonoBehaviour {
 		Vector3 footRay = new Vector3(transform.position.x, transform.position.y + 0.15f, transform.position.z);
 		Debug.DrawRay(midRay, Vector3.right, Color.white);
 		Debug.DrawRay(midRay, Vector3.left, Color.white);
+		Debug.DrawRay(midRay, new Vector3(1, 0, 1), Color.green);
+		Debug.DrawRay(midRay, new Vector3(-1, 0, 1), Color.green);
 		Debug.DrawRay(footRay, Vector3.right, Color.white);
 		Debug.DrawRay(footRay, Vector3.left, Color.white);
 		Debug.DrawRay(headRay, Vector3.right, Color.white);
@@ -157,12 +159,20 @@ public class PlayerMovement : MonoBehaviour {
 		
 		// stop player from sticking to colliders in mid-air
 		RaycastHit hit;
-		if (Physics.Raycast(midRay, Vector3.right, out hit, stickyBuffer)
-		    || Physics.Raycast(footRay, Vector3.right, out hit, stickyBuffer)
+		if (
+		    Physics.Raycast(footRay, Vector3.right, out hit, stickyBuffer)
+			|| Physics.Raycast(footRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+			|| Physics.Raycast(footRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+			|| Physics.Raycast(footRay, Vector3.left, out hit, stickyBuffer)
+		    || Physics.Raycast(midRay, Vector3.right, out hit, stickyBuffer)
 		    || Physics.Raycast(midRay, Vector3.left, out hit, stickyBuffer)
-		    || Physics.Raycast(footRay, Vector3.left, out hit, stickyBuffer)
+			|| Physics.Raycast(midRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+			|| Physics.Raycast(midRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
 		    || Physics.Raycast(headRay, Vector3.right, out hit, stickyBuffer)
-		    || Physics.Raycast(headRay, Vector3.left, out hit, stickyBuffer)) 
+		    || Physics.Raycast(headRay, Vector3.left, out hit, stickyBuffer)
+			|| Physics.Raycast(headRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+			|| Physics.Raycast(headRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+			) 
 		{
 			//Debug.Log("Stop movement 1!!!");
 			// the "walkable" layer
