@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour {
 	public bool facingRight = true;
 	public float moveDirection;
 	public float jumpSpeed = 600.0f;
-	public bool grounded = false;
+	public bool isGrounded = false;
 	public bool forcePushed = false;
 	public int boundaryForce = 100;
 	public float stickyBuffer = 0.4f;
@@ -22,8 +22,12 @@ public class PlayerMovement : MonoBehaviour {
 	public delegate void ReachedPlatformAction(Transform platform);
 	public static event ReachedPlatformAction On_PlatformReached;
 
+	public delegate void ExitPlatformAction(Transform platform);
+	public static event ExitPlatformAction On_PlatformExit;
+
 	// Subscribe to events
-	void OnEnable(){
+	void OnEnable()
+	{
 		EasyJoystick.On_JoystickTap += On_JoystickTap;
 		EasyJoystick.On_JoystickMove += On_JoystickMove;
 		EasyJoystick.On_JoystickMoveEnd += On_JoystickMove;
@@ -61,9 +65,9 @@ public class PlayerMovement : MonoBehaviour {
 		Move();
 
 		// handle jumping
-		var groundColliders = Physics.OverlapSphere(_groundCheck.position, 0.10f, whatIsGround);
+		var groundColliders = Physics.OverlapSphere(_groundCheck.position, 0.15f, whatIsGround);
 		if (groundColliders != null){
-			this.grounded = groundColliders.Length > 0 ? true : false;
+			this.isGrounded = groundColliders.Length > 0 ? true : false;
 		}
 		
 		// flip player on the y axis
@@ -91,16 +95,15 @@ public class PlayerMovement : MonoBehaviour {
 	void OnCollisionEnter(Collision collision) 
 	{
 		// left and right boundary behaviour
-		if (collision.transform.name == "LeftBoundary" && !grounded)
+		if (collision.transform.name == "LeftBoundary" && !isGrounded)
 		{
 			BounceBack("left");
 		}
-		if (collision.transform.name == "RightBoundary" && !grounded)
+		if (collision.transform.name == "RightBoundary" && !isGrounded)
 		{
 			BounceBack("right");
 		}
 
-		// restore control when bounce back is finished
 		HandlePlatformLanding (collision);
 	}
 
@@ -109,13 +112,23 @@ public class PlayerMovement : MonoBehaviour {
 		HandlePlatformLanding (collision);
 	}
 
+	void OnCollisionExit(Collision collision)
+	{
+		if (collision.gameObject.layer == 8
+		    && collision.transform.tag == "Stoppable"
+		    && !isGrounded)
+		{
+			On_PlatformExit(collision.transform);
+		}
+	}
+
 	void HandlePlatformLanding(Collision collision)
 	{
 		// restore control when bounce back is finished
-		if (collision.transform.gameObject.layer == 8)
+		if (collision.gameObject.layer == 8)
 		{
 			forcePushed = false;
-			if (grounded)
+			if (isGrounded)
 			{
 				On_PlatformReached(collision.transform); // trigger event for finding current platform
 			}
@@ -221,7 +234,7 @@ public class PlayerMovement : MonoBehaviour {
 
 	public void Jump()
 	{
-		if (this.grounded) 
+		if (this.isGrounded) 
 		{
 			rigidbody.AddForce(new Vector2(0, jumpSpeed));
 		}

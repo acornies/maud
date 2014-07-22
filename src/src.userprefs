@@ -1,23 +1,26 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/CameraMovement.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/PlatformSpawnControl.cs">
     <Files>
-      <File FileName="Assets/Scripts/KillBox.cs" Line="8" Column="39" />
-      <File FileName="Assets/Scripts/PlatformSpawnControl.cs" Line="118" Column="6" />
-      <File FileName="Assets/Scripts/BoundaryControl.cs" Line="66" Column="1" />
-      <File FileName="Assets/Scripts/CameraMovement.cs" Line="114" Column="3" />
-      <File FileName="Assets/Scripts/GameController.cs" Line="38" Column="18" />
-      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="67" Column="4" />
-      <File FileName="Assets/Scripts/RotationControl.cs" Line="93" Column="19" />
-      <File FileName="Assets/Scripts/Orbit.cs" Line="21" Column="2" />
+      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="121" Column="19" />
+      <File FileName="Assets/Scripts/BoundaryControl.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/KillBox.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PlatformSpawnControl.cs" Line="21" Column="29" />
+      <File FileName="Assets/Scripts/CameraMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/GameController.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="245" Column="1" />
+      <File FileName="Assets/Scripts/RotationControl.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Orbit.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Drop.cs" Line="63" Column="54" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
-            <Node name="Scripts" expanded="True">
-              <Node name="CameraMovement.cs" selected="True" />
-            </Node>
+            <Node name="Scripts" expanded="True" selected="True" />
+          </Node>
+          <Node name="Assembly-CSharp-Editor" expanded="True">
+            <Node name="Editor" expanded="True" />
           </Node>
         </State>
       </Pad>

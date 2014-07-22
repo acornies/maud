@@ -3,11 +3,13 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlatformSpawnControl : MonoBehaviour {
+public class PlatformSpawnControl : MonoBehaviour 
+{
 	
 	private string _currentLevel;
 	private Transform _currentPlatformObject;
 	private int _currentPlatform;
+	private PlatformBuilder _platformBuilder;
 
 	public static PlatformSpawnControl Instance { get; private set;}
 	public IDictionary<int, GameObject> levelPlatforms { get; private set;}
@@ -59,7 +61,9 @@ public class PlatformSpawnControl : MonoBehaviour {
 		}
 
 		_currentLevel = Application.loadedLevelName;
+		_platformBuilder = new PlatformBuilder ();
 		levelPlatforms = new Dictionary<int, GameObject>();
+
 	}
 
 	// Use this for initialization
@@ -107,8 +111,11 @@ public class PlatformSpawnControl : MonoBehaviour {
 				if (!levelPlatforms.TryGetValue (i, out newPlatform)) 
 				{
 					Debug.Log ("Spawn platform: " + i + " of " + toRange);
-					newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/ProtoPlatformStandard"), 
-                                              new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);
+					/*newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/ProtoPlatformStandard"), 
+                                              new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);*/
+
+					newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> (_platformBuilder.GetPlatformPrefabByNumber(i)), 
+					                                       new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);
 
 					//newPlatform.transform.Translate (newPlatform.transform.position.x, yAxisMultiplier, newPlatform.transform.position.z);
 					yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;

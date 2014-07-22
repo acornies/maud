@@ -1,117 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>10.0.20506</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{4CFFDA30-0E63-039E-0DCA-DAC117CE2649}</ProjectGuid>
-	<OutputType>Library</OutputType>
-	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace></RootNamespace>
-	<AssemblyName>Assembly-CSharp</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-	<FileAlignment>512</FileAlignment>
-	<BaseDirectory>Assets</BaseDirectory>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4CFFDA30-0E63-039E-0DCA-DAC117CE2649}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <BaseDirectory>Assets</BaseDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
-	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_4_5_1;UNITY_4_5;UNITY_IPHONE;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_WP8SUPPORT;ENABLE_WWW;ENABLE_IMAGEEFFECTS;UNITY_IPHONE_API;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_2D_PHYSICS;ENABLE_GAMECENTER;UNITY_IOS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_OSX;UNITY_TEAM_LICENSE;UNITY_PRO_LICENSE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<NoWarn>0169</NoWarn>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>Temp\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;UNITY_4_5_1;UNITY_4_5;UNITY_ANDROID;ENABLE_MICROPHONE;ENABLE_TEXTUREID_MAP;ENABLE_UNITYEVENTS;ENABLE_NEW_HIERARCHY ;ENABLE_AUDIO_FMOD;ENABLE_MONO;ENABLE_TERRAIN;ENABLE_SUBSTANCE;ENABLE_GENERICS;INCLUDE_WP8SUPPORT;ENABLE_WWW;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;INCLUDE_METROSUPPORT;RENDER_SOFTWARE_CURSOR;ENABLE_NETWORK;ENABLE_PHYSICS;ENABLE_CACHING;ENABLE_CLOTH;UNITY_ANDROID_API;ENABLE_2D_PHYSICS;ENABLE_SHADOWS;ENABLE_AUDIO;ENABLE_NAVMESH_CARVING;ENABLE_SINGLE_INSTANCE_BUILD_SETTING;DEVELOPMENT_BUILD;ENABLE_PROFILER;UNITY_EDITOR;UNITY_EDITOR_OSX;UNITY_TEAM_LICENSE;UNITY_PRO_LICENSE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
-	<OutputPath>Temp\bin\Release\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<NoWarn>0169</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>Temp\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="System" />
-    <Reference Include="System.XML" />
-	<Reference Include="System.Core" />
-	<Reference Include="System.Xml.Linq" />
-	<Reference Include="UnityEngine">
-	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEngine.dll</HintPath>
-	</Reference>
-	<Reference Include="UnityEditor">
-	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.dll</HintPath>
-	</Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor">
+      <HintPath>..\..\..\..\..\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\DataReceiver.cs" />
-     <Compile Include="Assets\DataSender.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Example for EasyButton\Bullet.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Example for EasyButton\ETPlayer.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Example for EasyButton\ManualControl.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyJoystick\Example-thirdPerson_DirectEventMode\JoystickEvent.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyJoystick\Example_FirstPerson_DirectMode\GUIFirstDirect.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyJoystick\ExitButton.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-2D\Monster.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-FreeCam\FreeCam.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-FreeCam\GuiCam.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-ManipulationImage\GuiPhoto.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-ManipulationImage\Photo.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-MultiLayer\GuiLayer.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-MultiLayer\TouchLayer.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-Multiplefingers\GuiMultiFinger.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-Multiplefingers\ObjectTouch.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-Multiplefingers\ScreenTouch.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-Multiplefingers\SlowRotate.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\DoubleTap.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\Drag.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\GuiOneFinger.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\LongTap.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\Swipe.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\Tap.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\TouchStart.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-StartMenu\GuiStartMenu.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\GuiTwoFinger.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\Pinch.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\Twist.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoDoubleTap.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoDrag.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoLongTap.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoSwipe.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoTap.cs" />
-     <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoTouchStart.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\ECamera.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\EasyButton.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\EasyJoystick.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\EasyTouch.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\EasyTouchInput.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\Finger.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\Gesture.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\MonoSingleton.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\MovingJoystick.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\VirtualScreen.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\_C#-Event-Template\C_EasyButtonTemplate.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\_C#-Event-Template\C_EasyJoystickTemplate.cs" />
-     <Compile Include="Assets\EasyTouch\Plugins\_C#-Event-Template\C_EasyTouchTemplate.cs" />
-     <Compile Include="Assets\RemoteConnection.cs" />
-     <Compile Include="Assets\ScreenStream.cs" />
-     <Compile Include="Assets\Scripts\BoundaryControl.cs" />
-     <Compile Include="Assets\Scripts\CameraMovement.cs" />
-     <Compile Include="Assets\Scripts\GameController.cs" />
-     <Compile Include="Assets\Scripts\KillBox.cs" />
-     <Compile Include="Assets\Scripts\Orbit.cs" />
-     <Compile Include="Assets\Scripts\PlatformSpawnControl.cs" />
-     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
-     <Compile Include="Assets\Scripts\RotationControl.cs" />
-     <Compile Include="Assets\Utils.cs" />
-     <Compile Include="Assets\WebCamStreamer.cs" />
-     <None Include="Assets\Sample Assets\Prototyping\Shaders\WorldCoord Diffuse.shader" />
-     <None Include="Assets\EasyTouch\Readme_first.txt" />
- <Reference Include="TouchScript">
- <HintPath>/Users/andrew/projects/legend-peak/src/Assets/TouchScript/Plugins/TouchScript.dll</HintPath>
- </Reference>
+    <Compile Include="Assets\DataReceiver.cs" />
+    <Compile Include="Assets\DataSender.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Example for EasyButton\Bullet.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Example for EasyButton\ETPlayer.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Example for EasyButton\ManualControl.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyJoystick\Example-thirdPerson_DirectEventMode\JoystickEvent.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyJoystick\Example_FirstPerson_DirectMode\GUIFirstDirect.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyJoystick\ExitButton.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-2D\Monster.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-FreeCam\FreeCam.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-FreeCam\GuiCam.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-ManipulationImage\GuiPhoto.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-ManipulationImage\Photo.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-MultiLayer\GuiLayer.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-MultiLayer\TouchLayer.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-Multiplefingers\GuiMultiFinger.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-Multiplefingers\ObjectTouch.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-Multiplefingers\ScreenTouch.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-Multiplefingers\SlowRotate.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\DoubleTap.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\Drag.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\GuiOneFinger.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\LongTap.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\Swipe.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\Tap.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-OneFinger\TouchStart.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-StartMenu\GuiStartMenu.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\GuiTwoFinger.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\Pinch.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\Twist.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoDoubleTap.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoDrag.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoLongTap.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoSwipe.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoTap.cs" />
+    <Compile Include="Assets\EasyTouch\Example\C# Example\Examples for EasyTouch\Example-TwoFinger\TwoTouchStart.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\ECamera.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\EasyButton.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\EasyJoystick.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\EasyTouch.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\EasyTouchInput.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\Finger.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\Gesture.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\MonoSingleton.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\MovingJoystick.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\VirtualScreen.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\_C#-Event-Template\C_EasyButtonTemplate.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\_C#-Event-Template\C_EasyJoystickTemplate.cs" />
+    <Compile Include="Assets\EasyTouch\Plugins\_C#-Event-Template\C_EasyTouchTemplate.cs" />
+    <Compile Include="Assets\RemoteConnection.cs" />
+    <Compile Include="Assets\ScreenStream.cs" />
+    <Compile Include="Assets\Scripts\BoundaryControl.cs" />
+    <Compile Include="Assets\Scripts\CameraMovement.cs" />
+    <Compile Include="Assets\Scripts\GameController.cs" />
+    <Compile Include="Assets\Scripts\KillBox.cs" />
+    <Compile Include="Assets\Scripts\Orbit.cs" />
+    <Compile Include="Assets\Scripts\PlatformBuilder\PlatformBuilder.cs" />
+    <Compile Include="Assets\Scripts\PlatformSpawnControl.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\RotationControl.cs" />
+    <Compile Include="Assets\Utils.cs" />
+    <Compile Include="Assets\WebCamStreamer.cs" />
+    <None Include="Assets\Sample Assets\Prototyping\Shaders\WorldCoord Diffuse.shader" />
+    <None Include="Assets\EasyTouch\Readme_first.txt" />
+    <Reference Include="TouchScript">
+      <HintPath>Assets\TouchScript\Plugins\TouchScript.dll</HintPath>
+    </Reference>
+    <Compile Include="Assets\Scripts\Drop.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -121,5 +122,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  
 </Project>
