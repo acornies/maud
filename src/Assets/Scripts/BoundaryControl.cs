@@ -35,11 +35,13 @@ public class BoundaryControl : MonoBehaviour {
 		                                       new Vector3 (leftBoundaryX, 0, verticalBoundaryY), Quaternion.identity);
 		leftBoundary.name = "LeftBoundary";
 		leftBoundary.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+		//leftBoundary.layer = 8;
 
 		GameObject rightBoundary = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/Boundary"), 
 		                                                   new Vector3 (rightBoundaryX, 0, verticalBoundaryY), Quaternion.identity);
 		rightBoundary.name = "RightBoundary";
 		rightBoundary.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+		//rightBoundary.layer = 8;
 
 		_leftBoundary = leftBoundary;
 		_rightBoundary = rightBoundary;

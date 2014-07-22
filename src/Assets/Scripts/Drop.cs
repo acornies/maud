@@ -16,7 +16,7 @@ public class Drop : MonoBehaviour
 	void OnEnable()
 	{
 		PlayerMovement.On_PlatformReached += HandleOnPlatformReached;
-		PlayerMovement.On_PlatformExit += HandleOnPlatformExit;
+		PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
 	}
 
 	void OnDisable()
@@ -32,7 +32,7 @@ public class Drop : MonoBehaviour
 	void UnsubscribeEvent()
 	{
 		PlayerMovement.On_PlatformReached -= HandleOnPlatformReached;
-		PlayerMovement.On_PlatformExit -= HandleOnPlatformExit;
+		PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
 	}
 
 	// Use this for initialization
@@ -80,14 +80,14 @@ public class Drop : MonoBehaviour
 		}
 	}
 
-	void HandleOnPlatformExit(Transform platform)
+	void HandlePlayerAirborne()
 	{
 		//transform.position = Vector3.MoveTowards (transform.position, new Vector3 (transform.position.x, _originalYPosition, transform.position.z), 0.3f);
-		if (platform.GetInstanceID () == this.transform.GetInstanceID ()) 
-		{
+		//if (platform.GetInstanceID () == this.transform.GetInstanceID ()) 
+		//{
 			//Debug.Log("return platform");
 			isDropping = false;
 			//atOriginalPosition = false;
-		}
+		//}
 	}
 }

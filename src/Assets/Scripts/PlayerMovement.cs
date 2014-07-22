@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Linq;
 using System.Collections;
 //using TouchScript.Gestures;
 
@@ -18,12 +19,13 @@ public class PlayerMovement : MonoBehaviour {
 	public int boundaryForce = 100;
 	public float stickyBuffer = 0.4f;
 	public LayerMask whatIsGround;
+	public float groundedRadius = 0.15f;
 
 	public delegate void ReachedPlatformAction(Transform platform);
 	public static event ReachedPlatformAction On_PlatformReached;
 
-	public delegate void ExitPlatformAction(Transform platform);
-	public static event ExitPlatformAction On_PlatformExit;
+	public delegate void PlayerAirborne();
+	public static event PlayerAirborne On_PlayerAirborne;
 
 	// Subscribe to events
 	void OnEnable()
@@ -65,9 +67,16 @@ public class PlayerMovement : MonoBehaviour {
 		Move();
 
 		// handle jumping
-		var groundColliders = Physics.OverlapSphere(_groundCheck.position, 0.15f, whatIsGround);
+		var groundColliders = Physics.OverlapSphere(_groundCheck.position, groundedRadius, whatIsGround);
 		if (groundColliders != null){
+
+			//this.isGrounded = groundColliders.Any(c => c.gameObject.layer == 8);
 			this.isGrounded = groundColliders.Length > 0 ? true : false;
+		}
+
+		if (!isGrounded)
+		{
+			On_PlayerAirborne();
 		}
 		
 		// flip player on the y axis
@@ -112,15 +121,15 @@ public class PlayerMovement : MonoBehaviour {
 		HandlePlatformLanding (collision);
 	}
 
-	void OnCollisionExit(Collision collision)
+	/*void OnCollisionExit(Collision collision)
 	{
 		if (collision.gameObject.layer == 8
 		    && collision.transform.tag == "Stoppable"
 		    && !isGrounded)
 		{
-			On_PlatformExit(collision.transform);
+			On_PlayerAirborne(collision.transform);
 		}
-	}
+	}*/
 
 	void HandlePlatformLanding(Collision collision)
 	{
@@ -222,7 +231,7 @@ public class PlayerMovement : MonoBehaviour {
 		rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
 		rigidbody.AddForce(
 			(direction == "right") ? -boundaryForce : boundaryForce, 
-			boundaryForce, 0);
+			boundaryForce, boundaryForce);
 		forcePushed = true;
 	}
 	
