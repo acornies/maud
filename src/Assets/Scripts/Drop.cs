@@ -54,12 +54,9 @@ public class Drop : MonoBehaviour
 		{
 			_atOriginalPosition = false;
 		}
-
-		//var rigidBody = gameObject.GetComponent<Rigidbody>();
+		
 		if (_isDropping && transform.position.y >= minY) 
 		{
-			//transform.Translate(Vector3.down * dropSpeed * Time.deltaTime);
-
 			rigidbody.isKinematic = false;
 			rigidbody.useGravity = true;
 		}

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Orbit : MonoBehaviour {
+public class Orbit : MonoBehaviour 
+{
 
 	public Transform center;
 	public Vector3 axis = Vector3.up;

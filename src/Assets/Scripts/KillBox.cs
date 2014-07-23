@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class KillBox : MonoBehaviour {
+public class KillBox : MonoBehaviour 
+{
 
 	private GameObject _checkpointPlatform;
 

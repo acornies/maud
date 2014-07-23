@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RotationControl : MonoBehaviour {
+public class RotationControl : MonoBehaviour 
+{
 
 	public float sensitivity = 0.005f;
 	public Transform platform;

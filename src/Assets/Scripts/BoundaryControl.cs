@@ -3,7 +3,8 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 
-public class BoundaryControl : MonoBehaviour {
+public class BoundaryControl : MonoBehaviour 
+{
 
 	private GameObject _leftBoundary;
 	private GameObject _rightBoundary;
@@ -35,12 +36,13 @@ public class BoundaryControl : MonoBehaviour {
 		                                       new Vector3 (leftBoundaryX, 0, verticalBoundaryY), Quaternion.identity);
 		leftBoundary.name = "LeftBoundary";
 		leftBoundary.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-		//leftBoundary.layer = 8;
+		leftBoundary.tag = "Boundary";
 
 		GameObject rightBoundary = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/Boundary"), 
 		                                                   new Vector3 (rightBoundaryX, 0, verticalBoundaryY), Quaternion.identity);
 		rightBoundary.name = "RightBoundary";
 		rightBoundary.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+		rightBoundary.tag = "Boundary";
 		//rightBoundary.layer = 8;
 
 		_leftBoundary = leftBoundary;

@@ -4,22 +4,26 @@ using System.Linq;
 using System.Collections;
 //using TouchScript.Gestures;
 
-public class PlayerMovement : MonoBehaviour {
-
+public class PlayerMovement : MonoBehaviour 
+{
 	//private Transform _tower;
 	private Transform _groundCheck;
+	private int _additionalJumpCount;
+	public bool isLongJumping;
 
 	public bool canMove = false;
 	public float maxSpeed = 6.0f;
 	public bool facingRight = true;
 	public float moveDirection;
-	public float jumpSpeed = 600.0f;
+	public float jumpForce = 600.0f;
+	public float extraJumpForce = 200.0f;
 	public bool isGrounded = false;
 	public bool forcePushed = false;
 	public int boundaryForce = 100;
 	public float stickyBuffer = 0.4f;
 	public LayerMask whatIsGround;
 	public float groundedRadius = 0.15f;
+	public int additionalJumps = 1;
 
 	public delegate void ReachedPlatformAction(Transform platform);
 	public static event ReachedPlatformAction On_PlatformReached;
@@ -33,7 +37,12 @@ public class PlayerMovement : MonoBehaviour {
 		EasyJoystick.On_JoystickTap += On_JoystickTap;
 		EasyJoystick.On_JoystickMove += On_JoystickMove;
 		EasyJoystick.On_JoystickMoveEnd += On_JoystickMove;
-		//EasyJoystick.On_JoystickTouchUp += On_JoystickTap;
+		EasyTouch.On_LongTapEnd += HandleLongTap;
+	}
+
+	void HandleLongTap (Gesture gesture)
+	{
+		Jump(extraJumpForce);
 	}
 	
 	void OnDisable()
@@ -51,13 +60,12 @@ public class PlayerMovement : MonoBehaviour {
 		EasyJoystick.On_JoystickTap -= On_JoystickTap;
 		EasyJoystick.On_JoystickMove -= On_JoystickMove;
 		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMove;
-		//EasyJoystick.On_JoystickTouchUp -= On_JoystickTap;
+		EasyTouch.On_LongTapEnd -= HandleLongTap;
 	}
 	
 	void Awake()
 	{
 		_groundCheck = GameObject.Find("GroundCheck").transform;
-		//_tower = GameObject.Find("Tower").transform;
 	}
 	
 	// Use this for physics updates
@@ -68,10 +76,16 @@ public class PlayerMovement : MonoBehaviour {
 
 		// handle jumping
 		var groundColliders = Physics.OverlapSphere(_groundCheck.position, groundedRadius, whatIsGround);
-		if (groundColliders != null){
-
-			//this.isGrounded = groundColliders.Any(c => c.gameObject.layer == 8);
-			this.isGrounded = groundColliders.Length > 0 ? true : false;
+		if (groundColliders != null)
+		{
+			isGrounded = groundColliders.Length > 0 ? true : false;
+			var collider = groundColliders.FirstOrDefault();
+			if (collider != null && isGrounded)
+			{
+				_additionalJumpCount = 0;
+				forcePushed = false;
+				On_PlatformReached(collider.transform); // trigger event for finding current platform
+			}
 		}
 
 		if (!isGrounded)
@@ -104,46 +118,13 @@ public class PlayerMovement : MonoBehaviour {
 	void OnCollisionEnter(Collision collision) 
 	{
 		// left and right boundary behaviour
-		if (collision.transform.name == "LeftBoundary" && !isGrounded)
+		if (collision.transform.tag == "Boundary")
 		{
-			BounceBack("left");
-		}
-		if (collision.transform.name == "RightBoundary" && !isGrounded)
-		{
-			BounceBack("right");
-		}
-
-		HandlePlatformLanding (collision);
-	}
-
-	void OnCollisionStay(Collision collision)
-	{
-		HandlePlatformLanding (collision);
-	}
-
-	/*void OnCollisionExit(Collision collision)
-	{
-		if (collision.gameObject.layer == 8
-		    && collision.transform.tag == "Stoppable"
-		    && !isGrounded)
-		{
-			On_PlayerAirborne(collision.transform);
-		}
-	}*/
-
-	void HandlePlatformLanding(Collision collision)
-	{
-		// restore control when bounce back is finished
-		if (collision.gameObject.layer == 8)
-		{
-			forcePushed = false;
-			if (isGrounded)
-			{
-				On_PlatformReached(collision.transform); // trigger event for finding current platform
-			}
+			BoundaryBounceBack(collision);
 		}
 	}
 
+	// TODO: move to specific platform script and get player through collision
 	void OnTriggerEnter(Collider collider)
 	{
 		// handle orbit object force
@@ -170,14 +151,14 @@ public class PlayerMovement : MonoBehaviour {
 		Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
 		Vector3 midRay = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
 		Vector3 footRay = new Vector3(transform.position.x, transform.position.y + 0.15f, transform.position.z);
-		Debug.DrawRay(midRay, Vector3.right, Color.white);
+		/*Debug.DrawRay(midRay, Vector3.right, Color.white);
 		Debug.DrawRay(midRay, Vector3.left, Color.white);
 		Debug.DrawRay(midRay, new Vector3(1, 0, 1), Color.green);
 		Debug.DrawRay(midRay, new Vector3(-1, 0, 1), Color.green);
 		Debug.DrawRay(footRay, Vector3.right, Color.white);
 		Debug.DrawRay(footRay, Vector3.left, Color.white);
 		Debug.DrawRay(headRay, Vector3.right, Color.white);
-		Debug.DrawRay(headRay, Vector3.left, Color.white);
+		Debug.DrawRay(headRay, Vector3.left, Color.white);*/
 		
 		// stop player from sticking to colliders in mid-air
 		RaycastHit hit;
@@ -226,12 +207,14 @@ public class PlayerMovement : MonoBehaviour {
 		}
 	}
 
-	void BounceBack(string direction)
+	//TODO: Move to BoundaryControl
+	void BoundaryBounceBack(Collision collision)
 	{
+		//Debug.Log ("Bounce back!");
 		rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
-		rigidbody.AddForce(
-			(direction == "right") ? -boundaryForce : boundaryForce, 
-			boundaryForce, boundaryForce);
+		var dir = (transform.position.x - collision.transform.position.x);
+		//Debug.Log (dir);
+		rigidbody.AddForce(dir * boundaryForce, 0, 0);
 		forcePushed = true;
 	}
 	
@@ -241,11 +224,31 @@ public class PlayerMovement : MonoBehaviour {
 		transform.Rotate(Vector3.up, 180.0f, Space.World);
 	}
 
-	public void Jump()
+	public void Jump(float extraForce = 0)
 	{
 		if (this.isGrounded) 
 		{
-			rigidbody.AddForce(new Vector2(0, jumpSpeed));
+			rigidbody.AddForce(new Vector2(0, jumpForce + extraForce));
+			if (extraForce > 0)
+			{
+				Debug.Log ("Long jumping!");
+				isLongJumping = true;
+			}
+			else
+			{
+				isLongJumping = false;
+			}
+		}
+
+		// conditions for mid-air jump
+		if (!isGrounded 
+		    && _additionalJumpCount < additionalJumps 
+		    && !isLongJumping
+		    && !forcePushed)
+		{
+			//Debug.Log ("Double jump!");
+			rigidbody.AddForce(new Vector2(0, jumpForce));
+			_additionalJumpCount++;
 		}
 
 	}

@@ -1,6 +1,8 @@
 fileFormatVersion: 2
 guid: 406d88cbf2113a641a0c8e805adca3c7
 TextureImporter:
+  fileIDToRecycleName:
+    21300000: char_enemy_alienShip-dead
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
