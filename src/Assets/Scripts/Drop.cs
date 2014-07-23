@@ -3,14 +3,14 @@ using System.Collections;
 
 public class Drop : MonoBehaviour 
 {
+	private bool _isDropping;
+	private bool _atOriginalPosition = true;
+	private float _originalYPosition;
 
 	public float dropSpeed = 10.0f;
-	public bool isDropping;
-	public bool atOriginalPosition = true;
 	public float maxY = 0.0f;
 	public float minY = 0.0f;
-
-	private float _originalYPosition;
+	public float returnSpeed = 0.1f;
 
 	// Subscribe to events
 	void OnEnable()
@@ -48,21 +48,30 @@ public class Drop : MonoBehaviour
 	{
 		if (transform.position.y == _originalYPosition)
 		{
-			atOriginalPosition = true;
+			_atOriginalPosition = true;
 		}
 		else
 		{
-			atOriginalPosition = false;
+			_atOriginalPosition = false;
 		}
 
-		if (isDropping && transform.position.y >= minY) 
+		//var rigidBody = gameObject.GetComponent<Rigidbody>();
+		if (_isDropping && transform.position.y >= minY) 
 		{
-			transform.Translate(Vector3.down * dropSpeed * Time.deltaTime);
+			//transform.Translate(Vector3.down * dropSpeed * Time.deltaTime);
+
+			rigidbody.isKinematic = false;
+			rigidbody.useGravity = true;
+		}
+		else
+		{
+			rigidbody.isKinematic = true;
+			rigidbody.useGravity = false;
 		}
 
-		if (!atOriginalPosition && !isDropping) 
+		if (!_atOriginalPosition && !_isDropping) 
 		{
-			transform.position = Vector3.MoveTowards (transform.position, new Vector3 (transform.position.x, _originalYPosition, transform.position.z), 1.0f);
+			transform.position = Vector3.Lerp(transform.position, new Vector3 (transform.position.x, _originalYPosition, transform.position.z), returnSpeed);
 		}
 	}
 
@@ -70,24 +79,12 @@ public class Drop : MonoBehaviour
 	{
 		if (platform.GetInstanceID() == this.transform.GetInstanceID())
 		{
-			//Debug.Log("drop platform");
-			//transform.position -= dropSpeed * Time.deltaTime;
-			//if (transform.position.y >= minY)
-			//{
-			isDropping = true;
-			//}
-			//atOriginalPosition = false;
+			_isDropping = true;
 		}
 	}
 
 	void HandlePlayerAirborne()
 	{
-		//transform.position = Vector3.MoveTowards (transform.position, new Vector3 (transform.position.x, _originalYPosition, transform.position.z), 0.3f);
-		//if (platform.GetInstanceID () == this.transform.GetInstanceID ()) 
-		//{
-			//Debug.Log("return platform");
-			isDropping = false;
-			//atOriginalPosition = false;
-		//}
+		_isDropping = false;
 	}
 }

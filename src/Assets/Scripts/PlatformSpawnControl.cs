@@ -5,9 +5,7 @@ using System.Collections.Generic;
 
 public class PlatformSpawnControl : MonoBehaviour 
 {
-	
-	private string _currentLevel;
-	private Transform _currentPlatformObject;
+	//private Transform _currentPlatformObject;
 	private int _currentPlatform;
 	private PlatformBuilder _platformBuilder;
 
@@ -60,7 +58,6 @@ public class PlatformSpawnControl : MonoBehaviour
 			Destroy(gameObject);
 		}
 
-		_currentLevel = Application.loadedLevelName;
 		_platformBuilder = new PlatformBuilder ();
 		levelPlatforms = new Dictionary<int, GameObject>();
 
@@ -135,7 +132,7 @@ public class PlatformSpawnControl : MonoBehaviour
 		if (platform.parent != null) 
 		{
 			_currentPlatform = int.Parse(platform.parent.name.Split('_')[1]);
-			_currentPlatformObject = levelPlatforms[_currentPlatform].transform;
+			//_currentPlatformObject = levelPlatforms[_currentPlatform].transform;
 
 			Debug.Log ("Current platform: " + _currentPlatform);
 
