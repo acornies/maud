@@ -7,7 +7,6 @@ public class Drop : MonoBehaviour
 	private bool _atOriginalPosition = true;
 	private float _originalYPosition;
 
-	public float dropSpeed = 10.0f;
 	public float maxY = 0.0f;
 	public float minY = 0.0f;
 	public float returnSpeed = 0.1f;

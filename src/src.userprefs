@@ -1,30 +1,17 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/PlatformSpawnControl.cs">
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlayerMovement.cs">
     <Files>
-      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="121" Column="19" />
-      <File FileName="Assets/Scripts/BoundaryControl.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/KillBox.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/PlatformSpawnControl.cs" Line="21" Column="29" />
-      <File FileName="Assets/Scripts/CameraMovement.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/GameController.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="245" Column="1" />
-      <File FileName="Assets/Scripts/RotationControl.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Orbit.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Drop.cs" Line="63" Column="54" />
+      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="21" Column="4" />
+      <File FileName="Assets\Scripts\RotationControl.cs" Line="5" Column="1" />
+      <File FileName="Assets\Scripts\PlatformSpawnControl.cs" Line="14" Column="40" />
+      <File FileName="Assets\Scripts\Orbit.cs" Line="5" Column="1" />
+      <File FileName="Assets\Scripts\KillBox.cs" Line="5" Column="1" />
+      <File FileName="Assets\Scripts\GameController.cs" Line="5" Column="1" />
+      <File FileName="Assets\Scripts\Drop.cs" Line="71" Column="28" />
+      <File FileName="Assets\Scripts\CameraMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\BoundaryControl.cs" Line="41" Column="10" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="Assembly-CSharp" expanded="True">
-            <Node name="Scripts" expanded="True" selected="True" />
-          </Node>
-          <Node name="Assembly-CSharp-Editor" expanded="True">
-            <Node name="Editor" expanded="True" />
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

@@ -181,7 +181,6 @@ public class PlayerMovement : MonoBehaviour
 			// the "walkable" layer
 			if (hit.transform.gameObject.layer == 8)
 			{
-				//Debug.Log("Stop movement 2!!!");
 				canMove = false;
 			}
 			else 
@@ -228,10 +227,9 @@ public class PlayerMovement : MonoBehaviour
 	{
 		if (this.isGrounded) 
 		{
-			rigidbody.AddForce(new Vector2(0, jumpForce + extraForce));
+			rigidbody.AddForceAtPosition(new Vector3(0, jumpForce + extraForce, 0), transform.position);
 			if (extraForce > 0)
 			{
-				Debug.Log ("Long jumping!");
 				isLongJumping = true;
 			}
 			else
@@ -246,8 +244,7 @@ public class PlayerMovement : MonoBehaviour
 		    && !isLongJumping
 		    && !forcePushed)
 		{
-			//Debug.Log ("Double jump!");
-			rigidbody.AddForce(new Vector2(0, jumpForce));
+			rigidbody.AddForceAtPosition(new Vector3(0, jumpForce, 0), transform.position);
 			_additionalJumpCount++;
 		}
 
