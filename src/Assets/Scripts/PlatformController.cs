@@ -12,7 +12,7 @@ public class PlatformController : MonoBehaviour
 	
 	public static PlatformController Instance { get; private set;}
 	public IDictionary<int, GameObject> levelPlatforms { get; private set;}
-	public int maxPlatformsForLevel = 100;
+	//public int maxPlatformsForLevel = 100;
 	public int checkpointBuffer = 3;
 	public float startingYAxisValue = 1.0f;
 	public int platformSpawnBuffer = 3;
@@ -65,12 +65,14 @@ public class PlatformController : MonoBehaviour
 	}
 	
 	// Use this for initialization
-	void Start () {
+	void Start () 
+	{
 		
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () 
+	{
 		
 		SpawnPlatforms ();
 	}
@@ -78,7 +80,7 @@ public class PlatformController : MonoBehaviour
 	// Spawn platforms based on player location
 	void SpawnPlatforms()
 	{
-		if (levelPlatforms.Count == maxPlatformsForLevel) return;
+		//if (levelPlatforms.Count == maxPlatformsForLevel) return;
 		
 		var highestPlatformIndex = (levelPlatforms.Keys.Count > 0) ? levelPlatforms.Keys.Max() : 0;
 		//Debug.Log("Highest platform is: " + highestPlatformIndex);
@@ -108,7 +110,7 @@ public class PlatformController : MonoBehaviour
 				
 				if (!levelPlatforms.TryGetValue (i, out newPlatform)) 
 				{
-					Debug.Log ("Spawn platform: " + i + " of " + toRange);
+					//Debug.Log ("Spawn platform: " + i + " of " + toRange);
 					/*newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/ProtoPlatformStandard"), 
                                               new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);*/
 					
@@ -133,7 +135,6 @@ public class PlatformController : MonoBehaviour
 		if (platform.parent != null) 
 		{
 			_currentPlatform = int.Parse(platform.parent.name.Split('_')[1]);
-			//_currentPlatformObject = levelPlatforms[_currentPlatform].transform;
 			
 			Debug.Log ("Current platform: " + _currentPlatform);
 			
@@ -158,7 +159,7 @@ public class PlatformController : MonoBehaviour
 		{
 			levelPlatforms.Remove(item);
 			Destroy(GameObject.Find("Platform_" + item));
-			Debug.Log("Removed Platform_" + item);
+			//Debug.Log("Removed Platform_" + item);
 		}
 		
 		

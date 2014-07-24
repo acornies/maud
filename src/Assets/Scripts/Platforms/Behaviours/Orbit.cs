@@ -3,7 +3,6 @@ using System.Collections;
 
 public class Orbit : MonoBehaviour 
 {
-
 	public Transform center;
 	public Vector3 axis = Vector3.up;
 	public float radius = 2.0f;
@@ -18,7 +17,7 @@ public class Orbit : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () 
+	void Update () 
 	{
 		transform.RotateAround (center.position, axis, rotationSpeed * Time.deltaTime);
 		var desiredPosition = (transform.position - center.position).normalized * radius + center.position;

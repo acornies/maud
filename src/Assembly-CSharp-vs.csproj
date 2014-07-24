@@ -98,6 +98,7 @@
      <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\KillBox.cs" />
      <Compile Include="Assets\Scripts\PlatformController.cs" />
+     <Compile Include="Assets\Scripts\Platforms\Behaviours\Disappear.cs" />
      <Compile Include="Assets\Scripts\Platforms\Behaviours\Drop.cs" />
      <Compile Include="Assets\Scripts\Platforms\Behaviours\Orbit.cs" />
      <Compile Include="Assets\Scripts\Platforms\Behaviours\UpAndDown.cs" />

@@ -1,10 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\KillBox.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Platforms\PlatformBuilder.cs">
     <Files>
-      <File FileName="Assets\Scripts\PlatformController.cs" Line="167" Column="1" />
-      <File FileName="Assets\Scripts\KillBox.cs" Line="78" Column="37" />
-      <File FileName="Assets\Scripts\CameraMovement.cs" Line="27" Column="1" />
+      <File FileName="Assets\Scripts\PlatformController.cs" Line="162" Column="5" />
+      <File FileName="Assets\Scripts\Platforms\Behaviours\Disappear.cs" Line="54" Column="4" />
+      <File FileName="Assets\Scripts\Platforms\Behaviours\Drop.cs" Line="74" Column="2" />
+      <File FileName="Assets\Scripts\Platforms\Behaviours\Orbit.cs" Line="26" Column="2" />
+      <File FileName="Assets\Scripts\Platforms\Behaviours\UpAndDown.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Platforms\PlatformBuilder.cs" Line="19" Column="81" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

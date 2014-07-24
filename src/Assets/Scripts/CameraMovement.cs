@@ -98,7 +98,7 @@ public class CameraMovement : MonoBehaviour
 				// update only if height is greater than previous since platforms will be destroyed underneath 
 				if (newCameraMinY > MinXandY.y)
 				{
-					Debug.Log("Update camera min y to: " + newCameraMinY);
+					//Debug.Log("Update camera min y to: " + newCameraMinY);
 					MinXandY = new Vector2(MinXandY.x, newCameraMinY);
 
 					On_CameraUpdatedMinY(newCameraMinY, checkpointPlatform);
