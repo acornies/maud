@@ -3,7 +3,7 @@ using System.Collections;
 
 public class UpAndDown : MonoBehaviour 
 {
-	public float speed = 1.0f;
+	public float smoothing = 1.0f;
 	public float waitTime = 1.0f;
 	public bool isMoving = true;
 	public Vector3 maxY;
@@ -17,8 +17,8 @@ public class UpAndDown : MonoBehaviour
 
 		while (isMoving) 
 		{
-			yield return StartCoroutine(MoveObject(transform, minY, maxY, speed));
-			yield return StartCoroutine(MoveObject(transform, maxY, minY, speed));
+			yield return StartCoroutine(MoveObject(transform, minY, maxY, smoothing));
+			yield return StartCoroutine(MoveObject(transform, maxY, minY, smoothing));
 		}
 	}
 	

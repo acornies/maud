@@ -1,19 +1,6 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UpAndDown.cs">
-    <Files>
-      <File FileName="Assets\Scripts\Drop.cs" Line="70" Column="149" />
-      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="247" Column="57" />
-      <File FileName="Assets\Scripts\PlatformSpawnControl.cs" Line="80" Column="1" />
-      <File FileName="Assets\Scripts\Orbit.cs" Line="25" Column="96" />
-      <File FileName="Assets\Scripts\KillBox.cs" Line="5" Column="1" />
-      <File FileName="Assets\Scripts\GameController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\CameraMovement.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\BoundaryControl.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\UpAndDown.cs" Line="21" Column="5" />
-      <File FileName="Assets\Scripts\PlatformBuilder\PlatformBuilder.cs" Line="24" Column="35" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

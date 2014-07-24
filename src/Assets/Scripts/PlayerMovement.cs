@@ -107,21 +107,6 @@ public class PlayerMovement : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		//this.moveDirection = Input.GetAxis("Horizontal");
-		
-		/*if (Input.GetButtonDown("Jump"))
-		{
-			Jump();
-		}*/
-	}
-
-	void OnCollisionEnter(Collision collision) 
-	{
-		// left and right boundary behaviour
-		if (collision.transform.tag == "Boundary")
-		{
-			BoundaryBounceBack(collision);
-		}
 	}
 
 	// TODO: move to specific platform script and get player through collision
@@ -205,17 +190,6 @@ public class PlayerMovement : MonoBehaviour
 					: new Vector2(0, rigidbody.velocity.y);
 		}
 	}
-
-	//TODO: Move to BoundaryControl
-	void BoundaryBounceBack(Collision collision)
-	{
-		//Debug.Log ("Bounce back!");
-		rigidbody.velocity = new Vector2(0, rigidbody.velocity.y);
-		var dir = (transform.position.x - collision.transform.position.x);
-		//Debug.Log (dir);
-		rigidbody.AddForce(dir * boundaryForce, 0, 0);
-		forcePushed = true;
-	}
 	
 	void Flip()
 	{
@@ -244,7 +218,7 @@ public class PlayerMovement : MonoBehaviour
 		    && !isLongJumping
 		    && !forcePushed)
 		{
-			rigidbody.AddForceAtPosition(new Vector3(0, jumpForce, 0), transform.position);
+			rigidbody.AddForceAtPosition(new Vector3(0, extraJumpForce, 0), transform.position);
 			_additionalJumpCount++;
 		}
 
