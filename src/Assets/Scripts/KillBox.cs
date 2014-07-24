@@ -72,12 +72,12 @@ public class KillBox : MonoBehaviour
 
 	void UpdateKillBoxAndCheckpointPosition(float newYPosition, int checkpointPlatform)
 	{
-		Debug.Log ("New kill box position: " + newYPosition);
+		//Debug.Log ("New kill box position: " + newYPosition);
 		transform.position = new Vector3 (transform.position.x, newYPosition - cameraPositionBuffer, transform.position.z);
 
-		var levelPlatforms = PlatformSpawnControl.Instance.levelPlatforms;
+		var levelPlatforms = PlatformController.Instance.levelPlatforms;
 
 		_checkpointPlatform = levelPlatforms[checkpointPlatform]; // get one platform above the killbox (check CameraMovement.killBoxBuffer)
-		Debug.Log ("Checkpoint platform is: " + _checkpointPlatform.name);
+		//Debug.Log ("Checkpoint platform is: " + _checkpointPlatform.name);
 	}
 }

@@ -1,6 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\KillBox.cs">
+    <Files>
+      <File FileName="Assets\Scripts\PlatformController.cs" Line="167" Column="1" />
+      <File FileName="Assets\Scripts\KillBox.cs" Line="78" Column="37" />
+      <File FileName="Assets\Scripts\CameraMovement.cs" Line="27" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class CameraMovement : MonoBehaviour
@@ -23,8 +23,8 @@ public class CameraMovement : MonoBehaviour
 	// Subscribe to events
 	void OnEnable()
 	{
-		PlatformSpawnControl.On_ReachedCheckpoint += UpdateMinYFromCheckpoint;
-		PlatformSpawnControl.On_NewPlatform += HandleNewPlatform;
+		PlatformController.On_ReachedCheckpoint += UpdateMinYFromCheckpoint;
+		PlatformController.On_NewPlatform += HandleNewPlatform;
 	}
 
 	void OnDisable()
@@ -39,8 +39,8 @@ public class CameraMovement : MonoBehaviour
 	
 	void UnsubscribeEvent()
 	{
-		PlatformSpawnControl.On_ReachedCheckpoint -= UpdateMinYFromCheckpoint;
-		PlatformSpawnControl.On_NewPlatform -= HandleNewPlatform;
+		PlatformController.On_ReachedCheckpoint -= UpdateMinYFromCheckpoint;
+		PlatformController.On_NewPlatform -= HandleNewPlatform;
 	}
 	
 	void Awake ()
@@ -87,11 +87,11 @@ public class CameraMovement : MonoBehaviour
 
 	void UpdateMinYFromCheckpoint(int checkpointPlatform)
 	{
-		var levelPlatforms = PlatformSpawnControl.Instance.levelPlatforms;
+		var levelPlatforms = PlatformController.Instance.levelPlatforms;
 		if (levelPlatforms != null && levelPlatforms.Count > 0) 
 		{
 			//Debug.Log ("New checkpoint is: " + checkpointPlatform);
-			if (checkpointPlatform > PlatformSpawnControl.Instance.checkpointBuffer)
+			if (checkpointPlatform > PlatformController.Instance.checkpointBuffer)
 			{
 				float newCameraMinY = levelPlatforms[checkpointPlatform].transform.position.y;
 
@@ -103,7 +103,7 @@ public class CameraMovement : MonoBehaviour
 
 					On_CameraUpdatedMinY(newCameraMinY, checkpointPlatform);
 
-					On_DestroyLowerPlatforms(checkpointPlatform - PlatformSpawnControl.Instance.checkpointBuffer - PlatformSpawnControl.Instance.platformSpawnBuffer);
+					On_DestroyLowerPlatforms(checkpointPlatform - PlatformController.Instance.checkpointBuffer - PlatformController.Instance.platformSpawnBuffer);
 				}
 			}
 		}
