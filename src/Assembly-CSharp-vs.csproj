@@ -103,6 +103,7 @@
      <Compile Include="Assets\Scripts\PlatformSpawnControl.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />
      <Compile Include="Assets\Scripts\RotationControl.cs" />
+     <Compile Include="Assets\Scripts\UpAndDown.cs" />
      <None Include="Assets\Sample Assets\Prototyping\Shaders\WorldCoord Diffuse.shader" />
      <None Include="Assets\EasyTouch\Readme_first.txt" />
  <Reference Include="TouchScript">
