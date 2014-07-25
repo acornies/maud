@@ -19,7 +19,6 @@ public class PlayerMovement : MonoBehaviour
 	public float extraJumpForce = 200.0f;
 	public bool isGrounded = false;
 	public bool forcePushed = false;
-	public int boundaryForce = 100;
 	public float stickyBuffer = 0.4f;
 	public LayerMask whatIsGround;
 	public float groundedRadius = 0.15f;
@@ -162,11 +161,17 @@ public class PlayerMovement : MonoBehaviour
 			|| Physics.Raycast(headRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
 			) 
 		{
-			//Debug.Log("Stop movement 1!!!");
 			// the "walkable" layer
 			if (hit.transform.gameObject.layer == 8)
 			{
-				canMove = false;
+				// only stop x velocity if player is moving towards collision
+				var dir = (hit.transform.position.x - transform.position.x);
+				//Debug.Log ("direction is: " + Mathf.Round(dir) + " move direction is: " + Mathf.Round(moveDirection));
+				if (Mathf.Round(moveDirection) == Mathf.Round(dir))
+				{
+					//Debug.Log ("stop!");
+					canMove = false;
+				}
 			}
 			else 
 			{
