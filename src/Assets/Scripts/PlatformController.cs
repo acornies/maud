@@ -110,14 +110,10 @@ public class PlatformController : MonoBehaviour
 				
 				if (!levelPlatforms.TryGetValue (i, out newPlatform)) 
 				{
-					//Debug.Log ("Spawn platform: " + i + " of " + toRange);
-					/*newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/ProtoPlatformStandard"), 
-                                              new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);*/
 					
 					newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> (_platformBuilder.GetPlatformPrefabByNumber(i)), 
 					                                       new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);
-					
-					//newPlatform.transform.Translate (newPlatform.transform.position.x, yAxisMultiplier, newPlatform.transform.position.z);
+
 					yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
 					
 					newPlatform.name = string.Format ("Platform_{0}", i);
