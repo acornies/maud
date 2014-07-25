@@ -103,6 +103,7 @@
      <Compile Include="Assets\Scripts\Platforms\Behaviours\Orbit.cs" />
      <Compile Include="Assets\Scripts\Platforms\Behaviours\UpAndDown.cs" />
      <Compile Include="Assets\Scripts\Platforms\PlatformBuilder.cs" />
+     <Compile Include="Assets\Scripts\Platforms\PlatformRangeInfo.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />
      <Compile Include="Assets\Scripts\RotationControl.cs" />
      <None Include="Assets\Sample Assets\Prototyping\Shaders\WorldCoord Diffuse.shader" />
