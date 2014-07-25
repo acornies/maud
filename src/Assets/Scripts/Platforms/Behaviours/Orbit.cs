@@ -14,6 +14,7 @@ public class Orbit : MonoBehaviour
 	void Start () 
 	{
 		transform.position = (transform.position - center.position).normalized * radius + center.position;
+		center = transform.parent;
 	}
 	
 	// Update is called once per frame

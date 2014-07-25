@@ -15,14 +15,15 @@ public class PlayerMovement : MonoBehaviour
 	public float maxSpeed = 6.0f;
 	public bool facingRight = true;
 	public float moveDirection;
-	public float jumpForce = 600.0f;
-	public float extraJumpForce = 200.0f;
+	public float jumpForce = 900.0f;
+	public float longJumpForce = 300.0f;
 	public bool isGrounded = false;
 	public bool forcePushed = false;
 	public float stickyBuffer = 0.4f;
 	public LayerMask whatIsGround;
 	public float groundedRadius = 0.15f;
 	public int additionalJumps = 1;
+	public float additionalJumpForce = 500.0f;
 
 	public delegate void ReachedPlatformAction(Transform platform);
 	public static event ReachedPlatformAction On_PlatformReached;
@@ -41,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
 	void HandleLongTap (Gesture gesture)
 	{
-		Jump(extraJumpForce);
+		Jump(longJumpForce);
 	}
 	
 	void OnDisable()
@@ -106,17 +107,6 @@ public class PlayerMovement : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-	}
-
-	// TODO: move to specific platform script and get player through collision
-	void OnTriggerEnter(Collider collider)
-	{
-		// handle orbit object force
-		if (collider.gameObject.name == "Sphere") {
-			var dir = (transform.position.x - collider.transform.position.x);
-			rigidbody.AddForce(dir * collider.gameObject.GetComponent<Orbit>().artificialForce, 0, 0);
-			forcePushed = true;
-		}
 	}
 
 	void On_JoystickMove(MovingJoystick movingStick)
@@ -223,7 +213,7 @@ public class PlayerMovement : MonoBehaviour
 		    && !isLongJumping
 		    && !forcePushed)
 		{
-			rigidbody.AddForceAtPosition(new Vector3(0, extraJumpForce, 0), transform.position);
+			rigidbody.AddForceAtPosition(new Vector3(0, additionalJumpForce, 0), transform.position);
 			_additionalJumpCount++;
 		}
 
