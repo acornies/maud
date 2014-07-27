@@ -1,12 +1,24 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Platforms\PlatformBuilder.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/PlayerMovement.cs">
     <Files>
-      <File FileName="Assets\Scripts\PlayerMovement.cs" Line="25" Column="32" />
-      <File FileName="Assets\Scripts\Platforms\PlatformBuilder.cs" Line="20" Column="114" />
-      <File FileName="Assets\Scripts\PlatformController.cs" Line="35" Column="3" />
-      <File FileName="Assets\Scripts\Platforms\PlatformRangeInfo.cs" Line="24" Column="14" />
+      <File FileName="Assets/Scripts/PlayerMovement.cs" Line="105" Column="4" />
+      <File FileName="Assets/EasyTouch/Plugins/EasyTouch.cs" Line="1840" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Assembly-CSharp" expanded="True">
+            <Node name="EasyTouch" expanded="True">
+              <Node name="Plugins" expanded="True" />
+            </Node>
+            <Node name="Scripts" expanded="True">
+              <Node name="PlayerMovement.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

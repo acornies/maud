@@ -34,17 +34,15 @@ public class PlayerMovement : MonoBehaviour
 	// Subscribe to events
 	void OnEnable()
 	{
-		EasyJoystick.On_JoystickTap += On_JoystickTap;
+		/*EasyJoystick.On_JoystickTap += On_JoystickTap;
 		EasyJoystick.On_JoystickMove += On_JoystickMove;
-		EasyJoystick.On_JoystickMoveEnd += On_JoystickMove;
+		EasyJoystick.On_JoystickMoveEnd += On_JoystickMove;*/
 		EasyTouch.On_LongTapEnd += HandleLongTap;
+		EasyTouch.On_Swipe += HandleSwipe;
+		EasyTouch.On_SwipeEnd += HandleSwipeEnd;
+		EasyTouch.On_SimpleTap += HandleSimpleTap;
 	}
 
-	void HandleLongTap (Gesture gesture)
-	{
-		Jump(longJumpForce);
-	}
-	
 	void OnDisable()
 	{
 		UnsubscribeEvent();
@@ -57,15 +55,22 @@ public class PlayerMovement : MonoBehaviour
 	
 	void UnsubscribeEvent()
 	{
-		EasyJoystick.On_JoystickTap -= On_JoystickTap;
+		/*EasyJoystick.On_JoystickTap -= On_JoystickTap;
 		EasyJoystick.On_JoystickMove -= On_JoystickMove;
-		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMove;
+		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMove;*/
 		EasyTouch.On_LongTapEnd -= HandleLongTap;
+		EasyTouch.On_Swipe -= HandleSwipe;
+		EasyTouch.On_SwipeEnd -= HandleSwipeEnd;
+		EasyTouch.On_SimpleTap -= HandleSimpleTap;
 	}
 	
 	void Awake()
 	{
 		_groundCheck = GameObject.Find("GroundCheck").transform;
+	}
+
+	void Start()
+	{
 	}
 	
 	// Use this for physics updates
@@ -88,7 +93,7 @@ public class PlayerMovement : MonoBehaviour
 			}
 		}
 
-		if (!isGrounded)
+		if (!isGrounded && On_PlayerAirborne != null)
 		{
 			On_PlayerAirborne();
 		}
@@ -103,13 +108,38 @@ public class PlayerMovement : MonoBehaviour
 			Flip();
 		}
 	}
-	
-	// Update is called once per frame
-	void Update ()
+
+	void HandleSimpleTap (Gesture gesture)
 	{
+		Jump();
+	}
+	
+	void HandleSwipeEnd (Gesture gesture)
+	{
+		moveDirection = 0;
+	}
+	
+	void HandleSwipe (Gesture gesture)
+	{
+		if (gesture.swipe == EasyTouch.SwipeType.Right)
+		{
+			facingRight = true;
+			moveDirection = 1;
+			
+		}
+		if (gesture.swipe == EasyTouch.SwipeType.Left) 
+		{
+			facingRight = false;
+			moveDirection = -1;		
+		}
+	}
+	
+	void HandleLongTap (Gesture gesture)
+	{
+		Jump(longJumpForce);
 	}
 
-	void On_JoystickMove(MovingJoystick movingStick)
+	/*void On_JoystickMove(MovingJoystick movingStick)
 	{
 		moveDirection = movingStick.joystickAxis.x;
 	}
@@ -117,7 +147,7 @@ public class PlayerMovement : MonoBehaviour
 	void On_JoystickTap(MovingJoystick movingStick)
 	{
 		Jump();
-	}
+	}*/
 
 	void HandleStickyPhysics()
 	{
@@ -181,7 +211,7 @@ public class PlayerMovement : MonoBehaviour
 		{
 			//this.shouldRotate = true;
 			rigidbody.velocity = (canMove) 
-				? new Vector2(this.moveDirection * this.maxSpeed, rigidbody.velocity.y) 
+				? new Vector2(this.moveDirection * maxSpeed, rigidbody.velocity.y) 
 					: new Vector2(0, rigidbody.velocity.y);
 		}
 	}

@@ -17,6 +17,8 @@ public class PlatformController : MonoBehaviour
 	public float startingYAxisValue = 1.0f;
 	public int platformSpawnBuffer = 3;
 	public float platformSpacing = 2.1f;
+	public float maxRotationLeft = 50.0f;
+	public float maxRotationRight = 310.0f;
 	
 	public delegate void ReachedNextCheckpoint(int platform);
 	public static event ReachedNextCheckpoint On_ReachedCheckpoint;
@@ -117,11 +119,28 @@ public class PlatformController : MonoBehaviour
 					yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
 					
 					newPlatform.name = string.Format ("Platform_{0}", i);
+					newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(), Vector3.up);
 					levelPlatforms.Add (i, newPlatform);
 					
 					On_NewPlatform(newPlatform.transform.position.y);
 				}
 			}
+		}
+	}
+
+	private float GetRandomRotation()
+	{
+		var options = new Dictionary<int, float> ();
+		options.Add (1, maxRotationLeft);
+		options.Add (2, maxRotationRight);
+		var leftOrRight = Random.Range (1, 3);
+		if (leftOrRight == 1) 
+		{
+			return Random.Range(0, options [leftOrRight]);
+		}
+		else
+		{
+			return Random.Range(360f, options [leftOrRight]);
 		}
 	}
 	
