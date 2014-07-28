@@ -18,7 +18,7 @@ public class Orbit : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () 
+	void Update () 
 	{
 		transform.RotateAround (center.position, axis, rotationSpeed * Time.deltaTime);
 		var desiredPosition = (transform.position - center.position).normalized * radius + center.position;
