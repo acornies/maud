@@ -44,7 +44,7 @@ public class Disappear : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update () 
+	void FixedUpdate () 
 	{
 		timer += Time.deltaTime;
 

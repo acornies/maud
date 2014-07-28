@@ -9,16 +9,17 @@ public class PlayerMovement : MonoBehaviour
 	//private Transform _tower;
 	private Transform _groundCheck;
 	private int _additionalJumpCount;
-	public bool isLongJumping;
+	private bool _isLongJumping;
 
-	public bool canMove = false;
+	public bool canMove;
+	public bool isRotating;
 	public float maxSpeed = 6.0f;
 	public bool facingRight = true;
 	public float moveDirection;
 	public float jumpForce = 900.0f;
 	public float longJumpForce = 300.0f;
-	public bool isGrounded = false;
-	public bool forcePushed = false;
+	public bool isGrounded;
+	public bool forcePushed;
 	public float stickyBuffer = 0.4f;
 	public LayerMask whatIsGround;
 	public float groundedRadius = 0.15f;
@@ -37,10 +38,22 @@ public class PlayerMovement : MonoBehaviour
 		/*EasyJoystick.On_JoystickTap += On_JoystickTap;
 		EasyJoystick.On_JoystickMove += On_JoystickMove;
 		EasyJoystick.On_JoystickMoveEnd += On_JoystickMove;*/
-		EasyTouch.On_LongTapEnd += HandleLongTap;
+		//EasyTouch.On_DoubleTap += HandleDoubleTap;
 		EasyTouch.On_Swipe += HandleSwipe;
 		EasyTouch.On_SwipeEnd += HandleSwipeEnd;
 		EasyTouch.On_SimpleTap += HandleSimpleTap;
+		RotationControl.On_PlayerRotationPowersStart += HandlePlayerRotationPowersStart;
+		RotationControl.On_PlayerRotationPowersEnd += HandlePlayerRotationPowersEnd;
+	}
+
+	void HandlePlayerRotationPowersEnd ()
+	{
+		isRotating = false;
+	}
+
+	void HandlePlayerRotationPowersStart ()
+	{
+		isRotating = true;
 	}
 
 	void OnDisable()
@@ -58,10 +71,12 @@ public class PlayerMovement : MonoBehaviour
 		/*EasyJoystick.On_JoystickTap -= On_JoystickTap;
 		EasyJoystick.On_JoystickMove -= On_JoystickMove;
 		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMove;*/
-		EasyTouch.On_LongTapEnd -= HandleLongTap;
+		//EasyTouch.On_DoubleTap -= HandleDoubleTap;
 		EasyTouch.On_Swipe -= HandleSwipe;
 		EasyTouch.On_SwipeEnd -= HandleSwipeEnd;
 		EasyTouch.On_SimpleTap -= HandleSimpleTap;
+		RotationControl.On_PlayerRotationPowersStart -= HandlePlayerRotationPowersStart;
+		RotationControl.On_PlayerRotationPowersEnd -= HandlePlayerRotationPowersEnd;
 	}
 	
 	void Awake()
@@ -134,12 +149,12 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 	
-	void HandleLongTap (Gesture gesture)
+	/*void HandleDoubleTap (Gesture gesture)
 	{
 		Jump(longJumpForce);
 	}
 
-	/*void On_JoystickMove(MovingJoystick movingStick)
+	void On_JoystickMove(MovingJoystick movingStick)
 	{
 		moveDirection = movingStick.joystickAxis.x;
 	}
@@ -210,7 +225,7 @@ public class PlayerMovement : MonoBehaviour
 		if (!forcePushed) 
 		{
 			//this.shouldRotate = true;
-			rigidbody.velocity = (canMove) 
+			rigidbody.velocity = (canMove && !isRotating) 
 				? new Vector2(this.moveDirection * maxSpeed, rigidbody.velocity.y) 
 					: new Vector2(0, rigidbody.velocity.y);
 		}
@@ -224,28 +239,29 @@ public class PlayerMovement : MonoBehaviour
 
 	public void Jump(float extraForce = 0)
 	{
-		if (this.isGrounded) 
-		{
-			rigidbody.AddForceAtPosition(new Vector3(0, jumpForce + extraForce, 0), transform.position);
-			if (extraForce > 0)
+		if (canMove) {
+			if (this.isGrounded) 
 			{
-				isLongJumping = true;
+				rigidbody.AddForceAtPosition(new Vector3(0, jumpForce + extraForce, 0), transform.position);
+				if (extraForce > 0)
+				{
+					_isLongJumping = true;
+				}
+				else
+				{
+					_isLongJumping = false;
+				}
 			}
-			else
+
+			// conditions for mid-air jump
+			if (!isGrounded 
+			    && _additionalJumpCount < additionalJumps 
+			    && !_isLongJumping
+			    && !forcePushed)
 			{
-				isLongJumping = false;
+				rigidbody.AddForceAtPosition(new Vector3(0, additionalJumpForce, 0), transform.position);
+				_additionalJumpCount++;
 			}
 		}
-
-		// conditions for mid-air jump
-		if (!isGrounded 
-		    && _additionalJumpCount < additionalJumps 
-		    && !isLongJumping
-		    && !forcePushed)
-		{
-			rigidbody.AddForceAtPosition(new Vector3(0, additionalJumpForce, 0), transform.position);
-			_additionalJumpCount++;
-		}
-
 	}
 }

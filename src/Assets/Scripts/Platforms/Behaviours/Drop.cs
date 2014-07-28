@@ -43,7 +43,7 @@ public class Drop : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update () 
+	void FixedUpdate () 
 	{
 		if (transform.position.y == _originalYPosition)
 		{

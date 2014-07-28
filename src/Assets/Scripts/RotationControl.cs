@@ -10,7 +10,15 @@ public class RotationControl : MonoBehaviour
 	private Vector3 _pointerReference;
 	private Vector3 _pointerOffset;
 	private Vector3 _rotation = Vector3.zero;
+
 	public bool shouldRotate;
+	public bool isPlayerAirborne;
+
+	public delegate void RotationPowersStart();
+	public static event RotationPowersStart On_PlayerRotationPowersStart;
+
+	public delegate void RotationPowersEnd();
+	public static event RotationPowersEnd On_PlayerRotationPowersEnd;
 
 	// Subscribe to events
 	void OnEnable()
@@ -18,9 +26,13 @@ public class RotationControl : MonoBehaviour
 		EasyTouch.On_Swipe += On_Swipe;
 		EasyTouch.On_SwipeStart += On_SwipeStart;
 		EasyTouch.On_SwipeEnd += On_SwipeEnd;
-		EasyJoystick.On_JoystickMoveStart += On_JoystickMoveStart;
+		EasyTouch.On_LongTapStart += HandleLongTap;
+
+		PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
+
+		/*EasyJoystick.On_JoystickMoveStart += On_JoystickMoveStart;
 		EasyJoystick.On_JoystickMove += On_JoystickMoveStart;
-		EasyJoystick.On_JoystickMoveEnd += On_JoystickMoveEnd;
+		EasyJoystick.On_JoystickMoveEnd += On_JoystickMoveEnd;*/
 	}
 
 	void OnDisable()
@@ -38,14 +50,21 @@ public class RotationControl : MonoBehaviour
 		EasyTouch.On_Swipe -= On_Swipe;
 		EasyTouch.On_SwipeStart -= On_SwipeStart;
 		EasyTouch.On_SwipeEnd -= On_SwipeEnd;
-		EasyJoystick.On_JoystickMoveStart -= On_JoystickMoveStart;
+		EasyTouch.On_LongTapStart -= HandleLongTap;
+
+		PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
+		/*EasyJoystick.On_JoystickMoveStart -= On_JoystickMoveStart;
 		EasyJoystick.On_JoystickMove -= On_JoystickMoveStart;
-		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMoveEnd;
+		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMoveEnd;*/
 	}
 
-	void On_SwipeStart(Gesture gesture)
+	void HandlePlayerAirborne ()
 	{
-		shouldRotate = true;
+		shouldRotate = false;
+	}
+	
+	void HandleLongTap (Gesture gesture)
+	{
 		_pointerReference = gesture.position;
 		RaycastHit hitInfo = new RaycastHit();
 		bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(gesture.position), out hitInfo);
@@ -56,13 +75,30 @@ public class RotationControl : MonoBehaviour
 			{
 				//Debug.Log ("It's active");
 				this.platform = hitInfo.transform;
+				
+				if (On_PlayerRotationPowersStart != null)
+				{
+					On_PlayerRotationPowersStart();
+				}
+				shouldRotate = true;
 			}
 			if (hitInfo.transform.gameObject.tag == "Stoppable")
 			{
 				//Debug.Log("Hit child, rotate parent: " + hitInfo.transform.parent.name);
 				this.platform = hitInfo.transform.parent;
+				
+				if (On_PlayerRotationPowersStart != null)
+				{
+					On_PlayerRotationPowersStart();
+				}
+				shouldRotate = true;
 			}
 		}
+	}
+
+	void On_SwipeStart(Gesture gesture)
+	{
+
 	}
 
 	void On_Swipe(Gesture gesture)
@@ -89,9 +125,13 @@ public class RotationControl : MonoBehaviour
 	{
 		shouldRotate = false;
 		platform = null;
+		if (On_PlayerRotationPowersEnd != null)
+		{
+			On_PlayerRotationPowersEnd();
+		}
 	}
 
-	void On_JoystickMoveStart (MovingJoystick move)
+	/*void On_JoystickMoveStart (MovingJoystick move)
 	{
 		shouldRotate = false;
 	}
@@ -99,5 +139,5 @@ public class RotationControl : MonoBehaviour
 	void On_JoystickMoveEnd (MovingJoystick move)
 	{
 		shouldRotate = true;
-	}
+	}*/
 }
