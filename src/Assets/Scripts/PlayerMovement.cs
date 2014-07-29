@@ -200,13 +200,13 @@ public class PlayerMovement : MonoBehaviour
 			if (hit.transform.gameObject.layer == 8)
 			{
 				// only stop x velocity if player is moving towards collision
-				var dir = (hit.transform.position.x - transform.position.x);
+				//var dir = (hit.transform.position.x - transform.position.x);
 				//Debug.Log ("direction is: " + Mathf.Round(dir) + " move direction is: " + Mathf.Round(moveDirection));
-				if (Mathf.Round(moveDirection) == Mathf.Round(dir))
-				{
+				//if (Mathf.Round(moveDirection) == Mathf.Round(dir))
+				//{
 					//Debug.Log ("stop!");
 					canMove = false;
-				}
+				//}
 			}
 			else 
 			{
