@@ -78,6 +78,11 @@ public class PlatformController : MonoBehaviour
 		
 		SpawnPlatforms ();
 	}
+
+	public int GetCurrentPlatformNumber()
+	{
+		return _currentPlatform;
+	}
 	
 	// Spawn platforms based on player location
 	void SpawnPlatforms()

@@ -5,6 +5,7 @@ public class GameController : MonoBehaviour
 {
 
 	private Transform _player;
+	private const float _playerZPosition = -2.8f;
 
 	public int lives = 3;
 	public float highestPoint = 0.0f;
@@ -83,6 +84,6 @@ public class GameController : MonoBehaviour
 		lives--;
 		//Debug.Log ("Lives: " + lives);
 
-		_player.transform.position = new Vector3 (0, spawnYPosition, -2.8f);
+		_player.transform.position = new Vector3 (0, spawnYPosition, _playerZPosition);
 	}
 }
