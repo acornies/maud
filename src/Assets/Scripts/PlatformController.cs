@@ -91,91 +91,71 @@ public class PlatformController : MonoBehaviour
 		
 		var highestPlatformIndex = (levelPlatforms.Keys.Count > 0) ? levelPlatforms.Keys.Max() : 0;
 		//Debug.Log("Highest platform is: " + highestPlatformIndex);
-		
-		if (_currentPlatform + platformSpawnBuffer >= highestPlatformIndex) 
-		{
-			//GameObject highestPlatformObj;
-			GameObject highestPlatform = null;
-			float yAxisMultiplier;
-			levelPlatforms.OrderBy(p => p.Key);
-			
-			int nextPlatform = highestPlatformIndex + 1;
-			if (levelPlatforms.TryGetValue(highestPlatformIndex, out highestPlatform))
-			{
-				//= _levelPlatforms [_levelPlatforms.Count].transform;
-				yAxisMultiplier = highestPlatform.transform.position.y + highestPlatform.transform.localScale.y + platformSpacing;
-			}
-			else
-			{
-				yAxisMultiplier = startingYAxisValue;
-			}
-			
-			int toRange = nextPlatform + platformSpawnBuffer;
-			for (int i=nextPlatform; i<=toRange; i++) {
-				
-				GameObject newPlatform;
-				
-				if (!levelPlatforms.TryGetValue (i, out newPlatform)) 
-				{
-					
-					newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> (_platformBuilder.GetPlatformPrefabByNumber(i)), 
-					                                       new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);
 
-					yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
+	    if (_currentPlatform + platformSpawnBuffer < highestPlatformIndex) return;
+	    //GameObject highestPlatformObj;
+	    GameObject highestPlatform = null;
+	    float yAxisMultiplier;
+	    levelPlatforms.OrderBy(p => p.Key);
+			
+	    int nextPlatform = highestPlatformIndex + 1;
+	    if (levelPlatforms.TryGetValue(highestPlatformIndex, out highestPlatform))
+	    {
+	        yAxisMultiplier = highestPlatform.transform.position.y + highestPlatform.transform.localScale.y + platformSpacing;
+	    }
+	    else
+	    {
+	        yAxisMultiplier = startingYAxisValue;
+	    }
+			
+	    int toRange = nextPlatform + platformSpawnBuffer;
+	    for (int i=nextPlatform; i<=toRange; i++) {
+				
+	        GameObject newPlatform;
+				
+	        if (!levelPlatforms.TryGetValue (i, out newPlatform)) 
+	        {
 					
-					newPlatform.name = string.Format ("Platform_{0}", i);
-					newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(), Vector3.up);
-					levelPlatforms.Add (i, newPlatform);
+	            newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> (_platformBuilder.GetPlatformPrefabByNumber(i)), 
+	                new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);
+
+	            yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
 					
-					On_NewPlatform(newPlatform.transform.position.y);
-				}
-			}
-		}
+	            newPlatform.name = string.Format ("Platform_{0}", i);
+	            newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(), Vector3.up);
+	            levelPlatforms.Add (i, newPlatform);
+					
+	            On_NewPlatform(newPlatform.transform.position.y);
+	        }
+	    }
 	}
 
 	private float GetRandomRotation()
 	{
-		var options = new Dictionary<int, float> ();
-		options.Add (1, maxRotationLeft);
-		options.Add (2, maxRotationRight);
-		var leftOrRight = Random.Range (1, 3);
-		if (leftOrRight == 1) 
-		{
-			return Random.Range(0, options [leftOrRight]);
-		}
-		else
-		{
-			return Random.Range(360f, options [leftOrRight]);
-		}
+		var options = new Dictionary<int, float> {{1, maxRotationLeft}, {2, maxRotationRight}};
+	    var leftOrRight = Random.Range (1, 3);
+	    return Random.Range(leftOrRight == 1 ? 0 : 360f, options [leftOrRight]);
 	}
 	
 	void HandlePlatformReached(Transform platform)
 	{
 		//Debug.Log (platform.parent.name);
-		if (platform.parent != null) 
-		{
-			_currentPlatform = int.Parse(platform.parent.name.Split('_')[1]);
+	    if (platform.parent == null) return;
+
+	    _currentPlatform = int.Parse(platform.parent.name.Split('_')[1]);
 			
-			Debug.Log ("Current platform: " + _currentPlatform);
+	    Debug.Log ("Current platform: " + _currentPlatform);
 			
-			On_ReachedCheckpoint(_currentPlatform - checkpointBuffer);
-		}
+	    On_ReachedCheckpoint(_currentPlatform - checkpointBuffer);
 	}
 	
 	void HandleDestroyLowerPlatforms(int platformIndex)
 	{
 		//Debug.Log ("Destroy platforms under: " + platformIndex);
 		
-		var buffer = new List<int> ();
-		foreach (var platform in levelPlatforms) 
-		{
-			if (platform.Key <= platformIndex) 
-			{
-				buffer.Add(platform.Key);
-			}
-		}
-		
-		foreach (var item in buffer) 
+		var buffer = (from platform in levelPlatforms where platform.Key <= platformIndex select platform.Key).ToList();
+
+	    foreach (var item in buffer) 
 		{
 			levelPlatforms.Remove(item);
 			Destroy(GameObject.Find("Platform_" + item));

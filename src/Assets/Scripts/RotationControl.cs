@@ -110,23 +110,21 @@ public class RotationControl : MonoBehaviour
 	void On_Swipe(Gesture gesture)
 	{
 		//Debug.Log("swiping... isRotating is: " + shouldRotate);
-		if(shouldRotate && platform != null)
-		{
-			// offset
-			_pointerOffset = (new Vector3(gesture.position.x, gesture.position.y, 0) - _pointerReference);
+	    if (!shouldRotate || platform == null) return;
+	    // offset
+	    _pointerOffset = (new Vector3(gesture.position.x, gesture.position.y, 0) - _pointerReference);
 			
-			// apply rotation
-			_rotation.y = -(_pointerOffset.x + _pointerOffset.y) * sensitivity;
+	    // apply rotation
+	    _rotation.y = -(_pointerOffset.x + _pointerOffset.y) * sensitivity;
 
-			isRotating = true;
+	    isRotating = true;
 
-			// rotate
-			platform.Rotate(_rotation);
+	    // rotate
+	    platform.Rotate(_rotation);
 			
-			// store mouse
-			_pointerReference = gesture.position;
-			//Debug.Log(platform.gameObject.name + " is rotating.");
-		}
+	    // store mouse
+	    _pointerReference = gesture.position;
+	    //Debug.Log(platform.gameObject.name + " is rotating.");
 	}
 
 	void On_SwipeEnd(Gesture gesture)

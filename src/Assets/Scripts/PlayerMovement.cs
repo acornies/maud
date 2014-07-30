@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using System.Linq;
 using System.Collections;
-//using TouchScript.Gestures;
 
 public class PlayerMovement : MonoBehaviour 
 {
@@ -17,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
 	public bool facingRight = true;
 	public float moveDirection;
 	public float jumpForce = 900.0f;
-	public float longJumpForce = 300.0f;
+	//public float longJumpForce = 300.0f;
 	public bool isGrounded;
 	public bool forcePushed;
 	public float stickyBuffer = 0.4f;
@@ -99,12 +98,12 @@ public class PlayerMovement : MonoBehaviour
 		if (groundColliders != null)
 		{
 			isGrounded = groundColliders.Length > 0 ? true : false;
-			var collider = groundColliders.FirstOrDefault();
-			if (collider != null && isGrounded)
+			var groundCollider = groundColliders.FirstOrDefault();
+			if (groundCollider != null && isGrounded)
 			{
 				_additionalJumpCount = 0;
 				forcePushed = false;
-				On_PlatformReached(collider.transform); // trigger event for finding current platform
+				On_PlatformReached(groundCollider.transform); // trigger event for finding current platform
 			}
 		}
 
@@ -136,20 +135,20 @@ public class PlayerMovement : MonoBehaviour
 	
 	void HandleSwipe (Gesture gesture)
 	{
-		if (gesture.swipe == EasyTouch.SwipeType.Right)
-		{
-			facingRight = true;
-			moveDirection = 1;
-			
-		}
-		if (gesture.swipe == EasyTouch.SwipeType.Left) 
-		{
-			facingRight = false;
-			moveDirection = -1;		
-		}
+	    switch (gesture.swipe)
+	    {
+	        case EasyTouch.SwipeType.Left:
+	            facingRight = false;
+	            moveDirection = -1;
+	            break;
+            case EasyTouch.SwipeType.Right:
+	            facingRight = true;
+	            moveDirection = 1;
+	            break;
+	    }
 	}
-	
-	/*void HandleDoubleTap (Gesture gesture)
+
+    /*void HandleDoubleTap (Gesture gesture)
 	{
 		Jump(longJumpForce);
 	}
@@ -170,14 +169,14 @@ public class PlayerMovement : MonoBehaviour
 		Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
 		Vector3 midRay = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
 		Vector3 footRay = new Vector3(transform.position.x, transform.position.y + 0.15f, transform.position.z);
-		/*Debug.DrawRay(midRay, Vector3.right, Color.white);
+		Debug.DrawRay(midRay, Vector3.right, Color.white);
 		Debug.DrawRay(midRay, Vector3.left, Color.white);
 		Debug.DrawRay(midRay, new Vector3(1, 0, 1), Color.green);
 		Debug.DrawRay(midRay, new Vector3(-1, 0, 1), Color.green);
 		Debug.DrawRay(footRay, Vector3.right, Color.white);
 		Debug.DrawRay(footRay, Vector3.left, Color.white);
 		Debug.DrawRay(headRay, Vector3.right, Color.white);
-		Debug.DrawRay(headRay, Vector3.left, Color.white);*/
+		Debug.DrawRay(headRay, Vector3.left, Color.white);
 		
 		// stop player from sticking to colliders in mid-air
 		RaycastHit hit;
