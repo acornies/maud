@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UpAndDown : MonoBehaviour 
+public class UpAndDown : PlatformBehaviour 
 {
 	public float smoothing = 1.0f;
 	public float waitTime = 1.0f;
@@ -35,4 +35,13 @@ public class UpAndDown : MonoBehaviour
 
 		yield return new WaitForSeconds(waitTime);
 	}
+
+    /*public override void HandleOnPlatformReached(Transform platform)
+    {
+        if (platform.GetInstanceID() == this.transform.GetInstanceID())
+        {
+            isOnPlatform = true;
+            Debug.Log("Test override.");
+        }
+    }*/
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Disappear : MonoBehaviour 
+public class Disappear : PlatformBehaviour 
 {
 	private Vector3 _initialPosition;
 	private Quaternion _initialRotation;
@@ -9,30 +9,6 @@ public class Disappear : MonoBehaviour
 	public float timer = 0.0f;
 	public float interval = 3.0f;
 	public bool isInvisible;
-	public bool isOnPlatform;
-
-	// Subscribe to events
-	void OnEnable()
-	{
-		PlayerMovement.On_PlatformReached += HandleOnPlatformReached;
-		PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
-	}
-
-	void OnDisable()
-	{
-		UnsubscribeEvent();
-	}
-	
-	void OnDestroy()
-	{
-		UnsubscribeEvent();
-	}
-	
-	void UnsubscribeEvent()
-	{
-		PlayerMovement.On_PlatformReached -= HandleOnPlatformReached;
-		PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
-	}
 
 	// Use this for initialization
 	void Start () 
@@ -40,7 +16,6 @@ public class Disappear : MonoBehaviour
 		var child = transform.Find ("Cube");
 		_initialPosition = transform.Find("Cube").localPosition;
 		_initialRotation = child.localRotation;
-		//_childCopy =  (GameObject)Object.Instantiate(transform.GetChild (0).gameObject);
 	}
 	
 	// Update is called once per frame
@@ -75,17 +50,13 @@ public class Disappear : MonoBehaviour
 		}
 	}
 
-	void HandleOnPlatformReached (Transform platform)
-	{
-		if (platform.GetInstanceID() == this.transform.GetInstanceID())
-		{
-			isOnPlatform = true;
-		}
-	}
-
-	void HandlePlayerAirborne ()
-	{
-		isOnPlatform = false;
-	}
-	
+    public override void HandleOnPlatformReached(Transform platform)
+    {
+        // since this script is on the parent gameobject, compare platform id with child id
+        var child = transform.Find("Cube");
+        if (platform != null && child != null)
+        {
+            isOnPlatform = platform.GetInstanceID() == child.GetInstanceID();
+        }
+    }
 }

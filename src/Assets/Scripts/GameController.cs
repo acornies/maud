@@ -16,6 +16,8 @@ public class GameController : MonoBehaviour
     public float timeBetweenDeaths = 3.0f;
     public Vector3 playerSpawnPosition;
 
+    public Vector3 gravity;
+
 	public static GameController Instance { get; private set;}
 
 	// Subscribe to events
@@ -103,7 +105,8 @@ public class GameController : MonoBehaviour
 	    // time delay between player deaths
 	    if (_playerIsDead)
 	    {
-	        _deathTimer -= Time.deltaTime;
+	        _player.transform.position =  new Vector3(0, 0, 0);
+            _deathTimer -= Time.deltaTime;
 	        if (!(_deathTimer <= 0)) return;
 	        if (lives <= -1)
 	        {
