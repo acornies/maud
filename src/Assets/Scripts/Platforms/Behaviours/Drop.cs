@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Drop : MonoBehaviour 
+public class Drop : PlatformBehaviour 
 {
 	private bool _isDropping;
 	private bool _atOriginalPosition = true;
@@ -10,29 +10,6 @@ public class Drop : MonoBehaviour
 	public float maxY = 0.0f;
 	public float minY = 0.0f;
 	public float returnSpeed = 0.1f;
-
-	// Subscribe to events
-	void OnEnable()
-	{
-		PlayerMovement.On_PlatformReached += HandleOnPlatformReached;
-		PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
-	}
-
-	void OnDisable()
-	{
-		UnsubscribeEvent();
-	}
-	
-	void OnDestroy()
-	{
-		UnsubscribeEvent();
-	}
-	
-	void UnsubscribeEvent()
-	{
-		PlayerMovement.On_PlatformReached -= HandleOnPlatformReached;
-		PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
-	}
 
 	// Use this for initialization
 	void Start () 
@@ -43,16 +20,9 @@ public class Drop : MonoBehaviour
 	}
 	
 	// Update is called once per frame
-	void Update () 
+	void FixedUpdate () 
 	{
-		if (transform.position.y == _originalYPosition)
-		{
-			_atOriginalPosition = true;
-		}
-		else
-		{
-			_atOriginalPosition = false;
-		}
+		_atOriginalPosition = transform.position.y == _originalYPosition;
 		
 		if (_isDropping && transform.position.y >= minY) 
 		{
@@ -71,16 +41,18 @@ public class Drop : MonoBehaviour
 		}
 	}
 
-	void HandleOnPlatformReached (Transform platform)
+	public override void HandleOnPlatformReached (Transform platform)
 	{
 		if (platform.GetInstanceID() == this.transform.GetInstanceID())
 		{
 			_isDropping = true;
+		    isOnPlatform = true;
 		}
 	}
 
-	void HandlePlayerAirborne()
+	public override void HandlePlayerAirborne()
 	{
 		_isDropping = false;
+	    isOnPlatform = false;
 	}
 }

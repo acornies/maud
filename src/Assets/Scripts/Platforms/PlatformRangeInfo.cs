@@ -8,18 +8,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
+
 namespace LegendPeak.Platforms
 {
 	public class PlatformRangeInfo
 	{
 		public int heightRange;
-		public int prefabRange;
+		public IEnumerable<int> prefabRange;
 
 		public PlatformRangeInfo ()
 		{
 		}
 
-		public PlatformRangeInfo(int heightRange, int prefabRange)
+		public PlatformRangeInfo(int heightRange, IEnumerable<int> prefabRange)
 		{
 			this.heightRange = heightRange;
 			this.prefabRange = prefabRange;
