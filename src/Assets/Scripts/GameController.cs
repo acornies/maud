@@ -49,12 +49,19 @@ public class GameController : MonoBehaviour
 	void Start () 
 	{
 		_player = GameObject.Find ("Player").transform;
+		GUI.contentColor = Color.white; 
 	}
 
 	void OnGUI()
 	{
-		GUI.Label(new Rect(Screen.width - 110, 10, 100, 25), highestPoint + "m", new GUIStyle(){ alignment = TextAnchor.UpperRight});
-		GUI.Label(new Rect(10, 10, 100, 25), "<3 x " + lives, new GUIStyle(){ alignment = TextAnchor.UpperLeft});
+
+		var guiStyleHeightMeter =  new GUIStyle(){ alignment = TextAnchor.UpperRight, fontSize = 24};
+		guiStyleHeightMeter.normal.textColor = Color.white;
+		var guiStyleLivesMeter =  new GUIStyle(){ alignment = TextAnchor.UpperLeft, fontSize = 24};
+		guiStyleLivesMeter.normal.textColor = Color.white;
+
+		GUI.Label(new Rect(Screen.width - 110, 10, 100, 25), highestPoint + "m", guiStyleHeightMeter);
+		GUI.Label(new Rect(10, 10, 150, 25), "Lives x " + lives, guiStyleLivesMeter);
 	}
 	
 	// Update is called once per frame

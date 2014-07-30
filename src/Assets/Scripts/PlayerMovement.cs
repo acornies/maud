@@ -197,21 +197,7 @@ public class PlayerMovement : MonoBehaviour
 			) 
 		{
 			// the "walkable" layer
-			if (hit.transform.gameObject.layer == 8)
-			{
-				// only stop x velocity if player is moving towards collision
-				//var dir = (hit.transform.position.x - transform.position.x);
-				//Debug.Log ("direction is: " + Mathf.Round(dir) + " move direction is: " + Mathf.Round(moveDirection));
-				//if (Mathf.Round(moveDirection) == Mathf.Round(dir))
-				//{
-					//Debug.Log ("stop!");
-					canMove = false;
-				//}
-			}
-			else 
-			{
-				canMove = true;
-			}
+			canMove = hit.transform.gameObject.layer != 8;
 		}
 		else
 		{
@@ -239,29 +225,16 @@ public class PlayerMovement : MonoBehaviour
 
 	public void Jump(float extraForce = 0)
 	{
-		if (canMove) {
-			if (this.isGrounded) 
-			{
-				rigidbody.AddForceAtPosition(new Vector3(0, jumpForce + extraForce, 0), transform.position);
-				if (extraForce > 0)
-				{
-					_isLongJumping = true;
-				}
-				else
-				{
-					_isLongJumping = false;
-				}
-			}
+	    if (!canMove) return;
+	    if (this.isGrounded)
+	    {
+	        rigidbody.AddForceAtPosition(new Vector3(0, jumpForce + extraForce, 0), transform.position);
+	        _isLongJumping = extraForce > 0;
+	    }
 
-			// conditions for mid-air jump
-			if (!isGrounded 
-			    && _additionalJumpCount < additionalJumps 
-			    && !_isLongJumping
-			    && !forcePushed)
-			{
-				rigidbody.AddForceAtPosition(new Vector3(0, additionalJumpForce, 0), transform.position);
-				_additionalJumpCount++;
-			}
-		}
+	    // conditions for mid-air jump
+	    if (isGrounded || _additionalJumpCount >= additionalJumps || _isLongJumping || forcePushed) return;
+	    rigidbody.AddForceAtPosition(new Vector3(0, additionalJumpForce, 0), transform.position);
+	    _additionalJumpCount++;
 	}
 }

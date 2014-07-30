@@ -12,7 +12,8 @@ public class RotationControl : MonoBehaviour
 	private Vector3 _rotation = Vector3.zero;
 
 	public bool shouldRotate;
-	public bool isPlayerAirborne;
+	public bool isRotating = false;
+	public float longTapTimeout = 1.0f;
 
 	public delegate void RotationPowersStart();
 	public static event RotationPowersStart On_PlayerRotationPowersStart;
@@ -27,12 +28,17 @@ public class RotationControl : MonoBehaviour
 		EasyTouch.On_SwipeStart += On_SwipeStart;
 		EasyTouch.On_SwipeEnd += On_SwipeEnd;
 		EasyTouch.On_LongTapStart += HandleLongTap;
-
+		EasyTouch.On_LongTapEnd += HandleLongTapEnd;
 		PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
 
 		/*EasyJoystick.On_JoystickMoveStart += On_JoystickMoveStart;
 		EasyJoystick.On_JoystickMove += On_JoystickMoveStart;
 		EasyJoystick.On_JoystickMoveEnd += On_JoystickMoveEnd;*/
+	}
+
+	void HandleLongTapEnd (Gesture gesture)
+	{
+
 	}
 
 	void OnDisable()
@@ -51,7 +57,7 @@ public class RotationControl : MonoBehaviour
 		EasyTouch.On_SwipeStart -= On_SwipeStart;
 		EasyTouch.On_SwipeEnd -= On_SwipeEnd;
 		EasyTouch.On_LongTapStart -= HandleLongTap;
-
+		EasyTouch.On_LongTapEnd -= HandleLongTapEnd;
 		PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
 		/*EasyJoystick.On_JoystickMoveStart -= On_JoystickMoveStart;
 		EasyJoystick.On_JoystickMove -= On_JoystickMoveStart;
@@ -111,7 +117,9 @@ public class RotationControl : MonoBehaviour
 			
 			// apply rotation
 			_rotation.y = -(_pointerOffset.x + _pointerOffset.y) * sensitivity;
-			
+
+			isRotating = true;
+
 			// rotate
 			platform.Rotate(_rotation);
 			
@@ -124,6 +132,7 @@ public class RotationControl : MonoBehaviour
 	void On_SwipeEnd(Gesture gesture)
 	{
 		shouldRotate = false;
+		isRotating = false;
 		platform = null;
 		if (On_PlayerRotationPowersEnd != null)
 		{
