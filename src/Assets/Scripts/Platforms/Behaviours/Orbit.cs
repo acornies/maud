@@ -8,6 +8,7 @@ public class Orbit : PlatformBehaviour
 	public float radius = 2.0f;
 	public float radiusSpeed = 0.5f;
 	public float rotationSpeed = 10.0f;
+    public float artificalForce = 1000f;
 
     // Use this for initialization
 	void Start () 
@@ -23,4 +24,20 @@ public class Orbit : PlatformBehaviour
 		var desiredPosition = (transform.position - center.position).normalized * radius + center.position;
 		transform.position = Vector3.MoveTowards(transform.position, desiredPosition, radiusSpeed);
 	}
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name != "Player" || isOnPlatform) return;
+        
+        if (axis.y > 0)
+        {
+            collision.rigidbody.AddForce(-1 * (artificalForce * rotationSpeed), collision.transform.position.y, collision.transform.position.z);
+        }
+        else
+        {
+            collision.rigidbody.AddForce(1 * (artificalForce * rotationSpeed), collision.transform.position.y, collision.transform.position.z);
+        }
+        
+        collision.transform.GetComponent<PlayerMovement>().forcePushed = true;
+    }
 }
