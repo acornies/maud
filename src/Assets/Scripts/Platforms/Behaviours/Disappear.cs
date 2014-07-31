@@ -25,28 +25,25 @@ public class Disappear : PlatformBehaviour
 
 		if (isInvisible)
 		{
-			if (timer >= interval)
-			{
-				GameObject newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/PrototypeCube"), 
-				                                       _initialPosition, Quaternion.identity);
-				newPlatform.name = "Cube";
-				newPlatform.transform.parent = transform;
-				newPlatform.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-				newPlatform.transform.localPosition = _initialPosition;
-				newPlatform.transform.localRotation = _initialRotation;
-				timer = 0;
-				isInvisible = false;
-			}
+		    if (!(timer >= interval)) return;
+		    GameObject newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> ("Prefabs/PrototypeCube"), 
+		        _initialPosition, Quaternion.identity);
+		    newPlatform.name = "Cube";
+		    newPlatform.transform.parent = transform;
+		    newPlatform.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+		    newPlatform.transform.localPosition = _initialPosition;
+		    newPlatform.transform.localRotation = _initialRotation;
+		    timer = 0;
+		    isInvisible = false;
 		}
 		else
 		{
-			if (timer >= interval)
-			{
-				GameObject platformToDestroy = transform.Find("Cube").gameObject;
-				Destroy(platformToDestroy);
-				timer = 0;
-				isInvisible = true;
-			}
+		    if (!(timer >= interval)) return;
+		    Transform platformToDestroy = transform.Find("Cube");
+		    if (platformToDestroy == null) return;
+		    Destroy(platformToDestroy.gameObject);
+		    timer = 0;
+		    isInvisible = true;
 		}
 	}
 

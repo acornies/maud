@@ -31,6 +31,7 @@ public class PlatformController : MonoBehaviour
 	{
 		PlayerMovement.On_PlatformReached += HandlePlatformReached;
 		CameraMovement.On_DestroyLowerPlatforms += HandleDestroyLowerPlatforms;
+	    //CameraMovement.On_CameraUpdatedMinY += HandleCameraUpdatedMinY;
 	}
 	
 	void OnDisable()
@@ -47,6 +48,7 @@ public class PlatformController : MonoBehaviour
 	{
 		PlayerMovement.On_PlatformReached -= HandlePlatformReached;
 		CameraMovement.On_DestroyLowerPlatforms -= HandleDestroyLowerPlatforms;
+        //CameraMovement.On_CameraUpdatedMinY -= HandleCameraUpdatedMinY;
 	}
 	
 	void Awake()
@@ -145,8 +147,10 @@ public class PlatformController : MonoBehaviour
 	    _currentPlatform = int.Parse(platform.parent.name.Split('_')[1]);
 			
 	    Debug.Log ("Current platform: " + _currentPlatform);
-			
-	    On_ReachedCheckpoint(_currentPlatform - checkpointBuffer);
+
+	    int newcheckpoint = (_currentPlatform - checkpointBuffer);
+        On_ReachedCheckpoint(newcheckpoint);
+        DestroyChildPlatformUnderCheckpoint(newcheckpoint-2);
 	}
 	
 	void HandleDestroyLowerPlatforms(int platformIndex)
@@ -161,7 +165,15 @@ public class PlatformController : MonoBehaviour
 			Destroy(GameObject.Find("Platform_" + item));
 			//Debug.Log("Removed Platform_" + item);
 		}
-		
-		
 	}
+
+    private void DestroyChildPlatformUnderCheckpoint(int platformIndex)
+    {
+        GameObject parent;
+        if (!this.levelPlatforms.TryGetValue(platformIndex, out parent)) return;
+        if (parent == null) return;
+        var child = parent.transform.Find("Cube");
+        if (child == null) return;
+        Destroy(child.gameObject);
+    }
 }
