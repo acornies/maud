@@ -135,17 +135,9 @@ public class PlayerMovement : MonoBehaviour
 	
 	void HandleSwipe (Gesture gesture)
 	{
-	    switch (gesture.swipe)
-	    {
-	        case EasyTouch.SwipeType.Left:
-	            facingRight = false;
-	            moveDirection = -1;
-	            break;
-            case EasyTouch.SwipeType.Right:
-	            facingRight = true;
-	            moveDirection = 1;
-	            break;
-	    }
+	    var touchDir = (gesture.position.x - gesture.startPosition.x);
+	    float touchDirMultiplied = touchDir*0.01f;
+        moveDirection = Mathf.Clamp(touchDirMultiplied, -1f, 1f);
 	}
 
     void HandleDoubleTap (Gesture gesture)
