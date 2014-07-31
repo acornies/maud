@@ -45,11 +45,20 @@ public class MusicController : MonoBehaviour {
 	void Update () {
 		int currentPlatform = PlatformController.Instance.GetCurrentPlatformNumber();
 
-		if (currentPlatform >= forestMusicSlowLimit)
-		{
-			audio.volume = Mathf.Lerp(audio.volume, 0.0f, musicFadeSpeed * Time.deltaTime);
-			forestMusicFast.volume = Mathf.Lerp(forestMusicFast.volume, 0.5f, musicFadeSpeed * Time.deltaTime);
-		}
+	    if (currentPlatform < forestMusicSlowLimit || !audio.isPlaying) return;
 
+	    if (Mathf.Approximately(audio.time, audio.clip.length))
+	    {
+	        MusicTransition(audio, forestMusicFast);
+	    }
 	}
+
+    static void MusicTransition(AudioSource currentSong, AudioSource nextSong)
+    {
+        Debug.Log("Start transition.");
+        nextSong.Play();
+        currentSong.volume = 0.0f;
+        currentSong.Stop();
+        nextSong.volume = 0.5f;
+    }
 }
