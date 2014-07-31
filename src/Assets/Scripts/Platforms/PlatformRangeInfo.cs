@@ -15,16 +15,18 @@ namespace LegendPeak.Platforms
 	public class PlatformRangeInfo
 	{
 		public int heightRange;
-		public IEnumerable<int> prefabRange;
+		public int prefabRangeStart;
+        public int prefabRangeEnd;
 
 		public PlatformRangeInfo ()
 		{
 		}
 
-		public PlatformRangeInfo(int heightRange, IEnumerable<int> prefabRange)
+		public PlatformRangeInfo(int heightRange, int prefabRangeStart, int prefabRangeEnd)
 		{
 			this.heightRange = heightRange;
-			this.prefabRange = prefabRange;
+            this.prefabRangeStart = prefabRangeStart;
+		    this.prefabRangeEnd = prefabRangeEnd;
 		}
 	}
 		

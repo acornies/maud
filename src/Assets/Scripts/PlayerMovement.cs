@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
 		/*EasyJoystick.On_JoystickTap += On_JoystickTap;
 		EasyJoystick.On_JoystickMove += On_JoystickMove;
 		EasyJoystick.On_JoystickMoveEnd += On_JoystickMove;*/
-		//EasyTouch.On_DoubleTap += HandleDoubleTap;
+		EasyTouch.On_DoubleTap += HandleDoubleTap;
 		EasyTouch.On_Swipe += HandleSwipe;
 		EasyTouch.On_SwipeEnd += HandleSwipeEnd;
 		EasyTouch.On_SimpleTap += HandleSimpleTap;
@@ -70,7 +70,7 @@ public class PlayerMovement : MonoBehaviour
 		/*EasyJoystick.On_JoystickTap -= On_JoystickTap;
 		EasyJoystick.On_JoystickMove -= On_JoystickMove;
 		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMove;*/
-		//EasyTouch.On_DoubleTap -= HandleDoubleTap;
+		EasyTouch.On_DoubleTap -= HandleDoubleTap;
 		EasyTouch.On_Swipe -= HandleSwipe;
 		EasyTouch.On_SwipeEnd -= HandleSwipeEnd;
 		EasyTouch.On_SimpleTap -= HandleSimpleTap;
@@ -148,11 +148,12 @@ public class PlayerMovement : MonoBehaviour
 	    }
 	}
 
-    /*void HandleDoubleTap (Gesture gesture)
+    void HandleDoubleTap (Gesture gesture)
 	{
-		Jump(longJumpForce);
+		Jump();
 	}
 
+    /*
 	void On_JoystickMove(MovingJoystick movingStick)
 	{
 		moveDirection = movingStick.joystickAxis.x;

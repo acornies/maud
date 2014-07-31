@@ -19,7 +19,6 @@ public class PlatformController : MonoBehaviour
 	public float platformSpacing = 2.1f;
 	public float maxRotationLeft = 50.0f;
 	public float maxRotationRight = 310.0f;
-    public int maxPlatformPrefabRange = 6;
 	
 	public delegate void ReachedNextCheckpoint(int platform);
 	public static event ReachedNextCheckpoint On_ReachedCheckpoint;
@@ -62,7 +61,7 @@ public class PlatformController : MonoBehaviour
 			Destroy(gameObject);
 		}
 
-        _platformBuilder = new PlatformBuilder(maxPlatformPrefabRange);
+        _platformBuilder = new PlatformBuilder();
 		levelPlatforms = new Dictionary<int, GameObject>();
 		
 	}
