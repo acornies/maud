@@ -16,12 +16,6 @@ namespace LegendPeak.Platforms
 
 	    public PlatformBuilder()
 		{
-	        /*_platformPrefabs = new List<int>();
-            for (int i = 1; i <= maxPlatformPrefabRange; i++)
-	        {
-	            _platformPrefabs.Add(i);
-	        }*/
-            
             _heightLevelDescriptions = new Dictionary<string, PlatformRangeInfo> ();
 			_heightLevelDescriptions.Add (new KeyValuePair<string, PlatformRangeInfo> ("One", new PlatformRangeInfo(10, 1, 1)));
             _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Two", new PlatformRangeInfo(20, 2, 2)));

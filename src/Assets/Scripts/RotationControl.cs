@@ -10,10 +10,12 @@ public class RotationControl : MonoBehaviour
 	private Vector3 _pointerReference;
 	private Vector3 _pointerOffset;
 	private Vector3 _rotation = Vector3.zero;
+    public float longTapEndTimer;
 
 	public bool shouldRotate;
 	public bool isRotating = false;
 	public float longTapTimeout = 1.0f;
+    public bool isLongTapTimingOut;
 
 	public delegate void RotationPowersStart();
 	public static event RotationPowersStart On_PlayerRotationPowersStart;
@@ -34,11 +36,6 @@ public class RotationControl : MonoBehaviour
 		/*EasyJoystick.On_JoystickMoveStart += On_JoystickMoveStart;
 		EasyJoystick.On_JoystickMove += On_JoystickMoveStart;
 		EasyJoystick.On_JoystickMoveEnd += On_JoystickMoveEnd;*/
-	}
-
-	void HandleLongTapEnd (Gesture gesture)
-	{
-
 	}
 
 	void OnDisable()
@@ -63,6 +60,29 @@ public class RotationControl : MonoBehaviour
 		EasyJoystick.On_JoystickMove -= On_JoystickMoveStart;
 		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMoveEnd;*/
 	}
+
+    void Update()
+    {
+        if (isLongTapTimingOut)
+        {
+            if (shouldRotate && !isRotating)
+            {
+                longTapEndTimer -= Time.deltaTime;
+                if (!(longTapEndTimer <= 0)) return;
+                shouldRotate = false;
+                platform = null;
+                if (On_PlayerRotationPowersEnd != null)
+                {
+                    On_PlayerRotationPowersEnd();
+                }
+                isLongTapTimingOut = false;
+            }
+        }
+        else
+        {
+            longTapEndTimer = longTapTimeout;
+        }
+    }
 
 	void HandlePlayerAirborne ()
 	{
@@ -101,6 +121,13 @@ public class RotationControl : MonoBehaviour
 			}
 		}
 	}
+    void HandleLongTapEnd(Gesture gesture)
+    {
+        if (platform != null)
+        {
+            isLongTapTimingOut = true;
+        }
+    }
 
 	void On_SwipeStart(Gesture gesture)
 	{
@@ -109,7 +136,9 @@ public class RotationControl : MonoBehaviour
 
 	void On_Swipe(Gesture gesture)
 	{
-		//Debug.Log("swiping... isRotating is: " + shouldRotate);
+	    isLongTapTimingOut = false;
+        
+        //Debug.Log("swiping... isRotating is: " + shouldRotate);
 	    if (!shouldRotate || platform == null) return;
 	    // offset
 	    _pointerOffset = (new Vector3(gesture.position.x, gesture.position.y, 0) - _pointerReference);

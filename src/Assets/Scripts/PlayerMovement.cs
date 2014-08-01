@@ -1,7 +1,5 @@
 using UnityEngine;
-using System;
 using System.Linq;
-using System.Collections;
 
 public class PlayerMovement : MonoBehaviour 
 {
@@ -9,9 +7,10 @@ public class PlayerMovement : MonoBehaviour
 	private Transform _groundCheck;
 	private int _additionalJumpCount;
 	private bool _isLongJumping;
+    private float _pushedTimer;
 
 	public bool canMove;
-	public bool isRotating;
+	public bool isUsingPowers;
 	public float maxSpeed = 6.0f;
 	public bool facingRight = true;
 	public float moveDirection;
@@ -19,6 +18,7 @@ public class PlayerMovement : MonoBehaviour
 	//public float longJumpForce = 300.0f;
 	public bool isGrounded;
 	public bool forcePushed;
+    public float forcePushedInterval = 0.5f;
 	public float stickyBuffer = 0.4f;
 	public LayerMask whatIsGround;
 	public float groundedRadius = 0.15f;
@@ -47,12 +47,12 @@ public class PlayerMovement : MonoBehaviour
 
 	void HandlePlayerRotationPowersEnd ()
 	{
-		isRotating = false;
+		isUsingPowers = false;
 	}
 
 	void HandlePlayerRotationPowersStart ()
 	{
-		isRotating = true;
+		isUsingPowers = true;
 	}
 
 	void OnDisable()
@@ -91,6 +91,7 @@ public class PlayerMovement : MonoBehaviour
 	void FixedUpdate ()
 	{
 		HandleStickyPhysics();
+	    HandleForcePushed();
 		Move();
 
 		// handle jumping
@@ -112,16 +113,32 @@ public class PlayerMovement : MonoBehaviour
 			On_PlayerAirborne();
 		}
 		
-		// flip player on the y axis
-		if (this.moveDirection > 0.0f && !this.facingRight)
-		{
-			Flip();
-		}
-		else if (this.moveDirection < 0.0f && this.facingRight)
-		{
-			Flip();
-		}
+	    if (isUsingPowers) return;
+        // flip player on the y axis
+        if (this.moveDirection > 0.0f && !this.facingRight)
+	    {
+	        Flip();
+	    }
+	    else if (this.moveDirection < 0.0f && this.facingRight)
+	    {
+	        Flip();
+	    }
 	}
+
+    void HandleForcePushed()
+    {
+        if (forcePushed)
+        {
+            _pushedTimer -= Time.deltaTime;
+            if (!(_pushedTimer <= 0)) return;
+            forcePushed = false;
+            //Debug.Log("Can move again.");
+        }
+        else
+        {
+            _pushedTimer = forcePushedInterval;
+        }
+    }
 
 	void HandleSimpleTap (Gesture gesture)
 	{
@@ -203,7 +220,7 @@ public class PlayerMovement : MonoBehaviour
 		if (!forcePushed) 
 		{
 			//this.shouldRotate = true;
-			rigidbody.velocity = (canMove && !isRotating) 
+			rigidbody.velocity = (canMove && !isUsingPowers) 
 				? new Vector2(this.moveDirection * maxSpeed, rigidbody.velocity.y) 
 					: new Vector2(0, rigidbody.velocity.y);
 		}
