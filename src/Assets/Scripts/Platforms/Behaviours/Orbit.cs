@@ -3,13 +3,16 @@ using System.Collections;
 
 public class Orbit : PlatformBehaviour 
 {
-	public Transform center;
+    private float _stoppedTimer = 0.5f;
+    private bool _isStopped;
+    
+    public Transform center;
 	public Vector3 axis = Vector3.up;
 	public float radius = 2.0f;
 	public float radiusSpeed = 0.5f;
 	public float rotationSpeed = 10.0f;
     public float artificalForce = 1000f;
-    public float pushedTimer = 0.5f;
+    public float stopTime = 1.0f;
 
     // Use this for initialization
 	void Start () 
@@ -24,17 +27,43 @@ public class Orbit : PlatformBehaviour
     }
 	
 	// Update is called once per frame
-	void FixedUpdate () 
+	void FixedUpdate ()
 	{
-		transform.RotateAround (center.position, axis, rotationSpeed);
-		var desiredPosition = (transform.position - center.position).normalized * radius + center.position;
-		transform.position = Vector3.MoveTowards(transform.position, desiredPosition, radiusSpeed);
+	    _isStopped = isOnPlatform;
+ 
+        if (_isStopped && !isOnPlatform)
+	    {
+            _stoppedTimer -= Time.deltaTime;
+            if (!(_stoppedTimer <= 0)) return;
+	        _isStopped = false;
+	    }
+
+        if (isOnPlatform)
+        {
+            // do nothing
+        }
+	    else
+	    {
+            _stoppedTimer = stopTime;
+            transform.RotateAround(center.position, axis, rotationSpeed);
+            var desiredPosition = (transform.position - center.position).normalized * radius + center.position;
+            transform.position = Vector3.MoveTowards(transform.position, desiredPosition, radiusSpeed);
+	    }
 	}
 
     void OnCollisionEnter(Collision collision)
     {
+        HandlePlayerCollisions(collision);
+    }
+    void OnCollisionStay(Collision collision)
+    {
+        HandlePlayerCollisions(collision);
+    }
+
+    void HandlePlayerCollisions(Collision collision)
+    {
         if (collision.gameObject.name != "Player" || isOnPlatform) return;
-        
+
         if (axis.y > 0)
         {
             collision.rigidbody.AddForce(-1 * (artificalForce * rotationSpeed), collision.transform.position.y, collision.transform.position.z);
@@ -46,5 +75,6 @@ public class Orbit : PlatformBehaviour
 
         //var timer = pushedTimer;
         collision.transform.GetComponent<PlayerMovement>().forcePushed = true;
+        _isStopped = true;
     }
 }

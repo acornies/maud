@@ -3,19 +3,17 @@ using System.Collections;
 
 public class RotationControl : MonoBehaviour 
 {
-
-	public float sensitivity = 0.005f;
-	public Transform platform;
-
 	private Vector3 _pointerReference;
 	private Vector3 _pointerOffset;
 	private Vector3 _rotation = Vector3.zero;
-    public float longTapEndTimer;
+    private float _longTapEndTimer;
+    private bool _isLongTapTimingOut;
 
-	public bool shouldRotate;
+    public float sensitivity = 0.005f;
+    public Transform platform;
+    public bool shouldRotate;
 	public bool isRotating = false;
 	public float longTapTimeout = 1.0f;
-    public bool isLongTapTimingOut;
 
 	public delegate void RotationPowersStart();
 	public static event RotationPowersStart On_PlayerRotationPowersStart;
@@ -63,24 +61,24 @@ public class RotationControl : MonoBehaviour
 
     void Update()
     {
-        if (isLongTapTimingOut)
+        if (_isLongTapTimingOut)
         {
             if (shouldRotate && !isRotating)
             {
-                longTapEndTimer -= Time.deltaTime;
-                if (!(longTapEndTimer <= 0)) return;
+                _longTapEndTimer -= Time.deltaTime;
+                if (!(_longTapEndTimer <= 0)) return;
                 shouldRotate = false;
                 platform = null;
                 if (On_PlayerRotationPowersEnd != null)
                 {
                     On_PlayerRotationPowersEnd();
                 }
-                isLongTapTimingOut = false;
+                _isLongTapTimingOut = false;
             }
         }
         else
         {
-            longTapEndTimer = longTapTimeout;
+            _longTapEndTimer = longTapTimeout;
         }
     }
 
@@ -125,7 +123,7 @@ public class RotationControl : MonoBehaviour
     {
         if (platform != null)
         {
-            isLongTapTimingOut = true;
+            _isLongTapTimingOut = true;
         }
     }
 
@@ -136,7 +134,7 @@ public class RotationControl : MonoBehaviour
 
 	void On_Swipe(Gesture gesture)
 	{
-	    isLongTapTimingOut = false;
+	    _isLongTapTimingOut = false;
         
         //Debug.Log("swiping... isRotating is: " + shouldRotate);
 	    if (!shouldRotate || platform == null) return;
