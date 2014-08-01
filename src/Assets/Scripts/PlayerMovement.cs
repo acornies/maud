@@ -1,10 +1,12 @@
 using UnityEngine;
 using System.Linq;
 
+[RequireComponent(typeof (Rigidbody))]
 public class PlayerMovement : MonoBehaviour 
 {
 	//private Transform _tower;
 	private Transform _groundCheck;
+    private Transform _heightCheck;
 	private int _additionalJumpCount;
 	private bool _isLongJumping;
     private float _pushedTimer;
@@ -17,16 +19,21 @@ public class PlayerMovement : MonoBehaviour
 	public float jumpForce = 900.0f;
 	//public float longJumpForce = 300.0f;
 	public bool isGrounded;
+    public bool isHittingHead;
 	public bool forcePushed;
     public float forcePushedInterval = 0.5f;
 	public float stickyBuffer = 0.4f;
 	public LayerMask whatIsGround;
 	public float groundedRadius = 0.15f;
+    public float headHitRadius = 0.1f;
 	public int additionalJumps = 1;
 	public float additionalJumpForce = 500.0f;
 
 	public delegate void ReachedPlatformAction(Transform platform);
 	public static event ReachedPlatformAction On_PlatformReached;
+
+    public delegate void HitHeadAction(Transform platform);
+    public static event HitHeadAction On_HitHead;
 
 	public delegate void PlayerAirborne();
 	public static event PlayerAirborne On_PlayerAirborne;
@@ -81,6 +88,7 @@ public class PlayerMovement : MonoBehaviour
 	void Awake()
 	{
 		_groundCheck = GameObject.Find("GroundCheck").transform;
+        _heightCheck = GameObject.Find("HeightCheck").transform;
 	}
 
 	void Start()
@@ -94,7 +102,7 @@ public class PlayerMovement : MonoBehaviour
 	    HandleForcePushed();
 		Move();
 
-		// handle jumping
+		// handle jump/is grounded control
 		var groundColliders = Physics.OverlapSphere(_groundCheck.position, groundedRadius, whatIsGround);
 		if (groundColliders != null)
 		{
@@ -107,6 +115,18 @@ public class PlayerMovement : MonoBehaviour
 				On_PlatformReached(groundCollider.transform); // trigger event for finding current platform
 			}
 		}
+
+        // handle head room
+        var heightColliders = Physics.OverlapSphere(_heightCheck.position, headHitRadius, whatIsGround);
+        if (heightColliders != null)
+        {
+            isHittingHead = heightColliders.Length > 0 ? true : false;
+            var heightCollider = heightColliders.FirstOrDefault();
+            if (heightCollider != null && isHittingHead && On_HitHead != null)
+            {
+                On_HitHead(heightCollider.transform);
+            }
+        }
 
 		if (!isGrounded && On_PlayerAirborne != null)
 		{

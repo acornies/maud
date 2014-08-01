@@ -29,7 +29,7 @@ public class Orbit : PlatformBehaviour
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
-	    _isStopped = isOnPlatform;
+	    //_isStopped = isOnPlatform;
  
         if (_isStopped && !isOnPlatform)
 	    {
@@ -40,7 +40,7 @@ public class Orbit : PlatformBehaviour
 
         if (isOnPlatform)
         {
-            // do nothing
+            _isStopped = true;
         }
 	    else
 	    {
@@ -55,14 +55,14 @@ public class Orbit : PlatformBehaviour
     {
         HandlePlayerCollisions(collision);
     }
-    void OnCollisionStay(Collision collision)
+    /*void OnCollisionStay(Collision collision)
     {
         HandlePlayerCollisions(collision);
-    }
+    }*/
 
     void HandlePlayerCollisions(Collision collision)
     {
-        if (collision.gameObject.name != "Player" || isOnPlatform) return;
+        if (collision.gameObject.name != "Player" || isOnPlatform || _playerCollidingWithHead) return;
 
         if (axis.y > 0)
         {
