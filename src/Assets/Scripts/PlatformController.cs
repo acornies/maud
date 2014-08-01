@@ -20,7 +20,7 @@ public class PlatformController : MonoBehaviour
 	public float maxRotationLeft = 50.0f;
 	public float maxRotationRight = 310.0f;
 	
-	public delegate void ReachedNextCheckpoint(int platform);
+	public delegate void ReachedNextCheckpoint(int platform, int childPlatformToDeleteIndex);
 	public static event ReachedNextCheckpoint On_ReachedCheckpoint;
 	
 	public delegate void NewPlatform(float yPosition);
@@ -149,14 +149,14 @@ public class PlatformController : MonoBehaviour
 	    Debug.Log ("Current platform: " + _currentPlatform);
 
 	    int newcheckpoint = (_currentPlatform - checkpointBuffer);
-        On_ReachedCheckpoint(newcheckpoint);
-        DestroyChildPlatformUnderCheckpoint(newcheckpoint-2);
+        On_ReachedCheckpoint(newcheckpoint, newcheckpoint - 2);
 	}
 	
-	void HandleDestroyLowerPlatforms(int platformIndex)
+	void HandleDestroyLowerPlatforms(int platformIndex, int childPlatformToDeleteIndex)
 	{
 		//Debug.Log ("Destroy platforms under: " + platformIndex);
-		
+        DestroyChildPlatformUnderCheckpoint(childPlatformToDeleteIndex);
+
 		var buffer = (from platform in levelPlatforms where platform.Key <= platformIndex select platform.Key).ToList();
 
 	    foreach (var item in buffer) 

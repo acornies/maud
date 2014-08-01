@@ -53,16 +53,24 @@ public class Orbit : PlatformBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        //Debug.Log("collision enter");
         HandlePlayerCollisions(collision);
     }
-    /*void OnCollisionStay(Collision collision)
+
+    private void OnCollisionStay(Collision collision)
     {
+        //Debug.Log("collision stay");
         HandlePlayerCollisions(collision);
-    }*/
+    }
 
     void HandlePlayerCollisions(Collision collision)
     {
-        if (collision.gameObject.name != "Player" || isOnPlatform || _playerCollidingWithHead) return;
+        var playerMovement = collision.transform.GetComponent<PlayerMovement>();
+        if (collision.gameObject.name != "Player" || isOnPlatform || playerMovement.isHittingHead || _isStopped)
+        {
+            Debug.Log("no force because: " + isOnPlatform + playerMovement.isHittingHead + _isStopped);
+            return;
+        }
 
         if (axis.y > 0)
         {
@@ -73,8 +81,7 @@ public class Orbit : PlatformBehaviour
             collision.rigidbody.AddForce(1 * (artificalForce * rotationSpeed), collision.transform.position.y, collision.transform.position.z);
         }
 
-        //var timer = pushedTimer;
-        collision.transform.GetComponent<PlayerMovement>().forcePushed = true;
+        playerMovement.forcePushed = true;
         _isStopped = true;
     }
 }

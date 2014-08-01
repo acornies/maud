@@ -8,6 +8,8 @@ public class CameraMovement : MonoBehaviour
 	
 	public float XSmooth = 10.0f;
 	public float YSmooth = 10.0f;
+
+    public int minCameraUpdatePlatform = 5;
 	
 	public Vector2 MaxXandY;
 	public Vector2 MinXandY;
@@ -17,7 +19,7 @@ public class CameraMovement : MonoBehaviour
 	public delegate void UpdatedCameraMinY(float yPosition, int checkpointPlatform);
 	public static event UpdatedCameraMinY On_CameraUpdatedMinY;
 
-	public delegate void DestroyLowerPlatforms(int platformNumber);
+    public delegate void DestroyLowerPlatforms(int platformNumber, int childPlatformToDeleteIndex);
 	public static event DestroyLowerPlatforms On_DestroyLowerPlatforms;
 
 	// Subscribe to events
@@ -85,7 +87,7 @@ public class CameraMovement : MonoBehaviour
 		}	
 	}
 
-	void UpdateMinYFromCheckpoint(int checkpointPlatform)
+    void UpdateMinYFromCheckpoint(int checkpointPlatform, int childPlatformToDeleteIndex)
 	{
 		var levelPlatforms = PlatformController.Instance.levelPlatforms;
 		if (levelPlatforms != null && levelPlatforms.Count > 0) 
@@ -96,14 +98,14 @@ public class CameraMovement : MonoBehaviour
 				float newCameraMinY = levelPlatforms[checkpointPlatform].transform.position.y;
 
 				// update only if height is greater than previous since platforms will be destroyed underneath 
-				if (newCameraMinY > MinXandY.y)
+				if (newCameraMinY > MinXandY.y && checkpointPlatform >= minCameraUpdatePlatform)
 				{
 					//Debug.Log("Update camera min y to: " + newCameraMinY);
 					MinXandY = new Vector2(MinXandY.x, newCameraMinY);
 
 					On_CameraUpdatedMinY(newCameraMinY, checkpointPlatform);
 
-					On_DestroyLowerPlatforms(checkpointPlatform - PlatformController.Instance.checkpointBuffer - PlatformController.Instance.platformSpawnBuffer);
+                    On_DestroyLowerPlatforms(checkpointPlatform - PlatformController.Instance.checkpointBuffer - PlatformController.Instance.platformSpawnBuffer, childPlatformToDeleteIndex);
 				}
 			}
 		}

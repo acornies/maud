@@ -195,7 +195,9 @@ public class PlayerMovement : MonoBehaviour
 
 	void HandleStickyPhysics()
 	{
-		// draw ray near the head of the player
+	    //if (forcePushed) return;
+        
+        // draw ray near the head of the player
 		Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
 		Vector3 midRay = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
 		Vector3 footRay = new Vector3(transform.position.x, transform.position.y + 0.15f, transform.position.z);
