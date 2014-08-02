@@ -34,7 +34,7 @@ namespace LegendPeak.Platforms
 			// if there are no defined height levels, generate the last range forever
 			else
 			{
-			    var lastRange = _heightLevelDescriptions.Last();
+			    var lastRange = _heightLevelDescriptions.First(i => i.Key == "Five");
                 return GetPrefab(lastRange.Value.prefabRangeStart, lastRange.Value.prefabRangeEnd);
 			}
 		}
