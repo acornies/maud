@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using System.Linq;
 
@@ -28,6 +29,9 @@ public class PlayerMovement : MonoBehaviour
     public float headHitRadius = 0.1f;
 	public int additionalJumps = 1;
 	public float additionalJumpForce = 500.0f;
+
+    public bool useAcceleration = false;
+    public float accelerometerMultiplier = 1.5f;
 
 	public delegate void ReachedPlatformAction(Transform platform);
 	public static event ReachedPlatformAction On_PlatformReached;
@@ -167,14 +171,27 @@ public class PlayerMovement : MonoBehaviour
 	
 	void HandleSwipeEnd (Gesture gesture)
 	{
-		moveDirection = 0;
+	    if (!useAcceleration)
+	    {
+	        moveDirection = 0;
+	    }
+
+        if (gesture.swipe == EasyTouch.SwipeType.Up)
+        {
+            Jump();
+        }
 	}
 	
 	void HandleSwipe (Gesture gesture)
 	{
-	    var touchDir = (gesture.position.x - gesture.startPosition.x);
-	    float touchDirMultiplied = touchDir*0.01f;
-        moveDirection = Mathf.Clamp(touchDirMultiplied, -1f, 1f);
+
+	    if (gesture.swipe == EasyTouch.SwipeType.Left || gesture.swipe == EasyTouch.SwipeType.Right && !useAcceleration)
+	    {
+	        var touchDir = (gesture.position.x - gesture.startPosition.x);
+            float touchDirMultiplied = touchDir * 0.01f;
+            moveDirection = Mathf.Clamp(touchDirMultiplied, -1f, 1f);
+	    }
+	    
 	}
 
     void HandleDoubleTap (Gesture gesture)
@@ -238,15 +255,37 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Move()
 	{
-		// move player
+        if (useAcceleration)
+	    {
+	        //Debug.Log(Input.acceleration.x);
+	        moveDirection = Input.acceleration.x;
+	    }
+        
+        // move player
 		if (!forcePushed) 
 		{
 			//this.shouldRotate = true;
-			rigidbody.velocity = (canMove && !isUsingPowers) 
-				? new Vector2(this.moveDirection * maxSpeed, rigidbody.velocity.y) 
-					: new Vector2(0, rigidbody.velocity.y);
+		    rigidbody.velocity = ApplyVelocity();
 		}
 	}
+
+    private Vector2 ApplyVelocity()
+    {
+        if (canMove && !isUsingPowers && !useAcceleration)
+        {
+            return new Vector2(this.moveDirection*maxSpeed, rigidbody.velocity.y);
+        }
+
+        if (canMove && !isUsingPowers && useAcceleration)
+        {
+            //var accelerometerMultiplier = 1.5f;
+            float newSpeed = (maxSpeed*accelerometerMultiplier);
+            return new Vector2(this.moveDirection * newSpeed, rigidbody.velocity.y);
+        }
+
+        return new Vector2(0, rigidbody.velocity.y);
+
+    }
 	
 	void Flip()
 	{
