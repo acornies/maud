@@ -5,7 +5,6 @@ using System.Linq;
 [RequireComponent(typeof (Rigidbody))]
 public class PlayerMovement : MonoBehaviour 
 {
-	//private Transform _tower;
 	private Transform _groundCheck;
     private Transform _heightCheck;
 	private int _additionalJumpCount;
