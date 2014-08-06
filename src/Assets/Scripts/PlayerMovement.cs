@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 using System.Linq;
 
@@ -32,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
     public bool useAcceleration = false;
     public float accelerometerMultiplier = 1.5f;
 
-	public delegate void ReachedPlatformAction(Transform platform);
+	public delegate void ReachedPlatformAction(Transform platform, Transform player);
 	public static event ReachedPlatformAction On_PlatformReached;
 
     public delegate void HitHeadAction(Transform platform);
@@ -115,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
 			{
 				_additionalJumpCount = 0;
 				forcePushed = false;
-				On_PlatformReached(groundCollider.transform); // trigger event for finding current platform
+				On_PlatformReached(groundCollider.transform, transform); // trigger event for finding current platform
 			}
 		}
 
@@ -211,7 +210,7 @@ public class PlayerMovement : MonoBehaviour
 
 	void HandleStickyPhysics()
 	{
-	    //if (forcePushed) return;
+	    //if (isGrounded) return;
         
         // draw ray near the head of the player
 		Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
@@ -244,7 +243,14 @@ public class PlayerMovement : MonoBehaviour
 			) 
 		{
 			// the "walkable" layer
-			canMove = hit.transform.gameObject.layer != 8;
+		    if (hit.transform.gameObject.layer == 8 && !isGrounded)
+		    {
+		        canMove = false;
+		    }
+		    else
+		    {
+		        canMove = true;
+		    }
 		}
 		else
 		{

@@ -47,7 +47,7 @@ public class Disappear : PlatformBehaviour
 		}
 	}
 
-    public override void HandleOnPlatformReached(Transform platform)
+    public override void HandleOnPlatformReached(Transform platform, Transform player)
     {
         // since this script is on the parent gameobject, compare platform id with child id
         var child = transform.Find("Cube");

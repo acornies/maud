@@ -68,7 +68,10 @@ public class RotationControl : MonoBehaviour
                 _longTapEndTimer -= Time.deltaTime;
                 if (!(_longTapEndTimer <= 0)) return;
                 shouldRotate = false;
-                platform.particleSystem.Stop();
+                if (platform != null && platform.particleSystem != null)
+                {
+                    platform.particleSystem.Stop();   
+                }
                 platform = null;
                 if (On_PlayerRotationPowersEnd != null)
                 {

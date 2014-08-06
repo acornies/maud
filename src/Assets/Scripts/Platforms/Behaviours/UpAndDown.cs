@@ -28,20 +28,24 @@ public class UpAndDown : PlatformBehaviour
 		var rate= 1.0f/time;
 		while (i < 1.0f) {
 			i += Time.deltaTime * rate;
-			thisTransform.position = Vector3.Lerp(new Vector3(transform.position.x, startPos.y, transform.position.z), 
-			                                      new Vector3(transform.position.x, endPos.y, transform.position.z), i);
-			yield return null; 
+			rigidbody.MovePosition(Vector3.Lerp(new Vector3(transform.position.x, startPos.y, transform.position.z), 
+			                                      new Vector3(transform.position.x, endPos.y, transform.position.z), i));
+			yield return new WaitForFixedUpdate(); 
 		}
 
 		yield return new WaitForSeconds(waitTime);
 	}
 
-    /*public override void HandleOnPlatformReached(Transform platform)
+    /*public override void HandleOnPlatformReached(Transform platform, Transform player)
     {
         if (platform.GetInstanceID() == this.transform.GetInstanceID())
         {
             isOnPlatform = true;
-            Debug.Log("Test override.");
+            var difference = (platform.position.y - player.position.y);
+            //player.rigidbody.MovePosition(new Vector3(player.position.x, platform.position.y, player.position.z));
+            //Debug.Log(difference);
+            //player.position = Vector3.MoveTowards(player.position, transform.position, difference);
+
         }
     }*/
 }

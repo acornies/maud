@@ -41,7 +41,7 @@ public class Drop : PlatformBehaviour
 		}
 	}
 
-	public override void HandleOnPlatformReached (Transform platform)
+	public override void HandleOnPlatformReached (Transform platform, Transform player)
 	{
 		if (platform.GetInstanceID() == this.transform.GetInstanceID())
 		{

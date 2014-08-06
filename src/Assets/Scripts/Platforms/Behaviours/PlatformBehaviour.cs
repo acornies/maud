@@ -30,7 +30,7 @@ public class PlatformBehaviour : MonoBehaviour
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
     }
 
-    public virtual void HandleOnPlatformReached(Transform platform)
+    public virtual void HandleOnPlatformReached(Transform platform, Transform player)
     {
         if (platform.GetInstanceID() == this.transform.GetInstanceID())
         {

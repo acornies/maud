@@ -139,7 +139,7 @@ public class PlatformController : MonoBehaviour
 	    return Random.Range(leftOrRight == 1 ? 0 : 360f, options [leftOrRight]);
 	}
 	
-	void HandlePlatformReached(Transform platform)
+	void HandlePlatformReached(Transform platform, Transform player)
 	{
 		//Debug.Log (platform.parent.name);
 	    if (platform.parent == null) return;
