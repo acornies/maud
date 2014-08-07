@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Runtime.Remoting.Messaging;
+using UnityEngine;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ public class PlatformController : MonoBehaviour
 	//private Transform _currentPlatformObject;
 	private int _currentPlatform;
 	private PlatformBuilder _platformBuilder;
+    private float _timer;
 	
 	public static PlatformController Instance { get; private set;}
 	public IDictionary<int, GameObject> levelPlatforms { get; private set;}
@@ -19,6 +21,7 @@ public class PlatformController : MonoBehaviour
 	public float platformSpacing = 2.1f;
 	public float maxRotationLeft = 50.0f;
 	public float maxRotationRight = 310.0f;
+    public float platformSpawnInterval = 1.0f;
 	
 	public delegate void ReachedNextCheckpoint(int platform, int childPlatformToDeleteIndex);
 	public static event ReachedNextCheckpoint On_ReachedCheckpoint;
@@ -77,8 +80,9 @@ public class PlatformController : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		
-		SpawnPlatforms ();
+      
+	    SpawnPlatforms();
+	    //timer = platformSpawnInterval;
 	}
 
 	public int GetCurrentPlatformNumber()
@@ -89,9 +93,8 @@ public class PlatformController : MonoBehaviour
 	// Spawn platforms based on player location
 	void SpawnPlatforms()
 	{
-		//if (levelPlatforms.Count == maxPlatformsForLevel) return;
-		
-		var highestPlatformIndex = (levelPlatforms.Keys.Count > 0) ? levelPlatforms.Keys.Max() : 0;
+        _timer -= Time.deltaTime;
+        var highestPlatformIndex = (levelPlatforms.Keys.Count > 0) ? levelPlatforms.Keys.Max() : 0;
 		//Debug.Log("Highest platform is: " + highestPlatformIndex);
 
 	    if (_currentPlatform + platformSpawnBuffer < highestPlatformIndex) return;
@@ -113,21 +116,24 @@ public class PlatformController : MonoBehaviour
 	    int toRange = nextPlatform + platformSpawnBuffer;
 	    for (int i=nextPlatform; i<=toRange; i++) {
 				
-	        GameObject newPlatform;
-				
-	        if (!levelPlatforms.TryGetValue (i, out newPlatform)) 
+            GameObject newPlatform;
+            //if (!(timer <= 0)) return;
+
+	        if (!levelPlatforms.TryGetValue(i, out newPlatform) && _timer <= 0)
 	        {
-					
-	            newPlatform = (GameObject)Instantiate (Resources.Load<GameObject> (_platformBuilder.GetPlatformPrefabByNumber(i)), 
-	                new Vector3 (0, yAxisMultiplier, 0), Quaternion.identity);
+
+	            newPlatform =
+	                (GameObject) Instantiate(Resources.Load<GameObject>(_platformBuilder.GetPlatformPrefabByNumber(i)),
+	                    new Vector3(0, yAxisMultiplier, 0), Quaternion.identity);
 
 	            yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
-					
-	            newPlatform.name = string.Format ("Platform_{0}", i);
+
+	            newPlatform.name = string.Format("Platform_{0}", i);
 	            newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(), Vector3.up);
-	            levelPlatforms.Add (i, newPlatform);
-					
+	            levelPlatforms.Add(i, newPlatform);
+
 	            On_NewPlatform(newPlatform.transform.position.y);
+	            _timer = platformSpawnInterval;
 	        }
 	    }
 	}
