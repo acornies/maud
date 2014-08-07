@@ -5,8 +5,7 @@ public class GameController : MonoBehaviour
 {
 
 	private Transform _player;
-	private const float _playerZPosition = -2.8f;
-    private bool _playerIsDead;
+	public float playerZPosition = -2.8f;
     private float _deathTimer;
 
     //private float _deathInterval = 3.0f;
@@ -15,10 +14,9 @@ public class GameController : MonoBehaviour
 	public float highestPoint = 0.0f;
     public float timeBetweenDeaths = 3.0f;
     public Vector3 playerSpawnPosition;
+    public bool playerIsDead;
 
-    public Vector3 gravity;
-
-	public static GameController Instance { get; private set;}
+    public static GameController Instance { get; private set;}
 
 	// Subscribe to events
 	void OnEnable()
@@ -58,7 +56,6 @@ public class GameController : MonoBehaviour
 	void Start () 
 	{
 		_player = GameObject.Find ("Player").transform;
-		GUI.contentColor = Color.white; 
 	}
 
 	void OnGUI()
@@ -79,13 +76,13 @@ public class GameController : MonoBehaviour
 		GUI.Label(new Rect(Screen.width - 110, 10, 100, 25), highestPoint + "m", guiStyleHeightMeter);
 		GUI.Label(new Rect(10, 10, 150, 25), "Lives x " + lives, guiStyleLivesMeter);
 
-	    if (_playerIsDead && lives >= 0)
+	    if (playerIsDead && lives >= 0)
 	    {
             GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 25, 200, 50), "You died!", guiStyleDeathTitle);
             GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "Next life in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
 	    }
 
-        if (_playerIsDead && lives <= -1)
+        if (playerIsDead && lives <= -1)
         {
             GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 25, 200, 50), "You died!", guiStyleDeathTitle);
             GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "New game starts in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
@@ -103,9 +100,13 @@ public class GameController : MonoBehaviour
 		}
 
 	    // time delay between player deaths
-	    if (_playerIsDead)
+	    if (playerIsDead)
 	    {
-	        _player.transform.position =  new Vector3(0, 0, 0);
+	        /*if (_player.transform.position == playerSpawnPosition)
+	        {
+	            
+	        }*/
+            //_player.transform.position = playerSpawnPosition;
             _deathTimer -= Time.deltaTime;
 	        if (!(_deathTimer <= 0)) return;
 	        if (lives <= -1)
@@ -114,9 +115,9 @@ public class GameController : MonoBehaviour
 	        }
 	        else
 	        {
-	            _player.transform.position = playerSpawnPosition;
+	            //_player.transform.position = playerSpawnPosition;
 	            _deathTimer = timeBetweenDeaths;
-	            _playerIsDead = false;   
+	            playerIsDead = false;   
 	        }
 	    }
 	    else
@@ -136,8 +137,8 @@ public class GameController : MonoBehaviour
 	{
 		lives--;
 		//Debug.Log ("Lives: " + lives);
-	    _playerIsDead = true;
-	    playerSpawnPosition = new Vector3(0, spawnYPosition, _playerZPosition);
+	    playerIsDead = true;
+	    playerSpawnPosition = new Vector3(0, spawnYPosition, playerZPosition);
 	    //_player.transform.position = new Vector3 (0, spawnYPosition, _playerZPosition);
 	}
 }

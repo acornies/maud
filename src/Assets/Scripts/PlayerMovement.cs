@@ -9,10 +9,13 @@ public class PlayerMovement : MonoBehaviour
 	private int _additionalJumpCount;
 	private bool _isLongJumping;
     private float _pushedTimer;
+    private GameObject _playerModel;
 
-	public bool canMove;
+    public bool isDead;
+    public bool canMove;
 	public bool isUsingPowers;
 	public float maxSpeed = 6.0f;
+    public float ghostSpeed = 1f;
 	public bool facingRight = true;
 	public float moveDirection;
 	public float jumpForce = 900.0f;
@@ -43,9 +46,6 @@ public class PlayerMovement : MonoBehaviour
 	// Subscribe to events
 	void OnEnable()
 	{
-		/*EasyJoystick.On_JoystickTap += On_JoystickTap;
-		EasyJoystick.On_JoystickMove += On_JoystickMove;
-		EasyJoystick.On_JoystickMoveEnd += On_JoystickMove;*/
 		EasyTouch.On_DoubleTap += HandleDoubleTap;
 		EasyTouch.On_Swipe += HandleSwipe;
 		EasyTouch.On_SwipeEnd += HandleSwipeEnd;
@@ -76,9 +76,6 @@ public class PlayerMovement : MonoBehaviour
 	
 	void UnsubscribeEvent()
 	{
-		/*EasyJoystick.On_JoystickTap -= On_JoystickTap;
-		EasyJoystick.On_JoystickMove -= On_JoystickMove;
-		EasyJoystick.On_JoystickMoveEnd -= On_JoystickMove;*/
 		EasyTouch.On_DoubleTap -= HandleDoubleTap;
 		EasyTouch.On_Swipe -= HandleSwipe;
 		EasyTouch.On_SwipeEnd -= HandleSwipeEnd;
@@ -91,32 +88,53 @@ public class PlayerMovement : MonoBehaviour
 	{
 		_groundCheck = GameObject.Find("GroundCheck").transform;
         _heightCheck = GameObject.Find("HeightCheck").transform;
+	    _playerModel = transform.FindChild("PlayerModel").gameObject;
 	}
 
 	void Start()
 	{
 	}
+
+    void Update()
+    {
+        isDead = GameController.Instance.playerIsDead;
+        if (isDead)
+        {
+            _playerModel.renderer.material.color = new Color(1, 1, 1, 0.25f);
+            //HandleDeath();
+        }
+        else
+        {
+            //Debug.Log(_playerModel.renderer.material.color);
+            _playerModel.renderer.material.color = new Color(1, 1, 1, 0.5f);
+        }
+    }
 	
 	// Use this for physics updates
 	void FixedUpdate ()
 	{
-		HandleStickyPhysics();
-	    HandleForcePushed();
-		Move();
+	    rigidbody.useGravity = !isDead;
+	    rigidbody.isKinematic = isDead;
 
-		// handle jump/is grounded control
-		var groundColliders = Physics.OverlapSphere(_groundCheck.position, groundedRadius, whatIsGround);
-		if (groundColliders != null)
-		{
-			isGrounded = groundColliders.Length > 0 ? true : false;
-			var groundCollider = groundColliders.FirstOrDefault();
-			if (groundCollider != null && isGrounded)
-			{
-				_additionalJumpCount = 0;
-				forcePushed = false;
-				On_PlatformReached(groundCollider.transform, transform); // trigger event for finding current platform
-			}
-		}
+	    if (isDead) return;
+
+        HandleStickyPhysics();
+        HandleForcePushed();
+        Move();
+
+        // handle jump/is grounded control
+        var groundColliders = Physics.OverlapSphere(_groundCheck.position, groundedRadius, whatIsGround);
+        if (groundColliders != null)
+        {
+            isGrounded = groundColliders.Length > 0 ? true : false;
+            var groundCollider = groundColliders.FirstOrDefault();
+            if (groundCollider != null && isGrounded)
+            {
+                _additionalJumpCount = 0;
+                forcePushed = false;
+                On_PlatformReached(groundCollider.transform, transform); // trigger event for finding current platform
+            }
+        }
 
         // handle head room
         var heightColliders = Physics.OverlapSphere(_heightCheck.position, headHitRadius, whatIsGround);
@@ -130,22 +148,27 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-		if (!isGrounded && On_PlayerAirborne != null)
-		{
-			On_PlayerAirborne();
-		}
-		
-	    if (isUsingPowers) return;
+        if (!isGrounded && On_PlayerAirborne != null)
+        {
+            On_PlayerAirborne();
+        }
+
+        if (isUsingPowers) return;
         // flip player on the y axis
         if (this.moveDirection > 0.0f && !this.facingRight)
-	    {
-	        Flip();
-	    }
-	    else if (this.moveDirection < 0.0f && this.facingRight)
-	    {
-	        Flip();
-	    }
+        {
+            Flip();
+        }
+        else if (this.moveDirection < 0.0f && this.facingRight)
+        {
+            Flip();
+        }
 	}
+
+    private void HandleDeath()
+    {
+        
+    }
 
     void HandleForcePushed()
     {
@@ -182,31 +205,25 @@ public class PlayerMovement : MonoBehaviour
 	
 	void HandleSwipe (Gesture gesture)
 	{
-
-	    if (gesture.swipe == EasyTouch.SwipeType.Left || gesture.swipe == EasyTouch.SwipeType.Right && !useAcceleration)
+	    if (isDead)
 	    {
-	        var touchDir = (gesture.position.x - gesture.startPosition.x);
-            float touchDirMultiplied = touchDir * 0.01f;
-            moveDirection = Mathf.Clamp(touchDirMultiplied, -1f, 1f);
+            transform.position = Vector3.Slerp(transform.position, gesture.GetTouchToWordlPoint(transform.position.z, true), ghostSpeed);
 	    }
-	    
+	    else
+	    {
+            if (gesture.swipe == EasyTouch.SwipeType.Left || gesture.swipe == EasyTouch.SwipeType.Right && !useAcceleration)
+            {
+                var touchDir = (gesture.position.x - gesture.startPosition.x);
+                float touchDirMultiplied = touchDir * 0.01f;
+                moveDirection = Mathf.Clamp(touchDirMultiplied, -1f, 1f);
+            }
+	    }
 	}
 
     void HandleDoubleTap (Gesture gesture)
 	{
 		Jump();
 	}
-
-    /*
-	void On_JoystickMove(MovingJoystick movingStick)
-	{
-		moveDirection = movingStick.joystickAxis.x;
-	}
-
-	void On_JoystickTap(MovingJoystick movingStick)
-	{
-		Jump();
-	}*/
 
 	void HandleStickyPhysics()
 	{
@@ -269,13 +286,17 @@ public class PlayerMovement : MonoBehaviour
         // move player
 		if (!forcePushed) 
 		{
-			//this.shouldRotate = true;
 		    rigidbody.velocity = ApplyVelocity();
 		}
 	}
 
     private Vector2 ApplyVelocity()
     {
+        /*if (isDead)
+        {
+            return new Vector2(moveDirection * maxSpeed, moveDirection * maxSpeed);
+        }*/
+
         if (canMove && !isUsingPowers && !useAcceleration)
         {
             return new Vector2(this.moveDirection*maxSpeed, rigidbody.velocity.y);
@@ -289,7 +310,6 @@ public class PlayerMovement : MonoBehaviour
         }
 
         return new Vector2(0, rigidbody.velocity.y);
-
     }
 	
 	void Flip()
