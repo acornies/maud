@@ -3,6 +3,8 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour
 {
+	public bool isTracking = true;
+
 	public float XMargin = 1.0f;
 	public float YMargin = 1.0f;
 	
@@ -27,6 +29,7 @@ public class CameraMovement : MonoBehaviour
 	{
 		PlatformController.On_ReachedCheckpoint += UpdateMinYFromCheckpoint;
 		PlatformController.On_NewPlatform += HandleNewPlatform;
+		//GameController.On_PlayerIsDead += HandlePlayerIsDead;
 	}
 
 	void OnDisable()
@@ -58,9 +61,19 @@ public class CameraMovement : MonoBehaviour
 	{
 		return Mathf.Abs(transform.position.y - this.CameraTarget.position.y) > this.YMargin;
 	}
+
+	void Update()
+	{
+		isTracking = !GameController.Instance.playerIsDead;
+		if (isTracking)
+		{
+			TrackPlayer();
+		}
+	}
 	
-	void FixedUpdate () {
-		TrackPlayer();
+	void FixedUpdate () 
+	{
+		//TrackPlayer();
 	}
 	
 	void TrackPlayer()

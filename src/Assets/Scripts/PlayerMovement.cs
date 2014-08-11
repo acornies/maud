@@ -205,9 +205,10 @@ public class PlayerMovement : MonoBehaviour
 	
 	void HandleSwipe (Gesture gesture)
 	{
-	    if (isDead)
+	    if (isDead && !GameController.Instance.initiatingRestart)
 	    {
             transform.position = Vector3.Slerp(transform.position, gesture.GetTouchToWordlPoint(transform.position.z, true), ghostSpeed);
+			GameController.Instance.movedFromSpawnPosition = true;
 	    }
 	    else
 	    {

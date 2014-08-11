@@ -5,18 +5,24 @@ public class GameController : MonoBehaviour
 {
 
 	private Transform _player;
-	public float playerZPosition = -2.8f;
+	private GameObject _telekensisControl;
     private float _deathTimer;
 
     //private float _deathInterval = 3.0f;
 
+	public float playerZPosition = -2.8f;
 	public int lives = 3;
 	public float highestPoint = 0.0f;
     public float timeBetweenDeaths = 3.0f;
     public Vector3 playerSpawnPosition;
     public bool playerIsDead;
+	public bool movedFromSpawnPosition;
+	public bool initiatingRestart;
 
     public static GameController Instance { get; private set;}
+
+	//public delegate void PlayerIsDead();
+	//public static event PlayerIsDead On_PlayerIsDead;
 
 	// Subscribe to events
 	void OnEnable()
@@ -56,6 +62,7 @@ public class GameController : MonoBehaviour
 	void Start () 
 	{
 		_player = GameObject.Find ("Player").transform;
+		_telekensisControl = GameObject.Find("RotationControl");
 	}
 
 	void OnGUI()
@@ -102,30 +109,37 @@ public class GameController : MonoBehaviour
 	    // time delay between player deaths
 	    if (playerIsDead)
 	    {
-	        /*if (_player.transform.position == playerSpawnPosition)
-	        {
-	            
-	        }*/
-            //_player.transform.position = playerSpawnPosition;
+			_telekensisControl.SetActive(false);
+			if (lives <= -1) 
+			{
+				initiatingRestart = true;
+			}
+
+			if (!initiatingRestart)
+			{
+				_player.transform.position = (movedFromSpawnPosition) ? _player.transform.position : playerSpawnPosition;
+			}
+
             _deathTimer -= Time.deltaTime;
 	        if (!(_deathTimer <= 0)) return;
 	        if (lives <= -1)
 	        {
-	            Restart();
+				Restart();
 	        }
 	        else
 	        {
-	            //_player.transform.position = playerSpawnPosition;
 	            _deathTimer = timeBetweenDeaths;
-	            playerIsDead = false;   
+	            playerIsDead = false; 
+				initiatingRestart = false;
 	        }
 	    }
 	    else
 	    {
-            _deathTimer = timeBetweenDeaths;
+			_telekensisControl.SetActive(true);
+			_deathTimer = timeBetweenDeaths;
+			movedFromSpawnPosition = false;
+			initiatingRestart = false;
 	    }
-
-		//Debug.Log ("Highest point is: " + highestPoint);
 	}
 
     static void Restart()
