@@ -10,7 +10,6 @@ public class PlayerMovement : MonoBehaviour
     private bool _isLongJumping;
     private float _pushedTimer;
     private GameObject _playerModel;
-    //private Vector2 _ghostStartPosition;
     private Vector3 _ghostTouchTargetPosition;
     private bool _isGhostMoving;
 
@@ -34,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
     public int additionalJumps = 1;
     public float additionalJumpForce = 500.0f;
 
-    public bool useAcceleration = false;
+    //public bool useAcceleration = false;
     public float accelerometerMultiplier = 1.5f;
 
     public delegate void ReachedPlatformAction(Transform platform, Transform player);
@@ -53,16 +52,16 @@ public class PlayerMovement : MonoBehaviour
         EasyTouch.On_Swipe += HandleSwipe;
         EasyTouch.On_SwipeEnd += HandleSwipeEnd;
         EasyTouch.On_SimpleTap += HandleSimpleTap;
-        RotationControl.On_PlayerRotationPowersStart += HandlePlayerRotationPowersStart;
-        RotationControl.On_PlayerRotationPowersEnd += HandlePlayerRotationPowersEnd;
+        TelekinesisController.On_PlayerPowersStart += HandlePlayerPowersStart;
+        TelekinesisController.On_PlayerPowersEnd += HandlePlayerPowersEnd;
     }
 
-    void HandlePlayerRotationPowersEnd()
+    void HandlePlayerPowersEnd()
     {
         isUsingPowers = false;
     }
 
-    void HandlePlayerRotationPowersStart()
+    void HandlePlayerPowersStart()
     {
         isUsingPowers = true;
     }
@@ -83,8 +82,8 @@ public class PlayerMovement : MonoBehaviour
         EasyTouch.On_Swipe -= HandleSwipe;
         EasyTouch.On_SwipeEnd -= HandleSwipeEnd;
         EasyTouch.On_SimpleTap -= HandleSimpleTap;
-        RotationControl.On_PlayerRotationPowersStart -= HandlePlayerRotationPowersStart;
-        RotationControl.On_PlayerRotationPowersEnd -= HandlePlayerRotationPowersEnd;
+        TelekinesisController.On_PlayerPowersStart -= HandlePlayerPowersStart;
+        TelekinesisController.On_PlayerPowersEnd -= HandlePlayerPowersEnd;
     }
 
     void Awake()
@@ -204,20 +203,20 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            Jump();
+            Jump(gesture);
         }
     }
 
     void HandleSwipeEnd(Gesture gesture)
     {
-        if (!useAcceleration)
+        if (!GameController.Instance.useAcceleration)
         {
             moveDirection = 0;
         }
 
         if (gesture.swipe == EasyTouch.SwipeType.Up)
         {
-            Jump();
+            Jump(gesture);
         }
     }
 
@@ -231,7 +230,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            if (gesture.swipe == EasyTouch.SwipeType.Left || gesture.swipe == EasyTouch.SwipeType.Right && !useAcceleration)
+            if (gesture.swipe == EasyTouch.SwipeType.Left || gesture.swipe == EasyTouch.SwipeType.Right && !GameController.Instance.useAcceleration)
             {
                 var touchDir = (gesture.position.x - gesture.startPosition.x);
                 float touchDirMultiplied = touchDir * 0.01f;
@@ -243,7 +242,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleDoubleTap(Gesture gesture)
     {
-        Jump();
+        Jump(gesture);
     }
 
     void HandleStickyPhysics()
@@ -298,7 +297,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        if (useAcceleration)
+        if (GameController.Instance.useAcceleration)
         {
             //Debug.Log(Input.acceleration.x);
             moveDirection = Input.acceleration.x;
@@ -313,12 +312,12 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 ApplyVelocity()
     {
-        if (canMove && !isUsingPowers && !useAcceleration)
+        if (canMove && !isUsingPowers && !GameController.Instance.useAcceleration)
         {
             return new Vector2(this.moveDirection * maxSpeed, rigidbody.velocity.y);
         }
 
-        if (canMove && !isUsingPowers && useAcceleration)
+        if (canMove && !isUsingPowers && GameController.Instance.useAcceleration)
         {
             //var accelerometerMultiplier = 1.5f;
             float newSpeed = (maxSpeed * accelerometerMultiplier);
@@ -334,9 +333,10 @@ public class PlayerMovement : MonoBehaviour
         transform.Rotate(Vector3.up, 180.0f, Space.World);
     }
 
-    public void Jump(float extraForce = 0)
+    public void Jump(Gesture gesture, float extraForce = 0)
     {
         if (!canMove) return;
+        if (gesture.touchCount > 1) return;
         if (this.isGrounded)
         {
             rigidbody.AddForceAtPosition(new Vector3(0, jumpForce + extraForce, 0), transform.position);

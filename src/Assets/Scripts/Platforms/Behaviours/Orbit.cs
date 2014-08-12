@@ -68,7 +68,7 @@ public class Orbit : PlatformBehaviour
         var playerMovement = collision.transform.GetComponent<PlayerMovement>();
         if (collision.gameObject.name != "Player" || isOnPlatform || playerMovement.isHittingHead || _isStopped)
         {
-            Debug.Log("no force because: " + isOnPlatform + playerMovement.isHittingHead + _isStopped);
+            //Debug.Log("no force because: " + isOnPlatform + playerMovement.isHittingHead + _isStopped);
             return;
         }
 

@@ -18,6 +18,7 @@ public class GameController : MonoBehaviour
     public bool playerIsDead;
 	public bool movedFromSpawnPosition;
 	public bool initiatingRestart;
+    public bool useAcceleration;
 
     public static GameController Instance { get; private set;}
 
@@ -62,7 +63,7 @@ public class GameController : MonoBehaviour
 	void Start () 
 	{
 		_player = GameObject.Find ("Player").transform;
-		_telekensisControl = GameObject.Find("RotationControl");
+		_telekensisControl = GameObject.Find("TelekinesisControl");
 	}
 
 	void OnGUI()
