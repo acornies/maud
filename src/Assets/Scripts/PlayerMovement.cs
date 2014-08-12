@@ -10,6 +10,9 @@ public class PlayerMovement : MonoBehaviour
 	private bool _isLongJumping;
     private float _pushedTimer;
     private GameObject _playerModel;
+    //private Vector2 _ghostStartPosition;
+    private Vector3 _ghostTouchTargetPosition;
+    private bool _isGhostMoving;
 
     public bool isDead;
     public bool canMove;
@@ -98,15 +101,27 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         isDead = GameController.Instance.playerIsDead;
-        if (isDead)
+        if (isDead && !GameController.Instance.initiatingRestart)
         {
-            _playerModel.renderer.material.color = new Color(1, 1, 1, 0.25f);
-            //HandleDeath();
+            //Debug.Log("isGhostMoving: " + _isGhostMoving + " ghostTargetPosition: " + _ghostTouchTargetPosition);
+            
+            _playerModel.renderer.material.color = new Color(1, 1, 1, 0.5f);
+            if (_isGhostMoving && _ghostTouchTargetPosition != Vector3.zero)
+            {
+                //Debug.Log("Move ghost!");
+                transform.position = Vector3.Lerp(transform.position, _ghostTouchTargetPosition, ghostSpeed * Time.deltaTime);
+            }
+            if (_isGhostMoving && transform.position == _ghostTouchTargetPosition)
+            {
+                //Debug.Log("Stop ghost!");
+                _isGhostMoving = false;
+                _ghostTouchTargetPosition = Vector3.zero;
+            }
         }
         else
         {
             //Debug.Log(_playerModel.renderer.material.color);
-            _playerModel.renderer.material.color = new Color(1, 1, 1, 0.5f);
+            _playerModel.renderer.material.color = new Color(1, 1, 1, 1);
         }
     }
 	
@@ -116,7 +131,7 @@ public class PlayerMovement : MonoBehaviour
 	    rigidbody.useGravity = !isDead;
 	    rigidbody.isKinematic = isDead;
 
-	    if (isDead) return;
+	    if (isDead && !GameController.Instance.initiatingRestart) return;
 
         HandleStickyPhysics();
         HandleForcePushed();
@@ -165,11 +180,6 @@ public class PlayerMovement : MonoBehaviour
         }
 	}
 
-    private void HandleDeath()
-    {
-        
-    }
-
     void HandleForcePushed()
     {
         if (forcePushed)
@@ -177,7 +187,6 @@ public class PlayerMovement : MonoBehaviour
             _pushedTimer -= Time.deltaTime;
             if (!(_pushedTimer <= 0)) return;
             forcePushed = false;
-            //Debug.Log("Can move again.");
         }
         else
         {
@@ -187,7 +196,16 @@ public class PlayerMovement : MonoBehaviour
 
 	void HandleSimpleTap (Gesture gesture)
 	{
-		Jump();
+        if (isDead && !GameController.Instance.initiatingRestart)
+        {
+            _ghostTouchTargetPosition = gesture.GetTouchToWordlPoint(transform.position.z, true);
+            _isGhostMoving = true;
+            GameController.Instance.movedFromSpawnPosition = true;
+        }
+        else
+        {
+            Jump();
+        }
 	}
 	
 	void HandleSwipeEnd (Gesture gesture)
@@ -207,18 +225,20 @@ public class PlayerMovement : MonoBehaviour
 	{
 	    if (isDead && !GameController.Instance.initiatingRestart)
 	    {
-            transform.position = Vector3.Slerp(transform.position, gesture.GetTouchToWordlPoint(transform.position.z, true), ghostSpeed);
-			GameController.Instance.movedFromSpawnPosition = true;
+	        _ghostTouchTargetPosition = Vector3.zero;
+            transform.position = Vector3.Lerp(transform.position, gesture.GetTouchToWordlPoint(transform.position.z, true), ghostSpeed * 0.01f);
+            GameController.Instance.movedFromSpawnPosition = true;
 	    }
 	    else
 	    {
-            if (gesture.swipe == EasyTouch.SwipeType.Left || gesture.swipe == EasyTouch.SwipeType.Right && !useAcceleration)
-            {
-                var touchDir = (gesture.position.x - gesture.startPosition.x);
-                float touchDirMultiplied = touchDir * 0.01f;
-                moveDirection = Mathf.Clamp(touchDirMultiplied, -1f, 1f);
-            }
+	        if (gesture.swipe == EasyTouch.SwipeType.Left || gesture.swipe == EasyTouch.SwipeType.Right && !useAcceleration)
+	        {
+	            var touchDir = (gesture.position.x - gesture.startPosition.x);
+	            float touchDirMultiplied = touchDir*0.01f;
+	            moveDirection = Mathf.Clamp(touchDirMultiplied, -1f, 1f);
+	        }
 	    }
+	  
 	}
 
     void HandleDoubleTap (Gesture gesture)
@@ -285,7 +305,7 @@ public class PlayerMovement : MonoBehaviour
 	    }
         
         // move player
-		if (!forcePushed) 
+		if (!forcePushed && !rigidbody.isKinematic) 
 		{
 		    rigidbody.velocity = ApplyVelocity();
 		}
@@ -293,11 +313,6 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 ApplyVelocity()
     {
-        /*if (isDead)
-        {
-            return new Vector2(moveDirection * maxSpeed, moveDirection * maxSpeed);
-        }*/
-
         if (canMove && !isUsingPowers && !useAcceleration)
         {
             return new Vector2(this.moveDirection*maxSpeed, rigidbody.velocity.y);

@@ -150,7 +150,7 @@ public class PlatformController : MonoBehaviour
 
 	    _currentPlatform = int.Parse(platform.parent.name.Split('_')[1]);
 			
-	    Debug.Log ("Current platform: " + _currentPlatform);
+	    //Debug.Log ("Current platform: " + _currentPlatform);
 
 	    int newcheckpoint = (_currentPlatform - checkpointBuffer);
         On_ReachedCheckpoint(newcheckpoint, newcheckpoint - 2);
