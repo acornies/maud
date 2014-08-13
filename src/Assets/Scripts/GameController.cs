@@ -22,9 +22,6 @@ public class GameController : MonoBehaviour
 
     public static GameController Instance { get; private set;}
 
-	//public delegate void PlayerIsDead();
-	//public static event PlayerIsDead On_PlayerIsDead;
-
 	// Subscribe to events
 	void OnEnable()
 	{

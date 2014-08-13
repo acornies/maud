@@ -7,13 +7,15 @@ public class PlayerMovement : MonoBehaviour
     private Transform _groundCheck;
     private Transform _heightCheck;
     private int _additionalJumpCount;
-    private bool _isLongJumping;
+    private bool _isHighJumping;
     private float _pushedTimer;
     private GameObject _playerModel;
     private Vector3 _ghostTouchTargetPosition;
     private bool _isGhostMoving;
+    private float _highJumpTimer;
+    private int _consectutiveJumpCounter;
 
-    public bool isDead;
+    //public bool isDead;
     public bool canMove;
     public bool isUsingPowers;
     public float maxSpeed = 6.0f;
@@ -32,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     public float headHitRadius = 0.1f;
     public int additionalJumps = 1;
     public float additionalJumpForce = 500.0f;
+    public float highJumpTimeout = 0.5f;
 
     //public bool useAcceleration = false;
     public float accelerometerMultiplier = 1.5f;
@@ -99,8 +102,8 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        isDead = GameController.Instance.playerIsDead;
-        if (isDead && !GameController.Instance.initiatingRestart)
+        //isDead = GameController.Instance.playerIsDead;
+        if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
             //Debug.Log("isGhostMoving: " + _isGhostMoving + " ghostTargetPosition: " + _ghostTouchTargetPosition);
 
@@ -127,10 +130,10 @@ public class PlayerMovement : MonoBehaviour
     // Use this for physics updates
     void FixedUpdate()
     {
-        rigidbody.useGravity = !isDead;
-        rigidbody.isKinematic = isDead;
+        rigidbody.useGravity = !GameController.Instance.playerIsDead;
+        rigidbody.isKinematic = GameController.Instance.playerIsDead;
 
-        if (isDead && !GameController.Instance.initiatingRestart) return;
+        if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart) return;
 
         HandleStickyPhysics();
         HandleForcePushed();
@@ -147,6 +150,11 @@ public class PlayerMovement : MonoBehaviour
                 _additionalJumpCount = 0;
                 forcePushed = false;
                 On_PlatformReached(groundCollider.transform, transform); // trigger event for finding current platform
+                _highJumpTimer -= Time.deltaTime;
+                if (_consectutiveJumpCounter >= 2)
+                {
+                    _consectutiveJumpCounter = 0;
+                }
             }
         }
 
@@ -195,7 +203,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleSimpleTap(Gesture gesture)
     {
-        if (isDead && !GameController.Instance.initiatingRestart)
+        if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
             _ghostTouchTargetPosition = gesture.GetTouchToWordlPoint(transform.position.z, true);
             _isGhostMoving = true;
@@ -203,7 +211,15 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            Jump(gesture);
+            if (_highJumpTimer > 0 && _consectutiveJumpCounter == 1)
+            {
+                Jump(gesture, additionalJumpForce);
+            }
+            else
+            {
+                Jump(gesture);
+            }
+            _highJumpTimer = highJumpTimeout;
         }
     }
 
@@ -222,7 +238,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleSwipe(Gesture gesture)
     {
-        if (isDead && !GameController.Instance.initiatingRestart)
+        if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
             _ghostTouchTargetPosition = Vector3.zero;
             transform.position = Vector3.Lerp(transform.position, gesture.GetTouchToWordlPoint(transform.position.z, true), ghostSpeed * 0.01f);
@@ -242,7 +258,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleDoubleTap(Gesture gesture)
     {
-        Jump(gesture);
+        //Jump(gesture);
     }
 
     void HandleStickyPhysics()
@@ -336,15 +352,16 @@ public class PlayerMovement : MonoBehaviour
     public void Jump(Gesture gesture, float extraForce = 0)
     {
         if (!canMove) return;
-        if (gesture.touchCount > 1) return;
+        if (gesture.touchCount > 1) return; // prevents dual tap super jump
         if (this.isGrounded)
         {
             rigidbody.AddForceAtPosition(new Vector3(0, jumpForce + extraForce, 0), transform.position);
-            _isLongJumping = extraForce > 0;
+            _isHighJumping = extraForce > 0;
+            _consectutiveJumpCounter++;
         }
 
         // conditions for mid-air jump
-        if (isGrounded || _additionalJumpCount >= additionalJumps || _isLongJumping || forcePushed) return;
+        if (isGrounded || _additionalJumpCount >= additionalJumps || _isHighJumping || forcePushed) return;
         rigidbody.AddForce(new Vector3(0, additionalJumpForce, 0));
         _additionalJumpCount++;
     }
