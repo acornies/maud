@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics;
+using UnityEngine;
 using System.Collections;
 
 public class UpAndDown : PlatformBehaviour 
@@ -35,6 +36,16 @@ public class UpAndDown : PlatformBehaviour
 
 		yield return new WaitForSeconds(waitTime);
 	}
+
+    public void StopMovement()
+    {
+        StopAllCoroutines();
+    }
+
+    public IEnumerator StartMovement()
+    {
+       return this.Start();
+    }
 
     /*public override void HandleOnPlatformReached(Transform platform, Transform player)
     {

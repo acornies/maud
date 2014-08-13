@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Security.Cryptography;
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class TelekinesisController : MonoBehaviour
 {
     private Vector3 _pointerReference;
     private Vector3 _pointerOffset;
     private Vector3 _rotation = Vector3.zero;
-    private float _longTapEndTimer;
-    private bool _isLongTapTimingOut;
+    private float _powerEndTimer;
+    private bool _isActivePowerTimingOut;
 
     public float sensitivity = 0.5f;
     public Transform platform;
@@ -31,8 +33,8 @@ public class TelekinesisController : MonoBehaviour
         EasyTouch.On_Swipe += On_Swipe;
         EasyTouch.On_SwipeStart += On_SwipeStart;
         EasyTouch.On_SwipeEnd += On_SwipeEnd;
-        //EasyTouch.On_LongTapStart += HandleLongTap;
-        //EasyTouch.On_LongTapEnd += HandleLongTapEnd;
+        EasyTouch.On_LongTapStart += HandleLongTap;
+        EasyTouch.On_LongTapEnd += HandleLongTapEnd;
         PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
     }
 
@@ -54,22 +56,22 @@ public class TelekinesisController : MonoBehaviour
         EasyTouch.On_Swipe -= On_Swipe;
         EasyTouch.On_SwipeStart -= On_SwipeStart;
         EasyTouch.On_SwipeEnd -= On_SwipeEnd;
-        //EasyTouch.On_LongTapStart -= HandleLongTap;
-        //EasyTouch.On_LongTapEnd -= HandleLongTapEnd;
+        EasyTouch.On_LongTapStart -= HandleLongTap;
+        EasyTouch.On_LongTapEnd -= HandleLongTapEnd;
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
     }
 
     void Update()
     {
-        if (_isLongTapTimingOut)
+        if (_isActivePowerTimingOut)
         {
             if (shouldRotate && !isRotating)
             {
-                _longTapEndTimer -= Time.deltaTime;
-                if (!(_longTapEndTimer <= 0)) return;
+                _powerEndTimer -= Time.deltaTime;
+                if (!(_powerEndTimer <= 0)) return;
                 //shouldRotate = false;
                 TelekinesisEnd();
-                _isLongTapTimingOut = false;
+                _isActivePowerTimingOut = false;
             }
             else
             {
@@ -78,7 +80,7 @@ public class TelekinesisController : MonoBehaviour
         }
         else
         {
-            _longTapEndTimer = powerTimeout;
+            _powerEndTimer = powerTimeout;
         }
     }
 
@@ -90,12 +92,25 @@ public class TelekinesisController : MonoBehaviour
     void HandleLongTap(Gesture gesture)
     {
         ActivatePlatform(gesture);
+        if (platform == null) return;
+        var scriptsToDisable = platform.GetComponentsInChildren<PlatformBehaviour>();
+        scriptsToDisable.ToList().ForEach(x =>
+        {
+            if (x.GetType() == typeof (UpAndDown))
+            {
+                ((UpAndDown) x).StopMovement();
+            }
+            else
+            {
+                x.enabled = false;   
+            }
+        });
     }
     void HandleLongTapEnd(Gesture gesture)
     {
         if (platform != null)
         {
-            _isLongTapTimingOut = true;
+            _isActivePowerTimingOut = true;
         }
     }
 
@@ -109,7 +124,7 @@ public class TelekinesisController : MonoBehaviour
     {
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
         
-        _isLongTapTimingOut = false;
+        _isActivePowerTimingOut = false;
 
         if (!shouldRotate || platform == null) return;
         // offset
@@ -134,7 +149,7 @@ public class TelekinesisController : MonoBehaviour
         isRotating = false;
         if (platform != null)
         {
-            _isLongTapTimingOut = true;
+            _isActivePowerTimingOut = true;
         }
     }
 
