@@ -44,7 +44,8 @@ public class Orbit : PlatformBehaviour
         else
         {
             _stoppedTimer = stopTime;
-            if (rotationTarget != null) return;
+            //if (rotationTarget != null) return;
+            if (child == null) return;
             child.RotateAround(center.position, axis, orbitRotationSpeed);
             var desiredPosition = (child.position - center.position).normalized * radius + center.position;
             child.position = Vector3.MoveTowards(child.position, desiredPosition, radiusSpeed);

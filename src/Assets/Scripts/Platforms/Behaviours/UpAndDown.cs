@@ -32,6 +32,8 @@ public class UpAndDown : PlatformBehaviour
             isStopped = false;
         }
 
+        if (child == null) return;
+
         if (Mathf.Approximately(child.position.y, maxY.y) && _waitTimer >= 0)
         {
             moveDirection = Vector3.down;

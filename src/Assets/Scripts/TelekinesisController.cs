@@ -124,6 +124,7 @@ public class TelekinesisController : MonoBehaviour
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
         ActivatePlatform(gesture);
         if (platform == null) return;
+        if (_platformClone != null) return; // prevent multi-finger object cloning
         _platformClone = Instantiate(platform, platform.position, platform.rotation) as Transform;
         if (_platformClone == null) return;
         _platformClone.renderer.material.color = new Color(1, 1, 1, .5f);
@@ -143,7 +144,7 @@ public class TelekinesisController : MonoBehaviour
     {
         _isActivePowerTimingOut = false;
 
-        if (!shouldRotate || platform == null) return; 
+        if (!shouldRotate || platform == null) return;
 
         // offset
         _pointerOffset = (new Vector3(gesture.position.x, gesture.position.y, 0) - _pointerReference);
@@ -163,12 +164,16 @@ public class TelekinesisController : MonoBehaviour
     void On_SwipeEnd(Gesture gesture)
     {
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
-        //shouldRotate = false;
+
         isRotating = false;
-        if (platform != null)
+        if (platform != null && gesture.actionTime > 0.3f)
         {
             _isActivePowerTimingOut = true;
             On_NewPlatformRotation(platform, _platformClone.localRotation);
+        }
+        else
+        {
+            _isActivePowerTimingOut = true;
         }
     }
 
@@ -198,10 +203,8 @@ public class TelekinesisController : MonoBehaviour
         bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(gesture.position), out hitInfo);
         if (hit)
         {
-            //Debug.Log("Hit " + hitInfo.transform.gameObject.name);
             if (hitInfo.transform.gameObject.tag == "Rotatable")
             {
-                //Debug.Log ("It's active");
                 this.platform = hitInfo.transform;
 
                 if (On_PlayerPowersStart != null)
@@ -216,7 +219,6 @@ public class TelekinesisController : MonoBehaviour
             }
             if (hitInfo.transform.gameObject.tag == "Stoppable")
             {
-                //Debug.Log("Hit child, rotate parent: " + hitInfo.transform.parent.name);
                 this.platform = hitInfo.transform.parent;
 
                 if (On_PlayerPowersStart != null)

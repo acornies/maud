@@ -4,10 +4,10 @@ using System.Collections;
 public class PlatformBehaviour : MonoBehaviour 
 {
     
-    protected Quaternion? rotationTarget;
+    //protected Quaternion? rotationTarget;
     protected Transform child;
 
-    public float rotationSpeed = 1;
+    //public float rotationSpeed = 1;
     public bool isOnPlatform;
     public bool isStopped;
 
@@ -16,7 +16,7 @@ public class PlatformBehaviour : MonoBehaviour
     {
         PlayerMovement.On_PlatformReached += HandleOnPlatformReached;
         PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
-        TelekinesisController.On_NewPlatformRotation += HandleNewPlatformRotation;
+        //TelekinesisController.On_NewPlatformRotation += HandleNewPlatformRotation;
     }
 
     public virtual void OnDisable()
@@ -33,7 +33,7 @@ public class PlatformBehaviour : MonoBehaviour
     {
         PlayerMovement.On_PlatformReached -= HandleOnPlatformReached;
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
-        TelekinesisController.On_NewPlatformRotation -= HandleNewPlatformRotation;
+        //TelekinesisController.On_NewPlatformRotation -= HandleNewPlatformRotation;
     }
 
     protected virtual void Start()
@@ -43,7 +43,7 @@ public class PlatformBehaviour : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        RotateToTarget();
+        //RotateToTarget();
     }
 
     public virtual void HandleOnPlatformReached(Transform platform, Transform player)
@@ -59,7 +59,7 @@ public class PlatformBehaviour : MonoBehaviour
         isOnPlatform = false;
     }
 
-    protected void HandleNewPlatformRotation(Transform platform, Quaternion rotation)
+    /*protected void HandleNewPlatformRotation(Transform platform, Quaternion rotation)
     {
         if (platform.GetInstanceID() == this.transform.GetInstanceID())
         {
@@ -79,5 +79,5 @@ public class PlatformBehaviour : MonoBehaviour
         {
             rotationTarget = null;
         }
-    }
+    }*/
 }
