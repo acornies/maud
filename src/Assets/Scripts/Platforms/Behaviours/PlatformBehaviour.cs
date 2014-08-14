@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlatformBehaviour : MonoBehaviour 
+public class PlatformBehaviour : MonoBehaviour
 {
-    
+
     //protected Quaternion? rotationTarget;
     protected Transform child;
 

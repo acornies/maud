@@ -7,7 +7,7 @@ public class OrbitHit : MonoBehaviour
     private Orbit _parentOrbitBehaviour;
 
     public float artificalForce = 50;
-    
+
     // Use this for initialization
     void Start()
     {

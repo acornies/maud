@@ -6,12 +6,12 @@ using System.Collections;
 public class UpAndDown : PlatformBehaviour
 {
     public float _waitTimer;
-    
+
     public float speed = 1.0f;
-	public float waitTime = 1.0f;
-	public bool isMoving = true;
-	public Vector3 maxY;
-	public Vector3 minY;
+    public float waitTime = 1.0f;
+    public bool isMoving = true;
+    public Vector3 maxY;
+    public Vector3 minY;
     public Vector3 moveDirection = Vector2.up;
 
     protected override void Start()
@@ -52,14 +52,14 @@ public class UpAndDown : PlatformBehaviour
             _waitTimer = waitTime;
             child.position = Vector3.MoveTowards(new Vector3(child.position.x, child.position.y, child.position.z),
                 new Vector3(child.position.x, maxY.y, child.position.z),
-                speed*Time.deltaTime);
+                speed * Time.deltaTime);
         }
         if (moveDirection == Vector3.down && child.position.y > minY.y)
         {
             _waitTimer = waitTime;
             child.position = Vector3.MoveTowards(new Vector3(child.position.x, child.position.y, child.position.z),
                 new Vector3(child.position.x, minY.y, child.position.z),
-                speed*Time.deltaTime);
+                speed * Time.deltaTime);
         }
     }
 }
