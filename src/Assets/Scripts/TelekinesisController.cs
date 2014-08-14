@@ -128,7 +128,11 @@ public class TelekinesisController : MonoBehaviour
         _platformClone = Instantiate(platform, platform.position, platform.rotation) as Transform;
         if (_platformClone == null) return;
         _platformClone.renderer.material.color = new Color(1, 1, 1, .5f);
-        _platformClone.FindChild("Cube").renderer.material.color = new Color(1, 1, 1, .5f);
+        var cloneChild = _platformClone.FindChild("Cube");
+        if (cloneChild != null)
+        {
+            cloneChild.renderer.material.color = new Color(1, 1, 1, .5f);
+        }
         _platformClone.localScale = new Vector3(platform.localScale.x * cloneScaleMultiplier, platform.localScale.y * cloneScaleMultiplier, platform.localScale.z * cloneScaleMultiplier);
         _platformClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
         Stabilize(_platformClone);

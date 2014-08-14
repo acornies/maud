@@ -14,6 +14,7 @@ public class Disappear : PlatformBehaviour
 	protected override void Start () 
 	{
         base.Start();
+	    if (child == null) return;
 		_initialPosition = child.localPosition;
 		_initialRotation = child.localRotation;
 	}
@@ -34,6 +35,8 @@ public class Disappear : PlatformBehaviour
 		    newPlatform.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 		    newPlatform.transform.localPosition = _initialPosition;
 		    newPlatform.transform.localRotation = _initialRotation;
+		    newPlatform.renderer.material = Resources.Load<Material>("Materials/Ghost");
+		    child = newPlatform.transform;
 		    timer = 0;
 		    isInvisible = false;
 		}
@@ -47,13 +50,4 @@ public class Disappear : PlatformBehaviour
 		    isInvisible = true;
 		}
 	}
-
-    /*public override void HandleOnPlatformReached(Transform platform, Transform player)
-    {
-        // since this script is on the parent gameobject, compare platform id with child id
-        if (platform != null && child != null)
-        {
-            isOnPlatform = platform.GetInstanceID() == child.GetInstanceID();
-        }
-    }*/
 }
