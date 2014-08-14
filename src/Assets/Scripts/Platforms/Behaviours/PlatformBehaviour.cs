@@ -4,11 +4,11 @@ using System.Collections;
 public class PlatformBehaviour : MonoBehaviour 
 {
     
-    protected bool isOnPlatform;
     protected Quaternion? rotationTarget;
     protected Transform child;
 
-    public float rotationSpeed = 1; 
+    public float rotationSpeed = 1;
+    public bool isOnPlatform;
 
     // Subscribe to events
     public virtual void OnEnable()
