@@ -12,38 +12,42 @@ public class Drop : PlatformBehaviour
 	public float returnSpeed = 0.1f;
 
 	// Use this for initialization
-	void Start () 
+	protected override void Start () 
 	{
-		_originalYPosition = transform.position.y;
-		maxY = transform.parent.position.y + (transform.parent.localScale.y / 2);
-		minY = transform.parent.position.y - (transform.parent.localScale.y / 2);
+		base.Start();
+        _originalYPosition = child.position.y;
+		maxY = transform.position.y + (transform.localScale.y / 2);
+		minY = transform.position.y - (transform.localScale.y / 2);
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () 
+    protected override void FixedUpdate() 
 	{
-		_atOriginalPosition = transform.position.y == _originalYPosition;
-		
-		if (_isDropping && transform.position.y >= minY) 
+		base.FixedUpdate();
+
+        if (child == null) return;
+        _atOriginalPosition = child.position.y == _originalYPosition;
+
+        if (_isDropping && child.position.y >= minY) 
 		{
-			rigidbody.isKinematic = false;
-			rigidbody.useGravity = true;
+            child.rigidbody.isKinematic = false;
+            child.rigidbody.useGravity = true;
 		}
 		else
 		{
-			rigidbody.isKinematic = true;
-			rigidbody.useGravity = false;
+            child.rigidbody.isKinematic = true;
+            child.rigidbody.useGravity = false;
 		}
 
 		if (!_atOriginalPosition && !_isDropping) 
 		{
-			transform.position = Vector3.Lerp(transform.position, new Vector3 (transform.position.x, _originalYPosition, transform.position.z), returnSpeed);
+            child.position = Vector3.Lerp(child.position, new Vector3(child.position.x, _originalYPosition, child.position.z), returnSpeed * Time.deltaTime);
 		}
 	}
 
 	public override void HandleOnPlatformReached (Transform platform, Transform player)
 	{
-		if (platform.GetInstanceID() == this.transform.GetInstanceID())
+		if (platform.GetInstanceID() == child.GetInstanceID())
 		{
 			_isDropping = true;
 		    isOnPlatform = true;

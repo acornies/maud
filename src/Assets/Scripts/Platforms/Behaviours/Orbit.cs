@@ -10,16 +10,17 @@ public class Orbit : PlatformBehaviour
 	public Vector3 axis = Vector3.up;
 	public float radius = 2.0f;
 	public float radiusSpeed = 0.5f;
-	public float rotationSpeed = 10.0f;
+	public float orbitRotationSpeed = 10.0f;
     public float artificalForce = 1000f;
     public float stopTime = 1.0f;
 
     // Use this for initialization
-	void Start () 
-	{
-		transform.position = (transform.position - center.position).normalized * radius + center.position;
-		center = transform.parent;
-	}
+    protected override void Start()
+    {
+        base.Start();
+        center = transform;
+        child.position = (child.position - center.position).normalized * radius + center.position;
+    }
 
     void Update()
     {
@@ -27,10 +28,10 @@ public class Orbit : PlatformBehaviour
     }
 	
 	// Update is called once per frame
-	void FixedUpdate ()
+    protected override void FixedUpdate()
 	{
-	    //_isStopped = isOnPlatform;
- 
+	    base.FixedUpdate();
+
         if (_isStopped && !isOnPlatform)
 	    {
             _stoppedTimer -= Time.deltaTime;
@@ -42,16 +43,21 @@ public class Orbit : PlatformBehaviour
         {
             _isStopped = true;
         }
-	    else
-	    {
+        else
+        {
             _stoppedTimer = stopTime;
-            transform.RotateAround(center.position, axis, rotationSpeed);
-            var desiredPosition = (transform.position - center.position).normalized * radius + center.position;
-            transform.position = Vector3.MoveTowards(transform.position, desiredPosition, radiusSpeed);
-	    }
+            if (rotationTarget != null) return;
+            child.RotateAround(center.position, axis, orbitRotationSpeed);
+            var desiredPosition = (child.position - center.position).normalized*radius + center.position;
+            child.position = Vector3.MoveTowards(child.position, desiredPosition, radiusSpeed);
+        }
 	}
 
-    void OnCollisionEnter(Collision collision)
+    /// <summary>
+    /// TODO: Move script to child object
+    /// </summary>
+    /// <param name="collision"></param>
+    /*void OnCollisionEnter(Collision collision)
     {
         //Debug.Log("collision enter");
         HandlePlayerCollisions(collision);
@@ -74,14 +80,14 @@ public class Orbit : PlatformBehaviour
 
         if (axis.y > 0)
         {
-            collision.rigidbody.AddForce(-1 * (artificalForce * rotationSpeed), collision.transform.position.y, collision.transform.position.z);
+            collision.rigidbody.AddForce(-1 * (artificalForce * orbitRotationSpeed), collision.transform.position.y, collision.transform.position.z);
         }
         else
         {
-            collision.rigidbody.AddForce(1 * (artificalForce * rotationSpeed), collision.transform.position.y, collision.transform.position.z);
+            collision.rigidbody.AddForce(1 * (artificalForce * orbitRotationSpeed), collision.transform.position.y, collision.transform.position.z);
         }
 
         playerMovement.forcePushed = true;
         _isStopped = true;
-    }
+    }*/
 }

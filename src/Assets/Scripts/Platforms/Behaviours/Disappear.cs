@@ -11,17 +11,18 @@ public class Disappear : PlatformBehaviour
 	public bool isInvisible;
 
 	// Use this for initialization
-	void Start () 
+	protected override void Start () 
 	{
-		var child = transform.Find ("Cube");
-		_initialPosition = transform.Find("Cube").localPosition;
+        base.Start();
+		_initialPosition = child.localPosition;
 		_initialRotation = child.localRotation;
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () 
+    protected override void FixedUpdate() 
 	{
-		timer += Time.deltaTime;
+        base.FixedUpdate();
+        timer += Time.deltaTime;
 
 		if (isInvisible)
 		{
@@ -39,7 +40,7 @@ public class Disappear : PlatformBehaviour
 		else
 		{
 		    if (!(timer >= interval)) return;
-		    Transform platformToDestroy = transform.Find("Cube");
+		    Transform platformToDestroy = child;
 		    if (platformToDestroy == null) return;
 		    Destroy(platformToDestroy.gameObject);
 		    timer = 0;
@@ -47,13 +48,12 @@ public class Disappear : PlatformBehaviour
 		}
 	}
 
-    public override void HandleOnPlatformReached(Transform platform, Transform player)
+    /*public override void HandleOnPlatformReached(Transform platform, Transform player)
     {
         // since this script is on the parent gameobject, compare platform id with child id
-        var child = transform.Find("Cube");
         if (platform != null && child != null)
         {
             isOnPlatform = platform.GetInstanceID() == child.GetInstanceID();
         }
-    }
+    }*/
 }

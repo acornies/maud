@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using UnityEngine;
 using System.Collections;
 using System.Linq;
@@ -11,18 +12,23 @@ public class TelekinesisController : MonoBehaviour
     private Vector3 _rotation = Vector3.zero;
     private float _powerEndTimer;
     private bool _isActivePowerTimingOut;
+    private Transform _platformClone;
 
     public float sensitivity = 0.5f;
     public Transform platform;
     public bool shouldRotate;
     public bool isRotating = false;
     public float powerTimeout = 1.0f;
+    public float cloneScaleMultiplier = 1.5f;
 
     public delegate void TelekinesisPowersStart();
     public static event TelekinesisPowersStart On_PlayerPowersStart;
 
     public delegate void TelekinesisPowersEnd();
     public static event TelekinesisPowersEnd On_PlayerPowersEnd;
+
+    public delegate void TelekinesisNewRotation(Transform platformToRotate, Quaternion rotation);
+    public static event TelekinesisNewRotation On_NewPlatformRotation;
 
     // Subscribe to events
     void OnEnable()
@@ -69,7 +75,7 @@ public class TelekinesisController : MonoBehaviour
             {
                 _powerEndTimer -= Time.deltaTime;
                 if (!(_powerEndTimer <= 0)) return;
-                //shouldRotate = false;
+
                 TelekinesisEnd();
                 _isActivePowerTimingOut = false;
             }
@@ -92,20 +98,26 @@ public class TelekinesisController : MonoBehaviour
     void HandleLongTap(Gesture gesture)
     {
         ActivatePlatform(gesture);
-        if (platform == null) return;
-        var scriptsToDisable = platform.GetComponentsInChildren<PlatformBehaviour>();
+        Stabilize(platform);
+    }
+
+    private static void Stabilize(Transform platformWithScripts)
+    {
+        if (platformWithScripts == null) return;
+        var scriptsToDisable = platformWithScripts.GetComponentsInChildren<PlatformBehaviour>();
         scriptsToDisable.ToList().ForEach(x =>
         {
-            if (x.GetType() == typeof (UpAndDown))
+            if (x.GetType() == typeof(UpAndDown))
             {
-                ((UpAndDown) x).StopMovement();
+                ((UpAndDown)x).StopMovement();
             }
             else
             {
-                x.enabled = false;   
+                x.enabled = false;
             }
         });
     }
+
     void HandleLongTapEnd(Gesture gesture)
     {
         if (platform != null)
@@ -118,15 +130,28 @@ public class TelekinesisController : MonoBehaviour
     {
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
         ActivatePlatform(gesture);
+        if (platform == null) return;
+        _platformClone = Instantiate(platform, platform.position, platform.rotation) as Transform;
+        if (_platformClone == null) return;
+        _platformClone.renderer.material.color = new Color(1, 1, 1, .5f);
+        _platformClone.FindChild("Cube").renderer.material.color = new Color(1, 1, 1, .5f);
+        _platformClone.localScale = new Vector3(platform.localScale.x * cloneScaleMultiplier, platform.localScale.y * cloneScaleMultiplier, platform.localScale.z * cloneScaleMultiplier);
+        _platformClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
+        Stabilize(_platformClone);
     }
 
     void On_Swipe(Gesture gesture)
     {
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
-        
+        Rotate(gesture);
+    }
+
+    private void Rotate(Gesture gesture)
+    {
         _isActivePowerTimingOut = false;
 
-        if (!shouldRotate || platform == null) return;
+        if (!shouldRotate || platform == null) return; 
+
         // offset
         _pointerOffset = (new Vector3(gesture.position.x, gesture.position.y, 0) - _pointerReference);
 
@@ -136,7 +161,7 @@ public class TelekinesisController : MonoBehaviour
         isRotating = true;
 
         // rotate
-        platform.Rotate(_rotation);
+        _platformClone.Rotate(_rotation);
 
         // store mouse
         _pointerReference = gesture.position;
@@ -150,12 +175,18 @@ public class TelekinesisController : MonoBehaviour
         if (platform != null)
         {
             _isActivePowerTimingOut = true;
+            On_NewPlatformRotation(platform, _platformClone.localRotation);
         }
     }
 
     private void TelekinesisEnd()
     {
         shouldRotate = false;
+        if (_platformClone != null)
+        {
+            Destroy(_platformClone.gameObject);
+            _platformClone = null;
+        }
         if (platform != null && platform.particleSystem != null)
         {
             platform.particleSystem.Stop();

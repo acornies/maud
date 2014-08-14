@@ -13,13 +13,14 @@ public class UpAndDown : PlatformBehaviour
 	// Use this for initialization
 	IEnumerator Start () 
 	{
-		maxY = new Vector3(transform.position.x, transform.parent.position.y + (transform.parent.localScale.y / 2), transform.position.z);
-		minY = new Vector3(transform.position.x, transform.parent.position.y - (transform.parent.localScale.y / 2), transform.position.z);
+		base.Start();
+        maxY = new Vector3(transform.position.x, transform.position.y + (transform.localScale.y / 2), child.position.z);
+		minY = new Vector3(transform.position.x, transform.position.y - (transform.localScale.y / 2), child.position.z);
 
 		while (isMoving) 
 		{
-			yield return StartCoroutine(MoveObject(transform, minY, maxY, smoothing));
-			yield return StartCoroutine(MoveObject(transform, maxY, minY, smoothing));
+			yield return StartCoroutine(MoveObject(child, minY, maxY, smoothing));
+			yield return StartCoroutine(MoveObject(child, maxY, minY, smoothing));
 		}
 	}
 	
@@ -27,10 +28,10 @@ public class UpAndDown : PlatformBehaviour
 	{
 		var i= 0.0f;
 		var rate= 1.0f/time;
-		while (i < 1.0f) {
+		while (i < 1.0f && child != null) {
 			i += Time.deltaTime * rate;
-			rigidbody.MovePosition(Vector3.Lerp(new Vector3(transform.position.x, startPos.y, transform.position.z), 
-			                                      new Vector3(transform.position.x, endPos.y, transform.position.z), i));
+            child.rigidbody.MovePosition(Vector3.Lerp(new Vector3(child.position.x, startPos.y, child.position.z), 
+			                                      new Vector3(child.position.x, endPos.y, child.position.z), i));
 			yield return new WaitForFixedUpdate(); 
 		}
 
