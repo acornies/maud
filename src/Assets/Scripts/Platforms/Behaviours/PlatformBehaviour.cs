@@ -9,6 +9,7 @@ public class PlatformBehaviour : MonoBehaviour
 
     public float rotationSpeed = 1;
     public bool isOnPlatform;
+    public bool isStopped;
 
     // Subscribe to events
     public virtual void OnEnable()

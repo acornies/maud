@@ -10,7 +10,6 @@ public class Orbit : PlatformBehaviour
     public float radius = 2.0f;
     public float radiusSpeed = 0.5f;
     public float orbitRotationSpeed = 10.0f;
-    public bool isStopped;
     public float stopTime = 1.0f;
 
     // Use this for initialization

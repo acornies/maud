@@ -107,14 +107,7 @@ public class TelekinesisController : MonoBehaviour
         var scriptsToDisable = platformWithScripts.GetComponentsInChildren<PlatformBehaviour>();
         scriptsToDisable.ToList().ForEach(x =>
         {
-            if (x.GetType() == typeof(UpAndDown))
-            {
-                ((UpAndDown)x).StopMovement();
-            }
-            else
-            {
-                x.enabled = false;
-            }
+            x.enabled = false;
         });
     }
 

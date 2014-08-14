@@ -1,63 +1,63 @@
 ﻿using System.Diagnostics;
+using System.Linq.Expressions;
 using UnityEngine;
 using System.Collections;
 
-public class UpAndDown : PlatformBehaviour 
+public class UpAndDown : PlatformBehaviour
 {
-	public float smoothing = 1.0f;
+    public float _waitTimer;
+    
+    public float speed = 1.0f;
 	public float waitTime = 1.0f;
 	public bool isMoving = true;
 	public Vector3 maxY;
 	public Vector3 minY;
+    public Vector3 moveDirection = Vector2.up;
 
-	// Use this for initialization
-	IEnumerator Start () 
-	{
-		base.Start();
+    protected override void Start()
+    {
+        base.Start();
         maxY = new Vector3(transform.position.x, transform.position.y + (transform.localScale.y / 2), child.position.z);
-		minY = new Vector3(transform.position.x, transform.position.y - (transform.localScale.y / 2), child.position.z);
-
-		while (isMoving) 
-		{
-			yield return StartCoroutine(MoveObject(child, minY, maxY, smoothing));
-			yield return StartCoroutine(MoveObject(child, maxY, minY, smoothing));
-		}
-	}
-	
-	IEnumerator MoveObject(Transform thisTransform, Vector3 startPos, Vector3 endPos, float time)
-	{
-		var i= 0.0f;
-		var rate= 1.0f/time;
-		while (i < 1.0f && child != null) {
-			i += Time.deltaTime * rate;
-            child.rigidbody.MovePosition(Vector3.Lerp(new Vector3(child.position.x, startPos.y, child.position.z), 
-			                                      new Vector3(child.position.x, endPos.y, child.position.z), i));
-			yield return new WaitForFixedUpdate(); 
-		}
-
-		yield return new WaitForSeconds(waitTime);
-	}
-
-    public void StopMovement()
-    {
-        StopAllCoroutines();
+        minY = new Vector3(transform.position.x, transform.position.y - (transform.localScale.y / 2), child.position.z);
     }
 
-    public IEnumerator StartMovement()
+    protected override void FixedUpdate()
     {
-       return this.Start();
-    }
+        base.FixedUpdate();
 
-    /*public override void HandleOnPlatformReached(Transform platform, Transform player)
-    {
-        if (platform.GetInstanceID() == this.transform.GetInstanceID())
+        if (isStopped)
         {
-            isOnPlatform = true;
-            var difference = (platform.position.y - player.position.y);
-            //player.rigidbody.MovePosition(new Vector3(player.position.x, platform.position.y, player.position.z));
-            //Debug.Log(difference);
-            //player.position = Vector3.MoveTowards(player.position, transform.position, difference);
-
+            _waitTimer -= Time.deltaTime;
+            if (!(_waitTimer <= 0)) return;
+            isStopped = false;
         }
-    }*/
+
+        if (Mathf.Approximately(child.position.y, maxY.y) && _waitTimer >= 0)
+        {
+            moveDirection = Vector3.down;
+            isStopped = true;
+        }
+        if (Mathf.Approximately(child.position.y, minY.y) && _waitTimer >= 0)
+        {
+            moveDirection = Vector3.up;
+            isStopped = true;
+        }
+
+        if (isStopped) return;
+
+        if (moveDirection == Vector3.up && child.position.y < maxY.y)
+        {
+            _waitTimer = waitTime;
+            child.position = Vector3.MoveTowards(new Vector3(child.position.x, child.position.y, child.position.z),
+                new Vector3(child.position.x, maxY.y, child.position.z),
+                speed*Time.deltaTime);
+        }
+        if (moveDirection == Vector3.down && child.position.y > minY.y)
+        {
+            _waitTimer = waitTime;
+            child.position = Vector3.MoveTowards(new Vector3(child.position.x, child.position.y, child.position.z),
+                new Vector3(child.position.x, minY.y, child.position.z),
+                speed*Time.deltaTime);
+        }
+    }
 }
