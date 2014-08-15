@@ -9,7 +9,7 @@ public class RotationHandler : MonoBehaviour
 
     public virtual void OnEnable()
     {
-        TelekinesisController.On_NewPlatformRotation += HandleNewPlatformRotation;
+        TelekinesisController.On_NewTelekinesisRotation += HandleNewTelekinesisRotation;
     }
 
     public virtual void OnDisable()
@@ -24,7 +24,7 @@ public class RotationHandler : MonoBehaviour
 
     public virtual void UnsubscribeEvent()
     {
-        TelekinesisController.On_NewPlatformRotation -= HandleNewPlatformRotation;
+        TelekinesisController.On_NewTelekinesisRotation -= HandleNewTelekinesisRotation;
     }
 
     // Use this for initialization
@@ -39,11 +39,11 @@ public class RotationHandler : MonoBehaviour
         RotateToTarget();
     }
 
-    protected void HandleNewPlatformRotation(Transform platform, Quaternion rotation)
+    protected void HandleNewTelekinesisRotation(Transform platform, Quaternion rotation)
     {
         if (platform.GetInstanceID() == this.transform.GetInstanceID())
         {
-            Debug.Log("new rotation: " + rotation + " for " + platform.name);
+            //Debug.Log("new rotation: " + rotation + " for " + platform.name);
             rotationTarget = rotation;
         }
     }

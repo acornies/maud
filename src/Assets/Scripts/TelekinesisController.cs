@@ -12,14 +12,16 @@ public class TelekinesisController : MonoBehaviour
     private Vector3 _rotation = Vector3.zero;
     private float _powerEndTimer;
     private bool _isActivePowerTimingOut;
+    private Transform _platform;
     private Transform _platformClone;
+    public Transform _hazzard;
 
     public float sensitivity = 0.5f;
-    public Transform platform;
     public bool shouldRotate;
     public bool isRotating = false;
     public float powerTimeout = 1.0f;
     public float cloneScaleMultiplier = 1.5f;
+    public float maxFlickGestureTime = 0.2f;
 
     public delegate void TelekinesisPowersStart();
     public static event TelekinesisPowersStart On_PlayerPowersStart;
@@ -28,7 +30,10 @@ public class TelekinesisController : MonoBehaviour
     public static event TelekinesisPowersEnd On_PlayerPowersEnd;
 
     public delegate void TelekinesisNewRotation(Transform platformToRotate, Quaternion rotation);
-    public static event TelekinesisNewRotation On_NewPlatformRotation;
+    public static event TelekinesisNewRotation On_NewTelekinesisRotation;
+
+    public delegate void TelekinesisPushDestroy(Transform platformToDestroy, Gesture gesture);
+    public static event TelekinesisPushDestroy On_TelekinesisPushDestroy;
 
     // Subscribe to events
     void OnEnable()
@@ -98,7 +103,7 @@ public class TelekinesisController : MonoBehaviour
     void HandleLongTap(Gesture gesture)
     {
         ActivatePlatform(gesture);
-        Stabilize(platform);
+        Stabilize(_platform);
     }
 
     private static void Stabilize(Transform platformWithScripts)
@@ -113,7 +118,7 @@ public class TelekinesisController : MonoBehaviour
 
     void HandleLongTapEnd(Gesture gesture)
     {
-        if (platform != null)
+        if (_platform != null)
         {
             _isActivePowerTimingOut = true;
         }
@@ -123,9 +128,9 @@ public class TelekinesisController : MonoBehaviour
     {
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
         ActivatePlatform(gesture);
-        if (platform == null) return;
+        if (_platform == null) return;
         if (_platformClone != null) return; // prevent multi-finger object cloning
-        _platformClone = Instantiate(platform, platform.position, platform.rotation) as Transform;
+        _platformClone = Instantiate(_platform, _platform.position, _platform.rotation) as Transform;
         if (_platformClone == null) return;
         _platformClone.renderer.material.color = new Color(1, 1, 1, .5f);
         var cloneChild = _platformClone.FindChild("Cube");
@@ -133,7 +138,7 @@ public class TelekinesisController : MonoBehaviour
         {
             cloneChild.renderer.material.color = new Color(1, 1, 1, .5f);
         }
-        _platformClone.localScale = new Vector3(platform.localScale.x * cloneScaleMultiplier, platform.localScale.y * cloneScaleMultiplier, platform.localScale.z * cloneScaleMultiplier);
+        _platformClone.localScale = new Vector3(_platform.localScale.x * cloneScaleMultiplier, _platform.localScale.y * cloneScaleMultiplier, _platform.localScale.z * cloneScaleMultiplier);
         _platformClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
         Stabilize(_platformClone);
     }
@@ -148,7 +153,7 @@ public class TelekinesisController : MonoBehaviour
     {
         _isActivePowerTimingOut = false;
 
-        if (!shouldRotate || platform == null) return;
+        if (!shouldRotate || _platform == null) return;
 
         // offset
         _pointerOffset = (new Vector3(gesture.position.x, gesture.position.y, 0) - _pointerReference);
@@ -170,10 +175,15 @@ public class TelekinesisController : MonoBehaviour
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
 
         isRotating = false;
-        if (platform != null && gesture.actionTime > 0.3f)
+        if (_platform != null && gesture.actionTime > maxFlickGestureTime)
         {
             _isActivePowerTimingOut = true;
-            On_NewPlatformRotation(platform, _platformClone.localRotation);
+            On_NewTelekinesisRotation(_platform, _platformClone.localRotation);
+        }
+        if (_hazzard != null && gesture.actionTime <= maxFlickGestureTime)
+        {
+            _isActivePowerTimingOut = true;
+            On_TelekinesisPushDestroy(_hazzard, gesture);
         }
         else
         {
@@ -189,15 +199,16 @@ public class TelekinesisController : MonoBehaviour
             Destroy(_platformClone.gameObject);
             _platformClone = null;
         }
-        if (platform != null && platform.particleSystem != null)
+        if (_platform != null && _platform.particleSystem != null)
         {
-            platform.particleSystem.Stop();
+            _platform.particleSystem.Stop();
         }
-        platform = null;
+        _platform = null;
         if (On_PlayerPowersEnd != null)
         {
             On_PlayerPowersEnd();
         }
+        _hazzard = null;
     }
 
     private void ActivatePlatform(Gesture gesture)
@@ -207,32 +218,41 @@ public class TelekinesisController : MonoBehaviour
         bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(gesture.position), out hitInfo);
         if (hit)
         {
-            if (hitInfo.transform.gameObject.tag == "Rotatable")
+            if (hitInfo.transform.tag == "Rotatable")
             {
-                this.platform = hitInfo.transform;
+                this._platform = hitInfo.transform;
 
                 if (On_PlayerPowersStart != null)
                 {
                     On_PlayerPowersStart();
                 }
                 shouldRotate = true;
-                if (platform != null && platform.particleSystem != null)
+                if (_platform != null && _platform.particleSystem != null)
                 {
-                    platform.particleSystem.Play();
+                    _platform.particleSystem.Play();
                 }
             }
-            if (hitInfo.transform.gameObject.tag == "Stoppable")
+            if (hitInfo.transform.tag == "Stoppable")
             {
-                this.platform = hitInfo.transform.parent;
+                this._platform = hitInfo.transform.parent;
 
                 if (On_PlayerPowersStart != null)
                 {
                     On_PlayerPowersStart();
                 }
                 shouldRotate = true;
-                if (platform != null && platform.particleSystem != null)
+                if (_platform != null && _platform.particleSystem != null)
                 {
-                    platform.particleSystem.Play();
+                    _platform.particleSystem.Play();
+                }
+            }
+
+            if (hitInfo.transform.tag == "Hazzard")
+            {
+                this._hazzard = hitInfo.transform;
+                if (On_PlayerPowersStart != null)
+                {
+                    On_PlayerPowersStart();
                 }
             }
         }
