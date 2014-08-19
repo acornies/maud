@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RotationHandler : MonoBehaviour
+public class RotationHandler : TelekinesisHandler
 {
     protected Quaternion? rotationTarget;
 

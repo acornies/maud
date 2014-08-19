@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Runtime.Remoting.Messaging;
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PushDestroyHandler : MonoBehaviour
+public class PushDestroyHandler : TelekinesisHandler
 {
     private float _destroyTimer;
     private bool _isPushed;
@@ -58,10 +59,8 @@ public class PushDestroyHandler : MonoBehaviour
     {
         if (objectToDestroy == null || objectToDestroy.GetInstanceID() != transform.GetInstanceID()) return;
 
-        //Debug.Log("Push & destroy " + transform.name);
         rigidbody.useGravity = true;
         rigidbody.isKinematic = false;
-        //Debug.Log(gestureInfo.swipeVector);
         rigidbody.AddForceAtPosition(gestureInfo.swipeVector * artificalForce, transform.position);
         _isPushed = true;
     }

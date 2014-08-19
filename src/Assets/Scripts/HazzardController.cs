@@ -10,7 +10,7 @@ public class HazzardController : MonoBehaviour
     private Transform _rightBoundary;
     public float _spawnTimer;
     public float spawnInterval = 10;
-    public Vector3 horizontalSpawnPosition;
+    //public Vector3 horizontalSpawnPosition;
 
     void Awake()
     {

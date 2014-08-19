@@ -62,7 +62,7 @@ public class CameraMovement : MonoBehaviour
         return Mathf.Abs(transform.position.y - this.CameraTarget.position.y) > this.YMargin;
     }
 
-    void Update()
+    void LateUpdate()
     {
         isTracking = !GameController.Instance.playerIsDead;
         if (isTracking)

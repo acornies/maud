@@ -44,7 +44,7 @@ public class MusicController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         int currentPlatform = PlatformController.Instance.GetCurrentPlatformNumber();
 

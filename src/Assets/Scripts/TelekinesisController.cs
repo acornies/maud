@@ -44,7 +44,7 @@ public class TelekinesisController : MonoBehaviour
         EasyTouch.On_Swipe += On_Swipe;
         EasyTouch.On_SwipeStart += On_SwipeStart;
         EasyTouch.On_SwipeEnd += On_SwipeEnd;
-        EasyTouch.On_LongTapStart += HandleLongTap;
+        EasyTouch.On_LongTapStart += HandleLongTapStart;
         EasyTouch.On_LongTapEnd += HandleLongTapEnd;
         PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
     }
@@ -67,7 +67,7 @@ public class TelekinesisController : MonoBehaviour
         EasyTouch.On_Swipe -= On_Swipe;
         EasyTouch.On_SwipeStart -= On_SwipeStart;
         EasyTouch.On_SwipeEnd -= On_SwipeEnd;
-        EasyTouch.On_LongTapStart -= HandleLongTap;
+        EasyTouch.On_LongTapStart -= HandleLongTapStart;
         EasyTouch.On_LongTapEnd -= HandleLongTapEnd;
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
     }
@@ -100,10 +100,20 @@ public class TelekinesisController : MonoBehaviour
         TelekinesisEnd();
     }
 
-    void HandleLongTap(Gesture gesture)
+    void HandleLongTapStart(Gesture gesture)
     {
         ActivatePlatform(gesture);
-        Stabilize(_platform);
+        if (_platform != null)
+        {
+            Stabilize(_platform);
+            _platform.GetComponent<TelekinesisHandler>().isStable = true;
+        }
+
+        if (_hazzard != null)
+        {
+            Stabilize(_hazzard);
+            _hazzard.GetComponent<TelekinesisHandler>().isStable = true;
+        }
     }
 
     private static void Stabilize(Transform platformWithScripts)
@@ -175,14 +185,16 @@ public class TelekinesisController : MonoBehaviour
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
 
         isRotating = false;
-        if (_platform != null && gesture.actionTime > maxFlickGestureTime)
+        //if (_platform != null && gesture.actionTime > maxFlickGestureTime)
+        if (_platform != null)
         {
             _isActivePowerTimingOut = true;
             On_NewTelekinesisRotation(_platform, _platformClone.localRotation);
         }
-        if (_hazzard != null && gesture.actionTime <= maxFlickGestureTime)
+        if (_hazzard != null && _hazzard.GetComponent<TelekinesisHandler>().isStable)
         {
             _isActivePowerTimingOut = true;
+            Debug.Log("hold & destroy");
             On_TelekinesisPushDestroy(_hazzard, gesture);
         }
         else
