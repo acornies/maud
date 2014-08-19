@@ -147,6 +147,7 @@ public class PlayerMovement : MonoBehaviour
             var groundCollider = groundColliders.FirstOrDefault();
             if (groundCollider != null && isGrounded)
             {
+                //canMove = true;
                 _additionalJumpCount = 0;
                 forcePushed = false;
                 On_PlatformReached(groundCollider.transform, transform); // trigger event for finding current platform
@@ -263,8 +264,6 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleStickyPhysics()
     {
-        //if (isGrounded) return;
-
         // draw ray near the head of the player
         Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
         Vector3 midRay = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
@@ -281,30 +280,33 @@ public class PlayerMovement : MonoBehaviour
         // stop player from sticking to colliders in mid-air
         RaycastHit hit;
         if (
-            Physics.Raycast(footRay, Vector3.right, out hit, stickyBuffer)
-            || Physics.Raycast(footRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
-            || Physics.Raycast(footRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
-            || Physics.Raycast(footRay, Vector3.left, out hit, stickyBuffer)
-            || Physics.Raycast(midRay, Vector3.right, out hit, stickyBuffer)
-            || Physics.Raycast(midRay, Vector3.left, out hit, stickyBuffer)
-            || Physics.Raycast(midRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
-            || Physics.Raycast(midRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
-            || Physics.Raycast(headRay, Vector3.right, out hit, stickyBuffer)
-            || Physics.Raycast(headRay, Vector3.left, out hit, stickyBuffer)
-            || Physics.Raycast(headRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
-            || Physics.Raycast(headRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
-            )
+            (Physics.Raycast(footRay, Vector3.right, out hit, stickyBuffer)
+             || Physics.Raycast(footRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(midRay, Vector3.right, out hit, stickyBuffer)
+             || Physics.Raycast(midRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(headRay, Vector3.right, out hit, stickyBuffer)
+             || Physics.Raycast(headRay, new Vector3(1, 0, 1), out hit, stickyBuffer))
+            && (hit.transform.gameObject.layer == 8 && !isGrounded))
         {
-            // the "walkable" layer
-            if (hit.transform.gameObject.layer == 8 && !isGrounded)
-            {
-                canMove = false;
-            }
-            else
-            {
-                canMove = true;
-            }
+           
+            canMove = !(moveDirection > 0);
+            //Debug.Log("Hit with rays on right, moveDirection: " + moveDirection + " canMove: " + canMove);
         }
+
+        else if (
+            (Physics.Raycast(footRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(footRay, Vector3.left, out hit, stickyBuffer)
+             || Physics.Raycast(midRay, Vector3.left, out hit, stickyBuffer)
+             || Physics.Raycast(midRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(headRay, Vector3.left, out hit, stickyBuffer)
+             || Physics.Raycast(headRay, new Vector3(-1, 0, 1), out hit, stickyBuffer))
+            && (hit.transform.gameObject.layer == 8 && !isGrounded))
+        {
+
+            canMove = !(moveDirection < 0);
+            //Debug.Log("Hit with rays on left, moveDirection: " + moveDirection + " canMove: " + canMove);
+        }
+
         else
         {
             canMove = true;

@@ -32,7 +32,6 @@ public class PlatformController : MonoBehaviour
     {
         PlayerMovement.On_PlatformReached += HandlePlatformReached;
         CameraMovement.On_DestroyLowerPlatforms += HandleDestroyLowerPlatforms;
-        //CameraMovement.On_CameraUpdatedMinY += HandleCameraUpdatedMinY;
     }
 
     void OnDisable()
@@ -49,7 +48,6 @@ public class PlatformController : MonoBehaviour
     {
         PlayerMovement.On_PlatformReached -= HandlePlatformReached;
         CameraMovement.On_DestroyLowerPlatforms -= HandleDestroyLowerPlatforms;
-        //CameraMovement.On_CameraUpdatedMinY -= HandleCameraUpdatedMinY;
     }
 
     void Awake()
