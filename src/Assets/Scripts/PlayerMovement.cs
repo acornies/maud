@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Linq;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(AudioSource))]
 public class PlayerMovement : MonoBehaviour
 {
     private Transform _groundCheck;
@@ -35,6 +36,9 @@ public class PlayerMovement : MonoBehaviour
     public int additionalJumps = 1;
     public float additionalJumpForce = 500.0f;
     public float highJumpTimeout = 0.5f;
+
+    public AudioClip jumpSound;
+    public AudioClip highJumpSound;
 
     //public bool useAcceleration = false;
     public float accelerometerMultiplier = 1.5f;
@@ -98,6 +102,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        //audio.clip = jumpSound;
     }
 
     void Update()
@@ -357,7 +362,9 @@ public class PlayerMovement : MonoBehaviour
         if (gesture.touchCount > 1) return; // prevents dual tap super jump
         if (this.isGrounded)
         {
-            rigidbody.AddForceAtPosition(new Vector3(0, jumpForce + extraForce, 0), transform.position);
+            var theForce = (jumpForce + extraForce);
+            rigidbody.AddForceAtPosition(new Vector3(0, theForce, 0), transform.position);
+            PlayJumpSound(theForce);
             _isHighJumping = extraForce > 0;
             _consectutiveJumpCounter++;
         }
@@ -366,5 +373,28 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded || _additionalJumpCount >= additionalJumps || _isHighJumping || forcePushed) return;
         rigidbody.AddForce(new Vector3(0, additionalJumpForce, 0));
         _additionalJumpCount++;
+    }
+
+    private void PlayJumpSound(float force = 0)
+    {
+        if (jumpSound == null)
+        {
+            Debug.LogWarning("Please assign a jump sound to this script.");
+        }
+
+        if (highJumpSound == null)
+        {
+            Debug.LogWarning("Please assign a high jump sound to this script.");
+        }
+
+        if (jumpSound != null && jumpSound.isReadyToPlay && force <= jumpForce)
+        {
+            audio.PlayOneShot(jumpSound, 1);
+        }
+
+        if (highJumpSound != null && highJumpSound.isReadyToPlay && force > jumpForce)
+        {
+            audio.PlayOneShot(highJumpSound, 1);
+        }
     }
 }

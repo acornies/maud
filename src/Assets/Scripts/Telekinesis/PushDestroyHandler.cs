@@ -60,6 +60,7 @@ public class PushDestroyHandler : MonoBehaviour
 
         //Debug.Log("Push & destroy " + transform.name);
         rigidbody.useGravity = true;
+        rigidbody.isKinematic = false;
         //Debug.Log(gestureInfo.swipeVector);
         rigidbody.AddForceAtPosition(gestureInfo.swipeVector * artificalForce, transform.position);
         _isPushed = true;
