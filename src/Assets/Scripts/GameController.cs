@@ -7,12 +7,12 @@ public class GameController : MonoBehaviour
     private Transform _player;
     private GameObject _telekensisControl;
     private float _deathTimer;
-
-    //private float _deathInterval = 3.0f;
+    private int _previousPlatformNumber;
 
     public float playerZPosition = -2.8f;
     public int lives = 3;
     public float highestPoint = 0.0f;
+    public float powerMeter = 0;
     public float timeBetweenDeaths = 3.0f;
     public Vector3 playerSpawnPosition;
     public bool playerIsDead;
@@ -25,7 +25,8 @@ public class GameController : MonoBehaviour
     // Subscribe to events
     void OnEnable()
     {
-        KillBox.On_PlayerDeath += HandleOn_PlayerDeath;
+        KillBox.On_PlayerDeath += HandleOnPlayerDeath;
+        TelekinesisController.On_PlayerPowerDeplete += HandleOnPlayerPowerDeplete;
     }
 
     void OnDisable()
@@ -40,7 +41,8 @@ public class GameController : MonoBehaviour
 
     void UnsubscribeEvent()
     {
-        KillBox.On_PlayerDeath -= HandleOn_PlayerDeath;
+        KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
+        TelekinesisController.On_PlayerPowerDeplete -= HandleOnPlayerPowerDeplete;
     }
 
     void Awake()
@@ -66,10 +68,10 @@ public class GameController : MonoBehaviour
     void OnGUI()
     {
 
-        var guiStyleHeightMeter = new GUIStyle() { alignment = TextAnchor.UpperRight, fontSize = 24 };
+        var guiStyleHeightMeter = new GUIStyle() { alignment = TextAnchor.MiddleRight, fontSize = 24 };
         guiStyleHeightMeter.normal.textColor = Color.white;
 
-        var guiStyleLivesMeter = new GUIStyle() { alignment = TextAnchor.UpperLeft, fontSize = 24 };
+        var guiStyleLivesMeter = new GUIStyle() { alignment = TextAnchor.MiddleLeft, fontSize = 24 };
         guiStyleLivesMeter.normal.textColor = Color.white;
 
         var guiStyleDeathTitle = new GUIStyle() { alignment = TextAnchor.MiddleCenter, fontSize = 40, fontStyle = FontStyle.Bold };
@@ -79,6 +81,7 @@ public class GameController : MonoBehaviour
         guiStyleDeathTimer.normal.textColor = Color.white;
 
         GUI.Label(new Rect(Screen.width - 110, 10, 100, 25), highestPoint + "m", guiStyleHeightMeter);
+        GUI.Label(new Rect(Screen.width - 110, Screen.height - 35, 100, 25), "Power: " + powerMeter, guiStyleHeightMeter);
         GUI.Label(new Rect(10, 10, 150, 25), "Lives x " + lives, guiStyleLivesMeter);
 
         if (playerIsDead && lives >= 0)
@@ -103,6 +106,16 @@ public class GameController : MonoBehaviour
         {
             highestPoint = Mathf.Round(_player.position.y);
         }
+
+        if (PlatformController.Instance.GetCurrentPlatformNumber() > _previousPlatformNumber)
+        {
+            _previousPlatformNumber = PlatformController.Instance.GetCurrentPlatformNumber();
+            powerMeter ++;
+        }
+
+        if (powerMeter < 0) { powerMeter = 0; }
+
+        Debug.Log("power: " + powerMeter);
 
         // time delay between player deaths
         if (playerIsDead)
@@ -145,12 +158,17 @@ public class GameController : MonoBehaviour
         Application.LoadLevel(Application.loadedLevel);
     }
 
-    void HandleOn_PlayerDeath(float spawnYPosition)
+    void HandleOnPlayerDeath(float spawnYPosition)
     {
         lives--;
         //Debug.Log ("Lives: " + lives);
         playerIsDead = true;
         playerSpawnPosition = new Vector3(0, spawnYPosition, playerZPosition);
         //_player.transform.position = new Vector3 (0, spawnYPosition, _playerZPosition);
+    }
+
+    void HandleOnPlayerPowerDeplete(float amount)
+    {
+        powerMeter -= amount;
     }
 }

@@ -60,16 +60,6 @@ public class KillBox : MonoBehaviour
         }
     }
 
-    /*void OnTriggerStay(Collider collider)
-    {
-        if (collider.gameObject.name.StartsWith ("Platform")) 
-        {
-            int platformNumber = int.Parse(collider.gameObject.name.Split('_')[1]);
-            _spawnPlatform = PlatformSpawnControl.Instance.levelPlatforms[platformNumber + 1]; // get one platform above the killbox (check CameraMovement.killBoxBuffer)
-            Debug.Log ("TriggerStay() Spawnning platform is: " + _spawnPlatform.name);
-        }
-    }*/
-
     void UpdateKillBoxAndCheckpointPosition(float newYPosition, int checkpointPlatform)
     {
         //Debug.Log ("New kill box position: " + newYPosition);
