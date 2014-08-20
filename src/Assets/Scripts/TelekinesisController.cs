@@ -32,6 +32,9 @@ public class TelekinesisController : MonoBehaviour
     public delegate void TelekinesisNewRotation(Transform platformToRotate, Quaternion rotation);
     public static event TelekinesisNewRotation On_NewTelekinesisRotation;
 
+    public delegate void TelekinesisStabilize(Transform objectToStabilize);
+    public static event TelekinesisStabilize On_TelekinesisStabilize;
+
     public delegate void TelekinesisPushDestroy(Transform platformToDestroy, Gesture gesture);
     public static event TelekinesisPushDestroy On_TelekinesisPushDestroy;
 
@@ -105,24 +108,27 @@ public class TelekinesisController : MonoBehaviour
         ActivatePlatform(gesture);
         if (_platform != null)
         {
-            Stabilize(_platform);
-            _platform.GetComponent<TelekinesisHandler>().isStable = true;
+            //DisableBehaviour(_platform);
+            //_platform.GetComponent<TelekinesisHandler>().isStable = true;
+            On_TelekinesisStabilize(_platform);
         }
 
         if (_hazzard != null)
         {
-            Stabilize(_hazzard);
-            _hazzard.GetComponent<TelekinesisHandler>().isStable = true;
+            //DisableBehaviour(_hazzard);
+            //_hazzard.GetComponent<TelekinesisHandler>().isStable = true;
+            On_TelekinesisStabilize(_hazzard);
         }
     }
 
-    private static void Stabilize(Transform platformWithScripts)
+    private static void DisableBehaviour(Transform platformWithScripts)
     {
         if (platformWithScripts == null) return;
-        var scriptsToDisable = platformWithScripts.GetComponentsInChildren<PlatformBehaviour>();
+        var scriptsToDisable = platformWithScripts.GetComponentsInChildren<TelekinesisHandler>();
         scriptsToDisable.ToList().ForEach(x =>
         {
-            x.enabled = false;
+            x.isStable = true;
+            x.isClone = true;
         });
     }
 
@@ -150,7 +156,7 @@ public class TelekinesisController : MonoBehaviour
         }
         _platformClone.localScale = new Vector3(_platform.localScale.x * cloneScaleMultiplier, _platform.localScale.y * cloneScaleMultiplier, _platform.localScale.z * cloneScaleMultiplier);
         _platformClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
-        Stabilize(_platformClone);
+        DisableBehaviour(_platformClone);
     }
 
     void On_Swipe(Gesture gesture)
@@ -191,12 +197,12 @@ public class TelekinesisController : MonoBehaviour
             _isActivePowerTimingOut = true;
             On_NewTelekinesisRotation(_platform, _platformClone.localRotation);
         }
-        if (_hazzard != null && _hazzard.GetComponent<TelekinesisHandler>().isStable)
+        /*if (_hazzard != null && _hazzard.GetComponent<TelekinesisHandler>().isStable)
         {
             _isActivePowerTimingOut = true;
-            Debug.Log("hold & destroy");
+            //Debug.Log("hold & destroy");
             On_TelekinesisPushDestroy(_hazzard, gesture);
-        }
+        }*/
         else
         {
             _isActivePowerTimingOut = true;
