@@ -10,21 +10,22 @@ public class TelekinesisController : MonoBehaviour
     private Vector3 _rotation = Vector3.zero;
     private bool _shouldRotate;
     private bool _isRotating;
+    private bool _isTeleporting;
     private float _powerEndTimer;
     private bool _isActivePowerTimingOut;
     private Transform _platform;
     private Transform _platformClone;
     private Transform _hazzard;
+    private Transform _hazzardClone;
     private float _rotationTimer;
 
     public float rotationSensitivity = 0.5f;
     public float cloneScaleMultiplier = 1.5f;
     public float powerTimeout = 1.0f;
     //public float maxFlickGestureTime = 0.2f;
-    public float rotationCost = 1;
-    public float rotationCostPerSecond = .5f;
-    public float stabilizeCost = 2;
-
+    public float rotationCostPerSecond = 1f;
+    public float moveCostPerSecond = 1.5f;
+    public float stabilizeCost = 3;
 
     public delegate void TelekinesisPowersStart();
     public static event TelekinesisPowersStart On_PlayerPowersStart;
@@ -35,14 +36,17 @@ public class TelekinesisController : MonoBehaviour
     public delegate void TelekinesisPowerDeplete(float amount);
     public static event TelekinesisPowerDeplete On_PlayerPowerDeplete;
 
-    public delegate void TelekinesisNewRotation(Transform platformToRotate, Quaternion rotation);
-    public static event TelekinesisNewRotation On_NewTelekinesisRotation;
+    public delegate void TelekinesisRotation(Transform platformToRotate, Quaternion rotation);
+    public static event TelekinesisRotation On_NewTelekinesisRotation;
 
     public delegate void TelekinesisStabilize(Transform objectToStabilize);
     public static event TelekinesisStabilize On_TelekinesisStabilize;
 
-    public delegate void TelekinesisPushDestroy(Transform platformToDestroy, Gesture gesture);
-    public static event TelekinesisPushDestroy On_TelekinesisPushDestroy;
+    public delegate void TelekinesisMove(Transform objectToMove, Vector3 newPosition);
+    public static event TelekinesisMove On_NewTelekinesisMovePosition;
+
+    //public delegate void TelekinesisPushDestroy(Transform platformToDestroy, Gesture gesture);
+    //public static event TelekinesisPushDestroy On_TelekinesisPushDestroy;
 
     // Subscribe to events
     void OnEnable()
@@ -85,7 +89,7 @@ public class TelekinesisController : MonoBehaviour
     {
         if (_isActivePowerTimingOut)
         {
-            if (_shouldRotate && !_isRotating)
+            if ((_shouldRotate && !_isRotating) || !_isTeleporting)
             {
                 _powerEndTimer -= Time.deltaTime;
                 if (!(_powerEndTimer <= 0)) return;
@@ -116,19 +120,13 @@ public class TelekinesisController : MonoBehaviour
         ActivatePlatform(gesture);
         if (_platform != null)
         {
-            //DisableBehaviour(_platform);
-            //_platform.GetComponent<TelekinesisHandler>().isStable = true;
             On_TelekinesisStabilize(_platform);
-           // GameController.Instance.powerMeter -= stabilizeCost;
             On_PlayerPowerDeplete(stabilizeCost);
         }
 
         if (_hazzard != null)
         {
-            //DisableBehaviour(_hazzard);
-            //_hazzard.GetComponent<TelekinesisHandler>().isStable = true;
             On_TelekinesisStabilize(_hazzard);
-            //GameController.Instance.powerMeter -= stabilizeCost;
             On_PlayerPowerDeplete(stabilizeCost);
         }
     }
@@ -152,10 +150,23 @@ public class TelekinesisController : MonoBehaviour
     void On_SwipeStart(Gesture gesture)
     {
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
-        if (GameController.Instance.powerMeter < rotationCost) return;
 
         ActivatePlatform(gesture);
-        if (_platform == null) return;
+        
+        if (_platform != null)
+        {
+            ClonePlatform();
+        }
+
+        if (_hazzard != null)
+        {
+            CloneHazzard();
+        }
+    }
+
+    private void ClonePlatform()
+    {
+        //if (_platform == null) return;
         if (_platformClone != null) return; // prevent multi-finger object cloning
         _platformClone = Instantiate(_platform, _platform.position, _platform.rotation) as Transform;
         if (_platformClone == null) return;
@@ -168,8 +179,23 @@ public class TelekinesisController : MonoBehaviour
         _platformClone.localScale = new Vector3(_platform.localScale.x * cloneScaleMultiplier, _platform.localScale.y * cloneScaleMultiplier, _platform.localScale.z * cloneScaleMultiplier);
         _platformClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
         Stabilize(_platformClone);
-        //GameController.Instance.powerMeter -= rotationCost;
-        On_PlayerPowerDeplete(rotationCost);
+    }
+
+    private void CloneHazzard()
+    {
+        //if (_platform == null) return;
+        if (_hazzardClone != null) return; // prevent multi-finger object cloning
+        _hazzardClone = Instantiate(_hazzard, _hazzard.position, _hazzard.rotation) as Transform;
+        if (_hazzardClone == null) return;
+        //_hazzardClone.renderer.material.color = new Color(1, 1, 1, .5f);
+        var cloneChild = _hazzardClone.FindChild("BirdModel");
+        if (cloneChild != null)
+        {
+            cloneChild.renderer.material.color = new Color(1, 1, 1, .5f);
+        }
+        _hazzardClone.localScale = new Vector3(_hazzard.localScale.x * cloneScaleMultiplier, _hazzard.localScale.y * cloneScaleMultiplier, _hazzard.localScale.z * cloneScaleMultiplier);
+        _hazzardClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
+        Stabilize(_hazzardClone);
     }
 
     void On_Swipe(Gesture gesture)
@@ -177,14 +203,21 @@ public class TelekinesisController : MonoBehaviour
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
         if (GameController.Instance.powerMeter < rotationCostPerSecond) return;
 
-        Rotate(gesture);
+        if (_platformClone != null && _platform != null)
+        {
+            Rotate(gesture);
+        }
+        if (_hazzardClone != null && _hazzard != null)
+        {
+            TeleportMove(gesture);
+        }
     }
 
     private void Rotate(Gesture gesture)
     {
         _isActivePowerTimingOut = false;
 
-        if (!_shouldRotate || _platform == null) return;
+        if (!_shouldRotate) return;
 
         // offset
         _pointerOffset = (new Vector3(gesture.position.x, gesture.position.y, 0) - _pointerReference);
@@ -204,23 +237,29 @@ public class TelekinesisController : MonoBehaviour
         On_PlayerPowerDeplete(rotationCostPerSecond * Time.deltaTime);
     }
 
+    private void TeleportMove(Gesture gesture)
+    {
+        _isTeleporting = true;
+        _hazzardClone.position = gesture.GetTouchToWordlPoint(GameController.Instance.playerZPosition, true);
+        On_PlayerPowerDeplete(moveCostPerSecond * Time.deltaTime);
+    }
+
     void On_SwipeEnd(Gesture gesture)
     {
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
 
-        _isRotating = false;
-        //if (_platform != null && gesture.actionTime > maxFlickGestureTime)
         if (_platform != null)
         {
             _isActivePowerTimingOut = true;
             On_NewTelekinesisRotation(_platform, _platformClone.localRotation);
+            _isRotating = false;
         }
-        /*if (_hazzard != null && _hazzard.GetComponent<TelekinesisHandler>().isStable)
+        else if (_hazzard != null)
         {
             _isActivePowerTimingOut = true;
-            //Debug.Log("hold & destroy");
-            On_TelekinesisPushDestroy(_hazzard, gesture);
-        }*/
+            On_NewTelekinesisMovePosition(_hazzard, _hazzardClone.position);
+            _isTeleporting = false;
+        }
         else
         {
             _isActivePowerTimingOut = true;
@@ -245,6 +284,11 @@ public class TelekinesisController : MonoBehaviour
             On_PlayerPowersEnd();
         }
         _hazzard = null;
+        if (_hazzardClone != null)
+        {
+            Destroy(_hazzardClone.gameObject);
+            _hazzardClone = null;
+        }
     }
 
     private void ActivatePlatform(Gesture gesture)

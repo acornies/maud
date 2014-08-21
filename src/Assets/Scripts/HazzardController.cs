@@ -3,14 +3,11 @@ using System.Collections;
 
 public class HazzardController : MonoBehaviour
 {
-
-
     private Transform _player;
     private Transform _leftBoundary;
     private Transform _rightBoundary;
-    public float _spawnTimer;
+    private float _spawnTimer;
     public float spawnInterval = 10;
-    //public Vector3 horizontalSpawnPosition;
 
     void Awake()
     {

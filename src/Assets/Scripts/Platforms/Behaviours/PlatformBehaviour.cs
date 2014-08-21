@@ -58,26 +58,4 @@ public class PlatformBehaviour : MonoBehaviour
     {
         isOnPlatform = false;
     }
-
-    /*protected void HandleNewPlatformRotation(Transform platform, Quaternion rotation)
-    {
-        if (platform.GetInstanceID() == this.transform.GetInstanceID())
-        {
-            Debug.Log("new rotation: "+ rotation +" for " + platform.name);
-            rotationTarget = rotation;
-        }
-    }
-
-    protected virtual void RotateToTarget()
-    {
-        if (rotationTarget == null) return;
-        if (transform.root.localRotation != rotationTarget)
-        {
-            transform.root.rotation = Quaternion.Lerp(transform.root.localRotation, rotationTarget.Value, rotationSpeed * Time.deltaTime);
-        }
-        if (transform.root.localRotation == rotationTarget)
-        {
-            rotationTarget = null;
-        }
-    }*/
 }

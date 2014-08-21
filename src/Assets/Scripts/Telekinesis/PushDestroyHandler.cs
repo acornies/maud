@@ -13,7 +13,7 @@ public class PushDestroyHandler : TelekinesisHandler
 
     void OnEnable()
     {
-        TelekinesisController.On_TelekinesisPushDestroy += HandlePushDestroy;
+        //TelekinesisController.On_TelekinesisPushDestroy += HandlePushDestroy;
     }
 
     void OnDisable()
@@ -28,7 +28,7 @@ public class PushDestroyHandler : TelekinesisHandler
 
     void UnsubscribeEvent()
     {
-        TelekinesisController.On_TelekinesisPushDestroy -= HandlePushDestroy;
+       //TelekinesisController.On_TelekinesisPushDestroy -= HandlePushDestroy;
     }
 
     // Use this for initialization

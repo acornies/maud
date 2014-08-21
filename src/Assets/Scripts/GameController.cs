@@ -3,7 +3,6 @@ using System.Collections;
 
 public class GameController : MonoBehaviour
 {
-
     private Transform _player;
     private GameObject _telekensisControl;
     private float _deathTimer;
@@ -19,6 +18,7 @@ public class GameController : MonoBehaviour
     public bool movedFromSpawnPosition;
     public bool initiatingRestart;
     public bool useAcceleration;
+    public float powerAccumulationRate = 0.25f;
 
     public static GameController Instance { get; private set; }
 
@@ -47,6 +47,8 @@ public class GameController : MonoBehaviour
 
     void Awake()
     {
+        Application.targetFrameRate = 60;
+        
         if (Instance == null)
         {
             //DontDestroyOnLoad(gameObject);
@@ -110,12 +112,10 @@ public class GameController : MonoBehaviour
         if (PlatformController.Instance.GetCurrentPlatformNumber() > _previousPlatformNumber)
         {
             _previousPlatformNumber = PlatformController.Instance.GetCurrentPlatformNumber();
-            powerMeter ++;
+            powerMeter += powerAccumulationRate;
         }
 
         if (powerMeter < 0) { powerMeter = 0; }
-
-        Debug.Log("power: " + powerMeter);
 
         // time delay between player deaths
         if (playerIsDead)
