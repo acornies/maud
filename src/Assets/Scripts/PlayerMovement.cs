@@ -135,8 +135,8 @@ public class PlayerMovement : MonoBehaviour
     // Use this for physics updates
     void FixedUpdate()
     {
-        rigidbody.useGravity = !GameController.Instance.playerIsDead;
-        rigidbody.isKinematic = GameController.Instance.playerIsDead;
+        rigidbody.useGravity = !GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart;
+        rigidbody.isKinematic = GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart;
 
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart) return;
 
@@ -293,7 +293,7 @@ public class PlayerMovement : MonoBehaviour
              || Physics.Raycast(headRay, new Vector3(1, 0, 1), out hit, stickyBuffer))
             && (hit.transform.gameObject.layer == 8 && !isGrounded))
         {
-           
+
             canMove = !(moveDirection > 0);
             //Debug.Log("Hit with rays on right, moveDirection: " + moveDirection + " canMove: " + canMove);
         }

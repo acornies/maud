@@ -26,6 +26,7 @@ public class GameController : MonoBehaviour
     void OnEnable()
     {
         KillBox.On_PlayerDeath += HandleOnPlayerDeath;
+        BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
         TelekinesisController.On_PlayerPowerDeplete += HandleOnPlayerPowerDeplete;
     }
 
@@ -42,13 +43,14 @@ public class GameController : MonoBehaviour
     void UnsubscribeEvent()
     {
         KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
+        BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
         TelekinesisController.On_PlayerPowerDeplete -= HandleOnPlayerPowerDeplete;
     }
 
     void Awake()
     {
         Application.targetFrameRate = 60;
-        
+
         if (Instance == null)
         {
             //DontDestroyOnLoad(gameObject);
@@ -158,12 +160,16 @@ public class GameController : MonoBehaviour
         Application.LoadLevel(Application.loadedLevel);
     }
 
-    void HandleOnPlayerDeath(float spawnYPosition)
+    void HandleOnPlayerDeath()
     {
         lives--;
         //Debug.Log ("Lives: " + lives);
         playerIsDead = true;
-        playerSpawnPosition = new Vector3(0, spawnYPosition, playerZPosition);
+        //playerSpawnPosition = new Vector3(0, spawnYPosition, playerZPosition);
+        var screenCenterToWorld =
+            Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
+        Debug.Log(screenCenterToWorld);
+        playerSpawnPosition = new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition);
         //_player.transform.position = new Vector3 (0, spawnYPosition, _playerZPosition);
     }
 

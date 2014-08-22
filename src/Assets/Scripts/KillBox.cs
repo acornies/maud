@@ -3,13 +3,14 @@ using System.Collections;
 
 public class KillBox : MonoBehaviour
 {
-
-    private GameObject _checkpointPlatform;
-
+    //public static KillBox Instance { get; private set; }
     public float cameraPositionBuffer = 8.0f;
 
-    public delegate void PlayerDeath(float spawnPosition);
+    public delegate void PlayerDeath();
     public static event PlayerDeath On_PlayerDeath;
+
+    public delegate void HazzardDestroy();
+    public static event HazzardDestroy On_HazzardDestroy;
 
     // Subscribe to events
     void OnEnable()
@@ -32,6 +33,11 @@ public class KillBox : MonoBehaviour
         CameraMovement.On_CameraUpdatedMinY -= UpdateKillBoxAndCheckpointPosition;
     }
 
+    void Awake()
+    {
+
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -41,22 +47,20 @@ public class KillBox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //checkpointYPosition = _checkpointPlatform == null ? 0.2f : _checkpointPlatform.position.y;
     }
 
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.gameObject.name == "Player")
+        if (collider.name == "Player")
         {
-            //Destroy(collider.gameObject);
-            if (_checkpointPlatform != null)
-            {
-                On_PlayerDeath(_checkpointPlatform.transform.position.y);
-            }
-            else
-            {
-                On_PlayerDeath(0.2f);
-            }
+            On_PlayerDeath();
+        }
+
+        if (collider.tag == "Hazzard")
+        {
+            Destroy(collider.gameObject);
+            On_HazzardDestroy();
         }
     }
 
@@ -65,9 +69,9 @@ public class KillBox : MonoBehaviour
         //Debug.Log ("New kill box position: " + newYPosition);
         transform.position = new Vector3(transform.position.x, newYPosition - cameraPositionBuffer, transform.position.z);
 
-        var levelPlatforms = PlatformController.Instance.levelPlatforms;
+        //var levelPlatforms = PlatformController.Instance.levelPlatforms;
 
-        _checkpointPlatform = levelPlatforms[checkpointPlatform]; // get one platform above the killbox (check CameraMovement.killBoxBuffer)
+        //this._checkpointPlatform = levelPlatforms[checkpointPlatform].transform; // get one platform above the killbox (check CameraMovement.killBoxBuffer)
         //Debug.Log ("Checkpoint platform is: " + _checkpointPlatform.name);
     }
 }

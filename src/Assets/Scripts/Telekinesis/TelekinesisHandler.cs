@@ -49,7 +49,7 @@ public class TelekinesisHandler : MonoBehaviour
     {
         _platformScripts = GetComponentsInChildren<PlatformBehaviour>();
         _hazzardScripts = GetComponentsInChildren<HazzardMovement>();
-        _hazzardModel = transform.FindChild("BirdModel");
+        _hazzardModel = transform.FindChild("ProtoModel");
     }
 
     void Update()
@@ -62,7 +62,7 @@ public class TelekinesisHandler : MonoBehaviour
         {
             _stabilizeTimer = stabilizationTime;
         }
-        
+
         HandleStabilizePlatforms();
         HandleStabilizeHazzards();
     }
@@ -72,6 +72,22 @@ public class TelekinesisHandler : MonoBehaviour
     {
         RotateToTarget();
         Teleport();
+
+        /*if (isStable)
+        {
+            if (transform.tag == "Hazzard" && !isClone)
+            {
+                rigidbody.useGravity = false;
+            }
+        }
+        else
+        {
+            if (transform.tag == "Hazzard" && !isClone)
+            {
+                rigidbody.useGravity = true;
+            }
+        }*/
+
     }
 
     protected void HandleNewTelekinesisRotation(Transform platform, Quaternion rotation)
@@ -126,8 +142,8 @@ public class TelekinesisHandler : MonoBehaviour
         {
             _teleportTimer = teleportTime;
         }
-       
-       
+
+
     }
 
     void HandleTelekinesisStabilize(Transform stabilizedObject)
@@ -167,6 +183,7 @@ public class TelekinesisHandler : MonoBehaviour
             {
                 x.enabled = false;
             });
+            //rigidbody.useGravity = false;
         }
 
         if (!isClone && isStable && _stabilizeTimer <= 0 && _hazzardScripts != null && _hazzardScripts.Any(x => !x.enabled))

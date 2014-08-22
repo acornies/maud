@@ -131,10 +131,10 @@ public class TelekinesisController : MonoBehaviour
         }
     }
 
-    private static void Stabilize(Transform platformWithScripts)
+    private static void Stabilize(Transform objectWithScripts)
     {
-        if (platformWithScripts == null) return;
-        var scriptsToDisable = platformWithScripts.GetComponentsInChildren<TelekinesisHandler>();
+        if (objectWithScripts == null) return;
+        var scriptsToDisable = objectWithScripts.GetComponentsInChildren<TelekinesisHandler>();
         scriptsToDisable.ToList().ForEach(x =>
         {
             x.isStable = true;
@@ -188,20 +188,24 @@ public class TelekinesisController : MonoBehaviour
         _hazzardClone = Instantiate(_hazzard, _hazzard.position, _hazzard.rotation) as Transform;
         if (_hazzardClone == null) return;
         //_hazzardClone.renderer.material.color = new Color(1, 1, 1, .5f);
-        var cloneChild = _hazzardClone.FindChild("BirdModel");
+        var cloneChild = _hazzardClone.FindChild("ProtoModel");
         if (cloneChild != null)
         {
             cloneChild.renderer.material.color = new Color(1, 1, 1, .5f);
         }
         _hazzardClone.localScale = new Vector3(_hazzard.localScale.x * cloneScaleMultiplier, _hazzard.localScale.y * cloneScaleMultiplier, _hazzard.localScale.z * cloneScaleMultiplier);
         _hazzardClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
+        if (!_hazzardClone.rigidbody.isKinematic)
+        {
+            _hazzardClone.rigidbody.isKinematic = true;
+        }
         Stabilize(_hazzardClone);
     }
 
     void On_Swipe(Gesture gesture)
     {
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
-        if (GameController.Instance.powerMeter < rotationCostPerSecond) return;
+        if (GameController.Instance.powerMeter <= 0) return;
 
         if (_platformClone != null && _platform != null)
         {

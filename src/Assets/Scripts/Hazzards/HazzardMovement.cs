@@ -3,9 +3,6 @@ using System.Collections;
 
 public class HazzardMovement : MonoBehaviour
 {
-
-    private bool _isStable;
-
     //public Vector3 startPosition;
     public Vector3 targetPosition;
     public float speed = 1;
@@ -18,14 +15,16 @@ public class HazzardMovement : MonoBehaviour
 
     // Update is called once per frame
     void FixedUpdate()
-    {   
-        if (targetPosition == Vector3.zero && targetPosition == transform.position) return;
-        
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
+    {
+        if (targetPosition == Vector3.zero && targetPosition == rigidbody.position) return;
 
-        if (transform.position == targetPosition)
+        rigidbody.MovePosition(Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime));
+
+        if (rigidbody.position == targetPosition)
         {
-            Destroy(gameObject);
+            //Destroy(gameObject);
         }
     }
+
+    //void 
 }
