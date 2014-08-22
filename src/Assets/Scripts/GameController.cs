@@ -168,7 +168,7 @@ public class GameController : MonoBehaviour
         //playerSpawnPosition = new Vector3(0, spawnYPosition, playerZPosition);
         var screenCenterToWorld =
             Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
-        Debug.Log(screenCenterToWorld);
+        //Debug.Log(screenCenterToWorld);
         playerSpawnPosition = new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition);
         //_player.transform.position = new Vector3 (0, spawnYPosition, _playerZPosition);
     }
