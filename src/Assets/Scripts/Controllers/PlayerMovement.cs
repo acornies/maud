@@ -46,9 +46,6 @@ public class PlayerMovement : MonoBehaviour
     public delegate void ReachedPlatformAction(Transform platform, Transform player);
     public static event ReachedPlatformAction On_PlatformReached;
 
-    public delegate void HitHeadAction(Transform platform);
-    public static event HitHeadAction On_HitHead;
-
     public delegate void PlayerAirborne();
     public static event PlayerAirborne On_PlayerAirborne;
 
@@ -102,7 +99,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        //audio.clip = jumpSound;
+        
     }
 
     void Update()
@@ -170,9 +167,10 @@ public class PlayerMovement : MonoBehaviour
         {
             isHittingHead = heightColliders.Length > 0 ? true : false;
             var heightCollider = heightColliders.FirstOrDefault();
-            if (heightCollider != null && isHittingHead && On_HitHead != null)
+            if (heightCollider != null && isHittingHead)
             {
-                On_HitHead(heightCollider.transform);
+                //On_HitHead(heightCollider.transform);
+                // TODO: add squash animation
             }
         }
 

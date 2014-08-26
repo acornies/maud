@@ -59,7 +59,7 @@ public class HazzardController : MonoBehaviour
             _reachedMinPlatform = true;
         }
 
-        if (_currentPlatformNumber >= minPlatformNumber && _reachedMinPlatform)
+        if (_currentPlatformNumber >= minPlatformNumber || _reachedMinPlatform)
         {
             _spawnTimer -= Time.deltaTime;
 

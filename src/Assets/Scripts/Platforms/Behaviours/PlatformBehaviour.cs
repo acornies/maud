@@ -16,7 +16,6 @@ public class PlatformBehaviour : MonoBehaviour
     {
         PlayerMovement.On_PlatformReached += HandleOnPlatformReached;
         PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
-        //TelekinesisController.On_NewPlatformRotation += HandleNewPlatformRotation;
     }
 
     public virtual void OnDisable()
@@ -33,7 +32,6 @@ public class PlatformBehaviour : MonoBehaviour
     {
         PlayerMovement.On_PlatformReached -= HandleOnPlatformReached;
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
-        //TelekinesisController.On_NewPlatformRotation -= HandleNewPlatformRotation;
     }
 
     protected virtual void Start()

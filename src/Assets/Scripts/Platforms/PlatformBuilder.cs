@@ -15,16 +15,15 @@ namespace LegendPeak.Platforms
         public PlatformBuilder()
         {
             _heightLevelDescriptions = new Dictionary<string, PlatformRangeInfo>();
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("One", new PlatformRangeInfo(10, 1, 1)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Two", new PlatformRangeInfo(20, 2, 2)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Three", new PlatformRangeInfo(30, 3, 3)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Four", new PlatformRangeInfo(50, 1, 5)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Five", new PlatformRangeInfo(100, 1, 6)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Six", new PlatformRangeInfo(120, 2, 6)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Seven", new PlatformRangeInfo(140, 3, 6)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Eight", new PlatformRangeInfo(160, 4, 6)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Nine", new PlatformRangeInfo(180, 5, 6)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Ten", new PlatformRangeInfo(200, 6, 6)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("One", new PlatformRangeInfo(5, 1, 1)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Two", new PlatformRangeInfo(10, 2, 2)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Three", new PlatformRangeInfo(40, 1, 4)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Four", new PlatformRangeInfo(80, 1, 5)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Six", new PlatformRangeInfo(140, 1, 6)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Seven", new PlatformRangeInfo(200, 2, 6)));
+            //_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Eight", new PlatformRangeInfo(140, 3, 6)));
+            //_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Nine", new PlatformRangeInfo(160, 4, 6)));
+            //_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Ten", new PlatformRangeInfo(180, 5, 6)));
         }
 
         public string GetPlatformPrefabByNumber(int platformNumber)
