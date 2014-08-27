@@ -356,7 +356,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump(Gesture gesture, float extraForce = 0)
     {
-        //if (GameController.Instance.isPaused) return;
         if (!canMove) return;
         if (gesture.touchCount > 1) return; // prevents dual tap super jump
         if (this.isGrounded)

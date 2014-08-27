@@ -45,9 +45,6 @@ public class TelekinesisController : MonoBehaviour
     public delegate void TelekinesisMove(Transform objectToMove, Vector3 newPosition);
     public static event TelekinesisMove On_NewTelekinesisMovePosition;
 
-    //public delegate void TelekinesisPushDestroy(Transform platformToDestroy, Gesture gesture);
-    //public static event TelekinesisPushDestroy On_TelekinesisPushDestroy;
-
     // Subscribe to events
     void OnEnable()
     {
