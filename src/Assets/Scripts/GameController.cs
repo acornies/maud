@@ -1,13 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Security.Cryptography.X509Certificates;
+using UnityEngine;
 using System.Collections;
 
 public class GameController : MonoBehaviour
 {
     private Transform _player;
-    private GameObject _telekensisControl;
+    private GameObject _telekinesisControl;
     private float _deathTimer;
     private int _previousPlatformNumber;
+    public float _resumeTimer;
+    public bool _initiatingResume;
 
+    public bool isPaused;
+    public float resumeTime = 1;
     public float playerZPosition = -2.8f;
     public int lives = 3;
     public float highestPoint = 0.0f;
@@ -22,12 +28,21 @@ public class GameController : MonoBehaviour
 
     public static GameController Instance { get; private set; }
 
+    public delegate void GamePause();
+    public static event GamePause OnGamePause;
+
+    public delegate void GameResume();
+    public static event GameResume OnGameResume;
+
     // Subscribe to events
     void OnEnable()
     {
         KillBox.On_PlayerDeath += HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
         TelekinesisController.On_PlayerPowerDeplete += HandleOnPlayerPowerDeplete;
+        EasyButton.On_ButtonDown += HandleOnButtonDown;
+        OnGamePause += HandleOnGamePause;
+        OnGameResume += HandleOnGameResume;
     }
 
     void OnDisable()
@@ -45,6 +60,9 @@ public class GameController : MonoBehaviour
         KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
         TelekinesisController.On_PlayerPowerDeplete -= HandleOnPlayerPowerDeplete;
+        EasyButton.On_ButtonDown -= HandleOnButtonDown;
+        OnGamePause -= HandleOnGamePause;
+        OnGameResume -= HandleOnGameResume;
     }
 
     void Awake()
@@ -66,7 +84,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         _player = GameObject.Find("Player").transform;
-        _telekensisControl = GameObject.Find("TelekinesisControl");
+        _telekinesisControl = GameObject.Find("TelekinesisControl");
     }
 
     void OnGUI()
@@ -100,12 +118,45 @@ public class GameController : MonoBehaviour
             GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "New game starts in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
         }
 
+        if (isPaused)
+        {
+            //GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Resources.Load<Texture>("Textures/PauseOverlay"), ScaleMode.StretchToFill);
+            //GUI.ModalWindow(1, )
+            var windowWidth = Screen.width/2;
+            var windowHeight = Screen.height/2;
+            GUI.ModalWindow(1, new Rect( (windowWidth - windowWidth/2), (windowHeight - windowHeight/2), windowWidth, windowHeight), PauseGUI, "Paused");
+        }
 
+    }
+
+    void PauseGUI(int windowId)
+    {
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        Time.timeScale = (isPaused && !_initiatingResume) ? 0 : 1;
+
+        if (isPaused && _initiatingResume)
+        {
+            _resumeTimer -= Time.deltaTime;
+            if (_resumeTimer <= 0)
+            {
+                isPaused = false;
+                _initiatingResume = false;
+                if (OnGameResume != null)
+                {
+                    OnGameResume();
+                }
+            }
+        }
+        else
+        {
+            _resumeTimer = resumeTime;
+        }
+
         if (_player.position.y > highestPoint)
         {
             highestPoint = Mathf.Round(_player.position.y);
@@ -122,7 +173,7 @@ public class GameController : MonoBehaviour
         // time delay between player deaths
         if (playerIsDead)
         {
-            _telekensisControl.SetActive(false);
+            _telekinesisControl.SetActive(false);
             if (lives <= -1)
             {
                 initiatingRestart = true;
@@ -141,14 +192,14 @@ public class GameController : MonoBehaviour
             }
             else
             {
+                _telekinesisControl.SetActive(true);
                 _deathTimer = timeBetweenDeaths;
                 playerIsDead = false;
                 initiatingRestart = false;
             }
         }
         else
-        {
-            _telekensisControl.SetActive(true);
+        {          
             _deathTimer = timeBetweenDeaths;
             movedFromSpawnPosition = false;
             initiatingRestart = false;
@@ -163,18 +214,48 @@ public class GameController : MonoBehaviour
     void HandleOnPlayerDeath()
     {
         lives--;
-        //Debug.Log ("Lives: " + lives);
         playerIsDead = true;
-        //playerSpawnPosition = new Vector3(0, spawnYPosition, playerZPosition);
+
         var screenCenterToWorld =
             Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
-        //Debug.Log(screenCenterToWorld);
+
         playerSpawnPosition = new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition);
-        //_player.transform.position = new Vector3 (0, spawnYPosition, _playerZPosition);
+
     }
 
     void HandleOnPlayerPowerDeplete(float amount)
     {
         powerMeter -= amount;
+    }
+
+    private void HandleOnButtonDown(string buttonName)
+    {
+        if (!buttonName.Equals("MenuButton")) return;
+
+        if (!isPaused)
+        {
+            isPaused = true;
+            if (OnGamePause != null)
+            {        
+                OnGamePause();
+
+            }
+        }
+        else
+        {
+            _initiatingResume = true;
+        }
+    }
+
+    void HandleOnGamePause()
+    {
+        _player.GetComponent<PlayerMovement>().enabled = false;
+        _telekinesisControl.SetActive(false);
+    }
+
+    void HandleOnGameResume()
+    {
+        _player.GetComponent<PlayerMovement>().enabled = true;
+        _telekinesisControl.SetActive(true);
     }
 }
