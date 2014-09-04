@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 
+[RequireComponent(typeof(AudioSource))]
 public class TelekinesisController : MonoBehaviour
 {
     private Vector3 _pointerReference;
@@ -57,6 +58,7 @@ public class TelekinesisController : MonoBehaviour
         EasyTouch.On_LongTapStart += HandleLongTapStart;
         EasyTouch.On_LongTapEnd += HandleLongTapEnd;
         PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
+        On_PlayerPowersStart += HandleOnPowersStart;
     }
 
     void OnDisable()
@@ -80,6 +82,7 @@ public class TelekinesisController : MonoBehaviour
         EasyTouch.On_LongTapStart -= HandleLongTapStart;
         EasyTouch.On_LongTapEnd -= HandleLongTapEnd;
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
+        On_PlayerPowersStart -= HandleOnPowersStart;
     }
 
     void Update()
@@ -290,6 +293,11 @@ public class TelekinesisController : MonoBehaviour
             Destroy(_hazzardClone.gameObject);
             _hazzardClone = null;
         }
+
+        if (audio.clip != null && audio.isPlaying)
+        {
+            audio.Stop();
+        }
     }
 
     private void ActivatePlatform(Gesture gesture)
@@ -336,6 +344,15 @@ public class TelekinesisController : MonoBehaviour
                     On_PlayerPowersStart();
                 }
             }
+        }
+    }
+
+    void HandleOnPowersStart()
+    {
+        if (audio.clip != null && !audio.isPlaying)
+        {
+            audio.Play();
+            //audio.volume = Mathf.Lerp(0, 0.6f, .5f);
         }
     }
 }

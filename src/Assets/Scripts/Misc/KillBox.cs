@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(AudioSource))]
 public class KillBox : MonoBehaviour
 {
     //public static KillBox Instance { get; private set; }
     public float cameraPositionBuffer = 8.0f;
+
+    public AudioClip deathSound;
 
     public delegate void PlayerDeath();
     public static event PlayerDeath On_PlayerDeath;
@@ -55,6 +58,10 @@ public class KillBox : MonoBehaviour
         if (collider.name == "Player")
         {
             On_PlayerDeath();
+            if (deathSound != null && deathSound.isReadyToPlay)
+            {
+                audio.PlayOneShot(deathSound);   
+            }
         }
 
         if (collider.tag == "Hazzard")
