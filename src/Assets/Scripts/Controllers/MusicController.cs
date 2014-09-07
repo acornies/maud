@@ -51,8 +51,8 @@ public class MusicController : MonoBehaviour
 
         forestMusicSlow = _allSongs["Jumpergame90bpm_280714"];
         forestMusicFast = _allSongs["Jumpergame_280714"];
-        cloudMusicSlow = _allSongs["Cloudlevel121Bpm_220814"];
-        cloudMusicFast = _allSongs["Cloudlevel141Bpm_220814"];
+        cloudMusicSlow = _allSongs["Cloudlevel121Bpm_280814"];
+        cloudMusicFast = _allSongs["Cloudlevel141Bpm_280814"];
     }
 
     // Use this for initialization
