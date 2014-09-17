@@ -82,6 +82,10 @@ public class MusicController : MonoBehaviour
         {
             MusicTransition(current, next);
         }
+		else if ( !current.isPlaying && !next.isPlaying ) {
+			Debug.Log ("It was silent.");
+			MusicTransition(current, next);
+		}
     }
 
     static void MusicTransition(AudioSource currentSong, AudioSource nextSong)
