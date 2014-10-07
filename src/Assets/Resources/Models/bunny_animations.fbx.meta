@@ -273,7 +273,7 @@ ModelImporter:
       name: Jump1_Up
       takeName: Take 001
       firstFrame: 34
-      lastFrame: 40
+      lastFrame: 37
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -356,7 +356,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Jump1_Down
       takeName: Take 001
-      firstFrame: 41
+      firstFrame: 38
       lastFrame: 47
       wrapMode: 0
       orientationOffsetY: 0
@@ -1203,7 +1203,7 @@ ModelImporter:
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 0
+    optimizeMeshForGPU: 1
     weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
@@ -1211,8 +1211,8 @@ ModelImporter:
     secondaryUVPackMargin: 4
   tangentSpace:
     normalSmoothAngle: 60
-    splitTangentsAcrossUV: 1
-    normalImportMode: 1
+    splitTangentsAcrossUV: 0
+    normalImportMode: 0
     tangentImportMode: 1
   importAnimation: 1
   copyAvatar: 0

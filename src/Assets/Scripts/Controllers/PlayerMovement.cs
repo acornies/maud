@@ -137,6 +137,8 @@ public class PlayerMovement : MonoBehaviour
         rigidbody.useGravity = !GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart;
         rigidbody.isKinematic = GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart;
 
+        HandleAnimations();
+
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart) return;
 
         HandleStickyPhysics();
@@ -318,6 +320,16 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void HandleAnimations()
+    {
+        _animator.SetFloat("speed", Mathf.Abs(moveDirection));
+        _animator.SetFloat("vSpeed", rigidbody.velocity.y);
+        _animator.SetBool("isGrounded", isGrounded);
+        _animator.SetBool("isHighJump", _isHighJumping);
+        _animator.SetBool("isDead", GameController.Instance.playerIsDead);
+        _animator.SetBool("isUsingPowers", isUsingPowers);
+    }
+
     private void Move()
     {
         if (GameController.Instance.useAcceleration)
@@ -331,13 +343,6 @@ public class PlayerMovement : MonoBehaviour
         {
             rigidbody.velocity = ApplyVelocity();
         }
-
-        _animator.SetFloat("speed", Mathf.Abs(moveDirection));
-        //Debug.Log("vSpeed is: " + rigidbody.velocity.y);
-        _animator.SetFloat("vSpeed", rigidbody.velocity.y);
-        _animator.SetBool("isGrounded", this.isGrounded);
-        _animator.SetBool("isHighJump", _isHighJumping);
-        _animator.SetBool("isDead", GameController.Instance.playerIsDead);
     }
 
     private Vector2 ApplyVelocity()
@@ -361,6 +366,8 @@ public class PlayerMovement : MonoBehaviour
     {
         this.facingRight = !facingRight;
         transform.Rotate(Vector3.up, 180.0f, Space.World);
+        //Vector3 targetAngles = transform.eulerAngles + 180f * Vector3.up; // what the new angles should be
+        //transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, targetAngles, 25f * Time.deltaTime); // lerp to new angles
     }
 
     public void Jump(Gesture gesture, float extraForce = 0)
