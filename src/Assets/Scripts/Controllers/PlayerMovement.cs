@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _isGhostMoving;
     private float _highJumpTimer;
     private int _consectutiveJumpCounter;
+    private Animator _animator;
 
     //public bool isDead;
     public bool canMove;
@@ -95,6 +96,7 @@ public class PlayerMovement : MonoBehaviour
         _groundCheck = GameObject.Find("GroundCheck").transform;
         _heightCheck = GameObject.Find("HeightCheck").transform;
         _playerModel = transform.FindChild("PlayerModel").gameObject;
+        _animator = _playerModel.GetComponent<Animator>();
     }
 
     void Start()
@@ -109,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
         {
             //Debug.Log("isGhostMoving: " + _isGhostMoving + " ghostTargetPosition: " + _ghostTouchTargetPosition);
 
-            _playerModel.renderer.material.color = new Color(1, 1, 1, 0.5f);
+            //_playerModel.renderer.material.color = new Color(1, 1, 1, 0.5f);
             if (_isGhostMoving && _ghostTouchTargetPosition != Vector3.zero)
             {
                 //Debug.Log("Move ghost!");
@@ -125,7 +127,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             //Debug.Log(_playerModel.renderer.material.color);
-            _playerModel.renderer.material.color = new Color(1, 1, 1, 1);
+            //_playerModel.renderer.material.color = new Color(1, 1, 1, 1);
         }
     }
 
@@ -268,9 +270,9 @@ public class PlayerMovement : MonoBehaviour
     void HandleStickyPhysics()
     {
         // draw ray near the head of the player
-        Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 0.8f, transform.position.z);
+        Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 1.2f, transform.position.z);
         Vector3 midRay = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
-        Vector3 footRay = new Vector3(transform.position.x, transform.position.y + 0.15f, transform.position.z);
+        Vector3 footRay = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         Debug.DrawRay(midRay, Vector3.right, Color.white);
         Debug.DrawRay(midRay, Vector3.left, Color.white);
         Debug.DrawRay(midRay, new Vector3(1, 0, 1), Color.green);
@@ -329,6 +331,13 @@ public class PlayerMovement : MonoBehaviour
         {
             rigidbody.velocity = ApplyVelocity();
         }
+
+        _animator.SetFloat("speed", Mathf.Abs(moveDirection));
+        //Debug.Log("vSpeed is: " + rigidbody.velocity.y);
+        _animator.SetFloat("vSpeed", rigidbody.velocity.y);
+        _animator.SetBool("isGrounded", this.isGrounded);
+        _animator.SetBool("isHighJump", _isHighJumping);
+        _animator.SetBool("isDead", GameController.Instance.playerIsDead);
     }
 
     private Vector2 ApplyVelocity()
