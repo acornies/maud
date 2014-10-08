@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _isUsingPowers;
     private bool _facingRight = true;
     private bool _isGrounded;
+    private bool _isFacingCamera;
 
     public bool isHittingHead;
     public float maxSpeed = 6.0f;
@@ -64,11 +65,21 @@ public class PlayerMovement : MonoBehaviour
     void HandlePlayerPowersEnd()
     {
         _isUsingPowers = false;
+        if (!_isFacingCamera) return;
+        var degrees = (_facingRight) ? -90f : 90f;
+        transform.Rotate(Vector3.up, degrees, Space.World);
+        Debug.Log("Powers end, turn away from camera: " + degrees);
+        _isFacingCamera = false;
     }
 
     void HandlePlayerPowersStart()
     {
         _isUsingPowers = true;
+        if (_isFacingCamera) return;
+        var degrees = (_facingRight) ? 90f : -90f;
+        transform.Rotate(Vector3.up, degrees, Space.World);
+        Debug.Log("Powers start, turn toward from camera: " + degrees);
+        _isFacingCamera = true;
     }
 
     void OnDisable()
@@ -192,11 +203,11 @@ public class PlayerMovement : MonoBehaviour
 
         if (_isUsingPowers) return;
         // flip player on the y axis
-        if (this._moveDirection > 0.0f && !this._facingRight)
+        if (_moveDirection > 0.0f && !this._facingRight)
         {
             Flip();
         }
-        else if (this._moveDirection < 0.0f && this._facingRight)
+        else if (_moveDirection < 0.0f && this._facingRight)
         {
             Flip();
         }
@@ -337,6 +348,7 @@ public class PlayerMovement : MonoBehaviour
         _animator.SetBool("isHighJump", _isHighJumping);
         _animator.SetBool("isDead", GameController.Instance.playerIsDead);
         _animator.SetBool("isUsingPowers", _isUsingPowers);
+        //_animator.SetBool("isHittingHead", isHittingHead);
     }
 
     private void Move()
