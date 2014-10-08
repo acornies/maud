@@ -20,9 +20,9 @@ public class PlayerMovement : MonoBehaviour
     private bool _canMove;
     private bool _isUsingPowers;
     private bool _facingRight = true;
-    private bool _isGrounded;
     private bool _isFacingCamera;
 
+    public bool isGrounded;
     public bool isHittingHead;
     public float maxSpeed = 6.0f;
     public float ghostSpeed = 1f;
@@ -160,9 +160,9 @@ public class PlayerMovement : MonoBehaviour
         var groundColliders = Physics.OverlapSphere(_groundCheck.position, groundedRadius, whatIsGround);
         if (groundColliders != null)
         {
-            _isGrounded = groundColliders.Length > 0 ? true : false;
+            isGrounded = groundColliders.Length > 0 ? true : false;
             var groundCollider = groundColliders.FirstOrDefault();
-            if (groundCollider != null && _isGrounded)
+            if (groundCollider != null && isGrounded)
             {
                 //canMove = true;
                 _additionalJumpCount = 0;
@@ -196,7 +196,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (!_isGrounded && On_PlayerAirborne != null)
+        if (!isGrounded && On_PlayerAirborne != null)
         {
             On_PlayerAirborne();
         }
@@ -313,7 +313,7 @@ public class PlayerMovement : MonoBehaviour
              || Physics.Raycast(midRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(1, 0, 1), out hit, stickyBuffer))
-            && (hit.transform.gameObject.layer == 8 && !_isGrounded))
+            && (hit.transform.gameObject.layer == 8 && !isGrounded))
         {
 
             _canMove = !(_moveDirection > 0);
@@ -327,7 +327,7 @@ public class PlayerMovement : MonoBehaviour
              || Physics.Raycast(midRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(-1, 0, 1), out hit, stickyBuffer))
-            && (hit.transform.gameObject.layer == 8 && !_isGrounded))
+            && (hit.transform.gameObject.layer == 8 && !isGrounded))
         {
 
             _canMove = !(_moveDirection < 0);
@@ -344,7 +344,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _animator.SetFloat("speed", Mathf.Abs(_moveDirection));
         _animator.SetFloat("vSpeed", rigidbody.velocity.y);
-        _animator.SetBool("isGrounded", _isGrounded);
+        _animator.SetBool("isGrounded", isGrounded);
         _animator.SetBool("isHighJump", _isHighJumping);
         _animator.SetBool("isDead", GameController.Instance.playerIsDead);
         _animator.SetBool("isUsingPowers", _isUsingPowers);
@@ -395,7 +395,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!_canMove) return;
         if (gesture.touchCount > 1) return; // prevents dual tap super jump
-        if (this._isGrounded)
+        if (this.isGrounded)
         {
             var theForce = (jumpForce + extraForce);
             rigidbody.AddForceAtPosition(new Vector3(0, theForce, 0), transform.position);
@@ -405,7 +405,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // conditions for mid-air jump
-        if (_isGrounded || _additionalJumpCount >= additionalJumps || _isHighJumping || forcePushed) return;
+        if (isGrounded || _additionalJumpCount >= additionalJumps || _isHighJumping || forcePushed) return;
         rigidbody.AddForceAtPosition(new Vector3(0, additionalJumpForce, 0), transform.position);
         _additionalJumpCount++;
         _consectutiveJumpCounter = 0; // reset consecutive jump counter

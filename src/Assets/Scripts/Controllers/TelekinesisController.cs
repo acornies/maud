@@ -19,6 +19,7 @@ public class TelekinesisController : MonoBehaviour
     private Transform _hazzard;
     private Transform _hazzardClone;
     private float _rotationTimer;
+    private PlayerMovement _player;
 
     public float rotationSensitivity = 0.5f;
     public float cloneScaleMultiplier = 1.5f;
@@ -83,6 +84,11 @@ public class TelekinesisController : MonoBehaviour
         EasyTouch.On_LongTapEnd -= HandleLongTapEnd;
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
         On_PlayerPowersStart -= HandleOnPowersStart;
+    }
+
+    void Awake()
+    {
+        _player = GameObject.Find("Player").transform.GetComponent<PlayerMovement>();
     }
 
     void Update()
@@ -302,6 +308,8 @@ public class TelekinesisController : MonoBehaviour
 
     private void ActivatePlatform(Gesture gesture)
     {
+        if (!_player.isGrounded) return;
+        
         _pointerReference = gesture.position;
         RaycastHit hitInfo = new RaycastHit();
         bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(gesture.position), out hitInfo);
