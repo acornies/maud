@@ -5,6 +5,7 @@ using System.Linq;
 [RequireComponent(typeof(AudioSource))]
 public class PlayerMovement : MonoBehaviour
 {
+    private float _moveDirection;
     private Transform _groundCheck;
     private Transform _heightCheck;
     private int _additionalJumpCount;
@@ -16,18 +17,15 @@ public class PlayerMovement : MonoBehaviour
     private float _highJumpTimer;
     private int _consectutiveJumpCounter;
     private Animator _animator;
+    private bool _canMove;
+    private bool _isUsingPowers;
+    private bool _facingRight = true;
+    private bool _isGrounded;
 
-    //public bool isDead;
-    public bool canMove;
-    public bool isUsingPowers;
+    public bool isHittingHead;
     public float maxSpeed = 6.0f;
     public float ghostSpeed = 1f;
-    public bool facingRight = true;
-    public float moveDirection;
     public float jumpForce = 900.0f;
-    //public float longJumpForce = 300.0f;
-    public bool isGrounded;
-    public bool isHittingHead;
     public bool forcePushed;
     public float forcePushedInterval = 0.5f;
     public float stickyBuffer = 0.4f;
@@ -36,6 +34,8 @@ public class PlayerMovement : MonoBehaviour
     public float headHitRadius = 0.1f;
     public int additionalJumps = 1;
     public float additionalJumpForce = 500.0f;
+    public int jumpsforHighJump = 3;
+    public float highJumpForce = 200f;
     public float highJumpTimeout = 0.5f;
 
     public AudioClip jumpSound;
@@ -63,12 +63,12 @@ public class PlayerMovement : MonoBehaviour
 
     void HandlePlayerPowersEnd()
     {
-        isUsingPowers = false;
+        _isUsingPowers = false;
     }
 
     void HandlePlayerPowersStart()
     {
-        isUsingPowers = true;
+        _isUsingPowers = true;
     }
 
     void OnDisable()
@@ -101,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        
+
     }
 
     void Update()
@@ -149,16 +149,23 @@ public class PlayerMovement : MonoBehaviour
         var groundColliders = Physics.OverlapSphere(_groundCheck.position, groundedRadius, whatIsGround);
         if (groundColliders != null)
         {
-            isGrounded = groundColliders.Length > 0 ? true : false;
+            _isGrounded = groundColliders.Length > 0 ? true : false;
             var groundCollider = groundColliders.FirstOrDefault();
-            if (groundCollider != null && isGrounded)
+            if (groundCollider != null && _isGrounded)
             {
                 //canMove = true;
                 _additionalJumpCount = 0;
                 forcePushed = false;
+                //_isHighJumping = false;
                 On_PlatformReached(groundCollider.transform, transform); // trigger event for finding current platform
                 _highJumpTimer -= Time.deltaTime;
-                if (_consectutiveJumpCounter >= 2)
+                if (_consectutiveJumpCounter >= jumpsforHighJump)
+                {
+                    _consectutiveJumpCounter = 0;
+                    _highJumpTimer = highJumpTimeout;
+                }
+
+                if (_highJumpTimer <= 0)
                 {
                     _consectutiveJumpCounter = 0;
                 }
@@ -178,18 +185,18 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (!isGrounded && On_PlayerAirborne != null)
+        if (!_isGrounded && On_PlayerAirborne != null)
         {
             On_PlayerAirborne();
         }
 
-        if (isUsingPowers) return;
+        if (_isUsingPowers) return;
         // flip player on the y axis
-        if (this.moveDirection > 0.0f && !this.facingRight)
+        if (this._moveDirection > 0.0f && !this._facingRight)
         {
             Flip();
         }
-        else if (this.moveDirection < 0.0f && this.facingRight)
+        else if (this._moveDirection < 0.0f && this._facingRight)
         {
             Flip();
         }
@@ -219,9 +226,10 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            if (_highJumpTimer > 0 && _consectutiveJumpCounter == 1)
+            if (_highJumpTimer > 0 && _consectutiveJumpCounter == (jumpsforHighJump - 1))
             {
-                Jump(gesture, additionalJumpForce);
+                Jump(gesture, highJumpForce);
+                _isHighJumping = true;
             }
             else
             {
@@ -235,10 +243,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!GameController.Instance.useAcceleration)
         {
-            moveDirection = 0;
+            _moveDirection = 0;
         }
 
-        if (gesture.swipe == EasyTouch.SwipeType.Up)
+        Debug.Log("Swipe length: " + gesture.actionTime);
+        if (gesture.swipe == EasyTouch.SwipeType.Up || gesture.actionTime < 0.1f)
         {
             Jump(gesture);
         }
@@ -258,7 +267,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 var touchDir = (gesture.position.x - gesture.startPosition.x);
                 float touchDirMultiplied = touchDir * 0.01f;
-                moveDirection = Mathf.Clamp(touchDirMultiplied, -1f, 1f);
+                _moveDirection = Mathf.Clamp(touchDirMultiplied, -1f, 1f);
             }
         }
 
@@ -266,7 +275,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleDoubleTap(Gesture gesture)
     {
-        //Jump(gesture);
+        Jump(gesture);
     }
 
     void HandleStickyPhysics()
@@ -293,10 +302,10 @@ public class PlayerMovement : MonoBehaviour
              || Physics.Raycast(midRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(1, 0, 1), out hit, stickyBuffer))
-            && (hit.transform.gameObject.layer == 8 && !isGrounded))
+            && (hit.transform.gameObject.layer == 8 && !_isGrounded))
         {
 
-            canMove = !(moveDirection > 0);
+            _canMove = !(_moveDirection > 0);
             //Debug.Log("Hit with rays on right, moveDirection: " + moveDirection + " canMove: " + canMove);
         }
 
@@ -307,27 +316,27 @@ public class PlayerMovement : MonoBehaviour
              || Physics.Raycast(midRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(-1, 0, 1), out hit, stickyBuffer))
-            && (hit.transform.gameObject.layer == 8 && !isGrounded))
+            && (hit.transform.gameObject.layer == 8 && !_isGrounded))
         {
 
-            canMove = !(moveDirection < 0);
+            _canMove = !(_moveDirection < 0);
             //Debug.Log("Hit with rays on left, moveDirection: " + moveDirection + " canMove: " + canMove);
         }
 
         else
         {
-            canMove = true;
+            _canMove = true;
         }
     }
 
     private void HandleAnimations()
     {
-        _animator.SetFloat("speed", Mathf.Abs(moveDirection));
+        _animator.SetFloat("speed", Mathf.Abs(_moveDirection));
         _animator.SetFloat("vSpeed", rigidbody.velocity.y);
-        _animator.SetBool("isGrounded", isGrounded);
+        _animator.SetBool("isGrounded", _isGrounded);
         _animator.SetBool("isHighJump", _isHighJumping);
         _animator.SetBool("isDead", GameController.Instance.playerIsDead);
-        _animator.SetBool("isUsingPowers", isUsingPowers);
+        _animator.SetBool("isUsingPowers", _isUsingPowers);
     }
 
     private void Move()
@@ -335,7 +344,7 @@ public class PlayerMovement : MonoBehaviour
         if (GameController.Instance.useAcceleration)
         {
             //Debug.Log(Input.acceleration.x);
-            moveDirection = Input.acceleration.x;
+            _moveDirection = Input.acceleration.x;
         }
 
         // move player
@@ -347,16 +356,16 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 ApplyVelocity()
     {
-        if (canMove && !isUsingPowers && !GameController.Instance.useAcceleration)
+        if (_canMove && !_isUsingPowers && !GameController.Instance.useAcceleration)
         {
-            return new Vector2(this.moveDirection * maxSpeed, rigidbody.velocity.y);
+            return new Vector2(this._moveDirection * maxSpeed, rigidbody.velocity.y);
         }
 
-        if (canMove && !isUsingPowers && GameController.Instance.useAcceleration)
+        if (_canMove && !_isUsingPowers && GameController.Instance.useAcceleration)
         {
             //var accelerometerMultiplier = 1.5f;
             float newSpeed = (maxSpeed * accelerometerMultiplier);
-            return new Vector2(this.moveDirection * newSpeed, rigidbody.velocity.y);
+            return new Vector2(this._moveDirection * newSpeed, rigidbody.velocity.y);
         }
 
         return new Vector2(0, rigidbody.velocity.y);
@@ -364,7 +373,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Flip()
     {
-        this.facingRight = !facingRight;
+        this._facingRight = !_facingRight;
         transform.Rotate(Vector3.up, 180.0f, Space.World);
         //Vector3 targetAngles = transform.eulerAngles + 180f * Vector3.up; // what the new angles should be
         //transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, targetAngles, 25f * Time.deltaTime); // lerp to new angles
@@ -372,9 +381,9 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump(Gesture gesture, float extraForce = 0)
     {
-        if (!canMove) return;
+        if (!_canMove) return;
         if (gesture.touchCount > 1) return; // prevents dual tap super jump
-        if (this.isGrounded)
+        if (this._isGrounded)
         {
             var theForce = (jumpForce + extraForce);
             rigidbody.AddForceAtPosition(new Vector3(0, theForce, 0), transform.position);
@@ -384,9 +393,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // conditions for mid-air jump
-        if (isGrounded || _additionalJumpCount >= additionalJumps || _isHighJumping || forcePushed) return;
-        rigidbody.AddForce(new Vector3(0, additionalJumpForce, 0));
+        if (_isGrounded || _additionalJumpCount >= additionalJumps || _isHighJumping || forcePushed) return;
+        rigidbody.AddForceAtPosition(new Vector3(0, additionalJumpForce, 0), transform.position);
         _additionalJumpCount++;
+        _consectutiveJumpCounter = 0; // reset consecutive jump counter
+        // TODO: add mid-air jump sound
     }
 
     private void PlayJumpSound(float force = 0)
