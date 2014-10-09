@@ -25,6 +25,7 @@ public class GameController : MonoBehaviour
     public bool initiatingRestart;
     public bool useAcceleration;
     public float powerAccumulationRate = 0.25f;
+    public float resurrectionSpeed = 15f;
 
     public static GameController Instance { get; private set; }
 
@@ -181,7 +182,7 @@ public class GameController : MonoBehaviour
 
             if (!initiatingRestart)
             {
-                _player.transform.position = (movedFromSpawnPosition) ? _player.transform.position : playerSpawnPosition;
+                _player.transform.position = (movedFromSpawnPosition) ? _player.transform.position : Vector3.Lerp(_player.transform.position, playerSpawnPosition, resurrectionSpeed * Time.deltaTime);
             }
 
             _deathTimer -= Time.deltaTime;

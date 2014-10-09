@@ -145,7 +145,8 @@ public class PlayerMovement : MonoBehaviour
     // Use this for physics updates
     void FixedUpdate()
     {
-        rigidbody.useGravity = !GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart;
+        rigidbody.useGravity = SetGravity();
+        //rigidbody.useGravity = !GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart;
         rigidbody.isKinematic = GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart;
 
         HandleAnimations();
@@ -211,6 +212,19 @@ public class PlayerMovement : MonoBehaviour
         {
             Flip();
         }
+    }
+
+    private bool SetGravity()
+    {
+        if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
+        {
+            return false;
+        }
+        if (GameController.Instance.playerIsDead && GameController.Instance.initiatingRestart)
+        {
+            return true;
+        }
+        return true;
     }
 
     void HandleForcePushed()
@@ -414,7 +428,7 @@ public class PlayerMovement : MonoBehaviour
 
 	private float AirJumpByVerticalVelocity(float rigidbodyVelocityY)
 	{
-		Debug.Log (rigidbodyVelocityY);
+		//Debug.Log (rigidbodyVelocityY);
 		if (rigidbodyVelocityY < 5f && rigidbodyVelocityY > 0f)
 		{
 			return (additionalJumpForce * 1.5f);
