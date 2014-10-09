@@ -123,7 +123,7 @@ public class TelekinesisController : MonoBehaviour
     {
         if (GameController.Instance.powerMeter < stabilizeCost) return;
 
-        ActivatePlatform(gesture);
+        ActivateObject(gesture);
         if (_platform != null)
         {
             On_TelekinesisStabilize(_platform);
@@ -157,7 +157,7 @@ public class TelekinesisController : MonoBehaviour
     {
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
 
-        ActivatePlatform(gesture);
+        ActivateObject(gesture);
         
         if (_platform != null)
         {
@@ -211,6 +211,7 @@ public class TelekinesisController : MonoBehaviour
     void On_Swipe(Gesture gesture)
     {
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
+
         if (GameController.Instance.powerMeter <= 0) return;
 
         if (_platformClone != null && _platform != null)
@@ -306,7 +307,7 @@ public class TelekinesisController : MonoBehaviour
         }
     }
 
-    private void ActivatePlatform(Gesture gesture)
+    private void ActivateObject(Gesture gesture)
     {
         if (!_player.isGrounded) return;
         

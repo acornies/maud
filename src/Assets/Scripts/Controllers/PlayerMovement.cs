@@ -257,8 +257,7 @@ public class PlayerMovement : MonoBehaviour
             _moveDirection = 0;
         }
 
-        Debug.Log("Swipe length: " + gesture.actionTime);
-        if (gesture.swipe == EasyTouch.SwipeType.Up || gesture.actionTime < 0.1f)
+        if (gesture.actionTime < 0.1f)
         {
             Jump(gesture);
         }
@@ -406,11 +405,41 @@ public class PlayerMovement : MonoBehaviour
 
         // conditions for mid-air jump
         if (isGrounded || _additionalJumpCount >= additionalJumps || _isHighJumping || forcePushed) return;
-        rigidbody.AddForceAtPosition(new Vector3(0, additionalJumpForce, 0), transform.position);
+        
+		rigidbody.AddForceAtPosition(new Vector3(0, AirJumpByVerticalVelocity(rigidbody.velocity.y), 0), transform.position);
         _additionalJumpCount++;
         _consectutiveJumpCounter = 0; // reset consecutive jump counter
         // TODO: add mid-air jump sound
     }
+
+	private float AirJumpByVerticalVelocity(float rigidbodyVelocityY)
+	{
+		Debug.Log (rigidbodyVelocityY);
+		if (rigidbodyVelocityY < 5f && rigidbodyVelocityY > 0f)
+		{
+			return (additionalJumpForce * 1.5f);
+		}
+		else if (rigidbodyVelocityY < 0f && rigidbodyVelocityY > -5f)
+		{
+			return (additionalJumpForce * 2);
+		}
+		else if (rigidbodyVelocityY < -5f && rigidbodyVelocityY > -10f)
+		{
+			return (additionalJumpForce * 3);
+		}
+		else if (rigidbodyVelocityY < -10f && rigidbodyVelocityY > -20f)
+		{
+			return (additionalJumpForce * 4);
+		}
+		else if (rigidbodyVelocityY < -20)
+		{
+			return (additionalJumpForce * 5);
+		}
+		else
+		{
+			return additionalJumpForce;
+		}
+	}
 
     private void PlayJumpSound(float force = 0)
     {
