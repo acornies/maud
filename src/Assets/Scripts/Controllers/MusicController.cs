@@ -71,15 +71,15 @@ public class MusicController : MonoBehaviour
         NextSong(currentPlatform, cloudMusicSlowLimit, cloudMusicSlow, cloudMusicFast);
     }
 
-    static void NextSong(int currentPlatform, int limit, AudioSource current, AudioSource next)
+    private static void NextSong(int currentPlatform, int limit, AudioSource current, AudioSource next)
     {
-        //Debug.Log("Current song is");
-        if (currentPlatform < limit || !current.isPlaying) return;
-        current.loop = false;
-        Debug.Log("Try to play " + next.clip.name);
-        Debug.Log("current: " + current.time + " clip length: " + current.clip.length);
-        if (Mathf.Approximately(current.time, current.clip.length))
+        if (currentPlatform > limit && current.isPlaying)
         {
+            current.loop = false;
+        }
+        else if (!current.isPlaying && !current.loop)
+        {
+            current.loop = true;
             MusicTransition(current, next);
         }
     }
