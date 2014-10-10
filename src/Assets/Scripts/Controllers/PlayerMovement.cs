@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _isUsingPowers;
     private bool _facingRight = true;
     private bool _isFacingCamera;
+    private Collider _playerCollider;
 
     public bool isGrounded;
     public bool isHittingHead;
@@ -108,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
         _heightCheck = GameObject.Find("HeightCheck").transform;
         _playerModel = transform.FindChild("PlayerModel").gameObject;
         _animator = _playerModel.GetComponent<Animator>();
+        _playerCollider = transform.GetComponent<Collider>();
     }
 
     void Start()
@@ -120,8 +122,7 @@ public class PlayerMovement : MonoBehaviour
         //isDead = GameController.Instance.playerIsDead;
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
-            //Debug.Log("isGhostMoving: " + _isGhostMoving + " ghostTargetPosition: " + _ghostTouchTargetPosition);
-
+            _playerCollider.enabled = false;
             //_playerModel.renderer.material.color = new Color(1, 1, 1, 0.5f);
             if (_isGhostMoving && _ghostTouchTargetPosition != Vector3.zero)
             {
@@ -137,7 +138,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            //Debug.Log(_playerModel.renderer.material.color);
+            _playerCollider.enabled = true;
             //_playerModel.renderer.material.color = new Color(1, 1, 1, 1);
         }
     }
@@ -192,8 +193,14 @@ public class PlayerMovement : MonoBehaviour
             var heightCollider = heightColliders.FirstOrDefault();
             if (heightCollider != null && isHittingHead)
             {
-                //On_HitHead(heightCollider.transform);
-                // TODO: add squash animation
+                if (heightColliders.Any(x => x.tag == "Hazzard"))
+                {
+                    _animator.SetBool("isHittingHead", true);
+                }
+            }
+            else
+            {
+                _animator.SetBool("isHittingHead", false);
             }
         }
 
@@ -406,7 +413,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump(Gesture gesture, float extraForce = 0)
     {
-        if (!_canMove) return;
         if (gesture.touchCount > 1) return; // prevents dual tap super jump
         if (this.isGrounded)
         {
@@ -428,14 +434,13 @@ public class PlayerMovement : MonoBehaviour
 
 	private float AirJumpByVerticalVelocity(float rigidbodyVelocityY)
 	{
-		//Debug.Log (rigidbodyVelocityY);
 		if (rigidbodyVelocityY < 5f && rigidbodyVelocityY > 0f)
 		{
-			return (additionalJumpForce * 1.5f);
+			return (additionalJumpForce * 1.7f);
 		}
 		else if (rigidbodyVelocityY < 0f && rigidbodyVelocityY > -5f)
 		{
-			return (additionalJumpForce * 2);
+			return (additionalJumpForce * 2f);
 		}
 		else if (rigidbodyVelocityY < -5f && rigidbodyVelocityY > -10f)
 		{
