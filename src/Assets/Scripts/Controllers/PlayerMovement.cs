@@ -69,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
         if (!_isFacingCamera) return;
         var degrees = (_facingRight) ? -90f : 90f;
         transform.Rotate(Vector3.up, degrees, Space.World);
-        Debug.Log("Powers end, turn away from camera: " + degrees);
+        //Debug.Log("Powers end, turn away from camera: " + degrees);
         _isFacingCamera = false;
     }
 
@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
         if (_isFacingCamera) return;
         var degrees = (_facingRight) ? 90f : -90f;
         transform.Rotate(Vector3.up, degrees, Space.World);
-        Debug.Log("Powers start, turn toward from camera: " + degrees);
+        //Debug.Log("Powers start, turn toward from camera: " + degrees);
         _isFacingCamera = true;
     }
 
@@ -211,11 +211,11 @@ public class PlayerMovement : MonoBehaviour
 
         if (_isUsingPowers) return;
         // flip player on the y axis
-        if (_moveDirection > 0.0f && !this._facingRight)
+        if (_moveDirection > 0.1f && !this._facingRight)
         {
             Flip();
         }
-        else if (_moveDirection < 0.0f && this._facingRight)
+        else if (_moveDirection < -0.1f && this._facingRight)
         {
             Flip();
         }
@@ -407,8 +407,6 @@ public class PlayerMovement : MonoBehaviour
     {
         this._facingRight = !_facingRight;
         transform.Rotate(Vector3.up, 180.0f, Space.World);
-        //Vector3 targetAngles = transform.eulerAngles + 180f * Vector3.up; // what the new angles should be
-        //transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, targetAngles, 25f * Time.deltaTime); // lerp to new angles
     }
 
     public void Jump(Gesture gesture, float extraForce = 0)
