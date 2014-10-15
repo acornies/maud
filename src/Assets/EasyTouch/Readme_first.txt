@@ -22,8 +22,3 @@ http://www.blitz3dfr.com/Doc/ET3
 
 If you like EasyTouch, don't forget a write a review on the asset store :-)
 
-A faire
-********
-- Bug sur le joystick qui bloque
-- Modifier le flag pour prendre en compte metro
-- Gestion du statut des cameras

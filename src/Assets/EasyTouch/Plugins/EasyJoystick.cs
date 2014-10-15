@@ -1574,7 +1574,7 @@ public class EasyJoystick : MonoBehaviour {
 		
 		if (!visible)
 			return;
-		
+
 		if ((!gesture.isHoverReservedArea && dynamicJoystick) || !dynamicJoystick){
 			
 			if (isActivated){

@@ -157,6 +157,7 @@ public class ObjectTouch : MonoBehaviour {
 		
 			Vector3 scale = transform.localScale ;
 			transform.localScale = new Vector3( scale.x - zoom, scale.y -zoom,1);
+			//transform.localScale = Vector3.Lerp(transform.localScale, new Vector3( scale.x - zoom, scale.y -zoom,1),Time.time);
 		}
 	}
 	

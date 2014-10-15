@@ -42,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
     public AudioClip jumpSound;
     public AudioClip highJumpSound;
+	public AudioClip midAirJumpSound;
 
     //public bool useAcceleration = false;
     public float accelerometerMultiplier = 1.5f;
@@ -368,7 +369,6 @@ public class PlayerMovement : MonoBehaviour
         _animator.SetBool("isHighJump", _isHighJumping);
         _animator.SetBool("isDead", GameController.Instance.playerIsDead);
         _animator.SetBool("isUsingPowers", _isUsingPowers);
-        //_animator.SetBool("isHittingHead", isHittingHead);
     }
 
     private void Move()
@@ -427,7 +427,10 @@ public class PlayerMovement : MonoBehaviour
 		rigidbody.AddForceAtPosition(new Vector3(0, AirJumpByVerticalVelocity(rigidbody.velocity.y), 0), transform.position);
         _additionalJumpCount++;
         _consectutiveJumpCounter = 0; // reset consecutive jump counter
-        // TODO: add mid-air jump sound
+		if (midAirJumpSound != null  && midAirJumpSound.isReadyToPlay)
+		{
+			audio.PlayOneShot(midAirJumpSound, 1);
+		}
     }
 
 	private float AirJumpByVerticalVelocity(float rigidbodyVelocityY)

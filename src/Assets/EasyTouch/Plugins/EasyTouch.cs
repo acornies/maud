@@ -2,7 +2,25 @@
 // Please send feedback or bug reports to the.hedgehog.team@gmail.com
 
 /// <summary>
+/// TO DO:
+/// - Priority between two finger gesture
+/// 
 /// Release notes:
+/// EasyTouch V3.1.9 October 2014
+/// =================================
+/// 
+/// 	* Bugs fixed
+/// 	------------
+/// 	- Fix sticking dynamic joystick when you touch GUI panel with a second finger.
+/// 
+/// EasyTouch V3.1.8 August 2014
+/// =================================
+/// 
+/// 	* Bugs fixed
+/// 	------------
+/// 	- Fix bug on GetCurrentPickedObject that take startposition instead of the current position
+/// 
+/// 
 /// EasyTouch V3.1.7 June 2014
 /// =================================
 /// 
@@ -483,7 +501,7 @@ public class EasyTouch : MonoBehaviour {
 	private GestureType oldGesture= GestureType.None;
 	
 	private float startTimeAction;									// The time of onset of action.
-	private Finger[] fingers=new Finger[10];						// The informations of the touch for finger 1.
+	private Finger[] fingers=new Finger[100];						// The informations of the touch for finger 1.
 			
 	private GameObject pickObject2Finger;
 	private GameObject oldPickObject2Finger;
@@ -619,7 +637,7 @@ public class EasyTouch : MonoBehaviour {
 		
 	void UpdateTouches(bool realTouch, int touchCount){
 			
-		Finger[] tmpArray = new Finger[10]; 
+		Finger[] tmpArray = new Finger[100]; 
 		fingers.CopyTo( tmpArray,0);
 			
 		
@@ -671,7 +689,7 @@ public class EasyTouch : MonoBehaviour {
 	}
 	
 	void ResetTouches(){
-		for (int i=0;i<10;i++){
+		for (int i=0;i<100;i++){
 			fingers[i] = null;
 		}	
 	}	
@@ -837,11 +855,10 @@ public class EasyTouch : MonoBehaviour {
 			isStartHoverNGUI = IsTouchHoverNGui(touchIndex);
 
 		}
-		
-		
-		//if (message == EventName.On_Cancel || message == EventName.On_TouchUp){
-		//	isStartHoverNGUI = false;	
-		//}
+
+		if (message == EventName.On_Cancel || message == EventName.On_TouchUp){
+			isStartHoverNGUI = false;	
+		}
 		
 		if (!isStartHoverNGUI){
 			//Creating the structure with the required information
@@ -877,6 +894,8 @@ public class EasyTouch : MonoBehaviour {
 				RaiseEvent(message, gesture);
 			}
 		}
+
+		isStartHoverNGUI = false;
 		
 	}
 
@@ -998,7 +1017,47 @@ public class EasyTouch : MonoBehaviour {
 			if (move){
 						
 				float dot = Vector2.Dot(fingers[twoFinger0].deltaPosition.normalized, fingers[twoFinger1].deltaPosition.normalized);
-																																															
+					
+				// Drag
+				if (dot>0 ){
+					if (pickObject2Finger && !twoFingerDragStart){
+						// Send end message
+						if (complexCurrentGesture != GestureType.Tap){
+							CreateStateEnd2Fingers(complexCurrentGesture,startPosition2Finger,position,deltaPosition,timeSinceStartAction,false,fingerDistance);
+							startTimeAction = Time.realtimeSinceStartup;
+						}
+						//
+						CreateGesture2Finger(EventName.On_DragStart2Fingers,startPosition2Finger,position,deltaPosition,timeSinceStartAction, SwipeType.None,0,Vector2.zero,0,0,fingerDistance);	
+						twoFingerDragStart = true; 
+					}
+					else if (!pickObject2Finger && !twoFingerSwipeStart ) {
+						// Send end message
+						if (complexCurrentGesture!= GestureType.Tap){
+							CreateStateEnd2Fingers(complexCurrentGesture,startPosition2Finger,position,deltaPosition,timeSinceStartAction,false,fingerDistance);
+							startTimeAction = Time.realtimeSinceStartup;
+						}
+						//
+						
+						CreateGesture2Finger(EventName.On_SwipeStart2Fingers,startPosition2Finger,position,deltaPosition,timeSinceStartAction, SwipeType.None,0,Vector2.zero,0,0,fingerDistance);
+						twoFingerSwipeStart=true;
+					}
+				} 
+				else{
+					if (dot<0){
+						twoFingerDragStart=false; 
+						twoFingerSwipeStart=false;
+					}
+				}
+				
+				//
+				if (twoFingerDragStart){
+					CreateGesture2Finger(EventName.On_Drag2Fingers,startPosition2Finger,position,deltaPosition,timeSinceStartAction, GetSwipe(oldStartPosition2Finger,position),0,deltaPosition,0,0,fingerDistance);
+				}
+				
+				if (twoFingerSwipeStart){
+					CreateGesture2Finger(EventName.On_Swipe2Fingers,startPosition2Finger,position,deltaPosition,timeSinceStartAction, GetSwipe(oldStartPosition2Finger,position),0,deltaPosition,0,0,fingerDistance);
+				}
+
 				// Pinch
 				if (enablePinch && fingerDistance != oldFingerDistance ){
 					// Pinch
@@ -1039,7 +1098,7 @@ public class EasyTouch : MonoBehaviour {
 				// Twist
 				if (enableTwist){
 	
-					if (Mathf.Abs(TwistAngle())>minTwistAngle){
+						if (Mathf.Abs(TwistAngle())>0){
 					
 						// Send end message
 						if (complexCurrentGesture != GestureType.Twist){
@@ -1058,45 +1117,7 @@ public class EasyTouch : MonoBehaviour {
 					fingers[twoFinger1].oldPosition = fingers[twoFinger1].position;
 				}
 		
-				// Drag
-				if (dot>0 ){
-					if (pickObject2Finger && !twoFingerDragStart){
-						// Send end message
-						if (complexCurrentGesture != GestureType.Tap){
-							CreateStateEnd2Fingers(complexCurrentGesture,startPosition2Finger,position,deltaPosition,timeSinceStartAction,false,fingerDistance);
-							startTimeAction = Time.realtimeSinceStartup;
-						}
-						//
-						CreateGesture2Finger(EventName.On_DragStart2Fingers,startPosition2Finger,position,deltaPosition,timeSinceStartAction, SwipeType.None,0,Vector2.zero,0,0,fingerDistance);	
-						twoFingerDragStart = true; 
-					}
-					else if (!pickObject2Finger && !twoFingerSwipeStart ) {
-						// Send end message
-						if (complexCurrentGesture!= GestureType.Tap){
-							CreateStateEnd2Fingers(complexCurrentGesture,startPosition2Finger,position,deltaPosition,timeSinceStartAction,false,fingerDistance);
-							startTimeAction = Time.realtimeSinceStartup;
-						}
-						//
-						
-						CreateGesture2Finger(EventName.On_SwipeStart2Fingers,startPosition2Finger,position,deltaPosition,timeSinceStartAction, SwipeType.None,0,Vector2.zero,0,0,fingerDistance);
-						twoFingerSwipeStart=true;
-					}
-				} 
-				else{
-					if (dot<0){
-						twoFingerDragStart=false; 
-						twoFingerSwipeStart=false;
-					}
-				}
-			
-				//
-				if (twoFingerDragStart){
-					CreateGesture2Finger(EventName.On_Drag2Fingers,startPosition2Finger,position,deltaPosition,timeSinceStartAction, GetSwipe(oldStartPosition2Finger,position),0,deltaPosition,0,0,fingerDistance);
-				}
-				
-				if (twoFingerSwipeStart){
-					CreateGesture2Finger(EventName.On_Swipe2Fingers,startPosition2Finger,position,deltaPosition,timeSinceStartAction, GetSwipe(oldStartPosition2Finger,position),0,deltaPosition,0,0,fingerDistance);
-				}
+				// Befor drag & swipe here
 								
 			}
 			else{
@@ -1260,6 +1281,8 @@ public class EasyTouch : MonoBehaviour {
 			else{
 				RaiseEvent(message, gesture);
 			}
+
+			isStartHoverNGUI = false;
 		}
 	}
 
@@ -1452,10 +1475,10 @@ public class EasyTouch : MonoBehaviour {
 		if (touchCameras.Count>0){
 			for (int i=0;i<touchCameras.Count;i++){
 				if (touchCameras[i].camera!=null && touchCameras[i].camera.enabled){
-					
+
 					Vector2 pos=Vector2.zero;
 					if (!twoFinger){
-						pos = finger.startPosition;
+						pos = finger.position;
 					}
 					else{
 						pos = finger.complexStartPosition;
