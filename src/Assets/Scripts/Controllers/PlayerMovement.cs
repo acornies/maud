@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _facingRight = true;
     private bool _isFacingCamera;
     private Collider _playerCollider;
+    private ParticleSystem _sparkEffect;
 
     public bool isGrounded;
     public bool isHittingHead;
@@ -42,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
 
     public AudioClip jumpSound;
     public AudioClip highJumpSound;
-	public AudioClip midAirJumpSound;
+    public AudioClip midAirJumpSound;
 
     //public bool useAcceleration = false;
     public float accelerometerMultiplier = 1.5f;
@@ -62,26 +63,8 @@ public class PlayerMovement : MonoBehaviour
         EasyTouch.On_SimpleTap += HandleSimpleTap;
         TelekinesisController.On_PlayerPowersStart += HandlePlayerPowersStart;
         TelekinesisController.On_PlayerPowersEnd += HandlePlayerPowersEnd;
-    }
-
-    void HandlePlayerPowersEnd()
-    {
-        _isUsingPowers = false;
-        if (!_isFacingCamera) return;
-        var degrees = (_facingRight) ? -90f : 90f;
-        transform.Rotate(Vector3.up, degrees, Space.World);
-        //Debug.Log("Powers end, turn away from camera: " + degrees);
-        _isFacingCamera = false;
-    }
-
-    void HandlePlayerPowersStart()
-    {
-        _isUsingPowers = true;
-        if (_isFacingCamera) return;
-        var degrees = (_facingRight) ? 90f : -90f;
-        transform.Rotate(Vector3.up, degrees, Space.World);
-        //Debug.Log("Powers start, turn toward from camera: " + degrees);
-        _isFacingCamera = true;
+        KillBox.On_PlayerDeath += HandleOnPlayerDeath;
+        BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
     }
 
     void OnDisable()
@@ -102,6 +85,8 @@ public class PlayerMovement : MonoBehaviour
         EasyTouch.On_SimpleTap -= HandleSimpleTap;
         TelekinesisController.On_PlayerPowersStart -= HandlePlayerPowersStart;
         TelekinesisController.On_PlayerPowersEnd -= HandlePlayerPowersEnd;
+        KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
+        BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
     }
 
     void Awake()
@@ -111,6 +96,7 @@ public class PlayerMovement : MonoBehaviour
         _playerModel = transform.FindChild("PlayerModel").gameObject;
         _animator = _playerModel.GetComponent<Animator>();
         _playerCollider = transform.GetComponent<Collider>();
+        _sparkEffect = transform.FindChild("Spark").GetComponent<ParticleSystem>();
     }
 
     void Start()
@@ -123,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
         //isDead = GameController.Instance.playerIsDead;
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
+
             _playerCollider.enabled = false;
             //_playerModel.renderer.material.color = new Color(1, 1, 1, 0.5f);
             if (_isGhostMoving && _ghostTouchTargetPosition != Vector3.zero)
@@ -136,10 +123,15 @@ public class PlayerMovement : MonoBehaviour
                 _isGhostMoving = false;
                 _ghostTouchTargetPosition = Vector3.zero;
             }
+
+            //if (_isFacingCamera) return;
+            //TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
         }
         else
         {
             _playerCollider.enabled = true;
+            //if (!_isFacingCamera) return;
+            //TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
             //_playerModel.renderer.material.color = new Color(1, 1, 1, 1);
         }
     }
@@ -219,6 +211,42 @@ public class PlayerMovement : MonoBehaviour
         else if (_moveDirection < -0.1f && this._facingRight)
         {
             Flip();
+        }
+    }
+
+    void HandlePlayerPowersEnd()
+    {
+        _isUsingPowers = false;
+        if (!_isFacingCamera) return;
+        TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
+        _sparkEffect.Stop();
+    }
+
+    void HandlePlayerPowersStart()
+    {
+        _isUsingPowers = true;
+        if (_isFacingCamera) return;
+        TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
+        _sparkEffect.Play();
+    }
+
+    private void HandleOnPlayerDeath()
+    {
+        if (_isFacingCamera) return;
+        TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
+    }
+
+    private void TurnToAndAwayFromCamera(float degrees)
+    {
+        if (!_isFacingCamera)
+        {
+            transform.Rotate(Vector3.up, degrees, Space.World);
+            _isFacingCamera = true;
+        }
+        else if (_isFacingCamera)
+        {
+            transform.Rotate(Vector3.up, degrees, Space.World);
+            _isFacingCamera = false;
         }
     }
 
@@ -423,43 +451,43 @@ public class PlayerMovement : MonoBehaviour
 
         // conditions for mid-air jump
         if (isGrounded || _additionalJumpCount >= additionalJumps || _isHighJumping || forcePushed) return;
-        
-		rigidbody.AddForceAtPosition(new Vector3(0, AirJumpByVerticalVelocity(rigidbody.velocity.y), 0), transform.position);
+
+        rigidbody.AddForceAtPosition(new Vector3(0, AirJumpByVerticalVelocity(rigidbody.velocity.y), 0), transform.position);
         _additionalJumpCount++;
         _consectutiveJumpCounter = 0; // reset consecutive jump counter
-		if (midAirJumpSound != null  && midAirJumpSound.isReadyToPlay)
-		{
-			audio.PlayOneShot(midAirJumpSound, 1);
-		}
+        if (midAirJumpSound != null && midAirJumpSound.isReadyToPlay)
+        {
+            audio.PlayOneShot(midAirJumpSound, 1);
+        }
     }
 
-	private float AirJumpByVerticalVelocity(float rigidbodyVelocityY)
-	{
-		if (rigidbodyVelocityY < 5f && rigidbodyVelocityY > 0f)
-		{
-			return (additionalJumpForce * 1.7f);
-		}
-		else if (rigidbodyVelocityY < 0f && rigidbodyVelocityY > -5f)
-		{
-			return (additionalJumpForce * 2f);
-		}
-		else if (rigidbodyVelocityY < -5f && rigidbodyVelocityY > -10f)
-		{
-			return (additionalJumpForce * 3);
-		}
-		else if (rigidbodyVelocityY < -10f && rigidbodyVelocityY > -20f)
-		{
-			return (additionalJumpForce * 4);
-		}
-		else if (rigidbodyVelocityY < -20)
-		{
-			return (additionalJumpForce * 5);
-		}
-		else
-		{
-			return additionalJumpForce;
-		}
-	}
+    private float AirJumpByVerticalVelocity(float rigidbodyVelocityY)
+    {
+        if (rigidbodyVelocityY < 5f && rigidbodyVelocityY > 0f)
+        {
+            return (additionalJumpForce * 1.7f);
+        }
+        else if (rigidbodyVelocityY < 0f && rigidbodyVelocityY > -5f)
+        {
+            return (additionalJumpForce * 2f);
+        }
+        else if (rigidbodyVelocityY < -5f && rigidbodyVelocityY > -10f)
+        {
+            return (additionalJumpForce * 3);
+        }
+        else if (rigidbodyVelocityY < -10f && rigidbodyVelocityY > -20f)
+        {
+            return (additionalJumpForce * 4);
+        }
+        else if (rigidbodyVelocityY < -20)
+        {
+            return (additionalJumpForce * 5);
+        }
+        else
+        {
+            return additionalJumpForce;
+        }
+    }
 
     private void PlayJumpSound(float force = 0)
     {

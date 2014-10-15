@@ -18,10 +18,10 @@ namespace LegendPeak.Platforms
             //_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("One", new PlatformRangeInfo(5, 1, 1)));
             _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Two", new PlatformRangeInfo(20, 1, 2)));
             _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Three", new PlatformRangeInfo(40, 1, 3)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Four", new PlatformRangeInfo(80, 1, 4)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Six", new PlatformRangeInfo(120, 1, 5)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Seven", new PlatformRangeInfo(180, 1, 6)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Eight", new PlatformRangeInfo(220, 2, 6)));
+            //_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Four", new PlatformRangeInfo(80, 1, 4)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Six", new PlatformRangeInfo(100, 1, 4)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Seven", new PlatformRangeInfo(180, 1, 5)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Eight", new PlatformRangeInfo(260, 1, 6)));
             //_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Nine", new PlatformRangeInfo(160, 4, 6)));
             //_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("Ten", new PlatformRangeInfo(180, 5, 6)));
         }

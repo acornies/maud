@@ -78,56 +78,48 @@ public class CameraMovement : MonoBehaviour
 
     void TrackPlayer()
     {
-        if (CameraTarget != null)
+        if (CameraTarget == null) return;
+        var targetX = transform.position.x;
+        var targetY = transform.position.y;
+
+        if (this.CheckXMargin())
         {
-            var targetX = transform.position.x;
-            var targetY = transform.position.y;
-
-            if (this.CheckXMargin())
-            {
-                targetX = Mathf.Lerp(transform.position.x, this.CameraTarget.position.x, this.XSmooth * Time.deltaTime);
-            }
-
-            if (this.CheckYMargin())
-            {
-                targetY = Mathf.Lerp(transform.position.y, this.CameraTarget.position.y, this.YSmooth * Time.deltaTime);
-            }
-
-            targetX = Mathf.Clamp(targetX, this.MinXandY.x, this.MaxXandY.x);
-            targetY = Mathf.Clamp(targetY, this.MinXandY.y, this.MaxXandY.y);
-
-            transform.position = new Vector3(targetX, targetY, transform.position.z);
+            targetX = Mathf.Lerp(transform.position.x, this.CameraTarget.position.x, this.XSmooth * Time.deltaTime);
         }
+
+        if (this.CheckYMargin())
+        {
+            targetY = Mathf.Lerp(transform.position.y, this.CameraTarget.position.y, this.YSmooth * Time.deltaTime);
+        }
+
+        targetX = Mathf.Clamp(targetX, this.MinXandY.x, this.MaxXandY.x);
+        targetY = Mathf.Clamp(targetY, this.MinXandY.y, this.MaxXandY.y);
+
+        transform.position = new Vector3(targetX, targetY, transform.position.z);
     }
 
     void UpdateMinYFromCheckpoint(int checkpointPlatform, int childPlatformToDeleteIndex)
     {
         var levelPlatforms = PlatformController.Instance.levelPlatforms;
-        if (levelPlatforms != null && levelPlatforms.Count > 0)
-        {
-            //Debug.Log ("New checkpoint is: " + checkpointPlatform);
-            if (checkpointPlatform > PlatformController.Instance.checkpointBuffer)
-            {
-                float newCameraMinY = levelPlatforms[checkpointPlatform].transform.position.y;
+        if (levelPlatforms == null || levelPlatforms.Count <= 0) return;
 
-                // update only if height is greater than previous since platforms will be destroyed underneath 
-                if (newCameraMinY > MinXandY.y && checkpointPlatform >= minCameraUpdatePlatform)
-                {
-                    //Debug.Log("Update camera min y to: " + newCameraMinY);
-                    MinXandY = new Vector2(MinXandY.x, newCameraMinY);
+        GameObject checkoutPlatformObj;
+        if (checkpointPlatform <= PlatformController.Instance.checkpointBuffer ||
+            !levelPlatforms.TryGetValue(checkpointPlatform, out checkoutPlatformObj)) return;
+        float newCameraMinY = checkoutPlatformObj.transform.position.y;
 
-                    On_CameraUpdatedMinY(newCameraMinY, checkpointPlatform);
+        // update only if height is greater than previous since platforms will be destroyed underneath 
+        if (!(newCameraMinY > MinXandY.y) || checkpointPlatform < minCameraUpdatePlatform) return;
 
-                    On_DestroyLowerPlatforms(checkpointPlatform - PlatformController.Instance.checkpointBuffer - PlatformController.Instance.platformSpawnBuffer, childPlatformToDeleteIndex);
-                }
-            }
-        }
+        MinXandY = new Vector2(MinXandY.x, newCameraMinY);
 
+        On_CameraUpdatedMinY(newCameraMinY, checkpointPlatform);
+
+        On_DestroyLowerPlatforms(checkpointPlatform - PlatformController.Instance.checkpointBuffer - PlatformController.Instance.platformSpawnBuffer, childPlatformToDeleteIndex);
     }
 
     void HandleNewPlatform(float yPosition)
     {
-        //Debug.Log ("Increase max y to: " + yPosition);
         MaxXandY = new Vector2(MaxXandY.x, yPosition);
     }
 }
