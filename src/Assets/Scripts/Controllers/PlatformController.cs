@@ -70,7 +70,14 @@ public class PlatformController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        var startingPlatforms = GameObject.FindGameObjectsWithTag("Rotatable");
+        foreach (var platform in startingPlatforms)
+        {
+            var key = platform.name.Split('_')[1];
+            var value = platform;
+            levelPlatforms.Add(int.Parse(key), value);
+        }
+        levelPlatforms.OrderBy(x => x.Key);
     }
 
     // Update is called once per frame
@@ -127,11 +134,21 @@ public class PlatformController : MonoBehaviour
 
                 newPlatform.name = string.Format("Platform_{0}", i);
                 newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(), Vector3.up);
+                AdjustProperties(newPlatform, i);
                 levelPlatforms.Add(i, newPlatform);
 
                 On_NewPlatform(newPlatform.transform.position.y);
                 _timer = platformSpawnInterval;
             }
+        }
+    }
+
+    private void AdjustProperties(GameObject newPlatform, int index)
+    {
+        Drop dropComponent = newPlatform.transform.GetComponentInChildren<Drop>();
+        if (index > 40 && dropComponent != null ) //TODO: change to Editor value
+        {
+            dropComponent.enabled = true;
         }
     }
 
