@@ -50,7 +50,7 @@ public class KillBox : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //checkpointYPosition = _checkpointPlatform == null ? 0.2f : _checkpointPlatform.position.y;
+
     }
 
     void OnTriggerEnter(Collider collider)
@@ -58,27 +58,20 @@ public class KillBox : MonoBehaviour
         if (collider.name == "Player")
         {
             On_PlayerDeath();
-            if (deathSound != null && deathSound.isReadyToPlay)
+            if (deathSound != null && deathSound.isReadyToPlay && !audio.isPlaying)
             {
                 audio.PlayOneShot(deathSound);   
             }
         }
 
-        if (collider.tag == "Hazzard")
-        {
-            Destroy(collider.gameObject);
-            On_HazzardDestroy();
-        }
+        if (collider.tag != "Hazzard") return;
+
+        Destroy(collider.gameObject);
+        On_HazzardDestroy();
     }
 
     void UpdateKillBoxAndCheckpointPosition(float newYPosition, int checkpointPlatform)
     {
-        //Debug.Log ("New kill box position: " + newYPosition);
         transform.position = new Vector3(transform.position.x, newYPosition - cameraPositionBuffer, transform.position.z);
-
-        //var levelPlatforms = PlatformController.Instance.levelPlatforms;
-
-        //this._checkpointPlatform = levelPlatforms[checkpointPlatform].transform; // get one platform above the killbox (check CameraMovement.killBoxBuffer)
-        //Debug.Log ("Checkpoint platform is: " + _checkpointPlatform.name);
     }
 }

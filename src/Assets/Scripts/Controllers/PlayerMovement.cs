@@ -65,6 +65,7 @@ public class PlayerMovement : MonoBehaviour
         TelekinesisController.On_PlayerPowersEnd += HandlePlayerPowersEnd;
         KillBox.On_PlayerDeath += HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
+        GameController.OnPlayerResurrection += HandleOnPlayerResurrection;
     }
 
     void OnDisable()
@@ -87,6 +88,7 @@ public class PlayerMovement : MonoBehaviour
         TelekinesisController.On_PlayerPowersEnd -= HandlePlayerPowersEnd;
         KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
+        GameController.OnPlayerResurrection -= HandleOnPlayerResurrection;
     }
 
     void Awake()
@@ -231,6 +233,13 @@ public class PlayerMovement : MonoBehaviour
         TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
     }
 
+    private void HandleOnPlayerResurrection()
+    {
+        //Debug.Log("Resurrection event handler!");
+        if (!_isFacingCamera) return;
+        TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
+    }
+
     private void TurnToAndAwayFromCamera(float degrees)
     {
         if (!_isFacingCamera)
@@ -338,13 +347,13 @@ public class PlayerMovement : MonoBehaviour
         // draw ray near the head of the player
         Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 1.2f, transform.position.z);
         Vector3 midRay = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
-        Vector3 footRay = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        Vector3 footRay = new Vector3(transform.position.x, transform.position.y - 0.1f, transform.position.z);
         Debug.DrawRay(midRay, Vector3.right, Color.white);
         Debug.DrawRay(midRay, Vector3.left, Color.white);
         Debug.DrawRay(midRay, new Vector3(1, 0, 1), Color.green);
         Debug.DrawRay(midRay, new Vector3(-1, 0, 1), Color.green);
-        Debug.DrawRay(footRay, Vector3.right, Color.white);
-        Debug.DrawRay(footRay, Vector3.left, Color.white);
+        Debug.DrawRay(footRay, Vector3.right, Color.blue);
+        Debug.DrawRay(footRay, Vector3.left, Color.blue);
         Debug.DrawRay(headRay, Vector3.right, Color.white);
         Debug.DrawRay(headRay, Vector3.left, Color.white);
 

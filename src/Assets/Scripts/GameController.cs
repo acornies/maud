@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using System.Collections;
 
@@ -34,6 +33,9 @@ public class GameController : MonoBehaviour
 
     public delegate void GameResume();
     public static event GameResume OnGameResume;
+
+    public delegate void PlayerResurrection();
+    public static event PlayerResurrection OnPlayerResurrection;
 
     // Subscribe to events
     void OnEnable()
@@ -197,6 +199,10 @@ public class GameController : MonoBehaviour
                 _deathTimer = timeBetweenDeaths;
                 playerIsDead = false;
                 initiatingRestart = false;
+                if (OnPlayerResurrection != null)
+                {
+                    OnPlayerResurrection();
+                }          
             }
         }
         else
