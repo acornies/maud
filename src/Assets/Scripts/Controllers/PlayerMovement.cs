@@ -123,15 +123,10 @@ public class PlayerMovement : MonoBehaviour
                 _isGhostMoving = false;
                 _ghostTouchTargetPosition = Vector3.zero;
             }
-
-            //if (_isFacingCamera) return;
-            //TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
         }
         else
         {
             _playerCollider.enabled = true;
-            //if (!_isFacingCamera) return;
-            //TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
             //_playerModel.renderer.material.color = new Color(1, 1, 1, 1);
         }
     }

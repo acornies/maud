@@ -9,7 +9,8 @@ public class TelekinesisHandler : MonoBehaviour
     private HazzardMovement[] _hazzardScripts;
     private float _stabilizeTimer;
     private Transform _hazzardModel;
-    public float _teleportTimer;
+    private float _teleportTimer;
+    private ParticleSystem _powerEffect;
 
     protected Quaternion? rotationTarget;
     protected Vector3? teleportLocation;
@@ -45,11 +46,13 @@ public class TelekinesisHandler : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         _platformScripts = GetComponentsInChildren<PlatformBehaviour>();
         _hazzardScripts = GetComponentsInChildren<HazzardMovement>();
         _hazzardModel = transform.FindChild("ProtoModel");
+        _powerEffect = transform.GetComponentInChildren<ParticleSystem>();
+
     }
 
     void Update()
@@ -72,29 +75,15 @@ public class TelekinesisHandler : MonoBehaviour
     {
         RotateToTarget();
         Teleport();
-
-        /*if (isStable)
-        {
-            if (transform.tag == "Hazzard" && !isClone)
-            {
-                rigidbody.useGravity = false;
-            }
-        }
-        else
-        {
-            if (transform.tag == "Hazzard" && !isClone)
-            {
-                rigidbody.useGravity = true;
-            }
-        }*/
-
     }
 
     protected void HandleNewTelekinesisRotation(Transform platform, Quaternion rotation)
     {
-        if (platform.GetInstanceID() == this.transform.GetInstanceID())
+        if (platform.GetInstanceID() != this.transform.GetInstanceID()) return;
+        rotationTarget = rotation;
+        if (_powerEffect != null)
         {
-            rotationTarget = rotation;
+            _powerEffect.Play();
         }
     }
 
