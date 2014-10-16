@@ -11,6 +11,8 @@ public class TelekinesisHandler : MonoBehaviour
     private Transform _hazzardModel;
     private float _teleportTimer;
     private ParticleSystem _powerEffect;
+    private ParticleSystem _implosionEffect;
+    private ParticleSystem _smokeEffect;
 
     protected Quaternion? rotationTarget;
     protected Vector3? teleportLocation;
@@ -26,6 +28,7 @@ public class TelekinesisHandler : MonoBehaviour
         TelekinesisController.On_NewTelekinesisRotation += HandleNewTelekinesisRotation;
         TelekinesisController.On_TelekinesisStabilize += HandleTelekinesisStabilize;
         TelekinesisController.On_NewTelekinesisMovePosition += HandleNewTelekinesisMovePosition;
+        Disappear.OnPlatformReappear += HandlePlatformReappear;
     }
 
     public virtual void OnDisable()
@@ -43,16 +46,23 @@ public class TelekinesisHandler : MonoBehaviour
         TelekinesisController.On_NewTelekinesisRotation -= HandleNewTelekinesisRotation;
         TelekinesisController.On_TelekinesisStabilize -= HandleTelekinesisStabilize;
         TelekinesisController.On_NewTelekinesisMovePosition -= HandleNewTelekinesisMovePosition;
+        Disappear.OnPlatformReappear -= HandlePlatformReappear;
     }
 
     // Use this for initialization
-    void Awake()
+    private void Awake()
     {
         _platformScripts = GetComponentsInChildren<PlatformBehaviour>();
         _hazzardScripts = GetComponentsInChildren<HazzardMovement>();
         _hazzardModel = transform.FindChild("ProtoModel");
-        _powerEffect = transform.GetComponentInChildren<ParticleSystem>();
 
+        var effects = transform.GetComponentsInChildren<ParticleSystem>();
+
+        if (effects == null || effects.Length <= 0) return;
+
+        _powerEffect = effects.FirstOrDefault(x => x.transform.name == "PowerEffect");
+        _implosionEffect = effects.FirstOrDefault(x => x.transform.name == "ImplosionEffect");
+        _smokeEffect = effects.FirstOrDefault(x => x.transform.name == "SmokeEffect");
     }
 
     void Update()
@@ -75,6 +85,13 @@ public class TelekinesisHandler : MonoBehaviour
     {
         RotateToTarget();
         Teleport();
+    }
+
+    protected void HandlePlatformReappear(Transform reappearingObj)
+    {
+        if (reappearingObj.GetInstanceID() != this.transform.GetInstanceID()) return;
+        Debug.Log("reassign the power effect");
+        _powerEffect = reappearingObj.GetComponentInChildren<ParticleSystem>();
     }
 
     protected void HandleNewTelekinesisRotation(Transform platform, Quaternion rotation)
@@ -116,6 +133,10 @@ public class TelekinesisHandler : MonoBehaviour
                     transform.position = teleportLocation.Value;
                     if (_hazzardModel != null)
                     {
+                        if (_smokeEffect != null)
+                        {
+                            _smokeEffect.Play();
+                        }
                         _hazzardModel.renderer.enabled = true;
                     }
                 }
@@ -190,5 +211,9 @@ public class TelekinesisHandler : MonoBehaviour
         if (objectToMove.GetInstanceID() != this.transform.GetInstanceID()) return;
 
         teleportLocation = newPosition;
+        if (_implosionEffect != null)
+        {
+            _implosionEffect.Play();
+        }
     }
 }

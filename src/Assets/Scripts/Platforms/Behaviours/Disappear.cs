@@ -10,6 +10,9 @@ public class Disappear : PlatformBehaviour
     public float interval = 3.0f;
     public bool isInvisible;
 
+    public delegate void PlatformReappear(Transform reappearingObj);
+    public static event PlatformReappear OnPlatformReappear;
+
     // Use this for initialization
     protected override void Start()
     {
@@ -28,17 +31,24 @@ public class Disappear : PlatformBehaviour
         if (isInvisible)
         {
             if (!(timer >= interval)) return;
-            GameObject newPlatform = (GameObject)Instantiate(Resources.Load<GameObject>("Prefabs/PrototypeCube"),
+            GameObject copyPlatform = (GameObject)Instantiate(Resources.Load<GameObject>("Prefabs/Platforms/5_Platform"),
                 _initialPosition, Quaternion.identity);
-            newPlatform.name = "Cube";
+
+            var newPlatform = copyPlatform.transform.FindChild("Cube");
+            newPlatform.parent = null;
+            Destroy(copyPlatform);
+
             newPlatform.transform.parent = transform;
             newPlatform.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             newPlatform.transform.localPosition = _initialPosition;
             newPlatform.transform.localRotation = _initialRotation;
-            newPlatform.renderer.material = Resources.Load<Material>("Materials/Ghost");
             child = newPlatform.transform;
             timer = 0;
             isInvisible = false;
+            if (OnPlatformReappear != null)
+            {
+                OnPlatformReappear(transform);
+            }
         }
         else
         {
