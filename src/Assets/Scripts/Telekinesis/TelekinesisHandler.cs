@@ -10,9 +10,10 @@ public class TelekinesisHandler : MonoBehaviour
     private float _stabilizeTimer;
     private Transform _hazzardModel;
     private float _teleportTimer;
-    private ParticleSystem _powerEffect;
+    private ParticleSystem _rotationEffect;
     private ParticleSystem _implosionEffect;
     private ParticleSystem _smokeEffect;
+    private ParticleSystem _stabilizeEffect;
 
     protected Quaternion? rotationTarget;
     protected Vector3? teleportLocation;
@@ -60,9 +61,11 @@ public class TelekinesisHandler : MonoBehaviour
 
         if (effects == null || effects.Length <= 0) return;
 
-        _powerEffect = effects.FirstOrDefault(x => x.transform.name == "PowerEffect");
+        _rotationEffect = effects.FirstOrDefault(x => x.transform.name == "PowerEffect");
         _implosionEffect = effects.FirstOrDefault(x => x.transform.name == "ImplosionEffect");
         _smokeEffect = effects.FirstOrDefault(x => x.transform.name == "SmokeEffect");
+        _stabilizeEffect = effects.FirstOrDefault(x => x.transform.name == "StabilizeEffect");
+
     }
 
     void Update()
@@ -91,16 +94,18 @@ public class TelekinesisHandler : MonoBehaviour
     {
         if (reappearingObj.GetInstanceID() != this.transform.GetInstanceID()) return;
         //Debug.Log("reassign the power effect");
-        _powerEffect = reappearingObj.GetComponentInChildren<ParticleSystem>();
+        var effects = reappearingObj.GetComponentsInChildren<ParticleSystem>();
+        _rotationEffect = effects.FirstOrDefault(x => x.transform.name == "PowerEffect");
+        _stabilizeEffect = effects.FirstOrDefault(x => x.transform.name == "StabilizeEffect");
     }
 
     protected void HandleNewTelekinesisRotation(Transform platform, Quaternion rotation)
     {
         if (platform.GetInstanceID() != this.transform.GetInstanceID()) return;
         rotationTarget = rotation;
-        if (_powerEffect != null)
+        if (_rotationEffect != null)
         {
-            _powerEffect.Play();
+            _rotationEffect.Play();
         }
     }
 
@@ -161,6 +166,11 @@ public class TelekinesisHandler : MonoBehaviour
         if (stabilizedObject.GetInstanceID() != this.transform.GetInstanceID()) return;
 
         isStable = true;
+
+        if (_stabilizeEffect != null)
+        {
+            _stabilizeEffect.Play();
+        }
     }
 
     void HandleStabilizePlatforms()
