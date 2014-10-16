@@ -90,7 +90,7 @@ public class TelekinesisHandler : MonoBehaviour
     protected void HandlePlatformReappear(Transform reappearingObj)
     {
         if (reappearingObj.GetInstanceID() != this.transform.GetInstanceID()) return;
-        Debug.Log("reassign the power effect");
+        //Debug.Log("reassign the power effect");
         _powerEffect = reappearingObj.GetComponentInChildren<ParticleSystem>();
     }
 
