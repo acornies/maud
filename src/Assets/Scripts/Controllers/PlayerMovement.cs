@@ -51,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
     public delegate void ReachedPlatformAction(Transform platform, Transform player);
     public static event ReachedPlatformAction On_PlatformReached;
 
-    public delegate void PlayerAirborne();
+    public delegate void PlayerAirborne(Transform player);
     public static event PlayerAirborne On_PlayerAirborne;
 
     // Subscribe to events
@@ -156,10 +156,10 @@ public class PlayerMovement : MonoBehaviour
             var groundCollider = groundColliders.FirstOrDefault();
             if (groundCollider != null && isGrounded)
             {
-                //canMove = true;
+
                 _additionalJumpCount = 0;
                 forcePushed = false;
-                //_isHighJumping = false;
+
                 On_PlatformReached(groundCollider.transform, transform); // trigger event for finding current platform
                 _highJumpTimer -= Time.deltaTime;
                 if (_consectutiveJumpCounter >= jumpsforHighJump)
@@ -172,7 +172,14 @@ public class PlayerMovement : MonoBehaviour
                 {
                     _consectutiveJumpCounter = 0;
                 }
+
+                //Debug.Log("Ground collider tag: " + groundCollider.tag);
+                //transform.parent = (groundCollider.tag == "Stoppable" ) ? groundCollider.transform : null;
             }
+            //else
+            //{
+            //   transform.parent = null;
+            //}
         }
 
         // handle head room
@@ -196,7 +203,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (!isGrounded && On_PlayerAirborne != null)
         {
-            On_PlayerAirborne();
+            On_PlayerAirborne(transform);
         }
 
         if (_isUsingPowers) return;

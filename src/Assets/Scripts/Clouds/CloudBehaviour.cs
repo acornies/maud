@@ -76,7 +76,7 @@ public class CloudBehaviour : MonoBehaviour
 
     }
 
-    void HandleOnPlayerAirborne()
+    void HandleOnPlayerAirborne(Transform player)
     {
         collider.isTrigger = true;
     }

@@ -6,6 +6,7 @@ public class PlatformBehaviour : MonoBehaviour
 
     //protected Quaternion? rotationTarget;
     protected Transform child;
+    protected bool isBeingAffected;
 
     //public float rotationSpeed = 1;
     public bool isOnPlatform;
@@ -16,6 +17,8 @@ public class PlatformBehaviour : MonoBehaviour
     {
         PlayerMovement.On_PlatformReached += HandleOnPlatformReached;
         PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
+        TelekinesisHandler.OnAffectStart += HandleOnAffectStart;
+        TelekinesisHandler.OnAffectEnd += HandleOnAffectEnd;
     }
 
     public virtual void OnDisable()
@@ -32,6 +35,8 @@ public class PlatformBehaviour : MonoBehaviour
     {
         PlayerMovement.On_PlatformReached -= HandleOnPlatformReached;
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
+        TelekinesisHandler.OnAffectStart -= HandleOnAffectStart;
+        TelekinesisHandler.OnAffectEnd -= HandleOnAffectEnd;
     }
 
     protected virtual void Start()
@@ -46,14 +51,35 @@ public class PlatformBehaviour : MonoBehaviour
 
     public virtual void HandleOnPlatformReached(Transform platform, Transform player)
     {
-        if (platform != null && child != null)
+        if (platform == null || child == null) return;
+        isOnPlatform = platform.GetInstanceID() == child.GetInstanceID();
+
+        if (isOnPlatform && isBeingAffected)
         {
-            isOnPlatform = platform.GetInstanceID() == child.GetInstanceID();
+            player.parent = null;
+        }
+        else if (isOnPlatform && !isBeingAffected)
+        {
+            player.parent = child;
         }
     }
 
-    public virtual void HandlePlayerAirborne()
+    public virtual void HandlePlayerAirborne(Transform player)
     {
         isOnPlatform = false;
+        player.parent = null;
     }
+
+    public virtual void HandleOnAffectStart(Transform platform)
+    {
+        if (platform.GetInstanceID() != transform.GetInstanceID()) return;
+        isBeingAffected = true;
+    }
+
+    public virtual void HandleOnAffectEnd(Transform platform)
+    {
+        if (platform.GetInstanceID() != transform.GetInstanceID()) return;
+        isBeingAffected = false;
+    }
+
 }

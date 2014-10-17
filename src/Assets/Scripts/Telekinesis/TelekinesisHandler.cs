@@ -24,6 +24,12 @@ public class TelekinesisHandler : MonoBehaviour
     public float stabilizationTime = 3;
     public float teleportTime = 1;
 
+    public delegate void AffectStart(Transform transformObj);
+    public static event AffectStart OnAffectStart;
+
+    public delegate void AffectEnd(Transform transformObj);
+    public static event AffectEnd OnAffectEnd;
+
     public virtual void OnEnable()
     {
         TelekinesisController.On_NewTelekinesisRotation += HandleNewTelekinesisRotation;
@@ -107,6 +113,10 @@ public class TelekinesisHandler : MonoBehaviour
         {
             _rotationEffect.Play();
         }
+        if (OnAffectStart != null)
+        {
+            OnAffectStart(transform);
+        }
     }
 
     protected virtual void RotateToTarget()
@@ -119,6 +129,10 @@ public class TelekinesisHandler : MonoBehaviour
         if (transform.root.localRotation == rotationTarget)
         {
             rotationTarget = null;
+            if (OnAffectEnd != null)
+            {
+                OnAffectEnd(transform);
+            }
         }
     }
 

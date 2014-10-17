@@ -114,7 +114,7 @@ public class TelekinesisController : MonoBehaviour
         }
     }
 
-    void HandlePlayerAirborne()
+    void HandlePlayerAirborne(Transform player)
     {
         TelekinesisEnd();
     }
@@ -172,14 +172,23 @@ public class TelekinesisController : MonoBehaviour
 
     private void ClonePlatform()
     {
-        //if (_platform == null) return;
+
         if (_platformClone != null) return; // prevent multi-finger object cloning
         _platformClone = Instantiate(_platform, _platform.position, _platform.rotation) as Transform;
         if (_platformClone == null) return;
+
         _platformClone.renderer.material.color = new Color(1, 1, 1, .5f);
         var cloneChild = _platformClone.FindChild("Cube");
         if (cloneChild != null)
         {
+            // if player is parented to the platform, DESTROY lest we spawn her N times
+            var playerClone = cloneChild.FindChild("Player");
+            if (playerClone != null)
+            {
+                Debug.Log("Found player clone");
+                Destroy(playerClone.gameObject);
+            }
+            
             cloneChild.renderer.material.color = new Color(1, 1, 1, .5f);
         }
         _platformClone.localScale = new Vector3(_platform.localScale.x * cloneScaleMultiplier, _platform.localScale.y * cloneScaleMultiplier, _platform.localScale.z * cloneScaleMultiplier);
