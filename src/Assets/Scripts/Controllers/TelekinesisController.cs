@@ -185,7 +185,7 @@ public class TelekinesisController : MonoBehaviour
             var playerClone = cloneChild.FindChild("Player");
             if (playerClone != null)
             {
-                Debug.Log("Found player clone");
+                //Debug.Log("Found player clone");
                 Destroy(playerClone.gameObject);
             }
             

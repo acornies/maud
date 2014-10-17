@@ -31,7 +31,7 @@ public class Disappear : PlatformBehaviour
         if (isInvisible)
         {
             if (!(timer >= interval)) return;
-            GameObject copyPlatform = (GameObject)Instantiate(Resources.Load<GameObject>("Prefabs/Platforms/5_Platform"),
+            /*GameObject copyPlatform = (GameObject)Instantiate(Resources.Load<GameObject>("Prefabs/Platforms/5_Platform"),
                 _initialPosition, Quaternion.identity);
 
             var newPlatform = copyPlatform.transform.FindChild("Cube");
@@ -43,6 +43,8 @@ public class Disappear : PlatformBehaviour
             newPlatform.transform.localPosition = _initialPosition;
             newPlatform.transform.localRotation = _initialRotation;
             child = newPlatform.transform;
+            */
+            child.gameObject.SetActive(true);
             timer = 0;
             isInvisible = false;
             if (OnPlatformReappear != null)
@@ -55,7 +57,17 @@ public class Disappear : PlatformBehaviour
             if (!(timer >= interval)) return;
             Transform platformToDestroy = child;
             if (platformToDestroy == null) return;
-            Destroy(platformToDestroy.gameObject);
+            if (isOnPlatform)
+            {
+                var player = platformToDestroy.FindChild("Player");
+                if (player != null)
+                {
+                    //Debug.Log("Found player, unparenting...");
+                    player.parent = null;
+                }
+            }
+            //Destroy(platformToDestroy.gameObject);
+            child.gameObject.SetActive(false);
             timer = 0;
             isInvisible = true;
         }
