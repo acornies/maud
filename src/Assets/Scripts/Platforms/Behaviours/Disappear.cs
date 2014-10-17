@@ -3,9 +3,6 @@ using System.Collections;
 
 public class Disappear : PlatformBehaviour
 {
-    private Vector3 _initialPosition;
-    private Quaternion _initialRotation;
-
     public float timer = 0.0f;
     public float interval = 3.0f;
     public bool isInvisible;
@@ -18,8 +15,6 @@ public class Disappear : PlatformBehaviour
     {
         base.Start();
         if (child == null) return;
-        _initialPosition = child.localPosition;
-        _initialRotation = child.localRotation;
     }
 
     // Update is called once per frame
@@ -31,26 +26,14 @@ public class Disappear : PlatformBehaviour
         if (isInvisible)
         {
             if (!(timer >= interval)) return;
-            /*GameObject copyPlatform = (GameObject)Instantiate(Resources.Load<GameObject>("Prefabs/Platforms/5_Platform"),
-                _initialPosition, Quaternion.identity);
 
-            var newPlatform = copyPlatform.transform.FindChild("Cube");
-            newPlatform.parent = null;
-            Destroy(copyPlatform);
-
-            newPlatform.transform.parent = transform;
-            newPlatform.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-            newPlatform.transform.localPosition = _initialPosition;
-            newPlatform.transform.localRotation = _initialRotation;
-            child = newPlatform.transform;
-            */
             child.gameObject.SetActive(true);
             timer = 0;
             isInvisible = false;
-            if (OnPlatformReappear != null)
+            /*if (OnPlatformReappear != null)
             {
                 OnPlatformReappear(transform);
-            }
+            }*/
         }
         else
         {

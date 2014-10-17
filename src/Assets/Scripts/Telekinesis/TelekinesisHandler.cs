@@ -35,7 +35,7 @@ public class TelekinesisHandler : MonoBehaviour
         TelekinesisController.On_NewTelekinesisRotation += HandleNewTelekinesisRotation;
         TelekinesisController.On_TelekinesisStabilize += HandleTelekinesisStabilize;
         TelekinesisController.On_NewTelekinesisMovePosition += HandleNewTelekinesisMovePosition;
-        Disappear.OnPlatformReappear += HandlePlatformReappear;
+        //Disappear.OnPlatformReappear += HandlePlatformReappear;
     }
 
     public virtual void OnDisable()

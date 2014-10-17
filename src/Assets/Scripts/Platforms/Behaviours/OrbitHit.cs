@@ -6,8 +6,6 @@ public class OrbitHit : MonoBehaviour
 
     private Orbit _parentOrbitBehaviour;
 
-    public float artificalForce = 50;
-
     // Use this for initialization
     void Start()
     {
@@ -35,7 +33,6 @@ public class OrbitHit : MonoBehaviour
         //Debug.Log("collision stay");
         HandlePlayerCollisions(collision);
     }
-
     void HandlePlayerCollisions(Collision collision)
     {
         var playerMovement = collision.transform.GetComponent<PlayerMovement>();
@@ -45,16 +42,18 @@ public class OrbitHit : MonoBehaviour
             return;
         }
 
-        if (_parentOrbitBehaviour.axis.y > 0)
+        /*if (_parentOrbitBehaviour.axis.y > 0)
         {
-            collision.rigidbody.AddForce(-1 * (artificalForce * _parentOrbitBehaviour.orbitRotationSpeed), collision.transform.position.y, collision.transform.position.z);
+            collision.rigidbody.AddForce(-1 * (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed), collision.transform.position.y, collision.transform.position.z);
+            Debug.Log("orbit hit on right with force: " + (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed));
         }
         else
         {
-            collision.rigidbody.AddForce(1 * (artificalForce * _parentOrbitBehaviour.orbitRotationSpeed), collision.transform.position.y, collision.transform.position.z);
+            collision.rigidbody.AddForce(1 * (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed), collision.transform.position.y, collision.transform.position.z);
+            Debug.Log("orbit hit on left with force: " + (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed));
         }
 
-        playerMovement.forcePushed = true;
+        playerMovement.forcePushed = true;*/
         _parentOrbitBehaviour.isStopped = true;
     }
 }
