@@ -6,7 +6,6 @@ using System.Collections;
 public class UpAndDown : PlatformBehaviour
 {
     public float _waitTimer;
-
     public float speed = 1.0f;
     public float waitTime = 1.0f;
     public bool isMoving = true;
