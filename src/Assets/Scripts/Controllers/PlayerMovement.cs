@@ -463,7 +463,8 @@ public class PlayerMovement : MonoBehaviour
         // conditions for mid-air jump
         if (isGrounded || _additionalJumpCount >= additionalJumps || _isHighJumping || forcePushed) return;
 
-        rigidbody.AddForceAtPosition(new Vector3(0, AirJumpByVerticalVelocity(rigidbody.velocity.y), 0), transform.position);
+		rigidbody.velocity = new Vector3 (rigidbody.velocity.x, 0f, rigidbody.velocity.z); // reset for consistent double jump
+		rigidbody.AddForceAtPosition(new Vector3(0, additionalJumpForce, 0), transform.position);
         _additionalJumpCount++;
         _consectutiveJumpCounter = 0; // reset consecutive jump counter
         if (midAirJumpSound != null && midAirJumpSound.isReadyToPlay)
@@ -471,35 +472,7 @@ public class PlayerMovement : MonoBehaviour
             audio.PlayOneShot(midAirJumpSound, 1);
         }
     }
-
-    private float AirJumpByVerticalVelocity(float rigidbodyVelocityY)
-    {
-        if (rigidbodyVelocityY < 5f && rigidbodyVelocityY > 0f)
-        {
-            return (additionalJumpForce * 1.7f);
-        }
-        else if (rigidbodyVelocityY < 0f && rigidbodyVelocityY > -5f)
-        {
-            return (additionalJumpForce * 2f);
-        }
-        else if (rigidbodyVelocityY < -5f && rigidbodyVelocityY > -10f)
-        {
-            return (additionalJumpForce * 3);
-        }
-        else if (rigidbodyVelocityY < -10f && rigidbodyVelocityY > -20f)
-        {
-            return (additionalJumpForce * 4);
-        }
-        else if (rigidbodyVelocityY < -20)
-        {
-            return (additionalJumpForce * 5);
-        }
-        else
-        {
-            return additionalJumpForce;
-        }
-    }
-
+	
     private void PlayJumpSound(float force = 0)
     {
         if (jumpSound == null)
