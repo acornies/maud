@@ -88,7 +88,7 @@ public class HazzardController : MonoBehaviour
 
         _hazzardCount++;
 
-        var hazzardMovement = hazzard.GetComponent<HazzardMovement>();
+        //var hazzardMovement = hazzard.GetComponent<HazzardMovement>();
         hazzard.rigidbody.AddForce(new Vector3(Vector3.left.x * initialHorizontalForce, Vector3.down.y * initialVerticalForce));
 
         //Debug.Log("TopLeft is: "+ topLeft);

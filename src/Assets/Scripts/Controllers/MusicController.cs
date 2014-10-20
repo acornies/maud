@@ -20,10 +20,11 @@ public class MusicController : MonoBehaviour
     public AudioSource cloudMusicSlow;
     public AudioSource cloudMusicFast;
 
+    //public AudioClip deathSound;
+
     // Subscribe to events
     void OnEnable()
     {
-        //PlayerMovement.On_PlatformReached += HandlePlatformReached;
     }
 
     void OnDisable()
@@ -38,7 +39,6 @@ public class MusicController : MonoBehaviour
 
     void UnsubscribeEvent()
     {
-        //PlayerMovement.On_PlatformReached -= HandlePlatformReached;
     }
 
     void Awake()

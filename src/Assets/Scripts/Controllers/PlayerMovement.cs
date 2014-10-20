@@ -25,6 +25,11 @@ public class PlayerMovement : MonoBehaviour
     private ParticleSystem _sparkEffect;
 
     public bool isGrounded;
+    public float headRayOffset;
+    public float noseRayOffset;
+    public float midRayOffset;
+    public float bellyRayOffset ;
+    public float footRayOffset;
     public bool isHittingHead;
     public float maxSpeed = 6.0f;
     public float ghostSpeed = 1f;
@@ -352,15 +357,21 @@ public class PlayerMovement : MonoBehaviour
     void HandleStickyPhysics()
     {
         // draw ray near the head of the player
-        Vector3 headRay = new Vector3(transform.position.x, transform.position.y + 1.2f, transform.position.z);
-        Vector3 midRay = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
-        Vector3 footRay = new Vector3(transform.position.x, transform.position.y - 0.1f, transform.position.z);
-        Debug.DrawRay(midRay, Vector3.right, Color.white);
-        Debug.DrawRay(midRay, Vector3.left, Color.white);
+        Vector3 headRay = new Vector3(transform.position.x, transform.position.y + headRayOffset, transform.position.z);
+        Vector3 noseRay = new Vector3(transform.position.x, transform.position.y + noseRayOffset, transform.position.z);
+        Vector3 midRay = new Vector3(transform.position.x, transform.position.y + midRayOffset, transform.position.z);
+        Vector3 bellyRay = new Vector3(transform.position.x, transform.position.y - bellyRayOffset, transform.position.z);
+        Vector3 footRay = new Vector3(transform.position.x, transform.position.y - footRayOffset, transform.position.z);
+        Debug.DrawRay(midRay, Vector3.right, Color.green);
+        Debug.DrawRay(midRay, Vector3.left, Color.green);
+        Debug.DrawRay(noseRay, Vector3.left, Color.yellow);
+        Debug.DrawRay(noseRay, Vector3.right, Color.yellow);
+        Debug.DrawRay(bellyRay, Vector3.left, Color.magenta);
+        Debug.DrawRay(bellyRay, Vector3.right, Color.magenta);
         Debug.DrawRay(midRay, new Vector3(1, 0, 1), Color.green);
         Debug.DrawRay(midRay, new Vector3(-1, 0, 1), Color.green);
-        Debug.DrawRay(footRay, Vector3.right, Color.blue);
-        Debug.DrawRay(footRay, Vector3.left, Color.blue);
+        Debug.DrawRay(footRay, Vector3.right, Color.red);
+        Debug.DrawRay(footRay, Vector3.left, Color.red);
         Debug.DrawRay(headRay, Vector3.right, Color.white);
         Debug.DrawRay(headRay, Vector3.left, Color.white);
 
@@ -369,8 +380,12 @@ public class PlayerMovement : MonoBehaviour
         if (
             (Physics.Raycast(footRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(footRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(bellyRay, Vector3.right, out hit, stickyBuffer)
+             || Physics.Raycast(bellyRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(midRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(midRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(noseRay, Vector3.right, out hit, stickyBuffer)
+             || Physics.Raycast(noseRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(1, 0, 1), out hit, stickyBuffer))
             && (hit.transform.gameObject.layer == 8 && !isGrounded))
@@ -383,8 +398,12 @@ public class PlayerMovement : MonoBehaviour
         else if (
             (Physics.Raycast(footRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(footRay, Vector3.left, out hit, stickyBuffer)
+             || Physics.Raycast(bellyRay, Vector3.left, out hit, stickyBuffer)
+             || Physics.Raycast(bellyRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(midRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(midRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(noseRay, Vector3.left, out hit, stickyBuffer)
+             || Physics.Raycast(noseRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(-1, 0, 1), out hit, stickyBuffer))
             && (hit.transform.gameObject.layer == 8 && !isGrounded))

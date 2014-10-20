@@ -19,6 +19,8 @@ public class KillBox : MonoBehaviour
     void OnEnable()
     {
         CameraMovement.On_CameraUpdatedMinY += UpdateKillBoxAndCheckpointPosition;
+        On_PlayerDeath += HandleOnPlayerDeath;
+        BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
     }
 
     void OnDisable()
@@ -34,6 +36,8 @@ public class KillBox : MonoBehaviour
     void UnsubscribeEvent()
     {
         CameraMovement.On_CameraUpdatedMinY -= UpdateKillBoxAndCheckpointPosition;
+        On_PlayerDeath -= HandleOnPlayerDeath;
+        BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
     }
 
     void Awake()
@@ -58,10 +62,6 @@ public class KillBox : MonoBehaviour
         if (collider.name == "Player")
         {
             On_PlayerDeath();
-            if (deathSound != null && deathSound.isReadyToPlay && !audio.isPlaying)
-            {
-                audio.PlayOneShot(deathSound);   
-            }
         }
 
         if (collider.tag != "Hazzard") return;
@@ -73,5 +73,13 @@ public class KillBox : MonoBehaviour
     void UpdateKillBoxAndCheckpointPosition(float newYPosition, int checkpointPlatform)
     {
         transform.position = new Vector3(transform.position.x, newYPosition - cameraPositionBuffer, transform.position.z);
+    }
+
+    void HandleOnPlayerDeath()
+    {
+        if (audio.clip != null && audio.clip.isReadyToPlay && !audio.isPlaying)
+        {
+            audio.Play();   
+        }
     }
 }
