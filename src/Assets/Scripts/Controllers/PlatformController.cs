@@ -145,10 +145,22 @@ public class PlatformController : MonoBehaviour
 
     private void AdjustProperties(GameObject newPlatform, int index)
     {
-        Drop dropComponent = newPlatform.transform.GetComponentInChildren<Drop>();
-        if (index > 40 && dropComponent != null ) //TODO: change to Editor value
+        UpAndDown upAndDownComponent = newPlatform.transform.GetComponent<UpAndDown>();
+        Drop dropComponent = newPlatform.transform.GetComponent<Drop>();
+        if (index > 40)
         {
-            dropComponent.enabled = true;
+            if (dropComponent != null) //TODO: change to Editor value
+            {
+                dropComponent.enabled = true;
+            }
+        }
+        if (index > 80)
+        {
+            if (upAndDownComponent != null) //TODO: change to Editor value
+            {
+                upAndDownComponent.speed = 3f;
+                upAndDownComponent.waitTime = .5f;
+            }
         }
     }
 

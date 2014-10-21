@@ -71,6 +71,7 @@ public class PlayerMovement : MonoBehaviour
         KillBox.On_PlayerDeath += HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
         GameController.OnPlayerResurrection += HandleOnPlayerResurrection;
+        CloudBehaviour.On_CloudDestroy += HandleOnCloudDestroy;
     }
 
     void OnDisable()
@@ -94,6 +95,7 @@ public class PlayerMovement : MonoBehaviour
         KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
         GameController.OnPlayerResurrection -= HandleOnPlayerResurrection;
+        CloudBehaviour.On_CloudDestroy -= HandleOnCloudDestroy;
     }
 
     void Awake()
@@ -513,5 +515,10 @@ public class PlayerMovement : MonoBehaviour
         {
             audio.PlayOneShot(highJumpSound, 1);
         }
+    }
+
+    void HandleOnCloudDestroy()
+    {
+        transform.parent = null;
     }
 }

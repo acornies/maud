@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class TelekinesisHandler : MonoBehaviour
 {
     private PlatformBehaviour[] _platformScripts;
-    private HazzardMovement[] _hazzardScripts;
+    //private HazzardMovement[] _hazzardScripts;
     private float _stabilizeTimer;
     private Transform _hazzardModel;
     private float _teleportTimer;
@@ -60,7 +60,7 @@ public class TelekinesisHandler : MonoBehaviour
     private void Awake()
     {
         _platformScripts = GetComponentsInChildren<PlatformBehaviour>();
-        _hazzardScripts = GetComponentsInChildren<HazzardMovement>();
+        //_hazzardScripts = GetComponentsInChildren<HazzardMovement>();
         _hazzardModel = transform.FindChild("ProtoModel");
 
         var effects = transform.GetComponentsInChildren<ParticleSystem>();
@@ -86,7 +86,7 @@ public class TelekinesisHandler : MonoBehaviour
         }
 
         HandleStabilizePlatforms();
-        HandleStabilizeHazzards();
+        //HandleStabilizeHazzards();
     }
 
     // Update is called once per frame
@@ -208,7 +208,7 @@ public class TelekinesisHandler : MonoBehaviour
         }
     }
 
-    void HandleStabilizeHazzards()
+    /*void HandleStabilizeHazzards()
     {
         if (isStable && _hazzardScripts != null && _hazzardScripts.Any(x => x.enabled))
         {
@@ -228,7 +228,7 @@ public class TelekinesisHandler : MonoBehaviour
             });
             isStable = false;
         }
-    }
+    }*/
 
     void HandleNewTelekinesisMovePosition(Transform objectToMove, Vector3 newPosition)
     {

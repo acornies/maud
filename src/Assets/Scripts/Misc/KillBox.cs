@@ -7,8 +7,6 @@ public class KillBox : MonoBehaviour
     //public static KillBox Instance { get; private set; }
     public float cameraPositionBuffer = 8.0f;
 
-    public AudioClip deathSound;
-
     public delegate void PlayerDeath();
     public static event PlayerDeath On_PlayerDeath;
 

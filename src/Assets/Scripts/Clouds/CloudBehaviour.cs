@@ -15,7 +15,6 @@ public class CloudBehaviour : MonoBehaviour
 
     void OnEnable()
     {
-        //CameraMovement.On_CameraUpdatedMinY += UpdateKillBoxAndCheckpointPosition;
         PlayerMovement.On_PlatformReached += HandleOnPlatformReached;
         PlayerMovement.On_PlayerAirborne += HandleOnPlayerAirborne;
     }
@@ -32,7 +31,6 @@ public class CloudBehaviour : MonoBehaviour
 
     void UnsubscribeEvent()
     {
-        //CameraMovement.On_CameraUpdatedMinY -= UpdateKillBoxAndCheckpointPosition;
         PlayerMovement.On_PlatformReached -= HandleOnPlatformReached;
         PlayerMovement.On_PlayerAirborne -= HandleOnPlayerAirborne;
     }
@@ -54,14 +52,14 @@ public class CloudBehaviour : MonoBehaviour
 
         if (_disappearTimer <= 0)
         {
-            Destroy(transform.gameObject);
             On_CloudDestroy();
+            Destroy(transform.gameObject);
         }
 
         if (transform.position == targetPosition)
         {
-            Destroy(transform.gameObject);
             On_CloudDestroy();
+            Destroy(transform.gameObject);
         }
     }
 
@@ -74,11 +72,14 @@ public class CloudBehaviour : MonoBehaviour
         collider.isTrigger = false;
         _disappearTimer -= Time.deltaTime;
 
+        player.parent = transform;
+
     }
 
     void HandleOnPlayerAirborne(Transform player)
     {
         collider.isTrigger = true;
+        player.parent = null;
     }
 
     void OnCollisionStay(Collision collision)

@@ -36,11 +36,13 @@ public class OrbitHit : MonoBehaviour
     void HandlePlayerCollisions(Collision collision)
     {
         var playerMovement = collision.transform.GetComponent<PlayerMovement>();
-        if (collision.gameObject.name != "Player" || _parentOrbitBehaviour.isOnPlatform || playerMovement.isHittingHead || _parentOrbitBehaviour.isStopped)
+        if (collision.gameObject.name != "Player" || _parentOrbitBehaviour.isOnPlatform || _parentOrbitBehaviour.isStopped)
         {
             //Debug.Log("no force because: " + isOnPlatform + playerMovement.isHittingHead + _isStopped);
             return;
         }
+
+        if (!_parentOrbitBehaviour.canStopWithHead && playerMovement.isHittingHead) return; 
 
         /*if (_parentOrbitBehaviour.axis.y > 0)
         {

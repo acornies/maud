@@ -11,6 +11,7 @@ public class Orbit : PlatformBehaviour
     public float radiusSpeed = 0.5f;
     public float orbitRotationSpeed = 10.0f;
     public float stopTime = 1.0f;
+    public bool canStopWithHead;
 
     // Use this for initialization
     protected override void Start()
