@@ -41,6 +41,7 @@ public class Orbit : PlatformBehaviour
         if (isOnPlatform)
         {
             isStopped = true;
+            _stoppedTimer = stopTime;
         }
         else
         {
