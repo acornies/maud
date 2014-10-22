@@ -5,11 +5,8 @@ public class CloudBehaviour : MonoBehaviour
 {
     private float _disappearTimer;
     private bool _isCollidingWithPlatform;
-    private bool _solidify;
-    private float _solidifyTimer;
     
     public float disappearTime = 2;
-    public float solidifyTime = 0.15f;
     public float speed = 1;
     public Vector3? targetPosition;
 
@@ -19,7 +16,7 @@ public class CloudBehaviour : MonoBehaviour
     void OnEnable()
     {
         PlayerMovement.On_PlatformReached += HandleOnPlatformReached;
-        //PlayerMovement.On_PlayerAirborne += HandleOnPlayerAirborne;
+        PlayerMovement.On_PlayerAirborne += HandleOnPlayerAirborne;
     }
 
     void OnDisable()
@@ -35,7 +32,7 @@ public class CloudBehaviour : MonoBehaviour
     void UnsubscribeEvent()
     {
         PlayerMovement.On_PlatformReached -= HandleOnPlatformReached;
-        //PlayerMovement.On_PlayerAirborne -= HandleOnPlayerAirborne;
+        PlayerMovement.On_PlayerAirborne -= HandleOnPlayerAirborne;
     }
 
     // Use this for initialization
@@ -64,23 +61,6 @@ public class CloudBehaviour : MonoBehaviour
             On_CloudDestroy();
             Destroy(transform.gameObject);
         }
-
-        if (_solidify && collider.isTrigger)
-        {
-            _solidifyTimer -= Time.deltaTime;
-            if (_solidifyTimer <= 0)
-            {
-                collider.isTrigger = false;
-                _solidifyTimer = solidifyTime;
-                Debug.Log("Turn on collider");
-            }
-           
-        }
-        else
-        {
-            _solidifyTimer = solidifyTime;
-            //_solidify = false;
-        }
     }
 
     void HandleOnPlatformReached(Transform platform, Transform player)
@@ -89,8 +69,7 @@ public class CloudBehaviour : MonoBehaviour
         if (_isCollidingWithPlatform) return;
  
         //Debug.Log("Stand on cloud!");
-        //collider.isTrigger = false;
-        _solidify = true;
+        collider.isTrigger = false;
         _disappearTimer -= Time.deltaTime;
 
         player.parent = transform;
@@ -101,53 +80,19 @@ public class CloudBehaviour : MonoBehaviour
     {
         collider.isTrigger = true;
         player.parent = null;
-        _solidify = false;
-        //_solidifyTimer = solidifyTime;
-        Debug.Log("Turn on trigger");
     }
 
-    /*void OnCollisionStay(Collision collision)
+    void OnCollisionStay(Collision collision)
     {
         if (collision.transform.tag != "Stoppable") return;
         //Debug.Log("Cloud hitting " + collision.transform.parent.name);
         _isCollidingWithPlatform = true;
-    }*/
+    }
 
     void OnCollisionExit(Collision collision)
     {
-        if (collision.transform.name != "Player") return;
-        collider.isTrigger = true;
-        _solidify = false;
-        //_solidifyTimer = solidifyTime;
-        Debug.Log("Turn on trigger");
+        if (collision.transform.tag != "Stoppable") return;
+        //Debug.Log("Cloud exiting " + collision.transform.parent.name);
+        _isCollidingWithPlatform = false;
     }
-
-    /*void OnTriggerStay(Collider triggerCollider)
-    {
-        if (triggerCollider.name == "Player")
-        {
-            _solidify = true;
-            //collider.isTrigger = false;
-        }
-    }*/
-
-    /*void OnTriggerExit(Collider triggerCollider)
-    {
-        if (triggerCollider.name == "Player")
-        {
-            if (_solidify = true;
-            //collider.isTrigger = false;
-        }
-    }*/
-
-    /*void OnCollisionExit(Collision triggerCollision)
-    {
-        if (triggerCollision.transform.name == "Player")
-        {
-            collider.isTrigger = true;
-            _solidify = false;
-            Debug.Log("Turn on trigger");
-        }
-    }*/
-
 }
