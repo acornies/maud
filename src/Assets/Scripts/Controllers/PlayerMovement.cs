@@ -211,6 +211,7 @@ public class PlayerMovement : MonoBehaviour
         if (!isGrounded && On_PlayerAirborne != null)
         {
             On_PlayerAirborne(transform);
+            transform.parent = null;
         }
 
         if (_isUsingPowers) return;
@@ -372,6 +373,8 @@ public class PlayerMovement : MonoBehaviour
         Debug.DrawRay(bellyRay, Vector3.right, Color.magenta);
         Debug.DrawRay(midRay, new Vector3(1, 0, 1), Color.green);
         Debug.DrawRay(midRay, new Vector3(-1, 0, 1), Color.green);
+        Debug.DrawRay(midRay, new Vector3(1, 0, -1), Color.green);
+        Debug.DrawRay(midRay, new Vector3(-1, 0, -1), Color.green);
         Debug.DrawRay(footRay, Vector3.right, Color.red);
         Debug.DrawRay(footRay, Vector3.left, Color.red);
         Debug.DrawRay(headRay, Vector3.right, Color.white);
@@ -382,15 +385,20 @@ public class PlayerMovement : MonoBehaviour
         if (
             (Physics.Raycast(footRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(footRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(footRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(bellyRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(bellyRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(bellyRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(midRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(midRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(midRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(noseRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(noseRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(noseRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, Vector3.right, out hit, stickyBuffer)
-             || Physics.Raycast(headRay, new Vector3(1, 0, 1), out hit, stickyBuffer))
-            && (hit.transform.gameObject.layer == 8 && !isGrounded))
+             || Physics.Raycast(headRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(headRay, new Vector3(1, 0, -1), out hit, stickyBuffer))
+            && (hit.transform.gameObject.layer == 8 && hit.transform.tag == "Stoppable" && !isGrounded))
         {
 
             _canMove = !(_moveDirection > 0);
@@ -400,15 +408,20 @@ public class PlayerMovement : MonoBehaviour
         else if (
             (Physics.Raycast(footRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(footRay, Vector3.left, out hit, stickyBuffer)
+             || Physics.Raycast(footRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(bellyRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(bellyRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(bellyRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(midRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(midRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(midRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(noseRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(noseRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(noseRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, Vector3.left, out hit, stickyBuffer)
-             || Physics.Raycast(headRay, new Vector3(-1, 0, 1), out hit, stickyBuffer))
-            && (hit.transform.gameObject.layer == 8 && !isGrounded))
+             || Physics.Raycast(headRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(headRay, new Vector3(-1, 0, -1), out hit, stickyBuffer))
+            && (hit.transform.gameObject.layer == 8 && hit.transform.tag == "Stoppable" && !isGrounded))
         {
 
             _canMove = !(_moveDirection < 0);
