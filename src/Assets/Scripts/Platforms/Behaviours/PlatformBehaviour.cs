@@ -71,7 +71,7 @@ public class PlatformBehaviour : MonoBehaviour
     public virtual void HandlePlayerAirborne(Transform player)
     {
         isOnPlatform = false;
-        player.parent = null;
+        //player.parent = null;
     }
 
     public virtual void HandleOnAffectStart(Transform platform)

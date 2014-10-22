@@ -20,6 +20,10 @@ public class TelekinesisController : MonoBehaviour
     private Transform _hazzardClone;
     private float _rotationTimer;
     private PlayerMovement _player;
+    private AudioSource[] _teleSources;
+    private AudioSource _teleAttack;
+    private AudioSource _teleLoop;
+    private AudioSource _teleTail;
 
     public float rotationSensitivity = 0.5f;
     public float cloneScaleMultiplier = 1.5f;
@@ -60,6 +64,7 @@ public class TelekinesisController : MonoBehaviour
         EasyTouch.On_LongTapEnd += HandleLongTapEnd;
         PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
         On_PlayerPowersStart += HandleOnPowersStart;
+        On_PlayerPowersEnd += HandleOnPlayerPowersEnd;
     }
 
     void OnDisable()
@@ -84,11 +89,17 @@ public class TelekinesisController : MonoBehaviour
         EasyTouch.On_LongTapEnd -= HandleLongTapEnd;
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
         On_PlayerPowersStart -= HandleOnPowersStart;
+        On_PlayerPowersEnd -= HandleOnPlayerPowersEnd;
     }
 
     void Awake()
     {
         _player = GameObject.Find("Player").transform.GetComponent<PlayerMovement>();
+        _teleSources = GetComponents<AudioSource>();
+        if (_teleSources == null || _teleSources.Length <= 0) return;
+        _teleAttack = _teleSources[0];
+        _teleLoop = _teleSources[1];
+        _teleTail = _teleSources[2];
     }
 
     void Update()
@@ -134,6 +145,15 @@ public class TelekinesisController : MonoBehaviour
         {
             On_TelekinesisStabilize(_hazzard);
             On_PlayerPowerDeplete(stabilizeCost);
+        }
+
+        if (_teleTail.clip != null && !_teleTail.isPlaying)
+        {
+            _teleTail.PlayDelayed(_teleAttack.clip.length);
+            if (_teleLoop.isPlaying)
+            {
+                _teleLoop.Stop();
+            }
         }
     }
 
@@ -294,10 +314,7 @@ public class TelekinesisController : MonoBehaviour
             Destroy(_platformClone.gameObject);
             _platformClone = null;
         }
-        if (_platform != null && _platform.particleSystem != null)
-        {
-            _platform.particleSystem.Stop();
-        }
+
         _platform = null;
         if (On_PlayerPowersEnd != null)
         {
@@ -308,11 +325,6 @@ public class TelekinesisController : MonoBehaviour
         {
             Destroy(_hazzardClone.gameObject);
             _hazzardClone = null;
-        }
-
-        if (audio.clip != null && audio.isPlaying)
-        {
-            audio.Stop();
         }
     }
 
@@ -334,10 +346,7 @@ public class TelekinesisController : MonoBehaviour
                     On_PlayerPowersStart();
                 }
                 _shouldRotate = true;
-                if (_platform != null && _platform.particleSystem != null)
-                {
-                    _platform.particleSystem.Play();
-                }
+
             }
             if (hitInfo.transform.tag == "Stoppable")
             {
@@ -348,10 +357,6 @@ public class TelekinesisController : MonoBehaviour
                     On_PlayerPowersStart();
                 }
                 _shouldRotate = true;
-                if (_platform != null && _platform.particleSystem != null)
-                {
-                    _platform.particleSystem.Play();
-                }
             }
 
             if (hitInfo.transform.tag == "Hazzard")
@@ -367,10 +372,24 @@ public class TelekinesisController : MonoBehaviour
 
     void HandleOnPowersStart()
     {
-        if (audio.clip != null && !audio.isPlaying)
+        if (_teleAttack.clip == null || _teleLoop.clip == null) return;
+        
+        _teleAttack.Play();
+
+        if (!_teleLoop.isPlaying)
         {
-            audio.Play();
-            //audio.volume = Mathf.Lerp(0, 0.6f, .5f);
+            _teleLoop.PlayDelayed(_teleAttack.clip.length);
         }
+        
+    }
+
+    void HandleOnPlayerPowersEnd()
+    {
+        if (_teleTail.clip == null || !_teleLoop.isPlaying) return;
+        if (!_teleTail.isPlaying)
+        {
+            _teleTail.Play();
+        }     
+        _teleLoop.Stop();
     }
 }

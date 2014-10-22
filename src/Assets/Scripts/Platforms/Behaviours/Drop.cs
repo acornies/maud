@@ -64,6 +64,6 @@ public class Drop : PlatformBehaviour
     {
         _isDropping = false;
         isOnPlatform = false;
-        player.parent = null;
+        //player.parent = null;
     }
 }
