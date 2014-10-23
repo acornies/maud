@@ -168,7 +168,6 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         rigidbody.useGravity = SetGravity();
-        //rigidbody.useGravity = !GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart;
         rigidbody.isKinematic = GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart;
 
         HandleAnimations();
@@ -203,14 +202,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     _consectutiveJumpCounter = 0;
                 }
-
-                //Debug.Log("Ground collider tag: " + groundCollider.tag);
-                //transform.parent = (groundCollider.tag == "Stoppable" ) ? groundCollider.transform : null;
             }
-            //else
-            //{
-            //   transform.parent = null;
-            //}
         }
 
         // handle head room
