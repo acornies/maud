@@ -1,6 +1,6 @@
 ﻿JMO Assets
-© 2013,2014 - Jean Moreno
-=========================
+© 2013, Jean Moreno
+===================
 
 Thanks for your download(s)! :)
 

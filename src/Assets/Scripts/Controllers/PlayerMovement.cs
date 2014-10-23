@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using System.Linq;
 
@@ -21,8 +22,16 @@ public class PlayerMovement : MonoBehaviour
     private bool _isUsingPowers;
     private bool _facingRight = true;
     private bool _isFacingCamera;
-    private Collider _playerCollider;
+    //private Collider _playerCollider;
     private ParticleSystem _sparkEffect;
+    private GameObject[] _playerModelObjects;
+    private Transform _modelBody;
+    private Transform _leftEye;
+    private Transform _rightEye;
+    private Material _normalBodyMaterial;
+    private Material _ghostBodyMaterial;
+    private Material _normalEyeMaterial;
+    private Material _ghostEyeMaterial;
 
     public bool isGrounded;
     public float headRayOffset;
@@ -104,22 +113,42 @@ public class PlayerMovement : MonoBehaviour
         _heightCheck = GameObject.Find("HeightCheck").transform;
         _playerModel = transform.FindChild("PlayerModel").gameObject;
         _animator = _playerModel.GetComponent<Animator>();
-        _playerCollider = transform.GetComponent<Collider>();
+        //_playerCollider = transform.GetComponent<Collider>();
         _sparkEffect = transform.FindChild("Spark").GetComponent<ParticleSystem>();
+        _playerModelObjects = GameObject.FindGameObjectsWithTag("PlayerModel");
     }
 
     void Start()
     {
-
+        _modelBody = _playerModelObjects.First(x => x.transform.name == "Body").transform;
+        _leftEye = _playerModelObjects.First(x => x.transform.name == "LeftEye").transform;
+        _rightEye = _playerModelObjects.First(x => x.transform.name == "RightEye").transform;
+        _ghostBodyMaterial = Resources.Load<Material>("Materials/BunnyBody_Ghost");
+        _normalBodyMaterial = Resources.Load<Material>("Materials/BunnyBody_Default");
+        _ghostEyeMaterial = Resources.Load<Material>("Materials/BunnyEye_Ghost");
+        _normalEyeMaterial = Resources.Load<Material>("Materials/BunnyEye_Default");
     }
 
     void Update()
     {
-        //isDead = GameController.Instance.playerIsDead;
+        if (GameController.Instance.playerIsDead)
+        {
+            _modelBody.renderer.material = _ghostBodyMaterial;
+            _leftEye.renderer.material = _ghostEyeMaterial;
+            _rightEye.renderer.material = _ghostEyeMaterial;
+        }
+        else
+        {
+            collider.enabled = true;
+            _modelBody.renderer.material = _normalBodyMaterial;
+            _leftEye.renderer.material = _normalEyeMaterial;
+            _rightEye.renderer.material = _normalEyeMaterial;
+        }
+        
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
 
-            _playerCollider.enabled = false;
+            collider.enabled = false;
             //_playerModel.renderer.material.color = new Color(1, 1, 1, 0.5f);
             if (_isGhostMoving && _ghostTouchTargetPosition != Vector3.zero)
             {
@@ -132,11 +161,6 @@ public class PlayerMovement : MonoBehaviour
                 _isGhostMoving = false;
                 _ghostTouchTargetPosition = Vector3.zero;
             }
-        }
-        else
-        {
-            _playerCollider.enabled = true;
-            //_playerModel.renderer.material.color = new Color(1, 1, 1, 1);
         }
     }
 
