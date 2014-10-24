@@ -65,6 +65,7 @@ public class TelekinesisController : MonoBehaviour
         PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
         On_PlayerPowersStart += HandleOnPowersStart;
         On_PlayerPowersEnd += HandleOnPlayerPowersEnd;
+		On_TelekinesisStabilize += HandleOnTelekinesisStabilize;
     }
 
     void OnDisable()
@@ -90,6 +91,7 @@ public class TelekinesisController : MonoBehaviour
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
         On_PlayerPowersStart -= HandleOnPowersStart;
         On_PlayerPowersEnd -= HandleOnPlayerPowersEnd;
+		On_TelekinesisStabilize -= HandleOnTelekinesisStabilize;
     }
 
     void Awake()
@@ -145,15 +147,6 @@ public class TelekinesisController : MonoBehaviour
         {
             On_TelekinesisStabilize(_hazzard);
             On_PlayerPowerDeplete(stabilizeCost);
-        }
-
-        if (_teleTail.clip != null && !_teleTail.isPlaying)
-        {
-            _teleTail.Play();
-            if (_teleLoop.isPlaying)
-            {
-                _teleLoop.Stop();
-            }
         }
     }
 
@@ -389,4 +382,16 @@ public class TelekinesisController : MonoBehaviour
         _teleTail.Play();     
         _teleLoop.Stop();
     }
+
+	void HandleOnTelekinesisStabilize(Transform transformtoStabilize)
+	{
+		if (_teleTail.clip != null && !_teleTail.isPlaying)
+		{
+			_teleTail.Play();
+			if (_teleLoop.isPlaying)
+			{
+				_teleLoop.Stop();
+			}
+		}
+	}
 }

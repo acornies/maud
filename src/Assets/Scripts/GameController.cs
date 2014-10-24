@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     private float _resumeTimer;
     private bool _initiatingResume;
     private Camera _mainCamera;
+	private GameObject _restartButton;
 
     public bool isPaused;
     public float resumeTime = 1;
@@ -90,9 +91,14 @@ public class GameController : MonoBehaviour
         _player = GameObject.Find("Player").transform;
         _telekinesisControl = GameObject.Find("TelekinesisControl");
         _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+		_restartButton = GameObject.Find("RestartButton");
+		if (_restartButton != null)
+		{
+			_restartButton.GetComponent<EasyButton>().enable = false;
+		}
     }
 
-    void OnGUI()
+	void OnGUI()
     {
 
         var guiStyleHeightMeter = new GUIStyle() { alignment = TextAnchor.MiddleRight, fontSize = 24 };
@@ -133,11 +139,6 @@ public class GameController : MonoBehaviour
              * */
         }
 
-    }
-
-    void PauseGUI(int windowId)
-    {
-        
     }
 
     // Update is called once per frame
@@ -240,21 +241,27 @@ public class GameController : MonoBehaviour
 
     private void HandleOnButtonDown(string buttonName)
     {
-        if (!buttonName.Equals("MenuButton")) return;
+        if (buttonName.Equals("MenuButton"))
+		{
+	        if (!isPaused)
+	        {
+	            isPaused = true;
+	            if (OnGamePause != null)
+	            {        
+	                OnGamePause();
 
-        if (!isPaused)
-        {
-            isPaused = true;
-            if (OnGamePause != null)
-            {        
-                OnGamePause();
+	            }
+	        }
+	        else
+	        {
+	            _initiatingResume = true;
+	        }
+		}
 
-            }
-        }
-        else
-        {
-            _initiatingResume = true;
-        }
+		if (buttonName.Equals("RestartButton"))
+		{
+			Restart();
+		}
     }
 
     void HandleOnGamePause()
@@ -262,6 +269,7 @@ public class GameController : MonoBehaviour
         _player.GetComponent<PlayerMovement>().enabled = false;
         _telekinesisControl.SetActive(false);
         _mainCamera.GetComponent<BlurEffect>().enabled = true;
+		_restartButton.GetComponent<EasyButton> ().enable = true;
 
     }
 
@@ -270,5 +278,6 @@ public class GameController : MonoBehaviour
         _player.GetComponent<PlayerMovement>().enabled = true;
         _telekinesisControl.SetActive(true);
         _mainCamera.GetComponent<BlurEffect>().enabled = false;
+		_restartButton.GetComponent<EasyButton> ().enable = false;
     }
 }
