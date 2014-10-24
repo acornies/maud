@@ -4,7 +4,6 @@ using System.Collections;
 public class CloudBehaviour : MonoBehaviour
 {
     private float _disappearTimer;
-    private bool _isCollidingWithPlatform;
     
     public float disappearTime = 2;
     public float speed = 1;
@@ -66,7 +65,7 @@ public class CloudBehaviour : MonoBehaviour
     void HandleOnPlatformReached(Transform platform, Transform player)
     {
         if (platform.GetInstanceID() != transform.GetInstanceID()) return;
-        if (_isCollidingWithPlatform) return;
+		if (player.rigidbody.velocity.y > 5f) return;
  
         //Debug.Log("Stand on cloud!");
         collider.isTrigger = false;
@@ -80,19 +79,5 @@ public class CloudBehaviour : MonoBehaviour
     {
         collider.isTrigger = true;
         player.parent = null;
-    }
-
-    void OnCollisionStay(Collision collision)
-    {
-        if (collision.transform.tag != "Stoppable") return;
-        //Debug.Log("Cloud hitting " + collision.transform.parent.name);
-        _isCollidingWithPlatform = true;
-    }
-
-    void OnCollisionExit(Collision collision)
-    {
-        if (collision.transform.tag != "Stoppable") return;
-        //Debug.Log("Cloud exiting " + collision.transform.parent.name);
-        _isCollidingWithPlatform = false;
     }
 }
