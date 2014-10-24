@@ -374,7 +374,6 @@ public class TelekinesisController : MonoBehaviour
     {
         if (_teleAttack.clip == null || _teleLoop.clip == null) return;
 
-        if (_teleTail == null || _teleTail.isPlaying) return;
         _teleAttack.Play();
 
         if (!_teleLoop.isPlaying)
@@ -386,10 +385,8 @@ public class TelekinesisController : MonoBehaviour
     void HandleOnPlayerPowersEnd()
     {
         if (_teleTail.clip == null || !_teleLoop.isPlaying) return;
-        if (!_teleTail.isPlaying)
-        {
-            _teleTail.Play();
-        }     
+
+        _teleTail.Play();     
         _teleLoop.Stop();
     }
 }

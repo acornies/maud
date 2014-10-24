@@ -8,8 +8,9 @@ public class GameController : MonoBehaviour
     private GameObject _telekinesisControl;
     private float _deathTimer;
     private int _previousPlatformNumber;
-    public float _resumeTimer;
-    public bool _initiatingResume;
+    private float _resumeTimer;
+    private bool _initiatingResume;
+    private Camera _mainCamera;
 
     public bool isPaused;
     public float resumeTime = 1;
@@ -70,7 +71,7 @@ public class GameController : MonoBehaviour
 
     void Awake()
     {
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 30;
 
         if (Instance == null)
         {
@@ -88,6 +89,7 @@ public class GameController : MonoBehaviour
     {
         _player = GameObject.Find("Player").transform;
         _telekinesisControl = GameObject.Find("TelekinesisControl");
+        _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
     void OnGUI()
@@ -125,9 +127,10 @@ public class GameController : MonoBehaviour
         {
             //GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Resources.Load<Texture>("Textures/PauseOverlay"), ScaleMode.StretchToFill);
             //GUI.ModalWindow(1, )
-            var windowWidth = Screen.width/2;
+            /*var windowWidth = Screen.width/2;
             var windowHeight = Screen.height/2;
             GUI.ModalWindow(1, new Rect( (windowWidth - windowWidth/2), (windowHeight - windowHeight/2), windowWidth, windowHeight), PauseGUI, "Paused");
+             * */
         }
 
     }
@@ -258,11 +261,14 @@ public class GameController : MonoBehaviour
     {
         _player.GetComponent<PlayerMovement>().enabled = false;
         _telekinesisControl.SetActive(false);
+        _mainCamera.GetComponent<BlurEffect>().enabled = true;
+
     }
 
     void HandleOnGameResume()
     {
         _player.GetComponent<PlayerMovement>().enabled = true;
         _telekinesisControl.SetActive(true);
+        _mainCamera.GetComponent<BlurEffect>().enabled = false;
     }
 }
