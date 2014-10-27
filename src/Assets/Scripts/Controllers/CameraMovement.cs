@@ -3,7 +3,10 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour
 {
-    public bool isTracking = true;
+    private float _introTimer;
+
+    public float introTime = 2.0f;
+    public bool isTracking;
 
     public float XMargin = 1.0f;
     public float YMargin = 1.0f;
@@ -28,8 +31,10 @@ public class CameraMovement : MonoBehaviour
     void OnEnable()
     {
         PlatformController.On_ReachedCheckpoint += UpdateMinYFromCheckpoint;
-        PlatformController.On_NewPlatform += HandleNewPlatform;
-        //GameController.On_PlayerIsDead += HandlePlayerIsDead;
+        PlatformController.On_NewPlatform += HandleNewPlatform;;
+        KillBox.On_PlayerDeath += HandlePlayerDeath;
+        BoundaryController.On_PlayerDeath += HandlePlayerDeath;
+        GameController.OnPlayerResurrection += HandlePlayerResurrection;
     }
 
     void OnDisable()
@@ -46,10 +51,14 @@ public class CameraMovement : MonoBehaviour
     {
         PlatformController.On_ReachedCheckpoint -= UpdateMinYFromCheckpoint;
         PlatformController.On_NewPlatform -= HandleNewPlatform;
+        KillBox.On_PlayerDeath -= HandlePlayerDeath;
+        BoundaryController.On_PlayerDeath -= HandlePlayerDeath;
+        GameController.OnPlayerResurrection -= HandlePlayerResurrection;
     }
 
     void Awake()
     {
+        _introTimer = introTime;
     }
 
     bool CheckXMargin()
@@ -64,16 +73,17 @@ public class CameraMovement : MonoBehaviour
 
     void LateUpdate()
     {
-        isTracking = !GameController.Instance.playerIsDead;
         if (isTracking)
         {
             TrackPlayer();
         }
-    }
-
-    void FixedUpdate()
-    {
-        //TrackPlayer();
+        else if (!isTracking && !GameController.Instance.playerIsDead)
+        {
+            _introTimer -= Time.deltaTime;
+            if (!(_introTimer <= 0)) return;
+            isTracking = true;
+            _introTimer = introTime;
+        }
     }
 
     void TrackPlayer()
@@ -121,5 +131,17 @@ public class CameraMovement : MonoBehaviour
     void HandleNewPlatform(float yPosition)
     {
         MaxXandY = new Vector2(MaxXandY.x, yPosition);
+    }
+
+    void HandlePlayerDeath()
+    {
+        isTracking = false;
+        Debug.Log("Turn off tracking");
+    }
+
+    void HandlePlayerResurrection()
+    {
+        isTracking = true;
+        Debug.Log("Turn on tracking");
     }
 }

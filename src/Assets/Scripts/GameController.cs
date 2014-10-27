@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
     private bool _initiatingResume;
     private Camera _mainCamera;
 	private GameObject _restartButton;
+    private EnergyBar _powerBar;
 
     public bool isPaused;
     public float resumeTime = 1;
@@ -19,6 +20,7 @@ public class GameController : MonoBehaviour
     public int lives = 3;
     public float highestPoint = 0.0f;
     public float powerMeter = 0;
+    public float maxPower = 20;
     public float timeBetweenDeaths = 3.0f;
     public Vector3 playerSpawnPosition;
     public bool playerIsDead;
@@ -90,6 +92,7 @@ public class GameController : MonoBehaviour
     {
         _player = GameObject.Find("Player").transform;
         _telekinesisControl = GameObject.Find("TelekinesisControl");
+        _powerBar = GetComponentInChildren<EnergyBar>();
         _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
 		_restartButton = GameObject.Find("RestartButton");
 		if (_restartButton != null)
@@ -114,7 +117,7 @@ public class GameController : MonoBehaviour
         guiStyleDeathTimer.normal.textColor = Color.white;
 
         GUI.Label(new Rect(Screen.width - 110, 10, 100, 25), highestPoint + "m", guiStyleHeightMeter);
-        GUI.Label(new Rect(Screen.width - 110, Screen.height - 35, 100, 25), "Power: " + powerMeter, guiStyleHeightMeter);
+        //GUI.Label(new Rect(Screen.width - 110, Screen.height - 35, 100, 25), "Power: " + powerMeter, guiStyleHeightMeter);
         GUI.Label(new Rect(10, 10, 150, 25), "Lives x " + lives, guiStyleLivesMeter);
 
         if (playerIsDead && lives >= 0)
@@ -175,7 +178,11 @@ public class GameController : MonoBehaviour
             powerMeter += powerAccumulationRate;
         }
 
-        if (powerMeter < 0) { powerMeter = 0; }
+        powerMeter = Mathf.Clamp(powerMeter, 0, maxPower);
+
+        _powerBar.valueCurrent = Mathf.CeilToInt(powerMeter);        
+        _powerBar.SetValueMin(0);
+        _powerBar.SetValueMax(Mathf.CeilToInt(maxPower));
 
         // time delay between player deaths
         if (playerIsDead)
@@ -231,7 +238,6 @@ public class GameController : MonoBehaviour
             Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
 
         playerSpawnPosition = new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition);
-
     }
 
     void HandleOnPlayerPowerDeplete(float amount)
