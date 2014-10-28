@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
     private float _resumeTimer;
     private bool _initiatingResume;
     private Camera _mainCamera;
+    private GameObject _menuButton;
     private GameObject _restartButton;
     private EnergyBar _powerBar;
     private EnergyBarRenderer _powerBarRenderer;
@@ -43,6 +44,9 @@ public class GameController : MonoBehaviour
 
     public delegate void GameResume();
     public static event GameResume OnGameResume;
+
+    public delegate void GameRestart(int sceneIndex);
+    public static event GameRestart OnGameRestart;
 
     public delegate void PlayerResurrection();
     public static event PlayerResurrection OnPlayerResurrection;
@@ -102,6 +106,7 @@ public class GameController : MonoBehaviour
         _powerBarRenderer = GetComponentInChildren<EnergyBarRenderer>();
         _deathTexture = Resources.Load<Texture>("Textures/GUI/Death");
         _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        _menuButton = GameObject.Find("MenuButton");
         _restartButton = GameObject.Find("RestartButton");
         if (_restartButton != null)
         {
@@ -125,8 +130,6 @@ public class GameController : MonoBehaviour
         guiStyleDeathTimer.normal.textColor = Color.white;
 
         GUI.Label(new Rect(Screen.width - 110, 10, 100, 25), highestPoint + "m", guiStyleHeightMeter);
-        //GUI.Label(new Rect(Screen.width - 110, Screen.height - 35, 100, 25), "Power: " + powerMeter, guiStyleHeightMeter);
-        //GUI.Label(new Rect(10, 10, 150, 25), "Lives x " + lives, guiStyleLivesMeter);
 
         if (playerIsDead && powerMeter >= lifeCost)
         {
@@ -241,9 +244,15 @@ public class GameController : MonoBehaviour
         }
     }
 
-    static void Restart()
+    void Restart()
     {
-        Application.LoadLevel(Application.loadedLevel);
+        //Debug.Log("Calling GameController.Restart");
+        _menuButton.GetComponent<EasyButton>().isActivated = false;
+        //button.enable = false; 
+        if (OnGameRestart != null)
+        {
+            OnGameRestart(Application.loadedLevel);
+        }
     }
 
     void HandleOnPlayerDeath()
@@ -282,7 +291,9 @@ public class GameController : MonoBehaviour
 
         if (buttonName.Equals("RestartButton"))
         {
+            Debug.Log("Pressed restart button");
             Restart();
+            _initiatingResume = true;
         }
     }
 

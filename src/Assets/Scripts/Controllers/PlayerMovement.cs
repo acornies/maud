@@ -113,7 +113,6 @@ public class PlayerMovement : MonoBehaviour
         _heightCheck = GameObject.Find("HeightCheck").transform;
         _playerModel = transform.FindChild("PlayerModel").gameObject;
         _animator = _playerModel.GetComponent<Animator>();
-        //_playerCollider = transform.GetComponent<Collider>();
         _sparkEffect = transform.FindChild("Spark").GetComponent<ParticleSystem>();
         _playerModelObjects = GameObject.FindGameObjectsWithTag("PlayerModel");
     }

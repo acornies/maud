@@ -54,8 +54,8 @@ public class OrbitHit : MonoBehaviour
             collision.rigidbody.AddForce(1 * (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed), collision.transform.position.y, collision.transform.position.z);
             Debug.Log("orbit hit on left with force: " + (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed));
         }
-
-        playerMovement.forcePushed = true;*/
+*/
+        playerMovement.forcePushed = true;
         _parentOrbitBehaviour.isStopped = true;
     }
 }
