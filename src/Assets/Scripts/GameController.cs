@@ -48,6 +48,9 @@ public class GameController : MonoBehaviour
     public delegate void GameRestart(int sceneIndex);
     public static event GameRestart OnGameRestart;
 
+    public delegate void GameOver();
+    public static event GameOver OnGameOver;
+
     public delegate void PlayerResurrection();
     public static event PlayerResurrection OnPlayerResurrection;
 
@@ -143,22 +146,10 @@ public class GameController : MonoBehaviour
                 new Rect(_powerBarRenderer.screenPosition.x, (_powerBarRenderer.screenPosition.y + _powerBarRenderer.SizePixels.y + deathIconOffset),
                 deathIconWidth, deathIconWidth),
                 _deathTexture, ScaleMode.ScaleToFit);
-
-            if (playerIsDead)
-            {
-                GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 25, 200, 50), "You died!", guiStyleDeathTitle);
-                GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "New game starts in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
-            }
         }
 
         if (isPaused)
         {
-            //GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Resources.Load<Texture>("Textures/PauseOverlay"), ScaleMode.StretchToFill);
-            //GUI.ModalWindow(1, )
-            /*var windowWidth = Screen.width/2;
-            var windowHeight = Screen.height/2;
-            GUI.ModalWindow(1, new Rect( (windowWidth - windowWidth/2), (windowHeight - windowHeight/2), windowWidth, windowHeight), PauseGUI, "Paused");
-             * */
         }
 
     }
@@ -204,13 +195,9 @@ public class GameController : MonoBehaviour
         _powerBar.SetValueMax(Mathf.CeilToInt(maxPower));
 
         // time delay between player deaths
-        if (playerIsDead)
+        if (playerIsDead && powerMeter >= lifeCost)
         {
             _telekinesisControl.SetActive(false);
-            if (powerMeter < lifeCost)
-            {
-                initiatingRestart = true;
-            }
 
             if (!initiatingRestart)
             {
@@ -219,21 +206,26 @@ public class GameController : MonoBehaviour
 
             _deathTimer -= Time.deltaTime;
             if (!(_deathTimer <= 0)) return;
-            if (powerMeter < lifeCost)
+
+            _telekinesisControl.SetActive(true);
+            _deathTimer = timeBetweenDeaths;
+            playerIsDead = false;
+            initiatingRestart = false;
+            if (OnPlayerResurrection != null)
             {
-                Restart();
+                OnPlayerResurrection();
+                powerMeter -= lifeCost;
             }
-            else
+        }
+
+        else if (playerIsDead && powerMeter < lifeCost)
+        {
+            initiatingRestart = true;
+            _menuButton.GetComponent<EasyButton>().isActivated = false;
+            _restartButton.GetComponent<EasyButton>().enable = true;
+            if (OnGameOver != null)
             {
-                _telekinesisControl.SetActive(true);
-                _deathTimer = timeBetweenDeaths;
-                playerIsDead = false;
-                initiatingRestart = false;
-                if (OnPlayerResurrection != null)
-                {
-                    OnPlayerResurrection();
-                    powerMeter -= lifeCost;
-                }
+                OnGameOver();
             }
         }
         else

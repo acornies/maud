@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 
 public class SceneFadeInOut : MonoBehaviour
@@ -10,6 +11,7 @@ public class SceneFadeInOut : MonoBehaviour
     private bool sceneStarting = true;      // Whether or not the scene is still fading in.
     private int _sceneToEnd;
     private bool _sceneEnding;
+    private bool _shouldRestart;
 
     // Subscribe to events
     void OnEnable()
@@ -17,6 +19,7 @@ public class SceneFadeInOut : MonoBehaviour
         GameController.OnGameRestart += HandleOnGameRestart;
         GameController.OnGamePause += HandleOnGamePause;
         GameController.OnGameResume += HandleOnGameResume;
+        GameController.OnGameOver += HandleOnGameOver;
     }
 
     void OnDisable()
@@ -34,6 +37,7 @@ public class SceneFadeInOut : MonoBehaviour
         GameController.OnGameRestart -= HandleOnGameRestart;
         GameController.OnGamePause -= HandleOnGamePause;
         GameController.OnGameResume -= HandleOnGameResume;
+        GameController.OnGameOver -= HandleOnGameOver;
     }
 
 
@@ -52,9 +56,14 @@ public class SceneFadeInOut : MonoBehaviour
             StartScene();
         }
 
-        else if (_sceneEnding)
+        else if (_sceneEnding && _shouldRestart)
         {
             EndScene(_sceneToEnd);
+        }
+
+        else if (_sceneEnding && !_shouldRestart)
+        {
+            EndScene();
         }
     }
 
@@ -91,25 +100,30 @@ public class SceneFadeInOut : MonoBehaviour
     }
 
 
-    public void EndScene(int sceneIndex)
+    public void EndScene()
     {
-        Debug.Log("Ending Scene...");
-
         // Make sure the texture is enabled.
         guiTexture.enabled = true;
 
         // Start fading towards black.
         FadeToBlack();
+    }
 
+    public void EndScene(int sceneIndex, bool shouldRestart = true)
+    {  
+        EndScene();
         // If the screen is almost black...
-        if (guiTexture.color.a >= 0.95f)
+        if (guiTexture.color.a >= 0.95f && shouldRestart)
+        {
             // ... reload the level.
-            Application.LoadLevel(sceneIndex);
+            Application.LoadLevel(sceneIndex);   
+        }
     }
 
     private void HandleOnGameRestart(int sceneIndex)
     {
         _sceneEnding = true;
+        _shouldRestart = true;
         _sceneToEnd = sceneIndex;
     }
     private void HandleOnGameResume()
@@ -120,5 +134,10 @@ public class SceneFadeInOut : MonoBehaviour
     private void HandleOnGamePause()
     {
         //TODO: remove overlay on pause
+    }
+
+    private void HandleOnGameOver()
+    {
+        _sceneEnding = true;
     }
 }
