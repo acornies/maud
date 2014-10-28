@@ -17,7 +17,7 @@ public class GameController : MonoBehaviour
     public bool isPaused;
     public float resumeTime = 1;
     public float playerZPosition = -2.8f;
-    public int lives = 3;
+    //public int lives = 3;
     public float highestPoint = 0.0f;
     public float powerMeter = 0;
     public float maxPower = 20;
@@ -27,6 +27,7 @@ public class GameController : MonoBehaviour
     public bool movedFromSpawnPosition;
     public bool initiatingRestart;
     public bool useAcceleration;
+    public float lifeCost = 5f;
     public float powerAccumulationRate = 0.25f;
     public float resurrectionSpeed = 15f;
 
@@ -118,15 +119,15 @@ public class GameController : MonoBehaviour
 
         GUI.Label(new Rect(Screen.width - 110, 10, 100, 25), highestPoint + "m", guiStyleHeightMeter);
         //GUI.Label(new Rect(Screen.width - 110, Screen.height - 35, 100, 25), "Power: " + powerMeter, guiStyleHeightMeter);
-        GUI.Label(new Rect(10, 10, 150, 25), "Lives x " + lives, guiStyleLivesMeter);
+        //GUI.Label(new Rect(10, 10, 150, 25), "Lives x " + lives, guiStyleLivesMeter);
 
-        if (playerIsDead && lives >= 0)
+        if (playerIsDead && powerMeter >= lifeCost)
         {
             GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 25, 200, 50), "You died!", guiStyleDeathTitle);
             GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "Next life in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
         }
 
-        if (playerIsDead && lives <= -1)
+        if (playerIsDead && powerMeter < lifeCost)
         {
             GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 25, 200, 50), "You died!", guiStyleDeathTitle);
             GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "New game starts in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
@@ -188,7 +189,7 @@ public class GameController : MonoBehaviour
         if (playerIsDead)
         {
             _telekinesisControl.SetActive(false);
-            if (lives <= -1)
+            if (powerMeter < lifeCost)
             {
                 initiatingRestart = true;
             }
@@ -200,7 +201,7 @@ public class GameController : MonoBehaviour
 
             _deathTimer -= Time.deltaTime;
             if (!(_deathTimer <= 0)) return;
-            if (lives <= -1)
+            if (powerMeter < lifeCost)
             {
                 Restart();
             }
@@ -231,7 +232,7 @@ public class GameController : MonoBehaviour
 
     void HandleOnPlayerDeath()
     {
-        lives--;
+        powerMeter -= lifeCost;
         playerIsDead = true;
 
         var screenCenterToWorld =
