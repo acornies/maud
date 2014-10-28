@@ -147,14 +147,14 @@ public class PlatformController : MonoBehaviour
     {
         UpAndDown upAndDownComponent = newPlatform.transform.GetComponent<UpAndDown>();
         Drop dropComponent = newPlatform.transform.GetComponent<Drop>();
-        if (index > 40)
+        if (index > 60)
         {
             if (dropComponent != null) //TODO: change to Editor value
             {
                 dropComponent.enabled = true;
             }
         }
-        if (index > 80)
+        if (index > 50)
         {
             if (upAndDownComponent != null) //TODO: change to Editor value
             {

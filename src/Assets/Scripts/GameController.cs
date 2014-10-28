@@ -1,4 +1,5 @@
 ﻿using System;
+using EnergyBarToolkit;
 using UnityEngine;
 using System.Collections;
 
@@ -11,8 +12,10 @@ public class GameController : MonoBehaviour
     private float _resumeTimer;
     private bool _initiatingResume;
     private Camera _mainCamera;
-	private GameObject _restartButton;
+    private GameObject _restartButton;
     private EnergyBar _powerBar;
+    private EnergyBarRenderer _powerBarRenderer;
+    private Texture _deathTexture;
 
     public bool isPaused;
     public float resumeTime = 1;
@@ -30,6 +33,8 @@ public class GameController : MonoBehaviour
     public float lifeCost = 5f;
     public float powerAccumulationRate = 0.25f;
     public float resurrectionSpeed = 15f;
+    public float deathIconWidth = 20f;
+    public float deathIconOffset = 10f;
 
     public static GameController Instance { get; private set; }
 
@@ -94,15 +99,17 @@ public class GameController : MonoBehaviour
         _player = GameObject.Find("Player").transform;
         _telekinesisControl = GameObject.Find("TelekinesisControl");
         _powerBar = GetComponentInChildren<EnergyBar>();
+        _powerBarRenderer = GetComponentInChildren<EnergyBarRenderer>();
+        _deathTexture = Resources.Load<Texture>("Textures/GUI/Death");
         _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
-		_restartButton = GameObject.Find("RestartButton");
-		if (_restartButton != null)
-		{
-			_restartButton.GetComponent<EasyButton>().enable = false;
-		}
+        _restartButton = GameObject.Find("RestartButton");
+        if (_restartButton != null)
+        {
+            _restartButton.GetComponent<EasyButton>().enable = false;
+        }
     }
 
-	void OnGUI()
+    void OnGUI()
     {
 
         var guiStyleHeightMeter = new GUIStyle() { alignment = TextAnchor.MiddleRight, fontSize = 24 };
@@ -127,10 +134,18 @@ public class GameController : MonoBehaviour
             GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "Next life in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
         }
 
-        if (playerIsDead && powerMeter < lifeCost)
+        if (powerMeter < lifeCost)
         {
-            GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 25, 200, 50), "You died!", guiStyleDeathTitle);
-            GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "New game starts in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
+            GUI.DrawTexture(
+                new Rect(_powerBarRenderer.screenPosition.x, (_powerBarRenderer.screenPosition.y + _powerBarRenderer.SizePixels.y + deathIconOffset),
+                deathIconWidth, deathIconWidth),
+                _deathTexture, ScaleMode.ScaleToFit);
+
+            if (playerIsDead)
+            {
+                GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 25, 200, 50), "You died!", guiStyleDeathTitle);
+                GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "New game starts in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
+            }
         }
 
         if (isPaused)
@@ -181,7 +196,7 @@ public class GameController : MonoBehaviour
 
         powerMeter = Mathf.Clamp(powerMeter, 0, maxPower);
 
-        _powerBar.valueCurrent = Mathf.CeilToInt(powerMeter);        
+        _powerBar.valueCurrent = Mathf.CeilToInt(powerMeter);
         _powerBar.SetValueMin(0);
         _powerBar.SetValueMax(Mathf.CeilToInt(maxPower));
 
@@ -214,11 +229,12 @@ public class GameController : MonoBehaviour
                 if (OnPlayerResurrection != null)
                 {
                     OnPlayerResurrection();
-                }          
+                    powerMeter -= lifeCost;
+                }
             }
         }
         else
-        {          
+        {
             _deathTimer = timeBetweenDeaths;
             movedFromSpawnPosition = false;
             initiatingRestart = false;
@@ -232,7 +248,6 @@ public class GameController : MonoBehaviour
 
     void HandleOnPlayerDeath()
     {
-        powerMeter -= lifeCost;
         playerIsDead = true;
 
         var screenCenterToWorld =
@@ -249,26 +264,26 @@ public class GameController : MonoBehaviour
     private void HandleOnButtonDown(string buttonName)
     {
         if (buttonName.Equals("MenuButton"))
-		{
-	        if (!isPaused)
-	        {
-	            isPaused = true;
-	            if (OnGamePause != null)
-	            {        
-	                OnGamePause();
+        {
+            if (!isPaused)
+            {
+                isPaused = true;
+                if (OnGamePause != null)
+                {
+                    OnGamePause();
 
-	            }
-	        }
-	        else
-	        {
-	            _initiatingResume = true;
-	        }
-		}
+                }
+            }
+            else
+            {
+                _initiatingResume = true;
+            }
+        }
 
-		if (buttonName.Equals("RestartButton"))
-		{
-			Restart();
-		}
+        if (buttonName.Equals("RestartButton"))
+        {
+            Restart();
+        }
     }
 
     void HandleOnGamePause()
@@ -276,7 +291,7 @@ public class GameController : MonoBehaviour
         _player.GetComponent<PlayerMovement>().enabled = false;
         _telekinesisControl.SetActive(false);
         _mainCamera.GetComponent<BlurEffect>().enabled = true;
-		_restartButton.GetComponent<EasyButton> ().enable = true;
+        _restartButton.GetComponent<EasyButton>().enable = true;
 
     }
 
@@ -285,6 +300,6 @@ public class GameController : MonoBehaviour
         _player.GetComponent<PlayerMovement>().enabled = true;
         _telekinesisControl.SetActive(true);
         _mainCamera.GetComponent<BlurEffect>().enabled = false;
-		_restartButton.GetComponent<EasyButton> ().enable = false;
+        _restartButton.GetComponent<EasyButton>().enable = false;
     }
 }
