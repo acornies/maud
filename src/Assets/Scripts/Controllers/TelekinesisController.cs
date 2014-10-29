@@ -32,6 +32,7 @@ public class TelekinesisController : MonoBehaviour
     public float rotationCostPerSecond = 1f;
     public float moveCostPerSecond = 1.5f;
     public float stabilizeCost = 3;
+    public float minimumSwipeTime = 0.15f;
 
     public delegate void TelekinesisPowersStart();
     public static event TelekinesisPowersStart On_PlayerPowersStart;
@@ -65,7 +66,7 @@ public class TelekinesisController : MonoBehaviour
         PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
         On_PlayerPowersStart += HandleOnPowersStart;
         On_PlayerPowersEnd += HandleOnPlayerPowersEnd;
-		On_TelekinesisStabilize += HandleOnTelekinesisStabilize;
+        On_TelekinesisStabilize += HandleOnTelekinesisStabilize;
     }
 
     void OnDisable()
@@ -91,7 +92,7 @@ public class TelekinesisController : MonoBehaviour
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
         On_PlayerPowersStart -= HandleOnPowersStart;
         On_PlayerPowersEnd -= HandleOnPlayerPowersEnd;
-		On_TelekinesisStabilize -= HandleOnTelekinesisStabilize;
+        On_TelekinesisStabilize -= HandleOnTelekinesisStabilize;
     }
 
     void Awake()
@@ -171,7 +172,7 @@ public class TelekinesisController : MonoBehaviour
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
 
         ActivateObject(gesture);
-        
+
         if (_platform != null)
         {
             ClonePlatform();
@@ -201,7 +202,7 @@ public class TelekinesisController : MonoBehaviour
                 //Debug.Log("Found player clone");
                 Destroy(playerClone.gameObject);
             }
-            
+
             cloneChild.renderer.material.color = new Color(1, 1, 1, .5f);
         }
         _platformClone.localScale = new Vector3(_platform.localScale.x * cloneScaleMultiplier, _platform.localScale.y * cloneScaleMultiplier, _platform.localScale.z * cloneScaleMultiplier);
@@ -323,8 +324,12 @@ public class TelekinesisController : MonoBehaviour
 
     private void ActivateObject(Gesture gesture)
     {
+        //Debug.Log("activate swipe time: " + gesture.actionTime + " minimum: " + minimumSwipeTime);
         if (!_player.isGrounded) return;
-        
+
+        // Guard against slower taps
+        if (gesture.actionTime < minimumSwipeTime) return;
+
         _pointerReference = gesture.position;
         RaycastHit hitInfo = new RaycastHit();
         bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(gesture.position), out hitInfo);
@@ -379,19 +384,19 @@ public class TelekinesisController : MonoBehaviour
     {
         if (_teleTail.clip == null || !_teleLoop.isPlaying) return;
 
-        _teleTail.Play();     
+        _teleTail.Play();
         _teleLoop.Stop();
     }
 
-	void HandleOnTelekinesisStabilize(Transform transformtoStabilize)
-	{
-		if (_teleTail.clip != null && !_teleTail.isPlaying)
-		{
-			_teleTail.Play();
-			if (_teleLoop.isPlaying)
-			{
-				_teleLoop.Stop();
-			}
-		}
-	}
+    void HandleOnTelekinesisStabilize(Transform transformtoStabilize)
+    {
+        if (_teleTail.clip != null && !_teleTail.isPlaying)
+        {
+            _teleTail.Play();
+            if (_teleLoop.isPlaying)
+            {
+                _teleLoop.Stop();
+            }
+        }
+    }
 }

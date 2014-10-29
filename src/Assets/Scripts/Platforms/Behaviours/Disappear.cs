@@ -26,14 +26,10 @@ public class Disappear : PlatformBehaviour
         if (isInvisible)
         {
             if (!(timer >= interval)) return;
-
+            if (child == null) return;
             child.gameObject.SetActive(true);
             timer = 0;
             isInvisible = false;
-            /*if (OnPlatformReappear != null)
-            {
-                OnPlatformReappear(transform);
-            }*/
         }
         else
         {

@@ -54,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
     public int jumpsforHighJump = 3;
     public float highJumpForce = 200f;
     public float highJumpTimeout = 0.5f;
+    public float swipeJumpTolerenceTime = 1f;
 
     public AudioClip jumpSound;
     public AudioClip highJumpSound;
@@ -341,7 +342,7 @@ public class PlayerMovement : MonoBehaviour
             _moveDirection = 0;
         }
 
-        if (gesture.actionTime < 0.1f)
+        if (gesture.actionTime < swipeJumpTolerenceTime)
         {
             Jump(gesture);
         }

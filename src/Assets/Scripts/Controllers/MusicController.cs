@@ -14,11 +14,13 @@ public class MusicController : MonoBehaviour
     public int forestMusicFastLimit = 100;
     public int cloudMusicSlowLimit = 200;
     public int cloudMusicFastLimit = 300;
+    public int stratosphereLimit = 500;
 
-    public AudioSource forestMusicSlow;
-    public AudioSource forestMusicFast;
-    public AudioSource cloudMusicSlow;
-    public AudioSource cloudMusicFast;
+    private AudioSource forestMusicSlow;
+    private AudioSource forestMusicFast;
+    private AudioSource cloudMusicSlow;
+    private AudioSource cloudMusicFast;
+    private AudioSource stratosphereMusic;
 
     //public AudioClip deathSound;
 
@@ -53,6 +55,7 @@ public class MusicController : MonoBehaviour
         forestMusicFast = _allSongs["Jumpergame_280714"];
         cloudMusicSlow = _allSongs["Cloudlevel121Bpm_280814"];
         cloudMusicFast = _allSongs["Cloudlevel141Bpm_280814"];
+        stratosphereMusic = _allSongs["Stratosphere_w-tail_70bpm_281114"];
     }
 
     // Use this for initialization
@@ -69,6 +72,7 @@ public class MusicController : MonoBehaviour
         NextSong(currentPlatform, forestMusicSlowLimit, forestMusicSlow, forestMusicFast);
         NextSong(currentPlatform, forestMusicFastLimit, forestMusicFast, cloudMusicSlow);
         NextSong(currentPlatform, cloudMusicSlowLimit, cloudMusicSlow, cloudMusicFast);
+        NextSong(currentPlatform, cloudMusicFastLimit, cloudMusicFast, stratosphereMusic);
     }
 
     private static void NextSong(int currentPlatform, int limit, AudioSource current, AudioSource next)
@@ -87,7 +91,7 @@ public class MusicController : MonoBehaviour
     static void MusicTransition(AudioSource currentSong, AudioSource nextSong)
     {
         if (nextSong == null) return;
-        Debug.Log("Start transition from " + currentSong.clip.name + " to " + nextSong.clip.name);
+        //Debug.Log("Start transition from " + currentSong.clip.name + " to " + nextSong.clip.name);
         nextSong.Play();
         currentSong.volume = 0.0f;
         currentSong.Stop();
