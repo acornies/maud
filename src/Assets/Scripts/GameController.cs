@@ -16,7 +16,6 @@ public class GameController : MonoBehaviour
     private GameObject _restartButton;
     private EnergyBar _powerBar;
     private EnergyBarRenderer _powerBarRenderer;
-    private Texture _deathTexture;
 
     public bool isPaused;
     public float resumeTime = 1;
@@ -107,7 +106,7 @@ public class GameController : MonoBehaviour
         _telekinesisControl = GameObject.Find("TelekinesisControl");
         _powerBar = GetComponentInChildren<EnergyBar>();
         _powerBarRenderer = GetComponentInChildren<EnergyBarRenderer>();
-        _deathTexture = Resources.Load<Texture>("Textures/GUI/Death");
+
         _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         _menuButton = GameObject.Find("MenuButton");
         _restartButton = GameObject.Find("RestartButton");
@@ -142,16 +141,12 @@ public class GameController : MonoBehaviour
 
         if (powerMeter < lifeCost)
         {
-            GUI.DrawTexture(
-                new Rect(_powerBarRenderer.screenPosition.x, (_powerBarRenderer.screenPosition.y + _powerBarRenderer.SizePixels.y + deathIconOffset),
-                deathIconWidth, deathIconWidth),
-                _deathTexture, ScaleMode.ScaleToFit);
+            _powerBarRenderer.texturesForeground[0].color.a = 1f;
         }
-
-        if (isPaused)
+        else if (powerMeter >= lifeCost)
         {
+            _powerBarRenderer.texturesForeground[0].color.a = 0f;
         }
-
     }
 
     // Update is called once per frame
@@ -283,7 +278,6 @@ public class GameController : MonoBehaviour
 
         if (buttonName.Equals("RestartButton"))
         {
-            Debug.Log("Pressed restart button");
             Restart();
             _initiatingResume = true;
         }
