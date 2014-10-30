@@ -8,7 +8,6 @@ public class Disappear : PlatformBehaviour
     public bool isInvisible;
 
     public delegate void PlatformReappear(Transform reappearingObj);
-    public static event PlatformReappear OnPlatformReappear;
 
     // Use this for initialization
     protected override void Start()

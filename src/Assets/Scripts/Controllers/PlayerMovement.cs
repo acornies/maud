@@ -51,7 +51,7 @@ public class PlayerMovement : MonoBehaviour
     public float headHitRadius = 0.1f;
     public int additionalJumps = 1;
     public float additionalJumpForce = 500.0f;
-    public int jumpsforHighJump = 3;
+    public int jumpsForHighJump = 3;
     public float highJumpForce = 200f;
     public float highJumpTimeout = 0.5f;
     public float swipeJumpTolerenceTime = 1f;
@@ -149,7 +149,7 @@ public class PlayerMovement : MonoBehaviour
         {
 
             collider.enabled = false;
-            //_playerModel.renderer.material.color = new Color(1, 1, 1, 0.5f);
+
             if (_isGhostMoving && _ghostTouchTargetPosition != Vector3.zero)
             {
                 //Debug.Log("Move ghost!");
@@ -192,7 +192,7 @@ public class PlayerMovement : MonoBehaviour
 
                 On_PlatformReached(groundCollider.transform, transform); // trigger event for finding current platform
                 _highJumpTimer -= Time.deltaTime;
-                if (_consectutiveJumpCounter >= jumpsforHighJump)
+                if (_consectutiveJumpCounter >= jumpsForHighJump)
                 {
                     _consectutiveJumpCounter = 0;
                     _highJumpTimer = highJumpTimeout;
@@ -322,7 +322,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            if (_highJumpTimer > 0 && _consectutiveJumpCounter == (jumpsforHighJump - 1))
+            if (_highJumpTimer > 0 && _consectutiveJumpCounter == (jumpsForHighJump - 1))
             {
                 Jump(gesture, highJumpForce);
                 _isHighJumping = true;

@@ -157,7 +157,7 @@ public class TelekinesisController : MonoBehaviour
         var scriptsToDisable = objectWithScripts.GetComponentsInChildren<TelekinesisHandler>();
         scriptsToDisable.ToList().ForEach(x =>
         {
-            x.isStable = true;
+            //x.isStable = true;
             x.isClone = true;
         });
     }

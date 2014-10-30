@@ -5,11 +5,13 @@ public class OrbitHit : MonoBehaviour
 {
 
     private Orbit _parentOrbitBehaviour;
+    private TelekinesisHandler _parenTelekinesisHandler;
 
     // Use this for initialization
     void Start()
     {
         _parentOrbitBehaviour = transform.parent.GetComponent<Orbit>();
+        _parenTelekinesisHandler = transform.parent.GetComponent<TelekinesisHandler>();
     }
 
     // Update is called once per frame
@@ -36,15 +38,17 @@ public class OrbitHit : MonoBehaviour
     void HandlePlayerCollisions(Collision collision)
     {
         var playerMovement = collision.transform.GetComponent<PlayerMovement>();
-        if (collision.gameObject.name != "Player" || _parentOrbitBehaviour.isOnPlatform || _parentOrbitBehaviour.isStopped)
+        if (collision.gameObject.name != "Player" 
+            || _parentOrbitBehaviour.isOnPlatform 
+            || _parenTelekinesisHandler.isStable 
+            || _parentOrbitBehaviour.isStopped)
         {
-            //Debug.Log("no force because: " + isOnPlatform + playerMovement.isHittingHead + _isStopped);
             return;
         }
 
-        if (!_parentOrbitBehaviour.canStopWithHead && playerMovement.isHittingHead) return; 
+        if (!_parentOrbitBehaviour.canStopWithHead && playerMovement.isHittingHead) return;
 
-        /*if (_parentOrbitBehaviour.axis.y > 0)
+        if (_parentOrbitBehaviour.axis.y > 0)
         {
             collision.rigidbody.AddForce(-1 * (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed), collision.transform.position.y, collision.transform.position.z);
             Debug.Log("orbit hit on right with force: " + (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed));
@@ -54,7 +58,7 @@ public class OrbitHit : MonoBehaviour
             collision.rigidbody.AddForce(1 * (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed), collision.transform.position.y, collision.transform.position.z);
             Debug.Log("orbit hit on left with force: " + (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed));
         }
-*/
+
         playerMovement.forcePushed = true;
         _parentOrbitBehaviour.isStopped = true;
     }

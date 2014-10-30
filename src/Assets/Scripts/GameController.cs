@@ -62,6 +62,7 @@ public class GameController : MonoBehaviour
         EasyButton.On_ButtonDown += HandleOnButtonDown;
         OnGamePause += HandleOnGamePause;
         OnGameResume += HandleOnGameResume;
+        OnGameOver += HandleOnGameOver;
     }
 
     void OnDisable()
@@ -82,6 +83,7 @@ public class GameController : MonoBehaviour
         EasyButton.On_ButtonDown -= HandleOnButtonDown;
         OnGamePause -= HandleOnGamePause;
         OnGameResume -= HandleOnGameResume;
+        OnGameOver -= HandleOnGameOver;
     }
 
     void Awake()
@@ -298,5 +300,11 @@ public class GameController : MonoBehaviour
         _telekinesisControl.SetActive(true);
         _mainCamera.GetComponent<BlurEffect>().enabled = false;
         _restartButton.GetComponent<EasyButton>().enable = false;
+    }
+
+    void HandleOnGameOver()
+    {
+        _player.GetComponent<PlayerMovement>().enabled = false;
+        _telekinesisControl.SetActive(false);
     }
 }
