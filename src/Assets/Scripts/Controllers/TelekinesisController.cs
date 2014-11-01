@@ -33,6 +33,7 @@ public class TelekinesisController : MonoBehaviour
     public float moveCostPerSecond = 1.5f;
     public float stabilizeCost = 3;
     public float minimumSwipeTime = 0.15f;
+    public Material telekinesisMaterial;
 
     public delegate void TelekinesisPowersStart();
     public static event TelekinesisPowersStart On_PlayerPowersStart;
@@ -203,7 +204,7 @@ public class TelekinesisController : MonoBehaviour
                 Destroy(playerClone.gameObject);
             }
 
-            cloneChild.renderer.material.color = new Color(1, 1, 1, .5f);
+            TelekinesisMaterial(cloneChild);
         }
         _platformClone.localScale = new Vector3(_platform.localScale.x * cloneScaleMultiplier, _platform.localScale.y * cloneScaleMultiplier, _platform.localScale.z * cloneScaleMultiplier);
         _platformClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
@@ -216,11 +217,11 @@ public class TelekinesisController : MonoBehaviour
         if (_hazzardClone != null) return; // prevent multi-finger object cloning
         _hazzardClone = Instantiate(_hazzard, _hazzard.position, _hazzard.rotation) as Transform;
         if (_hazzardClone == null) return;
-        //_hazzardClone.renderer.material.color = new Color(1, 1, 1, .5f);
+
         var cloneChild = _hazzardClone.FindChild("ProtoModel");
         if (cloneChild != null)
         {
-            cloneChild.renderer.material.color = new Color(1, 1, 1, .5f);
+            TelekinesisMaterial(cloneChild);
         }
         _hazzardClone.localScale = new Vector3(_hazzard.localScale.x * cloneScaleMultiplier, _hazzard.localScale.y * cloneScaleMultiplier, _hazzard.localScale.z * cloneScaleMultiplier);
         _hazzardClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
@@ -229,6 +230,12 @@ public class TelekinesisController : MonoBehaviour
             _hazzardClone.rigidbody.isKinematic = true;
         }
         Stabilize(_hazzardClone);
+    }
+
+    private void TelekinesisMaterial(Transform clone)
+    {
+        if (telekinesisMaterial == null) return;
+        clone.renderer.material = telekinesisMaterial;
     }
 
     void On_Swipe(Gesture gesture)

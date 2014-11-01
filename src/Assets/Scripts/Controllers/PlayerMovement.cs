@@ -34,11 +34,15 @@ public class PlayerMovement : MonoBehaviour
     private Material _ghostEyeMaterial;
 
     public bool isGrounded;
-    public float headRayOffset;
+    
+    /*public float headRayOffset;
     public float noseRayOffset;
     public float midRayOffset;
-    public float bellyRayOffset ;
+    public float bellyRayOffset;
     public float footRayOffset;
+    */
+    public float sphereColliderRadius;
+
     public bool isHittingHead;
     public float maxSpeed = 6.0f;
     public float ghostSpeed = 1f;
@@ -376,7 +380,7 @@ public class PlayerMovement : MonoBehaviour
     void HandleStickyPhysics()
     {
         // draw ray near the head of the player
-        Vector3 headRay = new Vector3(transform.position.x, transform.position.y + headRayOffset, transform.position.z);
+        /*Vector3 headRay = new Vector3(transform.position.x, transform.position.y + headRayOffset, transform.position.z);
         Vector3 noseRay = new Vector3(transform.position.x, transform.position.y + noseRayOffset, transform.position.z);
         Vector3 midRay = new Vector3(transform.position.x, transform.position.y + midRayOffset, transform.position.z);
         Vector3 bellyRay = new Vector3(transform.position.x, transform.position.y - bellyRayOffset, transform.position.z);
@@ -394,11 +398,11 @@ public class PlayerMovement : MonoBehaviour
         Debug.DrawRay(footRay, Vector3.right, Color.red);
         Debug.DrawRay(footRay, Vector3.left, Color.red);
         Debug.DrawRay(headRay, Vector3.right, Color.white);
-        Debug.DrawRay(headRay, Vector3.left, Color.white);
+        Debug.DrawRay(headRay, Vector3.left, Color.white);*/
 
         // stop player from sticking to colliders in mid-air
-        RaycastHit hit;
-        if (
+        //RaycastHit hit;
+        /*if (
             (Physics.Raycast(footRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(footRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(footRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
@@ -414,14 +418,46 @@ public class PlayerMovement : MonoBehaviour
              || Physics.Raycast(headRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(1, 0, -1), out hit, stickyBuffer))
-            && (hit.transform.gameObject.layer == 8 && hit.transform.tag == "Stoppable" && !isGrounded))
-        {
+            && (hit.transform.gameObject.layer == 8 && hit.transform.tag == "Stoppable" && !isGrounded))*/
+        var topRightCollisions =
+            Physics.OverlapSphere(
+                new Vector3(transform.position.x + 0.15f, transform.position.y + .9f, transform.position.z),
+                sphereColliderRadius, whatIsGround);
 
+        var midRightCollisions =
+           Physics.OverlapSphere(
+               new Vector3(transform.position.x + 0.15f, transform.position.y + 0.5f, transform.position.z),
+               sphereColliderRadius, whatIsGround);
+
+        var bottomRightCollisions =
+           Physics.OverlapSphere(
+               new Vector3(transform.position.x + 0.15f, transform.position.y + 0.15f, transform.position.z),
+               sphereColliderRadius, whatIsGround);
+
+         var topLeftCollisions =
+            Physics.OverlapSphere(
+                new Vector3(transform.position.x - 0.15f, transform.position.y + .9f, transform.position.z),
+                sphereColliderRadius, whatIsGround);
+
+        var midLeftCollisions =
+           Physics.OverlapSphere(
+               new Vector3(transform.position.x - 0.15f, transform.position.y + 0.5f, transform.position.z),
+               sphereColliderRadius, whatIsGround);
+
+        var bottomLeftCollisions =
+           Physics.OverlapSphere(
+               new Vector3(transform.position.x - 0.15f, transform.position.y + 0.15f, transform.position.z),
+               sphereColliderRadius, whatIsGround);
+
+        if (topRightCollisions.Length > 0
+            || midRightCollisions.Length > 0
+            || bottomRightCollisions.Length > 0)
+        {
             _canMove = !(_moveDirection > 0);
-            //Debug.Log("Hit with rays on right, moveDirection: " + moveDirection + " canMove: " + canMove);
+            //Debug.Log("Hit with sphere on right, moveDirection: " + _moveDirection + " canMove: " + _canMove);
         }
 
-        else if (
+        /*else if (
             (Physics.Raycast(footRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(footRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(footRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
@@ -437,17 +473,32 @@ public class PlayerMovement : MonoBehaviour
              || Physics.Raycast(headRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(-1, 0, -1), out hit, stickyBuffer))
-            && (hit.transform.gameObject.layer == 8 && hit.transform.tag == "Stoppable" && !isGrounded))
+            && (hit.transform.gameObject.layer == 8 && hit.transform.tag == "Stoppable" && !isGrounded))*/
+        else if (topLeftCollisions.Length > 0
+            || midLeftCollisions.Length > 0
+            || bottomLeftCollisions.Length > 0)
         {
 
             _canMove = !(_moveDirection < 0);
-            //Debug.Log("Hit with rays on left, moveDirection: " + moveDirection + " canMove: " + canMove);
+            //Debug.Log("Hit with sphere on left, moveDirection: " + _moveDirection + " canMove: " + _canMove);
         }
 
         else
         {
             _canMove = true;
         }
+    }
+
+    void OnDrawGizmos()
+    {
+        /*Gizmos.DrawSphere(new Vector3(transform.position.x + 0.15f, transform.position.y + 0.9f, transform.position.z), sphereColliderRadius);
+        Gizmos.DrawSphere(new Vector3(transform.position.x + 0.15f, transform.position.y + 0.5f, transform.position.z), sphereColliderRadius);
+        Gizmos.DrawSphere(new Vector3(transform.position.x + 0.15f, transform.position.y + 0.15f, transform.position.z), sphereColliderRadius);
+
+        Gizmos.DrawSphere(new Vector3(transform.position.x - 0.15f, transform.position.y + 0.9f, transform.position.z), sphereColliderRadius);
+        Gizmos.DrawSphere(new Vector3(transform.position.x - 0.15f, transform.position.y + 0.5f, transform.position.z), sphereColliderRadius);
+        Gizmos.DrawSphere(new Vector3(transform.position.x - 0.15f, transform.position.y + 0.15f, transform.position.z), sphereColliderRadius);*/
+        
     }
 
     private void HandleAnimations()
