@@ -59,13 +59,11 @@ public class PlayerMovement : MonoBehaviour
     public float highJumpForce = 200f;
     public float highJumpTimeout = 0.5f;
     public float swipeJumpTolerenceTime = 1f;
+	public float moveTolerence = 0.1f;
 
     public AudioClip jumpSound;
     public AudioClip highJumpSound;
     public AudioClip midAirJumpSound;
-
-    //public bool useAcceleration = false;
-    public float accelerometerMultiplier = 1.5f;
 
     public delegate void ReachedPlatformAction(Transform platform, Transform player);
     public static event ReachedPlatformAction On_PlatformReached;
@@ -236,11 +234,11 @@ public class PlayerMovement : MonoBehaviour
 
         if (_isUsingPowers) return;
         // flip player on the y axis
-        if (_moveDirection > 0.1f && !this._facingRight)
+        if (_moveDirection > moveTolerence && !this._facingRight)
         {
             Flip();
         }
-        else if (_moveDirection < -0.1f && this._facingRight)
+        else if (_moveDirection < -moveTolerence && this._facingRight)
         {
             Flip();
         }
@@ -360,7 +358,8 @@ public class PlayerMovement : MonoBehaviour
             transform.position = Vector3.Lerp(transform.position, gesture.GetTouchToWordlPoint(transform.position.z, true), ghostSpeed * 0.01f);
             GameController.Instance.movedFromSpawnPosition = true;
         }
-        else
+        /* TODO: support additional control mode
+         * else
         {
             if (gesture.swipe == EasyTouch.SwipeType.Left || gesture.swipe == EasyTouch.SwipeType.Right && !GameController.Instance.useAcceleration)
             {
@@ -368,7 +367,7 @@ public class PlayerMovement : MonoBehaviour
                 float touchDirMultiplied = touchDir * 0.01f;
                 _moveDirection = Mathf.Clamp(touchDirMultiplied, -1f, 1f);
             }
-        }
+        }*/
 
     }
 
@@ -421,7 +420,7 @@ public class PlayerMovement : MonoBehaviour
             && (hit.transform.gameObject.layer == 8 && hit.transform.tag == "Stoppable" && !isGrounded))*/
         var topRightCollisions =
             Physics.OverlapSphere(
-                new Vector3(transform.position.x + 0.15f, transform.position.y + .9f, transform.position.z),
+                new Vector3(transform.position.x + 0.15f, transform.position.y + .91f, transform.position.z),
                 sphereColliderRadius, whatIsGround);
 
         var midRightCollisions =
@@ -431,12 +430,12 @@ public class PlayerMovement : MonoBehaviour
 
         var bottomRightCollisions =
            Physics.OverlapSphere(
-               new Vector3(transform.position.x + 0.15f, transform.position.y + 0.15f, transform.position.z),
+               new Vector3(transform.position.x + 0.15f, transform.position.y + 0.16f, transform.position.z),
                sphereColliderRadius, whatIsGround);
 
          var topLeftCollisions =
             Physics.OverlapSphere(
-                new Vector3(transform.position.x - 0.15f, transform.position.y + .9f, transform.position.z),
+                new Vector3(transform.position.x - 0.15f, transform.position.y + .91f, transform.position.z),
                 sphereColliderRadius, whatIsGround);
 
         var midLeftCollisions =
@@ -446,7 +445,7 @@ public class PlayerMovement : MonoBehaviour
 
         var bottomLeftCollisions =
            Physics.OverlapSphere(
-               new Vector3(transform.position.x - 0.15f, transform.position.y + 0.15f, transform.position.z),
+               new Vector3(transform.position.x - 0.15f, transform.position.y + 0.16f, transform.position.z),
                sphereColliderRadius, whatIsGround);
 
         if (topRightCollisions.Length > 0
@@ -491,13 +490,13 @@ public class PlayerMovement : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        /*Gizmos.DrawSphere(new Vector3(transform.position.x + 0.15f, transform.position.y + 0.9f, transform.position.z), sphereColliderRadius);
+        Gizmos.DrawSphere(new Vector3(transform.position.x + 0.15f, transform.position.y + 0.91f, transform.position.z), sphereColliderRadius);
         Gizmos.DrawSphere(new Vector3(transform.position.x + 0.15f, transform.position.y + 0.5f, transform.position.z), sphereColliderRadius);
-        Gizmos.DrawSphere(new Vector3(transform.position.x + 0.15f, transform.position.y + 0.15f, transform.position.z), sphereColliderRadius);
+        Gizmos.DrawSphere(new Vector3(transform.position.x + 0.15f, transform.position.y + 0.16f, transform.position.z), sphereColliderRadius);
 
-        Gizmos.DrawSphere(new Vector3(transform.position.x - 0.15f, transform.position.y + 0.9f, transform.position.z), sphereColliderRadius);
+        Gizmos.DrawSphere(new Vector3(transform.position.x - 0.15f, transform.position.y + 0.91f, transform.position.z), sphereColliderRadius);
         Gizmos.DrawSphere(new Vector3(transform.position.x - 0.15f, transform.position.y + 0.5f, transform.position.z), sphereColliderRadius);
-        Gizmos.DrawSphere(new Vector3(transform.position.x - 0.15f, transform.position.y + 0.15f, transform.position.z), sphereColliderRadius);*/
+        Gizmos.DrawSphere(new Vector3(transform.position.x - 0.15f, transform.position.y + 0.16f, transform.position.z), sphereColliderRadius);
         
     }
 
@@ -528,16 +527,10 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 ApplyVelocity()
     {
-        if (_canMove && !_isUsingPowers && !GameController.Instance.useAcceleration)
+		//Debug.Log (_moveDirection);
+		if (_canMove && !_isUsingPowers && (_moveDirection < -moveTolerence || _moveDirection > moveTolerence))
         {
-            return new Vector2(this._moveDirection * maxSpeed, rigidbody.velocity.y);
-        }
-
-        if (_canMove && !_isUsingPowers && GameController.Instance.useAcceleration)
-        {
-            //var accelerometerMultiplier = 1.5f;
-            float newSpeed = (maxSpeed * accelerometerMultiplier);
-            return new Vector2(this._moveDirection * newSpeed, rigidbody.velocity.y);
+            return new Vector2(_moveDirection * maxSpeed, rigidbody.velocity.y);
         }
 
         return new Vector2(0, rigidbody.velocity.y);
