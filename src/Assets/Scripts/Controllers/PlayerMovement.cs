@@ -34,13 +34,17 @@ public class PlayerMovement : MonoBehaviour
     private Material _ghostEyeMaterial;
 
     public bool isGrounded;
-    
-    /*public float headRayOffset;
+
+    public float headRayOffset;
     public float noseRayOffset;
+    public float chinRayOffset;
+    public float chestRayOffset;
     public float midRayOffset;
     public float bellyRayOffset;
+    public float legRayOffset;
+    public float kneeRayOffset;
     public float footRayOffset;
-    */
+
     public float sphereColliderRadius;
 
     public bool isHittingHead;
@@ -59,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
     public float highJumpForce = 200f;
     public float highJumpTimeout = 0.5f;
     public float swipeJumpTolerenceTime = 1f;
-	public float moveTolerence = 0.1f;
+    public float moveThreshold = 0.1f;
 
     public AudioClip jumpSound;
     public AudioClip highJumpSound;
@@ -146,7 +150,7 @@ public class PlayerMovement : MonoBehaviour
             _leftEye.renderer.material = _normalEyeMaterial;
             _rightEye.renderer.material = _normalEyeMaterial;
         }
-        
+
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
 
@@ -234,11 +238,11 @@ public class PlayerMovement : MonoBehaviour
 
         if (_isUsingPowers) return;
         // flip player on the y axis
-        if (_moveDirection > moveTolerence && !this._facingRight)
+        if (_moveDirection > moveThreshold && !this._facingRight)
         {
             Flip();
         }
-        else if (_moveDirection < -moveTolerence && this._facingRight)
+        else if (_moveDirection < -moveThreshold && this._facingRight)
         {
             Flip();
         }
@@ -379,32 +383,56 @@ public class PlayerMovement : MonoBehaviour
     void HandleStickyPhysics()
     {
         // draw ray near the head of the player
-        /*Vector3 headRay = new Vector3(transform.position.x, transform.position.y + headRayOffset, transform.position.z);
+        Vector3 headRay = new Vector3(transform.position.x, transform.position.y + headRayOffset, transform.position.z);
         Vector3 noseRay = new Vector3(transform.position.x, transform.position.y + noseRayOffset, transform.position.z);
+        Vector3 chinRay = new Vector3(transform.position.x, transform.position.y + chinRayOffset, transform.position.z);
+        Vector3 chestRay = new Vector3(transform.position.x, transform.position.y + chestRayOffset, transform.position.z);
         Vector3 midRay = new Vector3(transform.position.x, transform.position.y + midRayOffset, transform.position.z);
         Vector3 bellyRay = new Vector3(transform.position.x, transform.position.y - bellyRayOffset, transform.position.z);
+        Vector3 legRay = new Vector3(transform.position.x, transform.position.y - legRayOffset, transform.position.z);
+        Vector3 kneeRay = new Vector3(transform.position.x, transform.position.y - kneeRayOffset, transform.position.z);
         Vector3 footRay = new Vector3(transform.position.x, transform.position.y - footRayOffset, transform.position.z);
         Debug.DrawRay(midRay, Vector3.right, Color.green);
         Debug.DrawRay(midRay, Vector3.left, Color.green);
         Debug.DrawRay(noseRay, Vector3.left, Color.yellow);
         Debug.DrawRay(noseRay, Vector3.right, Color.yellow);
+        Debug.DrawRay(chestRay, Vector3.left, Color.grey);
+        Debug.DrawRay(chestRay, Vector3.right, Color.grey);
+        Debug.DrawRay(chinRay, Vector3.left, Color.black);
+        Debug.DrawRay(chinRay, Vector3.right, Color.black);
         Debug.DrawRay(bellyRay, Vector3.left, Color.magenta);
         Debug.DrawRay(bellyRay, Vector3.right, Color.magenta);
         Debug.DrawRay(midRay, new Vector3(1, 0, 1), Color.green);
         Debug.DrawRay(midRay, new Vector3(-1, 0, 1), Color.green);
         Debug.DrawRay(midRay, new Vector3(1, 0, -1), Color.green);
+        Debug.DrawRay(legRay, Vector3.left, Color.cyan);
+        Debug.DrawRay(legRay, Vector3.right, Color.cyan);
         Debug.DrawRay(midRay, new Vector3(-1, 0, -1), Color.green);
         Debug.DrawRay(footRay, Vector3.right, Color.red);
         Debug.DrawRay(footRay, Vector3.left, Color.red);
+        Debug.DrawRay(kneeRay, Vector3.right, Color.white);
+        Debug.DrawRay(kneeRay, Vector3.left, Color.white);
         Debug.DrawRay(headRay, Vector3.right, Color.white);
-        Debug.DrawRay(headRay, Vector3.left, Color.white);*/
+        Debug.DrawRay(headRay, Vector3.left, Color.white);
 
         // stop player from sticking to colliders in mid-air
-        //RaycastHit hit;
-        /*if (
+        RaycastHit hit;
+        if (
             (Physics.Raycast(footRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(footRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(footRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
+             || Physics.Raycast(legRay, Vector3.right, out hit, stickyBuffer)
+             || Physics.Raycast(legRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(legRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
+             || Physics.Raycast(chinRay, Vector3.right, out hit, stickyBuffer)
+             || Physics.Raycast(chinRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(chinRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
+             || Physics.Raycast(chestRay, Vector3.right, out hit, stickyBuffer)
+             || Physics.Raycast(chestRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(chestRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
+             || Physics.Raycast(kneeRay, Vector3.right, out hit, stickyBuffer)
+             || Physics.Raycast(kneeRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(kneeRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(bellyRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(bellyRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(bellyRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
@@ -417,49 +445,27 @@ public class PlayerMovement : MonoBehaviour
              || Physics.Raycast(headRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(1, 0, -1), out hit, stickyBuffer))
-            && (hit.transform.gameObject.layer == 8 && hit.transform.tag == "Stoppable" && !isGrounded))*/
-        var topRightCollisions =
-            Physics.OverlapSphere(
-                new Vector3(transform.position.x + 0.15f, transform.position.y + .91f, transform.position.z),
-                sphereColliderRadius, whatIsGround);
-
-        var midRightCollisions =
-           Physics.OverlapSphere(
-               new Vector3(transform.position.x + 0.15f, transform.position.y + 0.5f, transform.position.z),
-               sphereColliderRadius, whatIsGround);
-
-        var bottomRightCollisions =
-           Physics.OverlapSphere(
-               new Vector3(transform.position.x + 0.15f, transform.position.y + 0.16f, transform.position.z),
-               sphereColliderRadius, whatIsGround);
-
-         var topLeftCollisions =
-            Physics.OverlapSphere(
-                new Vector3(transform.position.x - 0.15f, transform.position.y + .91f, transform.position.z),
-                sphereColliderRadius, whatIsGround);
-
-        var midLeftCollisions =
-           Physics.OverlapSphere(
-               new Vector3(transform.position.x - 0.15f, transform.position.y + 0.5f, transform.position.z),
-               sphereColliderRadius, whatIsGround);
-
-        var bottomLeftCollisions =
-           Physics.OverlapSphere(
-               new Vector3(transform.position.x - 0.15f, transform.position.y + 0.16f, transform.position.z),
-               sphereColliderRadius, whatIsGround);
-
-        if (topRightCollisions.Length > 0
-            || midRightCollisions.Length > 0
-            || bottomRightCollisions.Length > 0)
+            && (hit.transform.gameObject.layer == 8 && hit.transform.tag == "Stoppable" && !isGrounded))
         {
             _canMove = !(_moveDirection > 0);
             //Debug.Log("Hit with sphere on right, moveDirection: " + _moveDirection + " canMove: " + _canMove);
         }
-
-        /*else if (
+        else if (
             (Physics.Raycast(footRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(footRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(footRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
+             || Physics.Raycast(legRay, Vector3.left, out hit, stickyBuffer)
+             || Physics.Raycast(legRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(legRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
+             || Physics.Raycast(chinRay, Vector3.left, out hit, stickyBuffer)
+             || Physics.Raycast(chinRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(chinRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
+             || Physics.Raycast(chestRay, Vector3.left, out hit, stickyBuffer)
+             || Physics.Raycast(chestRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(chestRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
+             || Physics.Raycast(kneeRay, Vector3.left, out hit, stickyBuffer)
+             || Physics.Raycast(kneeRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             || Physics.Raycast(kneeRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(bellyRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(bellyRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(bellyRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
@@ -472,32 +478,15 @@ public class PlayerMovement : MonoBehaviour
              || Physics.Raycast(headRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(headRay, new Vector3(-1, 0, -1), out hit, stickyBuffer))
-            && (hit.transform.gameObject.layer == 8 && hit.transform.tag == "Stoppable" && !isGrounded))*/
-        else if (topLeftCollisions.Length > 0
-            || midLeftCollisions.Length > 0
-            || bottomLeftCollisions.Length > 0)
+            && (hit.transform.gameObject.layer == 8 && hit.transform.tag == "Stoppable" && !isGrounded))
         {
-
             _canMove = !(_moveDirection < 0);
             //Debug.Log("Hit with sphere on left, moveDirection: " + _moveDirection + " canMove: " + _canMove);
         }
-
         else
         {
             _canMove = true;
         }
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.DrawSphere(new Vector3(transform.position.x + 0.15f, transform.position.y + 0.91f, transform.position.z), sphereColliderRadius);
-        Gizmos.DrawSphere(new Vector3(transform.position.x + 0.15f, transform.position.y + 0.5f, transform.position.z), sphereColliderRadius);
-        Gizmos.DrawSphere(new Vector3(transform.position.x + 0.15f, transform.position.y + 0.16f, transform.position.z), sphereColliderRadius);
-
-        Gizmos.DrawSphere(new Vector3(transform.position.x - 0.15f, transform.position.y + 0.91f, transform.position.z), sphereColliderRadius);
-        Gizmos.DrawSphere(new Vector3(transform.position.x - 0.15f, transform.position.y + 0.5f, transform.position.z), sphereColliderRadius);
-        Gizmos.DrawSphere(new Vector3(transform.position.x - 0.15f, transform.position.y + 0.16f, transform.position.z), sphereColliderRadius);
-        
     }
 
     private void HandleAnimations()
@@ -527,8 +516,8 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 ApplyVelocity()
     {
-		//Debug.Log (_moveDirection);
-		if (_canMove && !_isUsingPowers && (_moveDirection < -moveTolerence || _moveDirection > moveTolerence))
+        //Debug.Log (_moveDirection);
+        if (_canMove && !_isUsingPowers && (_moveDirection < -moveThreshold || _moveDirection > moveThreshold))
         {
             return new Vector2(_moveDirection * maxSpeed, rigidbody.velocity.y);
         }
@@ -557,8 +546,8 @@ public class PlayerMovement : MonoBehaviour
         // conditions for mid-air jump
         if (isGrounded || _additionalJumpCount >= additionalJumps || _isHighJumping || forcePushed) return;
 
-		rigidbody.velocity = new Vector3 (rigidbody.velocity.x, 0f, rigidbody.velocity.z); // reset for consistent double jump
-		rigidbody.AddForceAtPosition(new Vector3(0, additionalJumpForce, 0), transform.position);
+        rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z); // reset for consistent double jump
+        rigidbody.AddForceAtPosition(new Vector3(0, additionalJumpForce, 0), transform.position);
         _additionalJumpCount++;
         _consectutiveJumpCounter = 0; // reset consecutive jump counter
         if (midAirJumpSound != null && midAirJumpSound.isReadyToPlay)
@@ -566,7 +555,7 @@ public class PlayerMovement : MonoBehaviour
             audio.PlayOneShot(midAirJumpSound, 1);
         }
     }
-	
+
     private void PlayJumpSound(float force = 0)
     {
         if (jumpSound == null)

@@ -32,7 +32,7 @@ public class TelekinesisController : MonoBehaviour
     public float rotationCostPerSecond = 1f;
     public float moveCostPerSecond = 1.5f;
     public float stabilizeCost = 3;
-    public float minimumSwipeTime = 0.15f;
+    //public float minimumSwipeTime = 0.15f;
     public Material telekinesisMaterial;
 
     public delegate void TelekinesisPowersStart();
@@ -335,7 +335,7 @@ public class TelekinesisController : MonoBehaviour
         if (!_player.isGrounded) return;
 
         // Guard against slower taps
-        if (gesture.actionTime < minimumSwipeTime) return;
+        //if (gesture.actionTime < minimumSwipeTime) return;
 
         _pointerReference = gesture.position;
         RaycastHit hitInfo = new RaycastHit();
