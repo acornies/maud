@@ -491,7 +491,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleAnimations()
     {
-        _animator.SetFloat("speed", Mathf.Abs(_moveDirection));
+        // don't play animations underneith the moveThreshold
+        if (_moveDirection < -moveThreshold || _moveDirection > moveThreshold)
+        {
+            _animator.SetFloat("speed", Mathf.Abs(_moveDirection));
+        }
+        else
+        {
+            _animator.SetFloat("speed", 0);
+        }
         _animator.SetFloat("vSpeed", rigidbody.velocity.y);
         _animator.SetBool("isGrounded", isGrounded);
         _animator.SetBool("isHighJump", _isHighJumping);
