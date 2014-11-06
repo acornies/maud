@@ -28,10 +28,6 @@ public class PlayerMovement : MonoBehaviour
     private Transform _modelBody;
     private Transform _leftEye;
     private Transform _rightEye;
-    private Material _normalBodyMaterial;
-    private Material _ghostBodyMaterial;
-    private Material _normalEyeMaterial;
-    private Material _ghostEyeMaterial;
 
     public bool isGrounded;
 
@@ -64,6 +60,11 @@ public class PlayerMovement : MonoBehaviour
     public float highJumpTimeout = 0.5f;
     public float swipeJumpTolerenceTime = 1f;
     public float moveThreshold = 0.1f;
+
+    public Material normalBodyMaterial;
+    public Material ghostBodyMaterial;
+    public Material normalEyeMaterial;
+    public Material ghostEyeMaterial;
 
     public AudioClip jumpSound;
     public AudioClip highJumpSound;
@@ -129,26 +130,22 @@ public class PlayerMovement : MonoBehaviour
         _modelBody = _playerModelObjects.First(x => x.transform.name == "Body").transform;
         _leftEye = _playerModelObjects.First(x => x.transform.name == "LeftEye").transform;
         _rightEye = _playerModelObjects.First(x => x.transform.name == "RightEye").transform;
-        _ghostBodyMaterial = Resources.Load<Material>("Materials/BunnyBody_Ghost");
-        _normalBodyMaterial = Resources.Load<Material>("Materials/BunnyBody_Default");
-        _ghostEyeMaterial = Resources.Load<Material>("Materials/BunnyEye_Ghost");
-        _normalEyeMaterial = Resources.Load<Material>("Materials/BunnyEye_Default");
     }
 
     void Update()
     {
         if (GameController.Instance.playerIsDead)
         {
-            _modelBody.renderer.material = _ghostBodyMaterial;
-            _leftEye.renderer.material = _ghostEyeMaterial;
-            _rightEye.renderer.material = _ghostEyeMaterial;
+            _modelBody.renderer.material = ghostBodyMaterial;
+            _leftEye.renderer.material = ghostEyeMaterial;
+            _rightEye.renderer.material = ghostEyeMaterial;
         }
         else
         {
             collider.enabled = true;
-            _modelBody.renderer.material = _normalBodyMaterial;
-            _leftEye.renderer.material = _normalEyeMaterial;
-            _rightEye.renderer.material = _normalEyeMaterial;
+            _modelBody.renderer.material = normalBodyMaterial;
+            _leftEye.renderer.material = normalEyeMaterial;
+            _rightEye.renderer.material = normalEyeMaterial;
         }
 
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
