@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _facingRight = true;
     private bool _isFacingCamera;
     //private Collider _playerCollider;
-    private ParticleSystem _sparkEffect;
+    private Transform _sparkEffect;
     private GameObject[] _playerModelObjects;
     private Transform _modelBody;
     private Transform _leftEye;
@@ -121,7 +121,7 @@ public class PlayerMovement : MonoBehaviour
         _heightCheck = GameObject.Find("HeightCheck").transform;
         _playerModel = transform.FindChild("PlayerModel").gameObject;
         _animator = _playerModel.GetComponent<Animator>();
-        _sparkEffect = transform.FindChild("Spark").GetComponent<ParticleSystem>();
+        _sparkEffect = transform.FindChild("Spark").transform;
         _playerModelObjects = GameObject.FindGameObjectsWithTag("PlayerModel");
     }
 
@@ -250,7 +250,7 @@ public class PlayerMovement : MonoBehaviour
         _isUsingPowers = false;
         if (!_isFacingCamera) return;
         TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
-        _sparkEffect.Stop();
+		_sparkEffect.GetComponent<ParticleSystem>().Stop();
     }
 
     void HandlePlayerPowersStart()
@@ -258,7 +258,7 @@ public class PlayerMovement : MonoBehaviour
         _isUsingPowers = true;
         if (_isFacingCamera) return;
         TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
-        _sparkEffect.Play();
+		_sparkEffect.GetComponent<ParticleSystem>().Play();
     }
 
     private void HandleOnPlayerDeath()

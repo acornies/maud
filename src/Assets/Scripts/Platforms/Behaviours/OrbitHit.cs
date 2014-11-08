@@ -48,7 +48,7 @@ public class OrbitHit : MonoBehaviour
 
         if (!_parentOrbitBehaviour.canStopWithHead && playerMovement.isHittingHead) return;
 
-        if (_parentOrbitBehaviour.axis.y > 0)
+        /*if (_parentOrbitBehaviour.axis.y > 0)
         {
             collision.rigidbody.AddForce(-1 * (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed), collision.transform.position.y, collision.transform.position.z);
             Debug.Log("orbit hit on right with force: " + (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed));
@@ -57,7 +57,7 @@ public class OrbitHit : MonoBehaviour
         {
             collision.rigidbody.AddForce(1 * (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed), collision.transform.position.y, collision.transform.position.z);
             Debug.Log("orbit hit on left with force: " + (rigidbody.mass * _parentOrbitBehaviour.orbitRotationSpeed));
-        }
+        }*/
 
         playerMovement.forcePushed = true;
         _parentOrbitBehaviour.isStopped = true;

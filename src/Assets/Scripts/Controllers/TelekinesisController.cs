@@ -381,6 +381,7 @@ public class TelekinesisController : MonoBehaviour
 
         _teleAttack.Play();
 
+
         if (!_teleLoop.isPlaying)
         {
             _teleLoop.PlayDelayed(_teleAttack.clip.length);

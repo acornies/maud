@@ -72,6 +72,7 @@ public class SceneFadeInOut : MonoBehaviour
     {
         // Lerp the colour of the texture between itself and transparent.
         guiTexture.color = Color.Lerp(guiTexture.color, Color.clear, fadeSpeed * Time.deltaTime);
+		//Debug.Log ("Fading in...");
     }
 
 
@@ -85,6 +86,7 @@ public class SceneFadeInOut : MonoBehaviour
     void StartScene()
     {
         // Fade the texture to clear.
+		guiTexture.enabled = true;
         FadeToClear();
 
         // If the texture is almost clear...
