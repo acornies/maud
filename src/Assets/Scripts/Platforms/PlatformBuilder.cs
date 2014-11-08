@@ -16,9 +16,11 @@ namespace LegendPeak.Platforms
         {
             _heightLevelDescriptions = new Dictionary<string, PlatformRangeInfo>();
             //_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("ForestSlowLimit", new PlatformRangeInfo(50, 1, 3)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("ForestFastLimit", new PlatformRangeInfo(120, 1, 4)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("ForestFastLimit", new PlatformRangeInfo(100, 1, 4)));
             _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("CloudSlowLimit", new PlatformRangeInfo(200, 1, 5)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("CloudFastLimit", new PlatformRangeInfo(300, 1, 6)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("CloudFast", new PlatformRangeInfo(300, 1, 6)));
+			_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("CloudFastLimit", new PlatformRangeInfo(400, 1, 7)));
+
         }
 
         public string GetPlatformPrefabByNumber(int platformNumber)
@@ -39,7 +41,7 @@ namespace LegendPeak.Platforms
         private string GetPrefab(int start, int end)
         {
             int range = Random.Range(start, end);
-            string prefab = string.Format("Prefabs/Platforms/{0}_Platform", range);
+            string prefab = string.Format("Prefabs/Platforms/{0}_Platform_Wood", range);
             return prefab;
         }
 

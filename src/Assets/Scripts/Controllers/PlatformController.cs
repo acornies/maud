@@ -20,6 +20,7 @@ public class PlatformController : MonoBehaviour
     public float maxRotationLeft = 50.0f;
     public float maxRotationRight = 310.0f;
     public float platformSpawnInterval = 1.0f;
+	public float trunkZAxis = 3.8f;
 
     public delegate void ReachedNextCheckpoint(int platform, int childPlatformToDeleteIndex);
     public static event ReachedNextCheckpoint On_ReachedCheckpoint;
@@ -128,7 +129,7 @@ public class PlatformController : MonoBehaviour
 
                 newPlatform =
                     (GameObject)Instantiate(Resources.Load<GameObject>(_platformBuilder.GetPlatformPrefabByNumber(i)),
-                        new Vector3(0, yAxisMultiplier, 0), Quaternion.identity);
+                        new Vector3(0, yAxisMultiplier, trunkZAxis), Quaternion.identity);
 
                 yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
 

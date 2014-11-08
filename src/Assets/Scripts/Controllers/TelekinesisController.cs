@@ -158,7 +158,7 @@ public class TelekinesisController : MonoBehaviour
         var scriptsToDisable = objectWithScripts.GetComponentsInChildren<TelekinesisHandler>();
         scriptsToDisable.ToList().ForEach(x =>
         {
-            //x.isStable = true;
+            x.isStable = true;
             x.isClone = true;
         });
     }
@@ -275,7 +275,6 @@ public class TelekinesisController : MonoBehaviour
         // store mouse
         _pointerReference = gesture.position;
 
-        //GameController.Instance.powerMeter -= rotationCostPerSecond * Time.deltaTime;
         On_PlayerPowerDeplete(rotationCostPerSecond * Time.deltaTime);
     }
 
