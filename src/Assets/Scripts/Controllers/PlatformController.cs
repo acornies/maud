@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using LegendPeak.Platforms;
@@ -8,7 +9,7 @@ public class PlatformController : MonoBehaviour
     //private Transform _currentPlatformObject;
     private int _currentPlatform;
     private PlatformBuilder _platformBuilder;
-    private float _timer;
+    //private float _timer;
 
     public static PlatformController Instance { get; private set; }
     public IDictionary<int, GameObject> levelPlatforms { get; private set; }
@@ -21,6 +22,8 @@ public class PlatformController : MonoBehaviour
     public float maxRotationRight = 310.0f;
     public float platformSpawnInterval = 1.0f;
 	public float trunkZAxis = 3.8f;
+
+    public GameObject[] platformTypes;
 
     public delegate void ReachedNextCheckpoint(int platform, int childPlatformToDeleteIndex);
     public static event ReachedNextCheckpoint On_ReachedCheckpoint;
@@ -69,7 +72,7 @@ public class PlatformController : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start()
+    IEnumerator Start()
     {
         var startingPlatforms = GameObject.FindGameObjectsWithTag("Rotatable");
         foreach (var platform in startingPlatforms)
@@ -79,14 +82,11 @@ public class PlatformController : MonoBehaviour
             levelPlatforms.Add(int.Parse(key), value);
         }
         levelPlatforms.OrderBy(x => x.Key);
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-        SpawnPlatforms();
-        //timer = platformSpawnInterval;
+        while (true)
+        {
+            yield return StartCoroutine("SpawnPlatforms");
+        }
     }
 
     public int GetCurrentPlatformNumber()
@@ -95,67 +95,73 @@ public class PlatformController : MonoBehaviour
     }
 
     // Spawn platforms based on player location
-    void SpawnPlatforms()
+    IEnumerator SpawnPlatforms()
     {
-        _timer -= Time.deltaTime;
+        //_timer -= Time.deltaTime;
         var highestPlatformIndex = (levelPlatforms.Keys.Count > 0) ? levelPlatforms.Keys.Max() : 0;
         //Debug.Log("Highest platform is: " + highestPlatformIndex);
 
-        if (_currentPlatform + platformSpawnBuffer < highestPlatformIndex) return;
-        //GameObject highestPlatformObj;
-        GameObject highestPlatform = null;
-        float yAxisMultiplier;
-        levelPlatforms.OrderBy(p => p.Key);
-
-        int nextPlatform = highestPlatformIndex + 1;
-        if (levelPlatforms.TryGetValue(highestPlatformIndex, out highestPlatform))
+        if (_currentPlatform + platformSpawnBuffer > highestPlatformIndex)
         {
-            yAxisMultiplier = highestPlatform.transform.position.y + highestPlatform.transform.localScale.y + platformSpacing;
-        }
-        else
-        {
-            yAxisMultiplier = startingYAxisValue;
-        }
+            //GameObject highestPlatformObj;
+            GameObject highestPlatform = null;
+            float yAxisMultiplier;
+            levelPlatforms.OrderBy(p => p.Key);
 
-        int toRange = nextPlatform + platformSpawnBuffer;
-        for (int i = nextPlatform; i <= toRange; i++)
-        {
+            int nextPlatform = highestPlatformIndex + 1;
+            if (levelPlatforms.TryGetValue(highestPlatformIndex, out highestPlatform))
+            {
+                yAxisMultiplier = highestPlatform.transform.position.y + highestPlatform.transform.localScale.y +
+                                  platformSpacing;
+            }
+            else
+            {
+                yAxisMultiplier = startingYAxisValue;
+            }
 
-            GameObject newPlatform;
-            //if (!(timer <= 0)) return;
-
-            if (!levelPlatforms.TryGetValue(i, out newPlatform) && _timer <= 0)
+            var toRange = nextPlatform + platformSpawnBuffer;
+            for (int i = nextPlatform; i <= toRange; i++)
             {
 
-                newPlatform =
-                    (GameObject)Instantiate(Resources.Load<GameObject>(_platformBuilder.GetPlatformPrefabByNumber(i)),
-                        new Vector3(0, yAxisMultiplier, trunkZAxis), Quaternion.identity);
+                GameObject newPlatform;
+                //if (!(timer <= 0)) return;
 
-                yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
+                if (!levelPlatforms.TryGetValue(i, out newPlatform))
+                {
 
-                newPlatform.name = string.Format("Platform_{0}", i);
-                newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(), Vector3.up);
-                AdjustProperties(newPlatform, i);
-                levelPlatforms.Add(i, newPlatform);
+                    newPlatform =
+                        (GameObject)Instantiate(platformTypes[_platformBuilder.GetPlatformPrefabByNumber(i)],
+                            new Vector3(0, yAxisMultiplier, trunkZAxis), Quaternion.identity);
 
-                On_NewPlatform(newPlatform.transform.position.y);
-                _timer = platformSpawnInterval;
+                    yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
+
+                    newPlatform.name = string.Format("Platform_{0}", i);
+                    newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(), Vector3.up);
+                    AdjustProperties(newPlatform, i);
+                    levelPlatforms.Add(i, newPlatform);
+
+                    On_NewPlatform(newPlatform.transform.position.y);
+                    //_timer = platformSpawnInterval;
+                }
             }
         }
+
+        Debug.Log("Platform creation finished. Waiting " + platformSpawnInterval + "s");
+        yield return new WaitForSeconds(platformSpawnInterval);
     }
 
     private void AdjustProperties(GameObject newPlatform, int index)
     {
         UpAndDown upAndDownComponent = newPlatform.transform.GetComponent<UpAndDown>();
         Drop dropComponent = newPlatform.transform.GetComponent<Drop>();
-        if (index > 60)
+        if (index > 40)
         {
             if (dropComponent != null) //TODO: change to Editor value
             {
                 dropComponent.enabled = true;
             }
         }
-        if (index > 50)
+        if (index > 60)
         {
             if (upAndDownComponent != null) //TODO: change to Editor value
             {

@@ -17,7 +17,7 @@ public class Drop : PlatformBehaviour
         base.Start();
         _originalYPosition = child.position.y;
         maxY = transform.position.y + (transform.localScale.y / 2);
-        minY = transform.position.y - (transform.localScale.y / 2);
+        minY = transform.position.y - (transform.localScale.y / 1.2f);
     }
 
     // Update is called once per frame

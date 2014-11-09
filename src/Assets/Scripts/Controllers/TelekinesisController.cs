@@ -192,8 +192,8 @@ public class TelekinesisController : MonoBehaviour
         _platformClone = Instantiate(_platform, _platform.position, _platform.rotation) as Transform;
         if (_platformClone == null) return;
 
-        //_platformClone.renderer.material.color = new Color(1, 1, 1, .5f);
-        TelekinesisMaterial(_platformClone);
+        _platformClone.renderer.enabled = false;
+        //TelekinesisMaterial(_platformClone);
         var cloneChild = _platformClone.FindChild("Cube");
         if (cloneChild != null)
         {
