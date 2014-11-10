@@ -14,9 +14,9 @@ public class HazzardController : MonoBehaviour
     public int maxHazzards = 5;
     public float initialHorizontalForce = 10;
     public float initialVerticalForce = 10;
-    [Range(-4, 4)]
+    [Range(-10, 10)]
     public float minHorizonalSpawnPosition;
-    [Range(-4, 4)]
+    [Range(-10, 10)]
     public float maxHorizonalSpawnPosition;
 
     void OnEnable()

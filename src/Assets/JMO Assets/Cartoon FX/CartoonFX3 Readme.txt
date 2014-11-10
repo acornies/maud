@@ -1,5 +1,5 @@
-﻿Cartoon FX Pack 3, version 1.13
-2013/09/05
+﻿Cartoon FX Pack 3, version 1.15
+2013/10/15
 © 2013,2014 - Jean Moreno
 ===============================
 
@@ -73,6 +73,12 @@ I'd be happy to see any effects used in your project, so feel free to drop me a 
 
 RELEASE NOTES
 -------------
+v1.15
+- updated "JMO Assets" menu
+
+v1.14
+- updated Demo scene
+
 v1.13
 - fixed serialization error with InspectorHelp script on builds
 

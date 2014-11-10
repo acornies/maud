@@ -1,5 +1,5 @@
-﻿Cartoon FX Pack, version 2.73
-2014/09/05
+﻿Cartoon FX Pack, version 2.75
+2014/10/15
 © 2013,2014 - Jean Moreno
 =============================
 
@@ -72,6 +72,12 @@ I'd be happy to see any effects used in your project, so feel free to drop me a 
 
 RELEASE NOTES
 -------------
+v2.75
+- updated "JMO Assets" menu
+
+v2.74
+- updated Demo scene
+
 v2.73
 - fixed serialization error with InspectorHelp script on builds
 

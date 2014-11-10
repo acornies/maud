@@ -342,7 +342,7 @@ public class TelekinesisController : MonoBehaviour
         bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(gesture.position), out hitInfo);
         if (hit)
         {
-            if (hitInfo.transform.tag == "Rotatable")
+            if (hitInfo.transform.tag == "Rotatable" && hitInfo.transform.gameObject.layer == 10)
             {
                 this._platform = hitInfo.transform;
 
@@ -353,7 +353,7 @@ public class TelekinesisController : MonoBehaviour
                 _shouldRotate = true;
 
             }
-            if (hitInfo.transform.tag == "Stoppable")
+            if (hitInfo.transform.tag == "Stoppable" && hitInfo.transform.parent.gameObject.layer == 10)
             {
                 this._platform = hitInfo.transform.parent;
 

@@ -149,6 +149,7 @@ public class TelekinesisHandler : MonoBehaviour
                 }
                 if (_teleportTimer <= 0)
                 {
+                    rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z); // reset velocity after teleport
                     transform.position = teleportLocation.Value;
                     if (_hazzardModel != null)
                     {
