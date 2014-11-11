@@ -9,6 +9,7 @@ public class PlatformController : MonoBehaviour
     //private Transform _currentPlatformObject;
     private int _currentPlatform;
     private PlatformBuilder _platformBuilder;
+	private Vector3[] _orbitAxis;
     //private float _timer;
 
     public static PlatformController Instance { get; private set; }
@@ -68,6 +69,10 @@ public class PlatformController : MonoBehaviour
 
         _platformBuilder = new PlatformBuilder();
         levelPlatforms = new Dictionary<int, GameObject>();
+
+		_orbitAxis = new Vector3[2];
+		_orbitAxis[0] = Vector3.up;
+		_orbitAxis[1] = Vector3.down;
 
     }
 
@@ -136,7 +141,7 @@ public class PlatformController : MonoBehaviour
                     yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
 
                     newPlatform.name = string.Format("Platform_{0}", i);
-                    newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(), Vector3.up);
+                    newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(i), Vector3.up);
                     AdjustProperties(newPlatform, i);
                     levelPlatforms.Add(i, newPlatform);
 
@@ -146,7 +151,7 @@ public class PlatformController : MonoBehaviour
             }
         }
 
-        Debug.Log("Platform creation finished. Waiting " + platformSpawnInterval + "s");
+        //Debug.Log("Platform creation finished. Waiting " + platformSpawnInterval + "s");
         yield return new WaitForSeconds(platformSpawnInterval);
     }
 
@@ -154,6 +159,15 @@ public class PlatformController : MonoBehaviour
     {
         UpAndDown upAndDownComponent = newPlatform.transform.GetComponent<UpAndDown>();
         Drop dropComponent = newPlatform.transform.GetComponent<Drop>();
+		Orbit orbitComponent = newPlatform.transform.GetComponent<Orbit>();
+
+		// set platform number agnostic values
+		if (orbitComponent != null) 
+		{
+			var rnd = new System.Random();
+			orbitComponent.axis = _orbitAxis[rnd.Next(_orbitAxis.Length)];
+		}
+
         if (index > 40)
         {
             if (dropComponent != null) //TODO: change to Editor value
@@ -161,21 +175,43 @@ public class PlatformController : MonoBehaviour
                 dropComponent.enabled = true;
             }
         }
-        if (index > 60)
+        
+		if (index > 60)
         {
             if (upAndDownComponent != null) //TODO: change to Editor value
             {
-                upAndDownComponent.speed = 3f;
-                upAndDownComponent.waitTime = .5f;
+				upAndDownComponent.speed = Random.Range(1f, 3f);
+				upAndDownComponent.waitTime = 0.5f;
             }
         }
+
+		if (index > 80) 
+		{
+			if (orbitComponent != null) //TODO: change to Editor value
+			{
+				orbitComponent.orbitRotationSpeed = Random.Range(0.5f, 1f);
+				//orbitComponent.stopTime = Random.Range(0.5f, 1f);
+			}	
+		}
     }
 
-    private float GetRandomRotation()
+    private float GetRandomRotation(int index)
     {
-        var options = new Dictionary<int, float> { { 1, maxRotationLeft }, { 2, maxRotationRight } };
-        var leftOrRight = Random.Range(1, 3);
-        return Random.Range(leftOrRight == 1 ? 0 : 360f, options[leftOrRight]);
+        if (index > 40) 
+		{
+			maxRotationLeft = 90f;
+			maxRotationRight = 270f;
+		}
+
+		if (index > 80)
+		{
+			maxRotationLeft = 180f;
+			maxRotationRight = 180f;
+		}
+
+		var options = new Dictionary<int, float> { { 1, maxRotationLeft }, { 2, maxRotationRight } };
+		var leftOrRight = Random.Range(1, 3);
+		return Random.Range(leftOrRight == 1 ? 0 : 360f, options[leftOrRight]);
     }
 
     void HandlePlatformReached(Transform platform, Transform player)
