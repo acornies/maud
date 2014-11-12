@@ -7,19 +7,15 @@ public class CameraMovement : MonoBehaviour
 
     public float introTime = 2.0f;
     public bool isTracking;
-
     public float XMargin = 1.0f;
     public float YMargin = 1.0f;
-
     public float XSmooth = 10.0f;
     public float YSmooth = 10.0f;
-
     public int minCameraUpdatePlatform = 5;
-
     public Vector2 MaxXandY;
     public Vector2 MinXandY;
-
     public Transform CameraTarget;
+    public static float defaultCameraSpeed = 4.5f;
 
     public delegate void UpdatedCameraMinY(float yPosition, int checkpointPlatform);
     public static event UpdatedCameraMinY On_CameraUpdatedMinY;
@@ -35,6 +31,21 @@ public class CameraMovement : MonoBehaviour
         KillBox.On_PlayerDeath += HandlePlayerDeath;
         BoundaryController.On_PlayerDeath += HandlePlayerDeath;
         GameController.OnPlayerResurrection += HandlePlayerResurrection;
+        UpAndDown.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
+        UpAndDown.OnReturnCameraSpeed += HandleReturnCameraSpeed;
+    }
+
+    private void HandleReturnCameraSpeed()
+    {
+        YSmooth = defaultCameraSpeed;
+        //Debug.Log("Return camera to default speed.");
+    }
+
+    private void HandleUpdateCameraSpeed(float speed)
+    {
+        if (!(speed > YSmooth)) return;
+        YSmooth = speed;
+        //Debug.Log("Match camera speed to: " + speed);
     }
 
     void OnDisable()
@@ -54,6 +65,8 @@ public class CameraMovement : MonoBehaviour
         KillBox.On_PlayerDeath -= HandlePlayerDeath;
         BoundaryController.On_PlayerDeath -= HandlePlayerDeath;
         GameController.OnPlayerResurrection -= HandlePlayerResurrection;
+        UpAndDown.OnUpdateCameraSpeed -= HandleUpdateCameraSpeed;
+        UpAndDown.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
     }
 
     void Awake()

@@ -13,9 +13,36 @@ public class UpAndDown : PlatformBehaviour
     public float minLocalY;
     public Vector3 moveDirection = Vector2.up;
 
+    public delegate void UpdateCameraSpeed(float speed);
+    public static event UpdateCameraSpeed OnUpdateCameraSpeed;
+
+    public delegate void ReturnCameraSpeed();
+    public static event ReturnCameraSpeed OnReturnCameraSpeed;
+
     protected override void Start()
     {
         base.Start();
+    }
+
+    public override void HandleOnPlatformReached(Transform platform, Transform player)
+    {
+        base.HandleOnPlatformReached(platform, player);
+        if (platform.GetInstanceID() != child.GetInstanceID()) return;
+        
+        if (OnUpdateCameraSpeed != null)
+        {
+            OnUpdateCameraSpeed(this.speed);    
+        }
+    }
+
+    public override void HandlePlayerAirborne(Transform player)
+    {
+        base.HandlePlayerAirborne(player);
+
+        if (OnReturnCameraSpeed != null)
+        {
+            OnReturnCameraSpeed();
+        }
     }
 
     protected override void FixedUpdate()

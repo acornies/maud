@@ -9,7 +9,7 @@ public class PlatformController : MonoBehaviour
     //private Transform _currentPlatformObject;
     private int _currentPlatform;
     private PlatformBuilder _platformBuilder;
-	private Vector3[] _orbitAxis;
+    private Vector3[] _orbitAxis;
     //private float _timer;
 
     public static PlatformController Instance { get; private set; }
@@ -22,7 +22,7 @@ public class PlatformController : MonoBehaviour
     public float maxRotationLeft = 50.0f;
     public float maxRotationRight = 310.0f;
     public float platformSpawnInterval = 1.0f;
-	public float trunkZAxis = 3.8f;
+    public float trunkZAxis = 3.8f;
 
     public GameObject[] platformTypes;
 
@@ -70,9 +70,9 @@ public class PlatformController : MonoBehaviour
         _platformBuilder = new PlatformBuilder();
         levelPlatforms = new Dictionary<int, GameObject>();
 
-		_orbitAxis = new Vector3[2];
-		_orbitAxis[0] = Vector3.up;
-		_orbitAxis[1] = Vector3.down;
+        _orbitAxis = new Vector3[2];
+        _orbitAxis[0] = Vector3.up;
+        _orbitAxis[1] = Vector3.down;
 
     }
 
@@ -159,14 +159,14 @@ public class PlatformController : MonoBehaviour
     {
         UpAndDown upAndDownComponent = newPlatform.transform.GetComponent<UpAndDown>();
         Drop dropComponent = newPlatform.transform.GetComponent<Drop>();
-		Orbit orbitComponent = newPlatform.transform.GetComponent<Orbit>();
+        Orbit orbitComponent = newPlatform.transform.GetComponent<Orbit>();
 
-		// set platform number agnostic values
-		if (orbitComponent != null) 
-		{
-			var rnd = new System.Random();
-			orbitComponent.axis = _orbitAxis[rnd.Next(_orbitAxis.Length)];
-		}
+        // set platform number agnostic values
+        if (orbitComponent != null)
+        {
+            var rnd = new System.Random();
+            orbitComponent.axis = _orbitAxis[rnd.Next(_orbitAxis.Length)];
+        }
 
         if (index > 40)
         {
@@ -175,43 +175,58 @@ public class PlatformController : MonoBehaviour
                 dropComponent.enabled = true;
             }
         }
-        
-		if (index > 60)
+
+        if (index > 60)
         {
             if (upAndDownComponent != null) //TODO: change to Editor value
             {
-				upAndDownComponent.speed = Random.Range(1f, 3f);
-				upAndDownComponent.waitTime = 0.5f;
+                upAndDownComponent.speed = Random.Range(1f, 3f);
+                upAndDownComponent.waitTime = 0.5f;
             }
         }
 
-		if (index > 80) 
-		{
-			if (orbitComponent != null) //TODO: change to Editor value
-			{
-				orbitComponent.orbitRotationSpeed = Random.Range(0.5f, 1f);
-				//orbitComponent.stopTime = Random.Range(0.5f, 1f);
-			}	
-		}
+        if (index > 80)
+        {
+            if (orbitComponent != null) //TODO: change to Editor value
+            {
+                orbitComponent.orbitRotationSpeed = Random.Range(0.5f, 1f);
+                //orbitComponent.stopTime = Random.Range(0.5f, 1f);
+            }
+        }
+
+        if (index > 140)
+        {
+            if (upAndDownComponent != null) //TODO: change to Editor value
+            {
+                upAndDownComponent.speed = Random.Range(2f, 4f);
+                //upAndDownComponent.waitTime = 0.5f;
+            }
+
+            if (orbitComponent != null) //TODO: change to Editor value
+            {
+                orbitComponent.orbitRotationSpeed = Random.Range(0.5f, 2f);
+                orbitComponent.stopTime = 0.5f;
+            }
+        }
     }
 
     private float GetRandomRotation(int index)
     {
-        if (index > 40) 
-		{
-			maxRotationLeft = 90f;
-			maxRotationRight = 270f;
-		}
+        if (index > 40)
+        {
+            maxRotationLeft = 90f;
+            maxRotationRight = 270f;
+        }
 
-		if (index > 80)
-		{
-			maxRotationLeft = 180f;
-			maxRotationRight = 180f;
-		}
+        if (index > 80)
+        {
+            maxRotationLeft = 180f;
+            maxRotationRight = 180f;
+        }
 
-		var options = new Dictionary<int, float> { { 1, maxRotationLeft }, { 2, maxRotationRight } };
-		var leftOrRight = Random.Range(1, 3);
-		return Random.Range(leftOrRight == 1 ? 0 : 360f, options[leftOrRight]);
+        var options = new Dictionary<int, float> { { 1, maxRotationLeft }, { 2, maxRotationRight } };
+        var leftOrRight = Random.Range(1, 3);
+        return Random.Range(leftOrRight == 1 ? 0 : 360f, options[leftOrRight]);
     }
 
     void HandlePlatformReached(Transform platform, Transform player)

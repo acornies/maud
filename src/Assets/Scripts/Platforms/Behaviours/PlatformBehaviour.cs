@@ -7,7 +7,7 @@ public class PlatformBehaviour : MonoBehaviour
     //protected Quaternion? rotationTarget;
     protected Transform child;
     protected bool isBeingAffected;
-    protected InAndOut inAndOutScript;
+    //protected InAndOut inAndOutScript;
 
     //public float rotationSpeed = 1;
     public bool isOnPlatform;
@@ -43,7 +43,7 @@ public class PlatformBehaviour : MonoBehaviour
     protected virtual void Start()
     {
         child = transform.Find("Cube");
-        inAndOutScript = transform.GetComponent<InAndOut>();
+        //inAndOutScript = transform.GetComponent<InAndOut>();
     }
 
     protected virtual void FixedUpdate()
@@ -56,7 +56,7 @@ public class PlatformBehaviour : MonoBehaviour
         if (platform == null || child == null) return;
         isOnPlatform = platform.GetInstanceID() == child.GetInstanceID();
 
-        if (inAndOutScript != null) return;
+        //if (inAndOutScript != null) return;
 
         if (isOnPlatform && isBeingAffected)
         {

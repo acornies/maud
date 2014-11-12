@@ -1,4 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using System.Linq;
 
@@ -153,18 +152,25 @@ public class PlayerMovement : MonoBehaviour
 
             collider.enabled = false;
 
-            if (_isGhostMoving && _ghostTouchTargetPosition != Vector3.zero)
+            if (_isGhostMoving)
             {
                 //Debug.Log("Move ghost!");
-                transform.position = Vector3.Lerp(transform.position, _ghostTouchTargetPosition, ghostSpeed * Time.deltaTime);
+                transform.position = Vector3.Lerp(transform.position, _ghostTouchTargetPosition,
+                    ghostSpeed * Time.deltaTime);
             }
-            if (_isGhostMoving && transform.position == _ghostTouchTargetPosition)
+            else if (_isGhostMoving && transform.position == _ghostTouchTargetPosition)
             {
                 //Debug.Log("Stop ghost!");
                 _isGhostMoving = false;
-                _ghostTouchTargetPosition = Vector3.zero;
+                //_ghostTouchTargetPosition = Vector3.zero;
             }
         }
+    }
+
+    public void SetSpawnPosition(Vector3 newPosition)
+    {
+        _ghostTouchTargetPosition = newPosition;
+        _isGhostMoving = true;
     }
 
     // Use this for physics updates
@@ -250,7 +256,7 @@ public class PlayerMovement : MonoBehaviour
         _isUsingPowers = false;
         if (!_isFacingCamera) return;
         TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
-		_sparkEffect.GetComponent<ParticleSystem>().Stop();
+        _sparkEffect.GetComponent<ParticleSystem>().Stop();
     }
 
     void HandlePlayerPowersStart()
@@ -258,7 +264,7 @@ public class PlayerMovement : MonoBehaviour
         _isUsingPowers = true;
         if (_isFacingCamera) return;
         TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
-		_sparkEffect.GetComponent<ParticleSystem>().Play();
+        _sparkEffect.GetComponent<ParticleSystem>().Play();
     }
 
     private void HandleOnPlayerDeath()
@@ -321,7 +327,7 @@ public class PlayerMovement : MonoBehaviour
         {
             _ghostTouchTargetPosition = gesture.GetTouchToWordlPoint(transform.position.z, true);
             _isGhostMoving = true;
-            GameController.Instance.movedFromSpawnPosition = true;
+            //GameController.Instance.movedFromSpawnPosition = true;
         }
         else
         {
@@ -355,9 +361,9 @@ public class PlayerMovement : MonoBehaviour
     {
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
-            _ghostTouchTargetPosition = Vector3.zero;
-            transform.position = Vector3.Lerp(transform.position, gesture.GetTouchToWordlPoint(transform.position.z, true), ghostSpeed * 0.01f);
-            GameController.Instance.movedFromSpawnPosition = true;
+            _ghostTouchTargetPosition = gesture.GetTouchToWordlPoint(transform.position.z, true);
+            _isGhostMoving = true;
+            //GameController.Instance.movedFromSpawnPosition = true;
         }
         /* TODO: support additional control mode
          * else

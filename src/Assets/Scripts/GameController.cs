@@ -16,18 +16,17 @@ public class GameController : MonoBehaviour
     private GameObject _restartButton;
     private EnergyBar _powerBar;
     private EnergyBarRenderer _powerBarRenderer;
+    private GUIText _heightCounter;
 
     public bool isPaused;
     public float resumeTime = 1;
     public float playerZPosition = -2.8f;
-    //public int lives = 3;
     public float highestPoint = 0.0f;
     public float powerMeter = 0;
     public float maxPower = 20;
     public float timeBetweenDeaths = 3.0f;
     public Vector3 playerSpawnPosition;
     public bool playerIsDead;
-    public bool movedFromSpawnPosition;
     public bool initiatingRestart;
     public bool useAcceleration;
     public float lifeCost = 5f;
@@ -112,6 +111,8 @@ public class GameController : MonoBehaviour
         _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         _menuButton = GameObject.Find("MenuButton");
         _restartButton = GameObject.Find("RestartButton");
+        _heightCounter = GameObject.Find("HeightCounter").GetComponent<GUIText>();
+
         if (_restartButton != null)
         {
             _restartButton.GetComponent<EasyButton>().enable = false;
@@ -133,12 +134,12 @@ public class GameController : MonoBehaviour
         var guiStyleDeathTimer = new GUIStyle() { alignment = TextAnchor.MiddleCenter, fontSize = 24 };
         guiStyleDeathTimer.normal.textColor = Color.white;
 
-        GUI.Label(new Rect(Screen.width - 110, 10, 100, 25), highestPoint + "m", guiStyleHeightMeter);
+        _heightCounter.text = highestPoint + "m";
 
         if (playerIsDead && powerMeter >= lifeCost)
         {
-            GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 25, 200, 50), "You died!", guiStyleDeathTitle);
-            GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "Next life in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
+            //GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 25, 200, 50), "You died!", guiStyleDeathTitle);
+            //GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "Next life in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
         }
 
         if (powerMeter < lifeCost)
@@ -196,11 +197,6 @@ public class GameController : MonoBehaviour
         {
             _telekinesisControl.SetActive(false);
 
-            if (!initiatingRestart)
-            {
-                _player.transform.position = (movedFromSpawnPosition) ? _player.transform.position : Vector3.Lerp(_player.transform.position, playerSpawnPosition, resurrectionSpeed * Time.deltaTime);
-            }
-
             _deathTimer -= Time.deltaTime;
             if (!(_deathTimer <= 0)) return;
 
@@ -228,7 +224,7 @@ public class GameController : MonoBehaviour
         else
         {
             _deathTimer = timeBetweenDeaths;
-            movedFromSpawnPosition = false;
+            //movedFromSpawnPosition = false;
             initiatingRestart = false;
         }
     }
@@ -251,7 +247,8 @@ public class GameController : MonoBehaviour
         var screenCenterToWorld =
             Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
 
-        playerSpawnPosition = new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition);
+        //playerSpawnPosition = new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition);
+        _player.GetComponent<PlayerMovement>().SetSpawnPosition(new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition));
     }
 
     void HandleOnPlayerPowerDeplete(float amount)
