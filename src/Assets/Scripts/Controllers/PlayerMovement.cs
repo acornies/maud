@@ -32,12 +32,12 @@ public class PlayerMovement : MonoBehaviour
 
     public float headRayOffset;
     public float noseRayOffset;
-    public float chinRayOffset;
+    //public float chinRayOffset;
     public float chestRayOffset;
     public float midRayOffset;
-    public float bellyRayOffset;
+    //public float bellyRayOffset;
     public float legRayOffset;
-    public float kneeRayOffset;
+    //public float kneeRayOffset;
     public float footRayOffset;
 
     public float sphereColliderRadius;
@@ -388,12 +388,12 @@ public class PlayerMovement : MonoBehaviour
         // draw ray near the head of the player
         Vector3 headRay = new Vector3(transform.position.x, transform.position.y + headRayOffset, transform.position.z);
         Vector3 noseRay = new Vector3(transform.position.x, transform.position.y + noseRayOffset, transform.position.z);
-        Vector3 chinRay = new Vector3(transform.position.x, transform.position.y + chinRayOffset, transform.position.z);
+        //Vector3 chinRay = new Vector3(transform.position.x, transform.position.y + chinRayOffset, transform.position.z);
         Vector3 chestRay = new Vector3(transform.position.x, transform.position.y + chestRayOffset, transform.position.z);
         Vector3 midRay = new Vector3(transform.position.x, transform.position.y + midRayOffset, transform.position.z);
-        Vector3 bellyRay = new Vector3(transform.position.x, transform.position.y - bellyRayOffset, transform.position.z);
+        //Vector3 bellyRay = new Vector3(transform.position.x, transform.position.y - bellyRayOffset, transform.position.z);
         Vector3 legRay = new Vector3(transform.position.x, transform.position.y - legRayOffset, transform.position.z);
-        Vector3 kneeRay = new Vector3(transform.position.x, transform.position.y - kneeRayOffset, transform.position.z);
+        //Vector3 kneeRay = new Vector3(transform.position.x, transform.position.y - kneeRayOffset, transform.position.z);
         Vector3 footRay = new Vector3(transform.position.x, transform.position.y - footRayOffset, transform.position.z);
         Debug.DrawRay(midRay, Vector3.right, Color.green);
         Debug.DrawRay(midRay, Vector3.left, Color.green);
@@ -401,10 +401,10 @@ public class PlayerMovement : MonoBehaviour
         Debug.DrawRay(noseRay, Vector3.right, Color.yellow);
         Debug.DrawRay(chestRay, Vector3.left, Color.grey);
         Debug.DrawRay(chestRay, Vector3.right, Color.grey);
-        Debug.DrawRay(chinRay, Vector3.left, Color.black);
-        Debug.DrawRay(chinRay, Vector3.right, Color.black);
-        Debug.DrawRay(bellyRay, Vector3.left, Color.magenta);
-        Debug.DrawRay(bellyRay, Vector3.right, Color.magenta);
+        //Debug.DrawRay(chinRay, Vector3.left, Color.black);
+        //Debug.DrawRay(chinRay, Vector3.right, Color.black);
+        //Debug.DrawRay(bellyRay, Vector3.left, Color.magenta);
+        //Debug.DrawRay(bellyRay, Vector3.right, Color.magenta);
         Debug.DrawRay(midRay, new Vector3(1, 0, 1), Color.green);
         Debug.DrawRay(midRay, new Vector3(-1, 0, 1), Color.green);
         Debug.DrawRay(midRay, new Vector3(1, 0, -1), Color.green);
@@ -413,8 +413,8 @@ public class PlayerMovement : MonoBehaviour
         Debug.DrawRay(midRay, new Vector3(-1, 0, -1), Color.green);
         Debug.DrawRay(footRay, Vector3.right, Color.red);
         Debug.DrawRay(footRay, Vector3.left, Color.red);
-        Debug.DrawRay(kneeRay, Vector3.right, Color.white);
-        Debug.DrawRay(kneeRay, Vector3.left, Color.white);
+        //Debug.DrawRay(kneeRay, Vector3.right, Color.white);
+        //Debug.DrawRay(kneeRay, Vector3.left, Color.white);
         Debug.DrawRay(headRay, Vector3.right, Color.white);
         Debug.DrawRay(headRay, Vector3.left, Color.white);
 
@@ -427,18 +427,18 @@ public class PlayerMovement : MonoBehaviour
              || Physics.Raycast(legRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(legRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(legRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
-             || Physics.Raycast(chinRay, Vector3.right, out hit, stickyBuffer)
-             || Physics.Raycast(chinRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
-             || Physics.Raycast(chinRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
+             //|| Physics.Raycast(chinRay, Vector3.right, out hit, stickyBuffer)
+             //|| Physics.Raycast(chinRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             //|| Physics.Raycast(chinRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(chestRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(chestRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(chestRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
-             || Physics.Raycast(kneeRay, Vector3.right, out hit, stickyBuffer)
-             || Physics.Raycast(kneeRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
-             || Physics.Raycast(kneeRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
-             || Physics.Raycast(bellyRay, Vector3.right, out hit, stickyBuffer)
-             || Physics.Raycast(bellyRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
-             || Physics.Raycast(bellyRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
+             //|| Physics.Raycast(kneeRay, Vector3.right, out hit, stickyBuffer)
+             //|| Physics.Raycast(kneeRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             //|| Physics.Raycast(kneeRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
+             //|| Physics.Raycast(bellyRay, Vector3.right, out hit, stickyBuffer)
+             //|| Physics.Raycast(bellyRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
+             //|| Physics.Raycast(bellyRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(midRay, Vector3.right, out hit, stickyBuffer)
              || Physics.Raycast(midRay, new Vector3(1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(midRay, new Vector3(1, 0, -1), out hit, stickyBuffer)
@@ -460,18 +460,18 @@ public class PlayerMovement : MonoBehaviour
              || Physics.Raycast(legRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(legRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(legRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
-             || Physics.Raycast(chinRay, Vector3.left, out hit, stickyBuffer)
-             || Physics.Raycast(chinRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
-             || Physics.Raycast(chinRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
+             //|| Physics.Raycast(chinRay, Vector3.left, out hit, stickyBuffer)
+             //|| Physics.Raycast(chinRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             //|| Physics.Raycast(chinRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(chestRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(chestRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(chestRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
-             || Physics.Raycast(kneeRay, Vector3.left, out hit, stickyBuffer)
-             || Physics.Raycast(kneeRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
-             || Physics.Raycast(kneeRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
-             || Physics.Raycast(bellyRay, Vector3.left, out hit, stickyBuffer)
-             || Physics.Raycast(bellyRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
-             || Physics.Raycast(bellyRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
+             //|| Physics.Raycast(kneeRay, Vector3.left, out hit, stickyBuffer)
+             //|| Physics.Raycast(kneeRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             //|| Physics.Raycast(kneeRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
+             //|| Physics.Raycast(bellyRay, Vector3.left, out hit, stickyBuffer)
+             //|| Physics.Raycast(bellyRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
+             //|| Physics.Raycast(bellyRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)
              || Physics.Raycast(midRay, Vector3.left, out hit, stickyBuffer)
              || Physics.Raycast(midRay, new Vector3(-1, 0, 1), out hit, stickyBuffer)
              || Physics.Raycast(midRay, new Vector3(-1, 0, -1), out hit, stickyBuffer)

@@ -27,11 +27,13 @@ public class UpAndDown : PlatformBehaviour
     public override void HandleOnPlatformReached(Transform platform, Transform player)
     {
         base.HandleOnPlatformReached(platform, player);
+
+        //if (platform == null || child == null) return;
         if (platform.GetInstanceID() != child.GetInstanceID()) return;
         
         if (OnUpdateCameraSpeed != null)
         {
-            OnUpdateCameraSpeed(this.speed);    
+            OnUpdateCameraSpeed(this.speed / 3f);    
         }
     }
 

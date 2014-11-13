@@ -62,6 +62,7 @@ public class GameController : MonoBehaviour
         OnGamePause += HandleOnGamePause;
         OnGameResume += HandleOnGameResume;
         OnGameOver += HandleOnGameOver;
+        PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickUp;
     }
 
     void OnDisable()
@@ -83,6 +84,7 @@ public class GameController : MonoBehaviour
         OnGamePause -= HandleOnGamePause;
         OnGameResume -= HandleOnGameResume;
         OnGameOver -= HandleOnGameOver;
+        PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
     }
 
     void Awake()
@@ -303,5 +305,11 @@ public class GameController : MonoBehaviour
     {
         _player.GetComponent<PlayerMovement>().enabled = false;
         _telekinesisControl.SetActive(false);
+    }
+
+    private void HandleOnPowerPickUp(float powerToAdd)
+    {
+        Debug.Log("Add " + powerToAdd + " to power meter.");
+        powerMeter += powerToAdd;
     }
 }
