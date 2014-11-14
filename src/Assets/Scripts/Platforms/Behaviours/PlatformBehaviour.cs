@@ -3,15 +3,19 @@ using System.Collections;
 
 public class PlatformBehaviour : MonoBehaviour
 {
-
-    //protected Quaternion? rotationTarget;
+	protected bool shouldBurnOut;
+    
+	//protected Quaternion? rotationTarget;
     protected Transform child;
     protected bool isBeingAffected;
+	protected Light innerLight;
     //protected InAndOut inAndOutScript;
 
     //public float rotationSpeed = 1;
     public bool isOnPlatform;
     public bool isStopped;
+	public float lightIntensity = 2.75f;
+	public float lightBurnoutSpeed = 1f;
 
     // Subscribe to events
     public virtual void OnEnable()
@@ -43,8 +47,22 @@ public class PlatformBehaviour : MonoBehaviour
     protected virtual void Start()
     {
         child = transform.Find("Cube");
+		innerLight = GetComponentInChildren<Light> ();
         //inAndOutScript = transform.GetComponent<InAndOut>();
     }
+
+	protected virtual void Update()
+	{
+		if (shouldBurnOut)
+		{
+			innerLight.intensity = Mathf.Lerp(innerLight.intensity, 0, lightBurnoutSpeed * Time.deltaTime);
+
+			if (innerLight.intensity == 0)
+			{
+				innerLight.enabled = false;
+			}
+		}
+	}
 
     protected virtual void FixedUpdate()
     {
@@ -54,8 +72,10 @@ public class PlatformBehaviour : MonoBehaviour
     public virtual void HandleOnPlatformReached(Transform platform, Transform player)
     {
         if (platform == null || child == null) return;
-        isOnPlatform = platform.GetInstanceID() == child.GetInstanceID();
+        //isOnPlatform = platform.GetInstanceID() == child.GetInstanceID();
 
+		if (platform.GetInstanceID() != child.GetInstanceID()) return;
+		isOnPlatform = true;
         //if (inAndOutScript != null) return;
 
         if (isOnPlatform && isBeingAffected)
@@ -66,6 +86,13 @@ public class PlatformBehaviour : MonoBehaviour
         {
             player.parent = child;
         }
+
+		if (innerLight != null && innerLight.intensity == 0)
+		{
+			innerLight.intensity = lightIntensity;
+			shouldBurnOut = true;
+			//Debug.Log("turn on");
+		}
     }
 
     public virtual void HandlePlayerAirborne(Transform player)
