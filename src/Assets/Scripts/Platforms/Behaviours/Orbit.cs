@@ -21,11 +21,6 @@ public class Orbit : PlatformBehaviour
         child.position = (child.position - center.position).normalized * radius + center.position;
     }
 
-    void Update()
-    {
-
-    }
-
     // Update is called once per frame
     protected override void FixedUpdate()
     {

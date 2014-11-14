@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using System.Collections;
 
 public class PlatformBehaviour : MonoBehaviour
@@ -53,15 +54,15 @@ public class PlatformBehaviour : MonoBehaviour
 
 	protected virtual void Update()
 	{
-		if (shouldBurnOut)
+        if (shouldBurnOut && innerLight.intensity >= 0.1f)
 		{
 			innerLight.intensity = Mathf.Lerp(innerLight.intensity, 0, lightBurnoutSpeed * Time.deltaTime);
-
-			if (innerLight.intensity == 0)
-			{
-				innerLight.enabled = false;
-			}
 		}
+        else if (shouldBurnOut && innerLight.intensity <= 0.1f)
+        {
+            innerLight.enabled = false;
+            shouldBurnOut = false;
+        }
 	}
 
     protected virtual void FixedUpdate()
@@ -87,12 +88,20 @@ public class PlatformBehaviour : MonoBehaviour
             player.parent = child;
         }
 
-		if (innerLight != null && innerLight.intensity == 0)
-		{
-			innerLight.intensity = lightIntensity;
-			shouldBurnOut = true;
-			//Debug.Log("turn on");
-		}
+        if (innerLight == null || !Mathf.Approximately(innerLight.intensity, 0)) return;
+
+        Color newColor = GameController.Instance.powerBarRenderer.textureBarColor;
+        var colorKeys = GameController.Instance.powerBarRenderer.textureBarGradient.colorKeys;
+        //var powerPostAccumulation = GameController.Instance.powerMeter + GameController.Instance.powerAccumulationRate;
+        var powerPercentage = GameController.Instance.powerMeter / GameController.Instance.maxPower;
+        bool hasColor = colorKeys.Any(x => powerPercentage <= x.time);
+        if (hasColor)
+        {
+            newColor = colorKeys.FirstOrDefault(x => powerPercentage <= x.time).color;
+        }
+        innerLight.color = newColor;
+        innerLight.intensity = lightIntensity;
+        shouldBurnOut = true;
     }
 
     public virtual void HandlePlayerAirborne(Transform player)

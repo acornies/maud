@@ -15,7 +15,7 @@ namespace LegendPeak.Platforms
         public PlatformBuilder()
         {
             _heightLevelDescriptions = new Dictionary<string, PlatformRangeInfo>();
-            //_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("ForestSlowLimit", new PlatformRangeInfo(40, 0, 3)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("ForestSlowLimit", new PlatformRangeInfo(20, 0, 2)));
             _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("ForestFastLimit", new PlatformRangeInfo(80, 0, 3)));
             _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("CloudSlowLimit", new PlatformRangeInfo(140, 0, 4)));
             _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("CloudFast", new PlatformRangeInfo(220, 0, 5)));

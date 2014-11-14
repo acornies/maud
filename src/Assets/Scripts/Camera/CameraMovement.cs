@@ -149,12 +149,12 @@ public class CameraMovement : MonoBehaviour
     void HandlePlayerDeath()
     {
         isTracking = false;
-        Debug.Log("Turn off tracking");
+        //Debug.Log("Turn off tracking");
     }
 
     void HandlePlayerResurrection()
     {
         isTracking = true;
-        Debug.Log("Turn on tracking");
+        //Debug.Log("Turn on tracking");
     }
 }

@@ -152,15 +152,27 @@ public class TelekinesisController : MonoBehaviour
         }
     }
 
-    private static void Stabilize(Transform objectWithScripts)
+    private void Stabilize(Transform objectWithScripts)
     {
         if (objectWithScripts == null) return;
-        var scriptsToDisable = objectWithScripts.GetComponentsInChildren<TelekinesisHandler>();
-        scriptsToDisable.ToList().ForEach(x =>
+        var baseScripts = objectWithScripts.GetComponentsInChildren<TelekinesisHandler>();
+        baseScripts.ToList().ForEach(x =>
         {
-            x.isStable = true;
+            //x.isStable = true;
             x.isClone = true;
         });
+
+        var upAndDownClone = objectWithScripts.GetComponentInChildren<UpAndDown>();
+        var upAndDownReal = _platform.GetComponentInChildren<UpAndDown>();
+        if (upAndDownClone != null && upAndDownReal != null)
+        {
+            upAndDownClone.waitTimer = upAndDownReal.waitTimer;
+            upAndDownClone.speed = upAndDownReal.speed;
+            upAndDownClone.waitTime = upAndDownReal.waitTime;
+            upAndDownClone.maxLocalY = upAndDownReal.maxLocalY;
+            upAndDownClone.minLocalY = upAndDownReal.minLocalY;
+            upAndDownClone.moveDirection = upAndDownReal.moveDirection;
+        }
     }
 
     void HandleLongTapEnd(Gesture gesture)

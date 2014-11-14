@@ -15,7 +15,6 @@ public class GameController : MonoBehaviour
     private GameObject _menuButton;
     private GameObject _restartButton;
     private EnergyBar _powerBar;
-    private EnergyBarRenderer _powerBarRenderer;
     private GUIText _heightCounter;
 
     public bool isPaused;
@@ -34,6 +33,7 @@ public class GameController : MonoBehaviour
     public float resurrectionSpeed = 15f;
     public float deathIconWidth = 20f;
     public float deathIconOffset = 10f;
+    public EnergyBarRenderer powerBarRenderer;
 
     public static GameController Instance { get; private set; }
 
@@ -51,6 +51,9 @@ public class GameController : MonoBehaviour
 
     public delegate void PlayerResurrection();
     public static event PlayerResurrection OnPlayerResurrection;
+
+    public delegate void MaxHeightIncrease(float amount);
+    public static event MaxHeightIncrease OnMaxHeightIncrease;
 
     // Subscribe to events
     void OnEnable()
@@ -108,7 +111,7 @@ public class GameController : MonoBehaviour
         _player = GameObject.Find("Player").transform;
         _telekinesisControl = GameObject.Find("TelekinesisControl");
         _powerBar = GetComponentInChildren<EnergyBar>();
-        _powerBarRenderer = GetComponentInChildren<EnergyBarRenderer>();
+        powerBarRenderer = GetComponentInChildren<EnergyBarRenderer>();
 
         _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         _menuButton = GameObject.Find("MenuButton");
@@ -146,11 +149,11 @@ public class GameController : MonoBehaviour
 
         if (powerMeter < lifeCost)
         {
-            _powerBarRenderer.texturesForeground[0].color.a = 1f;
+            powerBarRenderer.texturesForeground[0].color.a = 1f;
         }
         else if (powerMeter >= lifeCost)
         {
-            _powerBarRenderer.texturesForeground[0].color.a = 0f;
+            powerBarRenderer.texturesForeground[0].color.a = 0f;
         }
     }
 
@@ -179,7 +182,12 @@ public class GameController : MonoBehaviour
 
         if (_player.position.y > highestPoint)
         {
-            highestPoint = Mathf.Round(_player.position.y);
+            var roundedPosition = Mathf.Round(_player.position.y);
+            highestPoint = roundedPosition;
+            if (OnMaxHeightIncrease != null)
+            {
+                OnMaxHeightIncrease(roundedPosition * SkyboxCameraMovement.speedMultiplier);
+            }
         }
 
         if (PlatformController.Instance.GetCurrentPlatformNumber() > _previousPlatformNumber)
