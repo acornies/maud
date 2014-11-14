@@ -94,11 +94,20 @@ public class PlatformBehaviour : MonoBehaviour
         var colorKeys = GameController.Instance.powerBarRenderer.textureBarGradient.colorKeys;
         //var powerPostAccumulation = GameController.Instance.powerMeter + GameController.Instance.powerAccumulationRate;
         var powerPercentage = GameController.Instance.powerMeter / GameController.Instance.maxPower;
-        bool hasColor = colorKeys.Any(x => powerPercentage <= x.time);
-        if (hasColor)
-        {
-            newColor = colorKeys.FirstOrDefault(x => powerPercentage <= x.time).color;
-        }
+        //bool hasColor = colorKeys.Any(x => powerPercentage <= x.time);
+        
+		foreach (GradientColorKey key in colorKeys)
+		{
+			if (powerPercentage >= key.time)
+			{
+				newColor = key.color;
+			}
+		}
+
+		//if (hasColor)
+        //{
+        //    newColor = colorKeys.FirstOrDefault(x => powerPercentage <= x.time).color;
+        //}
         innerLight.color = newColor;
         innerLight.intensity = lightIntensity;
         shouldBurnOut = true;
