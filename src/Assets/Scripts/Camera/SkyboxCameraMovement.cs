@@ -3,7 +3,7 @@ using System.Collections;
 
 public class SkyboxCameraMovement : MonoBehaviour
 {
-    public static float speedMultiplier = 0.01f;
+    public static float speedMultiplier = 0.02f;
     public float rotationSpeed = 1f;
 
     void OnEnable()

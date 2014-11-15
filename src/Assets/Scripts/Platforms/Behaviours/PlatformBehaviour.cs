@@ -4,6 +4,8 @@ using System.Collections;
 
 public class PlatformBehaviour : MonoBehaviour
 {
+	protected Color _originalColor;
+
 	protected bool shouldBurnOut;
     
 	//protected Quaternion? rotationTarget;
@@ -11,6 +13,7 @@ public class PlatformBehaviour : MonoBehaviour
     protected bool isBeingAffected;
 	protected Light innerLight;
     //protected InAndOut inAndOutScript;
+	protected Color towerColor;
 
     //public float rotationSpeed = 1;
     public bool isOnPlatform;
@@ -50,6 +53,12 @@ public class PlatformBehaviour : MonoBehaviour
         child = transform.Find("Cube");
 		innerLight = GetComponentInChildren<Light> ();
         //inAndOutScript = transform.GetComponent<InAndOut>();
+
+		if (renderer != null) 
+		{
+			_originalColor = renderer.material.color;;
+			towerColor = renderer.material.color;
+		}
     }
 
 	protected virtual void Update()
@@ -63,6 +72,14 @@ public class PlatformBehaviour : MonoBehaviour
             innerLight.enabled = false;
             shouldBurnOut = false;
         }
+
+		if (renderer == null) return;
+
+		if (renderer.material.color != towerColor)
+		{
+			//Debug.Log ("Change tower color");
+			renderer.material.color = Color.Lerp(renderer.material.color, towerColor, lightBurnoutSpeed * Time.deltaTime);
+		}
 	}
 
     protected virtual void FixedUpdate()
@@ -90,28 +107,28 @@ public class PlatformBehaviour : MonoBehaviour
 
         if (innerLight == null || !Mathf.Approximately(innerLight.intensity, 0)) return;
 
-        Color newColor = GameController.Instance.powerBarRenderer.textureBarColor;
-        var colorKeys = GameController.Instance.powerBarRenderer.textureBarGradient.colorKeys;
-        //var powerPostAccumulation = GameController.Instance.powerMeter + GameController.Instance.powerAccumulationRate;
-        var powerPercentage = GameController.Instance.powerMeter / GameController.Instance.maxPower;
-        //bool hasColor = colorKeys.Any(x => powerPercentage <= x.time);
-        
-		foreach (GradientColorKey key in colorKeys)
-		{
-			if (powerPercentage >= key.time)
-			{
-				newColor = key.color;
-			}
-		}
-
-		//if (hasColor)
-        //{
-        //    newColor = colorKeys.FirstOrDefault(x => powerPercentage <= x.time).color;
-        //}
-        innerLight.color = newColor;
+        innerLight.color = GetPowerBarColor();
         innerLight.intensity = lightIntensity;
         shouldBurnOut = true;
     }
+
+	private Color GetPowerBarColor()
+	{
+		Color newColor = GameController.Instance.powerBarRenderer.textureBarColor;
+		var colorKeys = GameController.Instance.powerBarRenderer.textureBarGradient.colorKeys;
+		var powerPercentage = GameController.Instance.powerMeter / GameController.Instance.maxPower;
+
+		var barColor = colorKeys.FirstOrDefault (x => powerPercentage <= x.time).color;
+
+		if (barColor.r != 0 || barColor.g != 0 || barColor.b != 0) 
+		{
+			return barColor;
+		}
+		else
+		{
+			return newColor;
+		}
+	}
 
     public virtual void HandlePlayerAirborne(Transform player)
     {
@@ -123,6 +140,7 @@ public class PlatformBehaviour : MonoBehaviour
     {
         if (platform.GetInstanceID() != transform.GetInstanceID()) return;
         isBeingAffected = true;
+		towerColor = this.GetPowerBarColor ();
     }
 
     public virtual void HandleOnAffectEnd(Transform platform)

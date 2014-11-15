@@ -176,7 +176,7 @@ public class PlatformController : MonoBehaviour
             }
         }
 
-        if (index > 60)
+        if (index > 40)
         {
             if (upAndDownComponent != null) //TODO: change to Editor value
             {
@@ -194,7 +194,7 @@ public class PlatformController : MonoBehaviour
             }
         }
 
-        if (index > 140)
+        if (index > 100)
         {
             if (upAndDownComponent != null) //TODO: change to Editor value
             {
