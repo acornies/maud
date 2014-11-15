@@ -107,7 +107,7 @@ public class PlatformBehaviour : MonoBehaviour
 
         if (innerLight == null || !Mathf.Approximately(innerLight.intensity, 0)) return;
 
-        innerLight.color = GetPowerBarColor();
+        //innerLight.color = GetPowerBarColor();
         innerLight.intensity = lightIntensity;
         shouldBurnOut = true;
     }
@@ -118,7 +118,7 @@ public class PlatformBehaviour : MonoBehaviour
 		var colorKeys = GameController.Instance.powerBarRenderer.textureBarGradient.colorKeys;
 		var powerPercentage = GameController.Instance.powerMeter / GameController.Instance.maxPower;
 
-		var barColor = colorKeys.FirstOrDefault (x => powerPercentage <= x.time).color;
+		/*var barColor = colorKeys.FirstOrDefault (x => powerPercentage <= x.time).color;
 
 		if (barColor.r != 0 || barColor.g != 0 || barColor.b != 0) 
 		{
@@ -127,7 +127,17 @@ public class PlatformBehaviour : MonoBehaviour
 		else
 		{
 			return newColor;
+		}*/
+
+		foreach (GradientColorKey key in colorKeys)
+		{
+			if (powerPercentage >= key.time)
+			{
+				newColor = key.color;
+			}
 		}
+
+		return newColor;
 	}
 
     public virtual void HandlePlayerAirborne(Transform player)
