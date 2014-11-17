@@ -89,13 +89,9 @@ public class MusicController : MonoBehaviour
 			next.volume = Mathf.Lerp(next.volume, 0.5f, musicFadeSpeed * Time.deltaTime);
 			current.volume = Mathf.Lerp(current.volume, 0f, musicFadeSpeed * Time.deltaTime);
 
-			if (current.volume <= 0.2f)
+			if (current.volume <= 0.01f)
 			{
 				current.Stop();
-			}
-
-			if (next.volume >= 0.45){
-				next.volume = 0.5f;
 			}
 		}
 	}
