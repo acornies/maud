@@ -93,6 +93,10 @@ public class MusicController : MonoBehaviour
 			{
 				current.Stop();
 			}
+
+			if (next.volume >= 0.45){
+				next.volume = 0.5f;
+			}
 		}
 	}
 
