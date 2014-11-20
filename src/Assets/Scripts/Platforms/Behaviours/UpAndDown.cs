@@ -33,7 +33,7 @@ public class UpAndDown : PlatformBehaviour
         
         if (OnUpdateCameraSpeed != null)
         {
-            OnUpdateCameraSpeed(this.speed / 3f);    
+            OnUpdateCameraSpeed(this.speed / 2.5f);    
         }
     }
 

@@ -33,6 +33,7 @@ public class CameraMovement : MonoBehaviour
         GameController.OnPlayerResurrection += HandlePlayerResurrection;
         UpAndDown.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
         UpAndDown.OnReturnCameraSpeed += HandleReturnCameraSpeed;
+		StartPlatform.OnReturnCameraSpeed += HandleReturnCameraSpeed;
     }
 
     private void HandleReturnCameraSpeed()
@@ -67,6 +68,7 @@ public class CameraMovement : MonoBehaviour
         GameController.OnPlayerResurrection -= HandlePlayerResurrection;
         UpAndDown.OnUpdateCameraSpeed -= HandleUpdateCameraSpeed;
         UpAndDown.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
+		StartPlatform.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
     }
 
     void Awake()
