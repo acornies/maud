@@ -76,10 +76,14 @@ public class SceneFadeInOut : MonoBehaviour
     }
 
 
-    void FadeToBlack()
+    void FadeToBlack(float alpha)
     {
         // Lerp the colour of the texture between itself and black.
-        guiTexture.color = Color.Lerp(guiTexture.color, Color.black, fadeSpeed * Time.deltaTime);
+		var blackWithAlpha = new Color (0, 0, 0, alpha);
+		//guiTexture.color = blackWithAlpha;
+
+		guiTexture.color = Color.Lerp(guiTexture.color, blackWithAlpha, fadeSpeed * Time.deltaTime);
+
     }
 
 
@@ -99,16 +103,17 @@ public class SceneFadeInOut : MonoBehaviour
             // The scene is no longer starting.
             sceneStarting = false;
         }
-    }
-
+	}
 
     public void EndScene()
     {
         // Make sure the texture is enabled.
-        guiTexture.enabled = true;
+        if (!guiTexture.enabled) {
+			guiTexture.enabled = true;
+		}
 
         // Start fading towards black.
-        FadeToBlack();
+        FadeToBlack(1f);
     }
 
     public void EndScene(int sceneIndex, bool shouldRestart = true)
@@ -130,12 +135,19 @@ public class SceneFadeInOut : MonoBehaviour
     }
     private void HandleOnGameResume()
     {
-        //TODO: add overlay on pause
+		if (!_sceneEnding)
+		{
+			guiTexture.color = Color.clear;
+			guiTexture.enabled = false;	
+		}
+		//Debug.Log ("Hit scene resume");
     }
 
     private void HandleOnGamePause()
     {
-        //TODO: remove overlay on pause
+		guiTexture.enabled = true;
+		//FadeToBlack (0.75f);
+		guiTexture.color = new Color (0, 0, 0, 0.4f);
     }
 
     private void HandleOnGameOver()

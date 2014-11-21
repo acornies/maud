@@ -11,7 +11,7 @@ public class GameController : MonoBehaviour
     private int _previousPlatformNumber;
     private float _resumeTimer;
     private bool _initiatingResume;
-    private Camera _mainCamera;
+    //private Camera _mainCamera;
     private GameObject _menuButton;
     private GameObject _restartButton;
     private EnergyBar _powerBar;
@@ -113,7 +113,7 @@ public class GameController : MonoBehaviour
         _powerBar = GetComponentInChildren<EnergyBar>();
         powerBarRenderer = GetComponentInChildren<EnergyBarRenderer>();
 
-        _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+        //_mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         _menuButton = GameObject.Find("MenuButton");
         _restartButton = GameObject.Find("RestartButton");
         _heightCounter = GameObject.Find("HeightCounter").GetComponent<GUIText>();
@@ -296,7 +296,7 @@ public class GameController : MonoBehaviour
     {
         _player.GetComponent<PlayerMovement>().enabled = false;
         _telekinesisControl.SetActive(false);
-        _mainCamera.GetComponent<BlurEffect>().enabled = true;
+        //_mainCamera.GetComponent<BlurEffect>().enabled = true;
         _restartButton.GetComponent<EasyButton>().enable = true;
 
     }
@@ -305,7 +305,7 @@ public class GameController : MonoBehaviour
     {
         _player.GetComponent<PlayerMovement>().enabled = true;
         _telekinesisControl.SetActive(true);
-        _mainCamera.GetComponent<BlurEffect>().enabled = false;
+        //_mainCamera.GetComponent<BlurEffect>().enabled = false;
         _restartButton.GetComponent<EasyButton>().enable = false;
     }
 
@@ -317,7 +317,7 @@ public class GameController : MonoBehaviour
 
     private void HandleOnPowerPickUp(float powerToAdd)
     {
-        Debug.Log("Add " + powerToAdd + " to power meter.");
+        //Debug.Log("Add " + powerToAdd + " to power meter.");
         powerMeter += powerToAdd;
     }
 }
