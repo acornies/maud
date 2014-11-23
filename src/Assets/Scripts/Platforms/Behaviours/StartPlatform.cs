@@ -9,9 +9,14 @@ public class StartPlatform : PlatformBehaviour
 	public float maxLocalY;
 	public float speed;
 	public float cameraUpdateY;
+    public float cameraSpeed = 1.0f;
 
-	public delegate void ReturnCameraSpeed();
+    public delegate void UpdateCameraSpeed(float speed);
+    public static event UpdateCameraSpeed OnUpdateCameraSpeed;
+    
+    public delegate void ReturnCameraSpeed();
 	public static event ReturnCameraSpeed OnReturnCameraSpeed;
+
 	
 	void Awake()
 	{
@@ -33,6 +38,18 @@ public class StartPlatform : PlatformBehaviour
 			Debug.Log("Update min camera to " + cameraUpdateY);
 		}
 	}
+
+    public override void HandleOnPlatformReached(Transform platform, Transform player)
+    {
+        base.HandleOnPlatformReached(platform, player);
+
+        if (platform.GetInstanceID() != child.GetInstanceID()) return;
+
+        if (OnUpdateCameraSpeed != null)
+        {
+            OnUpdateCameraSpeed(cameraSpeed);
+        }
+    }
 
 	public override void HandlePlayerAirborne(Transform player)
 	{
