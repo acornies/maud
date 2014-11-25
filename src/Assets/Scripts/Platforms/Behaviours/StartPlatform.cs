@@ -45,6 +45,8 @@ public class StartPlatform : PlatformBehaviour
 
         if (platform.GetInstanceID() != child.GetInstanceID()) return;
 
+        player.parent = child;
+
         if (OnUpdateCameraSpeed != null)
         {
             OnUpdateCameraSpeed(cameraSpeed);

@@ -96,14 +96,14 @@ public class PlatformBehaviour : MonoBehaviour
 		isOnPlatform = true;
         //if (inAndOutScript != null) return;
 
-        if (isOnPlatform && isBeingAffected)
+        /*if (isOnPlatform && isBeingAffected)
         {
             player.parent = null;
         }
         else if (isOnPlatform && !isBeingAffected)
         {
             player.parent = child;
-        }
+        }*/
 
         if (innerLight == null || !Mathf.Approximately(innerLight.intensity, 0)) return;
 

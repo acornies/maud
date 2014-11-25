@@ -12,6 +12,7 @@ public class UpAndDown : PlatformBehaviour
     public float maxLocalY;
     public float minLocalY;
     public Vector3 moveDirection = Vector2.up;
+    public float cameraSpeed = 1f;
 
     public delegate void UpdateCameraSpeed(float speed);
     public static event UpdateCameraSpeed OnUpdateCameraSpeed;
@@ -30,10 +31,20 @@ public class UpAndDown : PlatformBehaviour
 
         //if (platform == null || child == null) return;
         if (platform.GetInstanceID() != child.GetInstanceID()) return;
+
+        if (isOnPlatform && isBeingAffected)
+        {
+            player.parent = null;
+        }
+        
+        if (isOnPlatform && !isBeingAffected)
+        {
+            player.parent = child;
+        }
         
         if (OnUpdateCameraSpeed != null)
         {
-            OnUpdateCameraSpeed(this.speed / 2.5f);    
+            OnUpdateCameraSpeed(cameraSpeed);    
         }
     }
 

@@ -168,7 +168,7 @@ public class PlatformController : MonoBehaviour
             orbitComponent.axis = _orbitAxis[rnd.Next(_orbitAxis.Length)];
         }
 
-        if (index > 40)
+        if (index > 30)
         {
             if (dropComponent != null) //TODO: change to Editor value
             {
@@ -176,11 +176,12 @@ public class PlatformController : MonoBehaviour
             }
         }
 
-        if (index > 60)
+        if (index > 50)
         {
             if (upAndDownComponent != null) //TODO: change to Editor value
             {
                 upAndDownComponent.speed = Random.Range(1f, 3f);
+                upAndDownComponent.cameraSpeed = upAndDownComponent.speed / 2;
                 upAndDownComponent.waitTime = 0.5f;
             }
         }
@@ -194,11 +195,12 @@ public class PlatformController : MonoBehaviour
             }
         }
 
-        if (index > 140)
+        if (index > 100)
         {
             if (upAndDownComponent != null) //TODO: change to Editor value
             {
                 upAndDownComponent.speed = Random.Range(2f, 4f);
+                upAndDownComponent.cameraSpeed = upAndDownComponent.speed/2;
                 //upAndDownComponent.waitTime = 0.5f;
             }
 
@@ -212,13 +214,13 @@ public class PlatformController : MonoBehaviour
 
     private float GetRandomRotation(int index)
     {
-        if (index > 40)
+        if (index > 60)
         {
             maxRotationLeft = 90f;
             maxRotationRight = 270f;
         }
 
-        if (index > 80)
+        if (index > 100)
         {
             maxRotationLeft = 180f;
             maxRotationRight = 180f;

@@ -254,17 +254,18 @@ public class PlayerMovement : MonoBehaviour
     void HandlePlayerPowersEnd()
     {
         _isUsingPowers = false;
-        if (!_isFacingCamera) return;
-        TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
         _sparkEffect.GetComponent<ParticleSystem>().Stop();
+        if (!_isFacingCamera) return;     
+        TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
     }
 
     void HandlePlayerPowersStart()
     {
         _isUsingPowers = true;
         if (_isFacingCamera) return;
-        TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
         _sparkEffect.GetComponent<ParticleSystem>().Play();
+        if (!isGrounded) return;           
+        TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
     }
 
     private void HandleOnPlayerDeath()

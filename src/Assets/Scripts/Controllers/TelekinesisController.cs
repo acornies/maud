@@ -16,10 +16,9 @@ public class TelekinesisController : MonoBehaviour
     private bool _isActivePowerTimingOut;
     private Transform _platform;
     private Transform _platformClone;
-    private Transform _hazzard;
+    private Transform _hazard;
     private Transform _hazzardClone;
     private float _rotationTimer;
-    private PlayerMovement _player;
     private AudioSource[] _teleSources;
     private AudioSource _teleAttack;
     private AudioSource _teleLoop;
@@ -64,7 +63,6 @@ public class TelekinesisController : MonoBehaviour
         EasyTouch.On_SwipeEnd += On_SwipeEnd;
         EasyTouch.On_LongTapStart += HandleLongTapStart;
         EasyTouch.On_LongTapEnd += HandleLongTapEnd;
-        PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
         On_PlayerPowersStart += HandleOnPowersStart;
         On_PlayerPowersEnd += HandleOnPlayerPowersEnd;
         On_TelekinesisStabilize += HandleOnTelekinesisStabilize;
@@ -90,7 +88,6 @@ public class TelekinesisController : MonoBehaviour
         EasyTouch.On_SwipeEnd -= On_SwipeEnd;
         EasyTouch.On_LongTapStart -= HandleLongTapStart;
         EasyTouch.On_LongTapEnd -= HandleLongTapEnd;
-        PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
         On_PlayerPowersStart -= HandleOnPowersStart;
         On_PlayerPowersEnd -= HandleOnPlayerPowersEnd;
         On_TelekinesisStabilize -= HandleOnTelekinesisStabilize;
@@ -98,7 +95,7 @@ public class TelekinesisController : MonoBehaviour
 
     void Awake()
     {
-        _player = GameObject.Find("Player").transform.GetComponent<PlayerMovement>();
+        GameObject.Find("Player").transform.GetComponent<PlayerMovement>();
         _teleSources = GetComponents<AudioSource>();
         if (_teleSources == null || _teleSources.Length <= 0) return;
         _teleAttack = _teleSources[0];
@@ -129,25 +126,38 @@ public class TelekinesisController : MonoBehaviour
         }
     }
 
-    void HandlePlayerAirborne(Transform player)
-    {
-        TelekinesisEnd();
-    }
-
     void HandleLongTapStart(Gesture gesture)
     {
         if (GameController.Instance.powerMeter < stabilizeCost) return;
 
-        ActivateObject(gesture);
-        if (_platform != null)
+        Transform teleObject;
+        ActivateObject(gesture, out teleObject);
+
+        // figure out the type of object
+        if (teleObject == null) return;
+
+        var platformBehaviour = teleObject.GetComponent<PlatformBehaviour>();
+        var hazardBehaviour = teleObject.GetComponent<HazardBehaviour>();
+        if (platformBehaviour != null)
         {
+            if (platformBehaviour.isOnPlatform) return; // disable powers if on platform
+            _platform = teleObject;
+            if (On_PlayerPowersStart != null)
+            {
+                On_PlayerPowersStart();
+            }
             On_TelekinesisStabilize(_platform);
             On_PlayerPowerDeplete(stabilizeCost);
         }
-
-        if (_hazzard != null)
+        
+        if (hazardBehaviour != null)
         {
-            On_TelekinesisStabilize(_hazzard);
+            _hazard = teleObject;
+            if (On_PlayerPowersStart != null)
+            {
+                On_PlayerPowersStart();
+            }
+            On_TelekinesisStabilize(_hazard);
             On_PlayerPowerDeplete(stabilizeCost);
         }
     }
@@ -184,16 +194,34 @@ public class TelekinesisController : MonoBehaviour
     {
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
 
-        ActivateObject(gesture);
+        Transform teleObject;
+        ActivateObject(gesture, out teleObject);
 
-        if (_platform != null)
+        // figure out the type of object
+        if (teleObject == null) return;
+
+        var platformBehaviour = teleObject.GetComponent<PlatformBehaviour>();
+        var hazardBehaviour = teleObject.GetComponent<HazardBehaviour>();
+        if (platformBehaviour != null)
         {
+            if (platformBehaviour.isOnPlatform) return; // disable powers if on platform
+            _platform = teleObject; // TODO: change to params
             ClonePlatform();
+            if (On_PlayerPowersStart != null)
+            {
+                On_PlayerPowersStart();
+            }
+            _shouldRotate = true;
         }
-
-        if (_hazzard != null)
+        
+        if (hazardBehaviour != null)
         {
+            _hazard = teleObject; // TODO: change to params
             CloneHazzard();
+            if (On_PlayerPowersStart != null)
+            {
+                On_PlayerPowersStart();
+            }
         }
     }
 
@@ -228,7 +256,7 @@ public class TelekinesisController : MonoBehaviour
     {
         //if (_platform == null) return;
         if (_hazzardClone != null) return; // prevent multi-finger object cloning
-        _hazzardClone = Instantiate(_hazzard, _hazzard.position, _hazzard.rotation) as Transform;
+        _hazzardClone = Instantiate(_hazard, _hazard.position, _hazard.rotation) as Transform;
         if (_hazzardClone == null) return;
 
         var cloneChild = _hazzardClone.FindChild("ProtoModel");
@@ -236,7 +264,7 @@ public class TelekinesisController : MonoBehaviour
         {
             TelekinesisMaterial(cloneChild);
         }
-        _hazzardClone.localScale = new Vector3(_hazzard.localScale.x * cloneScaleMultiplier, _hazzard.localScale.y * cloneScaleMultiplier, _hazzard.localScale.z * cloneScaleMultiplier);
+        _hazzardClone.localScale = new Vector3(_hazard.localScale.x * cloneScaleMultiplier, _hazard.localScale.y * cloneScaleMultiplier, _hazard.localScale.z * cloneScaleMultiplier);
         _hazzardClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
         if (!_hazzardClone.rigidbody.isKinematic)
         {
@@ -261,7 +289,7 @@ public class TelekinesisController : MonoBehaviour
         {
             Rotate(gesture);
         }
-        if (_hazzardClone != null && _hazzard != null)
+        if (_hazzardClone != null && _hazard != null)
         {
             TeleportMove(gesture);
         }
@@ -307,10 +335,10 @@ public class TelekinesisController : MonoBehaviour
             On_NewTelekinesisRotation(_platform, _platformClone.localRotation);
             _isRotating = false;
         }
-        else if (_hazzard != null)
+        else if (_hazard != null)
         {
             _isActivePowerTimingOut = true;
-            On_NewTelekinesisMovePosition(_hazzard, _hazzardClone.position);
+            On_NewTelekinesisMovePosition(_hazard, _hazzardClone.position);
             _isTeleporting = false;
         }
         else
@@ -333,7 +361,7 @@ public class TelekinesisController : MonoBehaviour
         {
             On_PlayerPowersEnd();
         }
-        _hazzard = null;
+        _hazard = null;
         if (_hazzardClone != null)
         {
             Destroy(_hazzardClone.gameObject);
@@ -341,14 +369,13 @@ public class TelekinesisController : MonoBehaviour
         }
     }
 
-    private void ActivateObject(Gesture gesture)
+    private void ActivateObject(Gesture gesture, out Transform teleObject)
     {
-        //Debug.Log("activate swipe time: " + gesture.actionTime + " minimum: " + minimumSwipeTime);
-        if (!_player.isGrounded) return;
+        //if (!_player.isGrounded) return;
 
         // Guard against slower taps
         //if (gesture.actionTime < minimumSwipeTime) return;
-
+        Transform teleTransform = null;
         _pointerReference = gesture.position;
         RaycastHit hitInfo = new RaycastHit();
         bool hit = Physics.Raycast(Camera.main.ScreenPointToRay(gesture.position), out hitInfo);
@@ -356,35 +383,39 @@ public class TelekinesisController : MonoBehaviour
         {
             if (hitInfo.transform.tag == "Rotatable" && hitInfo.transform.gameObject.layer == 10)
             {
-                this._platform = hitInfo.transform;
+                //this._platform = hitInfo.transform;
+                teleTransform = hitInfo.transform;
+                //if (_platform != null)
 
-                if (On_PlayerPowersStart != null)
+                /*if (On_PlayerPowersStart != null)
                 {
                     On_PlayerPowersStart();
                 }
-                _shouldRotate = true;
+                _shouldRotate = true;*/
 
             }
             if (hitInfo.transform.tag == "Stoppable" && hitInfo.transform.parent.gameObject.layer == 10)
             {
-                this._platform = hitInfo.transform.parent;
+                teleTransform = hitInfo.transform.parent;
 
-                if (On_PlayerPowersStart != null)
+                /*if (On_PlayerPowersStart != null)
                 {
                     On_PlayerPowersStart();
                 }
-                _shouldRotate = true;
+                _shouldRotate = true;*/
             }
 
             if (hitInfo.transform.tag == "Hazzard")
             {
-                this._hazzard = hitInfo.transform;
-                if (On_PlayerPowersStart != null)
+                teleTransform = hitInfo.transform;
+                /*if (On_PlayerPowersStart != null)
                 {
                     On_PlayerPowersStart();
-                }
+                }*/
             }
         }
+
+        teleObject = teleTransform;
     }
 
     void HandleOnPowersStart()
