@@ -160,12 +160,13 @@ public class PlatformController : MonoBehaviour
         UpAndDown upAndDownComponent = newPlatform.transform.GetComponent<UpAndDown>();
         Drop dropComponent = newPlatform.transform.GetComponent<Drop>();
         Orbit orbitComponent = newPlatform.transform.GetComponent<Orbit>();
+		Vector3 orbitAxis = Vector3.zero;
 
         // set platform number agnostic values
         if (orbitComponent != null)
         {
             var rnd = new System.Random();
-            orbitComponent.axis = _orbitAxis[rnd.Next(_orbitAxis.Length)];
+            orbitAxis = _orbitAxis[rnd.Next(_orbitAxis.Length)];
         }
 
         if (index > 30)
@@ -186,11 +187,11 @@ public class PlatformController : MonoBehaviour
             }
         }
 
-        if (index > 80)
+        if (index > 60)
         {
             if (orbitComponent != null) //TODO: change to Editor value
             {
-                orbitComponent.orbitRotationSpeed = Random.Range(0.5f, 1f);
+                orbitComponent.rotationSpeed = Random.Range(10f, 20f) * orbitAxis.y;
                 //orbitComponent.stopTime = Random.Range(0.5f, 1f);
             }
         }
@@ -206,7 +207,7 @@ public class PlatformController : MonoBehaviour
 
             if (orbitComponent != null) //TODO: change to Editor value
             {
-                orbitComponent.orbitRotationSpeed = Random.Range(0.5f, 2f);
+                orbitComponent.rotationSpeed = Random.Range(30f, 40f) * orbitAxis.y;
                 orbitComponent.stopTime = 0.5f;
             }
         }

@@ -124,9 +124,9 @@ public class TelekinesisHandler : MonoBehaviour
         if (!rotationTarget.HasValue) return;
         if (transform.root.localRotation != rotationTarget)
         {
-            transform.root.rotation = Quaternion.Lerp(transform.root.localRotation, rotationTarget.Value, rotationSpeed * Time.deltaTime);
+            transform.root.rotation = Quaternion.Lerp(transform.root.rotation, rotationTarget.Value, rotationSpeed * Time.deltaTime);
         }
-        if (transform.root.localRotation == rotationTarget)
+        if (transform.root.rotation == rotationTarget)
         {
             rotationTarget = null;
             if (OnAffectEnd != null)
