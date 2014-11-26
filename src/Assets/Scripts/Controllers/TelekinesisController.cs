@@ -140,7 +140,6 @@ public class TelekinesisController : MonoBehaviour
         var hazardBehaviour = teleObject.GetComponent<HazardBehaviour>();
         if (platformBehaviour != null)
         {
-            if (platformBehaviour.isOnPlatform) return; // disable powers if on platform
             _platform = teleObject;
             if (On_PlayerPowersStart != null)
             {
@@ -383,35 +382,17 @@ public class TelekinesisController : MonoBehaviour
         {
             if (hitInfo.transform.tag == "Rotatable" && hitInfo.transform.gameObject.layer == 10)
             {
-                //this._platform = hitInfo.transform;
                 teleTransform = hitInfo.transform;
-                //if (_platform != null)
-
-                /*if (On_PlayerPowersStart != null)
-                {
-                    On_PlayerPowersStart();
-                }
-                _shouldRotate = true;*/
 
             }
             if (hitInfo.transform.tag == "Stoppable" && hitInfo.transform.parent.gameObject.layer == 10)
             {
                 teleTransform = hitInfo.transform.parent;
-
-                /*if (On_PlayerPowersStart != null)
-                {
-                    On_PlayerPowersStart();
-                }
-                _shouldRotate = true;*/
             }
 
             if (hitInfo.transform.tag == "Hazzard")
             {
                 teleTransform = hitInfo.transform;
-                /*if (On_PlayerPowersStart != null)
-                {
-                    On_PlayerPowersStart();
-                }*/
             }
         }
 
