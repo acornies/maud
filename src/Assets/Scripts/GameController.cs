@@ -2,6 +2,7 @@
 using EnergyBarToolkit;
 using UnityEngine;
 using System.Collections;
+using LegendPeak;
 
 public class GameController : MonoBehaviour
 {
@@ -16,8 +17,8 @@ public class GameController : MonoBehaviour
     private GameObject _restartButton;
     private EnergyBar _powerBar;
     private GUIText _heightCounter;
-
-    public bool isPaused;
+	
+	public GameState gameState;
     public float resumeTime = 1;
     public float playerZPosition = -2.8f;
     public float highestPoint = 0.0f;
@@ -122,6 +123,8 @@ public class GameController : MonoBehaviour
         {
             _restartButton.GetComponent<EasyButton>().enable = false;
         }
+
+		gameState = GameState.Running;
     }
 
     void OnGUI()
@@ -160,14 +163,14 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Time.timeScale = (isPaused && !_initiatingResume) ? 0 : 1;
+        Time.timeScale = (gameState == GameState.Paused && !_initiatingResume) ? 0 : 1;
 
-        if (isPaused && _initiatingResume)
+		if (gameState == GameState.Paused && _initiatingResume)
         {
             _resumeTimer -= Time.deltaTime;
             if (_resumeTimer <= 0)
             {
-                isPaused = false;
+				gameState = GameState.Running;
                 _initiatingResume = false;
                 if (OnGameResume != null)
                 {
@@ -270,9 +273,9 @@ public class GameController : MonoBehaviour
     {
         if (buttonName.Equals("MenuButton"))
         {
-            if (!isPaused)
+            if (gameState != GameState.Paused)
             {
-                isPaused = true;
+                gameState = GameState.Paused;
                 if (OnGamePause != null)
                 {
                     OnGamePause();
