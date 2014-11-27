@@ -16,7 +16,7 @@ public class InAndOut : PlatformBehaviour
     {
         base.Start();
         //maxLocalZPosition = child.localPosition.z;
-        minLocalZ = child.localPosition.z;
+        //minLocalZ = child.localPosition.z;
     }
 
     protected override void FixedUpdate()

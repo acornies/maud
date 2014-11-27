@@ -1,6 +1,7 @@
 ﻿using System;
 using EnergyBarToolkit;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using LegendPeak;
 
@@ -16,7 +17,7 @@ public class GameController : MonoBehaviour
     private GameObject _menuButton;
     private GameObject _restartButton;
     private EnergyBar _powerBar;
-    private GUIText _heightCounter;
+    private Text _heightCounter;
 	
 	public GameState gameState;
     public float resumeTime = 1;
@@ -117,7 +118,7 @@ public class GameController : MonoBehaviour
         //_mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
         _menuButton = GameObject.Find("MenuButton");
         _restartButton = GameObject.Find("RestartButton");
-        _heightCounter = GameObject.Find("HeightCounter").GetComponent<GUIText>();
+        _heightCounter = GameObject.Find("HeightCounter").GetComponent<Text>();
 
         if (_restartButton != null)
         {

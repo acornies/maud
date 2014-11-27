@@ -537,6 +537,11 @@ public class PlayerMovement : MonoBehaviour
         return new Vector2(0, rigidbody.velocity.y);
     }
 
+	public void UpdateSpeed(float newSpeed)
+	{
+		maxSpeed = newSpeed;
+	}
+
     void Flip()
     {
         this._facingRight = !_facingRight;
