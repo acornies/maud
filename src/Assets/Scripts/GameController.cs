@@ -302,7 +302,7 @@ public class GameController : MonoBehaviour
 
     void HandleOnGamePause()
     {
-        _player.GetComponent<PlayerMovement>().enabled = false;
+        _player.GetComponent<PlayerMovement>().disabled = true;
         _telekinesisControl.SetActive(false);
         //_mainCamera.GetComponent<BlurEffect>().enabled = true;
         _restartButton.GetComponent<Image>().enabled = true;
@@ -312,7 +312,7 @@ public class GameController : MonoBehaviour
 
     void HandleOnGameResume()
     {
-        _player.GetComponent<PlayerMovement>().enabled = true;
+        _player.GetComponent<PlayerMovement>().disabled = false;
         _telekinesisControl.SetActive(true);
         //_mainCamera.GetComponent<BlurEffect>().enabled = false;
         _restartButton.GetComponent<Image>().enabled = false;
@@ -321,8 +321,10 @@ public class GameController : MonoBehaviour
 
     void HandleOnGameOver()
     {
-        _player.GetComponent<PlayerMovement>().enabled = false;
+        _player.GetComponent<PlayerMovement>().disabled = true;
         _telekinesisControl.SetActive(false);
+        _restartButton.GetComponent<Image>().enabled = true;
+        _restartButton.GetComponent<Button>().interactable = true;
     }
 
     private void HandleOnPowerPickUp(float powerToAdd)

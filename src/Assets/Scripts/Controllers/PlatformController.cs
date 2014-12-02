@@ -125,25 +125,25 @@ public class PlatformController : MonoBehaviour
             }
 
             var toRange = nextPlatform + platformSpawnBuffer;
-            for (int i = nextPlatform; i <= toRange; i++)
+            if (nextPlatform <= toRange)
             {
 
                 GameObject newPlatform;
                 //if (!(timer <= 0)) return;
 
-                if (!levelPlatforms.TryGetValue(i, out newPlatform))
+                if (!levelPlatforms.TryGetValue(nextPlatform, out newPlatform))
                 {
 
                     newPlatform =
-                        (GameObject)Instantiate(platformTypes[_platformBuilder.GetPlatformPrefabByNumber(i)],
+                        (GameObject)Instantiate(platformTypes[_platformBuilder.GetPlatformPrefabByNumber(nextPlatform)],
                             new Vector3(0, yAxisMultiplier, trunkZAxis), Quaternion.identity);
 
-                    yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
+                    //yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
 
-                    newPlatform.name = string.Format("Platform_{0}", i);
-                    newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(i), Vector3.up);
-                    AdjustProperties(newPlatform, i);
-                    levelPlatforms.Add(i, newPlatform);
+                    newPlatform.name = string.Format("Platform_{0}", nextPlatform);
+                    newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(nextPlatform), Vector3.up);
+                    AdjustProperties(newPlatform, nextPlatform);
+                    levelPlatforms.Add(nextPlatform, newPlatform);
 
                     On_NewPlatform(newPlatform.transform.position.y);
                     //_timer = platformSpawnInterval;
