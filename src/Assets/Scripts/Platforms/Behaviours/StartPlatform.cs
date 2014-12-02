@@ -1,43 +1,53 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 //[RequireComponent(typeof(Rigidbody)]
-public class StartPlatform : PlatformBehaviour 
+public class StartPlatform : PlatformBehaviour
 {
-	private CameraMovement _cameraMovement;
+    private CameraMovement _cameraMovement;
+    private PlayerMovement _playerMovement;
 
-	public float maxLocalY;
-	public float speed;
-	public float cameraUpdateY;
+    public float maxLocalY;
+    public float speed;
+    public float cameraUpdateY;
     public float cameraSpeed = 1.0f;
+    public GameObject firstTutorial;
 
     public delegate void UpdateCameraSpeed(float speed);
     public static event UpdateCameraSpeed OnUpdateCameraSpeed;
-    
+
     public delegate void ReturnCameraSpeed();
-	public static event ReturnCameraSpeed OnReturnCameraSpeed;
+    public static event ReturnCameraSpeed OnReturnCameraSpeed;
 
-	
-	void Awake()
-	{
-		_cameraMovement = GameObject.Find ("Main Camera").GetComponent<CameraMovement>();
-	}
 
-	protected override void FixedUpdate()
-	{
-		base.FixedUpdate ();
+    void Awake()
+    {
+        _cameraMovement = GameObject.Find("Main Camera").GetComponent<CameraMovement>();
+        _playerMovement = GameObject.Find("Player").GetComponent<PlayerMovement>();
+    }
 
-		if (child.localPosition.y < maxLocalY)
-		{
-			child.localPosition = Vector3.Lerp(child.localPosition, new Vector3(child.localPosition.x, maxLocalY, child.localPosition.z), speed * Time.deltaTime);
-		}
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
 
-		if (child.localPosition.y >= (maxLocalY - 0.1f) && _cameraMovement.MinXandY.y == 1)
-		{
-			_cameraMovement.MinXandY = new Vector2(0, cameraUpdateY);
-			Debug.Log("Update min camera to " + cameraUpdateY);
-		}
-	}
+        if (child.localPosition.y < maxLocalY)
+        {
+            child.localPosition = Vector3.Lerp(child.localPosition, new Vector3(child.localPosition.x, maxLocalY, child.localPosition.z), speed * Time.deltaTime);
+        }
+
+        if (child.localPosition.y >= (maxLocalY - 0.3f))
+        {
+            _playerMovement.disabled = false;
+        }
+
+        if (!(child.localPosition.y >= (maxLocalY - 0.05f)) || _cameraMovement.MinXandY.y != 1) return;
+
+        _cameraMovement.MinXandY = new Vector2(0, cameraUpdateY);
+        cameraSpeed = 4.5f;
+        Debug.Log("Update min camera to " + cameraUpdateY);
+        
+    }
 
     public override void HandleOnPlatformReached(Transform platform, Transform player)
     {
@@ -53,12 +63,12 @@ public class StartPlatform : PlatformBehaviour
         }
     }
 
-	public override void HandlePlayerAirborne(Transform player)
-	{
-		base.HandlePlayerAirborne(player);
-		if (OnReturnCameraSpeed != null)
-		{
-			OnReturnCameraSpeed ();
-		}
-	}
+    public override void HandlePlayerAirborne(Transform player)
+    {
+        base.HandlePlayerAirborne(player);
+        if (OnReturnCameraSpeed != null)
+        {
+            OnReturnCameraSpeed();
+        }
+    }
 }

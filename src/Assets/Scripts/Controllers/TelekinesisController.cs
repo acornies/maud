@@ -146,9 +146,12 @@ public class TelekinesisController : MonoBehaviour
                 On_PlayerPowersStart();
             }
             On_TelekinesisStabilize(_platform);
-            On_PlayerPowerDeplete(stabilizeCost);
+            if (!GameController.Instance.inSafeZone)
+            {
+                On_PlayerPowerDeplete(stabilizeCost);
+            }
         }
-        
+
         if (hazardBehaviour != null)
         {
             _hazard = teleObject;
@@ -157,7 +160,10 @@ public class TelekinesisController : MonoBehaviour
                 On_PlayerPowersStart();
             }
             On_TelekinesisStabilize(_hazard);
-            On_PlayerPowerDeplete(stabilizeCost);
+            if (!GameController.Instance.inSafeZone)
+            {
+                On_PlayerPowerDeplete(stabilizeCost);
+            }
         }
     }
 
@@ -212,7 +218,7 @@ public class TelekinesisController : MonoBehaviour
             }
             _shouldRotate = true;
         }
-        
+
         if (hazardBehaviour != null)
         {
             _hazard = teleObject; // TODO: change to params
@@ -314,14 +320,21 @@ public class TelekinesisController : MonoBehaviour
         // store mouse
         _pointerReference = gesture.position;
 
-        On_PlayerPowerDeplete(rotationCostPerSecond * Time.deltaTime);
+        if (!GameController.Instance.inSafeZone)
+        {
+            On_PlayerPowerDeplete(rotationCostPerSecond * Time.deltaTime);
+        }
     }
 
     private void TeleportMove(Gesture gesture)
     {
         _isTeleporting = true;
         _hazzardClone.position = gesture.GetTouchToWordlPoint(GameController.Instance.playerZPosition, true);
-        On_PlayerPowerDeplete(moveCostPerSecond * Time.deltaTime);
+
+        if (!GameController.Instance.inSafeZone)
+        {
+            On_PlayerPowerDeplete(moveCostPerSecond * Time.deltaTime);
+        }
     }
 
     void On_SwipeEnd(Gesture gesture)

@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.GameState;
 using EnergyBarToolkit;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,13 +14,14 @@ public class GameController : MonoBehaviour
     private int _previousPlatformNumber;
     private float _resumeTimer;
     private bool _initiatingResume;
-    //private Camera _mainCamera;
     private GameObject _menuButton;
     private GameObject _restartButton;
     private EnergyBar _powerBar;
     private Text _heightCounter;
 	
 	public GameState gameState;
+    public GameMode gameMode;
+    public bool inSafeZone = true;
     public float resumeTime = 1;
     public float playerZPosition = -2.8f;
     public float highestPoint = 0.0f;
@@ -63,7 +65,6 @@ public class GameController : MonoBehaviour
         KillBox.On_PlayerDeath += HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
         TelekinesisController.On_PlayerPowerDeplete += HandleOnPlayerPowerDeplete;
-        EasyButton.On_ButtonDown += HandleOnButtonDown;
         OnGamePause += HandleOnGamePause;
         OnGameResume += HandleOnGameResume;
         OnGameOver += HandleOnGameOver;
@@ -85,7 +86,6 @@ public class GameController : MonoBehaviour
         KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
         TelekinesisController.On_PlayerPowerDeplete -= HandleOnPlayerPowerDeplete;
-        EasyButton.On_ButtonDown -= HandleOnButtonDown;
         OnGamePause -= HandleOnGamePause;
         OnGameResume -= HandleOnGameResume;
         OnGameOver -= HandleOnGameOver;
@@ -120,36 +120,36 @@ public class GameController : MonoBehaviour
         _restartButton = GameObject.Find("RestartButton");
         _heightCounter = GameObject.Find("HeightCounter").GetComponent<Text>();
 
-        if (_restartButton != null)
-        {
-            _restartButton.GetComponent<EasyButton>().enable = false;
-        }
-
 		gameState = GameState.Running;
+        gameMode = GameMode.Story; // TODO: change from menu
+
+        switch (gameMode)
+        {
+            case GameMode.Story:
+                //_heightCounter.enabled = false;
+                powerBarRenderer.texturesBackground[0].color.a = 0f;
+                //powerBarRenderer.textureBar..a = 0f;
+                break;
+            default:
+                break;
+        }
     }
 
     void OnGUI()
     {
-
-        var guiStyleHeightMeter = new GUIStyle() { alignment = TextAnchor.MiddleRight, fontSize = 24 };
-        guiStyleHeightMeter.normal.textColor = Color.white;
-
-        var guiStyleLivesMeter = new GUIStyle() { alignment = TextAnchor.MiddleLeft, fontSize = 24 };
-        guiStyleLivesMeter.normal.textColor = Color.white;
-
-        var guiStyleDeathTitle = new GUIStyle() { alignment = TextAnchor.MiddleCenter, fontSize = 40, fontStyle = FontStyle.Bold };
-        guiStyleDeathTitle.normal.textColor = Color.red;
-
-        var guiStyleDeathTimer = new GUIStyle() { alignment = TextAnchor.MiddleCenter, fontSize = 24 };
-        guiStyleDeathTimer.normal.textColor = Color.white;
-
-        _heightCounter.text = highestPoint + "m";
-
-        if (playerIsDead && powerMeter >= lifeCost)
+        if (_heightCounter.enabled)
         {
-            //GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 25, 200, 50), "You died!", guiStyleDeathTitle);
-            //GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 15, 200, 50), "Next life in: " + Mathf.Round(_deathTimer) + "s", guiStyleDeathTimer);
+            _heightCounter.text = highestPoint + "m"; // TODO: localize
         }
+
+        if (!inSafeZone && powerBarRenderer.texturesBackground[0].color.a == 0f)
+        {
+            powerBarRenderer.texturesBackground[0].color.a = 1f;
+            //powerBarRenderer.textureBarColor.a = 0f;
+            powerBarRenderer.screenPosition = new Vector2(20f, 20f);
+        }
+
+        //if (!powerBarRenderer.enabled) return;
 
         if (powerMeter < lifeCost)
         {
@@ -218,18 +218,22 @@ public class GameController : MonoBehaviour
             _deathTimer = timeBetweenDeaths;
             playerIsDead = false;
             initiatingRestart = false;
+
             if (OnPlayerResurrection != null)
             {
                 OnPlayerResurrection();
-                powerMeter -= lifeCost;
+                if (!inSafeZone)
+                {
+                    powerMeter -= lifeCost;
+                }
             }
         }
 
         else if (playerIsDead && powerMeter < lifeCost)
         {
             initiatingRestart = true;
-            _menuButton.GetComponent<EasyButton>().isActivated = false;
-            _restartButton.GetComponent<EasyButton>().enable = true;
+            _menuButton.GetComponent<Button>().interactable = false;
+            _restartButton.GetComponent<Button>().interactable = true;
             if (OnGameOver != null)
             {
                 OnGameOver();
@@ -246,12 +250,17 @@ public class GameController : MonoBehaviour
     void Restart()
     {
         //Debug.Log("Calling GameController.Restart");
-        _menuButton.GetComponent<EasyButton>().isActivated = false;
+        _menuButton.GetComponent<Button>().interactable = false;
         //button.enable = false; 
         if (OnGameRestart != null)
         {
             OnGameRestart(Application.loadedLevel);
         }
+    }
+
+    public void UpdateSafeZone(bool boolValue)
+    {
+        inSafeZone = boolValue;
     }
 
     void HandleOnPlayerDeath()
@@ -261,7 +270,6 @@ public class GameController : MonoBehaviour
         var screenCenterToWorld =
             Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
 
-        //playerSpawnPosition = new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition);
         _player.GetComponent<PlayerMovement>().SetSpawnPosition(new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition));
     }
 
@@ -270,30 +278,26 @@ public class GameController : MonoBehaviour
         powerMeter -= amount;
     }
 
-    private void HandleOnButtonDown(string buttonName)
+    public void ButtonMenu()
     {
-        if (buttonName.Equals("MenuButton"))
+        if (gameState != GameState.Paused)
         {
-            if (gameState != GameState.Paused)
+            gameState = GameState.Paused;
+            if (OnGamePause != null)
             {
-                gameState = GameState.Paused;
-                if (OnGamePause != null)
-                {
-                    OnGamePause();
-
-                }
-            }
-            else
-            {
-                _initiatingResume = true;
+                OnGamePause();
             }
         }
-
-        if (buttonName.Equals("RestartButton"))
+        else
         {
-            Restart();
             _initiatingResume = true;
         }
+    }
+
+    public void ButtonRestart()
+    {
+        Restart();
+        _initiatingResume = true;
     }
 
     void HandleOnGamePause()
@@ -301,7 +305,8 @@ public class GameController : MonoBehaviour
         _player.GetComponent<PlayerMovement>().enabled = false;
         _telekinesisControl.SetActive(false);
         //_mainCamera.GetComponent<BlurEffect>().enabled = true;
-        _restartButton.GetComponent<EasyButton>().enable = true;
+        _restartButton.GetComponent<Image>().enabled = true;
+        _restartButton.GetComponent<Button>().interactable = true;
 
     }
 
@@ -310,7 +315,8 @@ public class GameController : MonoBehaviour
         _player.GetComponent<PlayerMovement>().enabled = true;
         _telekinesisControl.SetActive(true);
         //_mainCamera.GetComponent<BlurEffect>().enabled = false;
-        _restartButton.GetComponent<EasyButton>().enable = false;
+        _restartButton.GetComponent<Image>().enabled = false;
+        _restartButton.GetComponent<Button>().interactable = false;
     }
 
     void HandleOnGameOver()
