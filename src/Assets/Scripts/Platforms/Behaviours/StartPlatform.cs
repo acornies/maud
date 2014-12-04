@@ -12,7 +12,6 @@ public class StartPlatform : PlatformBehaviour
     public float speed;
     public float cameraUpdateY;
     public float cameraSpeed = 1.0f;
-    public GameObject firstTutorial;
 
     public delegate void UpdateCameraSpeed(float speed);
     public static event UpdateCameraSpeed OnUpdateCameraSpeed;

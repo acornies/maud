@@ -1,14 +1,18 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class SceneFadeInOut : MonoBehaviour
 {
 
     public float fadeSpeed = 1.5f;          // Speed that the screen fades to and from black.
+    public Color overlayColour = new Color (0, 0, 0, 0.4f);
 
 
-    private bool sceneStarting = true;      // Whether or not the scene is still fading in.
+    private Image _black;
+    private bool _sceneStarting = true;      // Whether or not the scene is still fading in.
+    private bool _sceneRunning;
     private int _sceneToEnd;
     private bool _sceneEnding;
     private bool _shouldRestart;
@@ -16,10 +20,17 @@ public class SceneFadeInOut : MonoBehaviour
     // Subscribe to events
     void OnEnable()
     {
+        GameController.OnGameStart += HandleOnGameStart;
         GameController.OnGameRestart += HandleOnGameRestart;
         GameController.OnGamePause += HandleOnGamePause;
         GameController.OnGameResume += HandleOnGameResume;
         GameController.OnGameOver += HandleOnGameOver;
+    }
+
+    private void HandleOnGameStart()
+    {
+        _sceneStarting = false;
+        _sceneRunning = true;
     }
 
     void OnDisable()
@@ -34,6 +45,7 @@ public class SceneFadeInOut : MonoBehaviour
 
     void UnsubscribeEvent()
     {
+        GameController.OnGameStart -= HandleOnGameStart;
         GameController.OnGameRestart -= HandleOnGameRestart;
         GameController.OnGamePause -= HandleOnGamePause;
         GameController.OnGameResume -= HandleOnGameResume;
@@ -44,16 +56,23 @@ public class SceneFadeInOut : MonoBehaviour
     void Awake()
     {
         // Set the texture so that it is the the size of the screen and covers it.
-        guiTexture.pixelInset = new Rect(0f, 0f, Screen.width, Screen.height);
+        //guiTexture.pixelInset = new Rect(0f, 0f, Screen.width, Screen.height);
+        _black = GetComponent<Image>();
     }
 
     void Update()
     {
         // If the scene is starting...
-        if (sceneStarting)
+        if (_sceneStarting)
+        {
+            //guiTexture.enabled = true;
+            StartScene();
+        }
+
+        if (_sceneRunning)
         {
             // ... call the StartScene function.
-            StartScene();
+            RunScene();
         }
 
         else if (_sceneEnding && _shouldRestart)
@@ -71,7 +90,7 @@ public class SceneFadeInOut : MonoBehaviour
     void FadeToClear()
     {
         // Lerp the colour of the texture between itself and transparent.
-        guiTexture.color = Color.Lerp(guiTexture.color, Color.clear, fadeSpeed * Time.deltaTime);
+        _black.color = Color.Lerp(_black.color, Color.clear, fadeSpeed * Time.deltaTime);
 		//Debug.Log ("Fading in...");
     }
 
@@ -86,22 +105,26 @@ public class SceneFadeInOut : MonoBehaviour
 
     }
 
-
     void StartScene()
     {
+        _black.color = Color.Lerp(_black.color, overlayColour, fadeSpeed * Time.deltaTime);
+    }
+
+    void RunScene()
+    {
         // Fade the texture to clear.
-		guiTexture.enabled = true;
+		//guiTexture.enabled = true;
         FadeToClear();
 
         // If the texture is almost clear...
-        if (guiTexture.color.a <= 0.05f)
+        if (_black.color.a <= 0.05f)
         {
             // ... set the colour to clear and disable the GUITexture.
-            guiTexture.color = Color.clear;
-            guiTexture.enabled = false;
+            _black.color = Color.clear;
+            _black.enabled = false;
 
             // The scene is no longer starting.
-            sceneStarting = false;
+            //_sceneStarting = false;
         }
 	}
 
@@ -137,17 +160,17 @@ public class SceneFadeInOut : MonoBehaviour
     {
 		if (!_sceneEnding)
 		{
-			guiTexture.color = Color.clear;
-			guiTexture.enabled = false;	
+			_black.color = Color.clear;
+			_black.enabled = false;	
 		}
 		//Debug.Log ("Hit scene resume");
     }
 
     private void HandleOnGamePause()
     {
-		guiTexture.enabled = true;
+		_black.enabled = true;
 		//FadeToBlack (0.75f);
-		guiTexture.color = new Color (0, 0, 0, 0.4f);
+        _black.color = overlayColour;
     }
 
     private void HandleOnGameOver()

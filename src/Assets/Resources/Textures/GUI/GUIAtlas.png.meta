@@ -1,0 +1,146 @@
+fileFormatVersion: 2
+guid: 5c9bd0bc086879447b766f46f63567a6
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: Play
+    21300002: SoundOn
+    21300004: SoundOff
+    21300006: Cog
+    21300008: Restart
+    21300010: Back
+    21300012: RightHanded
+    21300014: LeftHanded
+    21300016: Record
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: .25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: .5, y: .5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaIsTransparency: 1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    sprites:
+    - name: Play
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 1544
+        width: 269
+        height: 360
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SoundOn
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 1544
+        width: 480
+        height: 360
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SoundOff
+      rect:
+        serializedVersion: 2
+        x: 1008
+        y: 1545
+        width: 481
+        height: 360
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Cog
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 1041
+        width: 437
+        height: 437
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Restart
+      rect:
+        serializedVersion: 2
+        x: 576
+        y: 1041
+        width: 502
+        height: 431
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Back
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 1040
+        width: 432
+        height: 432
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: RightHanded
+      rect:
+        serializedVersion: 2
+        x: 1654
+        y: 1040
+        width: 355
+        height: 432
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: LeftHanded
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 536
+        width: 355
+        height: 432
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Record
+      rect:
+        serializedVersion: 2
+        x: 502
+        y: 537
+        width: 431
+        height: 431
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+  spritePackingTag: 
+  userData: 

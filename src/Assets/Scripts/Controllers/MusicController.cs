@@ -62,7 +62,8 @@ public class MusicController : MonoBehaviour
     void Start()
     {
         //forestMusicFast = transform.FindChild("ForestFast").audio;
-        forestMusicSlow.Play();
+        //forestMusicSlow.Play();
+        stratosphereMusic.Play();
     }
 
     // Update is called once per frame
@@ -72,7 +73,7 @@ public class MusicController : MonoBehaviour
         NextSong(currentPlatform, forestMusicSlowLimit, forestMusicSlow, forestMusicFast);
         FadeTransition(currentPlatform, forestMusicFastLimit, forestMusicFast, cloudMusicSlow);
         NextSong(currentPlatform, cloudMusicSlowLimit, cloudMusicSlow, cloudMusicFast);
-        NextSong(currentPlatform, cloudMusicFastLimit, cloudMusicFast, stratosphereMusic);
+        FadeTransition(currentPlatform, cloudMusicFastLimit, cloudMusicFast, stratosphereMusic);
     }
 
 	void FadeTransition(int currentPlatform, int limit, AudioSource current, AudioSource next)

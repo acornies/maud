@@ -18,8 +18,10 @@ public class GameController : MonoBehaviour
     private GameObject _restartButton;
     private EnergyBar _powerBar;
     private Text _heightCounter;
-	
-	public GameState gameState;
+    private CameraMovement _cameraMovement;
+
+    public GameObject mainCamera;
+    public GameState gameState;
     public GameMode gameMode;
     public bool inSafeZone = true;
     public float resumeTime = 1;
@@ -41,6 +43,9 @@ public class GameController : MonoBehaviour
 
     public static GameController Instance { get; private set; }
 
+    public delegate void GameStart();
+    public static event GameStart OnGameStart;
+    
     public delegate void GamePause();
     public static event GamePause OnGamePause;
 
@@ -65,6 +70,7 @@ public class GameController : MonoBehaviour
         KillBox.On_PlayerDeath += HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
         TelekinesisController.On_PlayerPowerDeplete += HandleOnPlayerPowerDeplete;
+        OnGameStart += HandleOnGameStart;
         OnGamePause += HandleOnGamePause;
         OnGameResume += HandleOnGameResume;
         OnGameOver += HandleOnGameOver;
@@ -86,6 +92,7 @@ public class GameController : MonoBehaviour
         KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
         TelekinesisController.On_PlayerPowerDeplete -= HandleOnPlayerPowerDeplete;
+        OnGameStart -= HandleOnGameStart;
         OnGamePause -= HandleOnGamePause;
         OnGameResume -= HandleOnGameResume;
         OnGameOver -= HandleOnGameOver;
@@ -120,7 +127,16 @@ public class GameController : MonoBehaviour
         _restartButton = GameObject.Find("RestartButton");
         _heightCounter = GameObject.Find("HeightCounter").GetComponent<Text>();
 
-		gameState = GameState.Running;
+        if (mainCamera == null)
+        {
+            Debug.LogError("Please set a main camera GameObject to GameController.cs");
+        }
+        else
+        {
+            _cameraMovement = mainCamera.GetComponent<CameraMovement>();
+        }
+
+		gameState = GameState.Started;
         gameMode = GameMode.Story; // TODO: change from menu
 
         switch (gameMode)
@@ -278,11 +294,19 @@ public class GameController : MonoBehaviour
         powerMeter -= amount;
     }
 
+    public void ButtonStart()
+    {
+        Debug.Log("Pressed play button");
+        if (OnGameStart != null)
+        {
+            OnGameStart();
+        }
+    }
+
     public void ButtonMenu()
     {
         if (gameState != GameState.Paused)
         {
-            gameState = GameState.Paused;
             if (OnGamePause != null)
             {
                 OnGamePause();
@@ -300,8 +324,15 @@ public class GameController : MonoBehaviour
         _initiatingResume = true;
     }
 
+    void HandleOnGameStart()
+    {
+         gameState = GameState.Running;
+        _cameraMovement.CameraTarget = _player.FindChild("CharacterTarget");
+    }
+
     void HandleOnGamePause()
     {
+        gameState = GameState.Paused;
         _player.GetComponent<PlayerMovement>().disabled = true;
         _telekinesisControl.SetActive(false);
         //_mainCamera.GetComponent<BlurEffect>().enabled = true;
@@ -321,6 +352,7 @@ public class GameController : MonoBehaviour
 
     void HandleOnGameOver()
     {
+        gameState = GameState.Over;
         _player.GetComponent<PlayerMovement>().disabled = true;
         _telekinesisControl.SetActive(false);
         _restartButton.GetComponent<Image>().enabled = true;

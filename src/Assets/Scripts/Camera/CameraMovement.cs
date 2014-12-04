@@ -5,7 +5,6 @@ public class CameraMovement : MonoBehaviour
 {
     private float _introTimer;
 
-    public float introTime = 2.0f;
     public bool isTracking;
     public float XMargin = 1.0f;
     public float YMargin = 1.0f;
@@ -75,7 +74,7 @@ public class CameraMovement : MonoBehaviour
 
     void Awake()
     {
-        _introTimer = introTime;
+        
     }
 
     bool CheckXMargin()
@@ -94,13 +93,13 @@ public class CameraMovement : MonoBehaviour
         {
             TrackPlayer();
         }
-        else if (!isTracking && !GameController.Instance.playerIsDead)
+        /*else if (!isTracking && !GameController.Instance.playerIsDead)
         {
             _introTimer -= Time.deltaTime;
             if (!(_introTimer <= 0)) return;
             isTracking = true;
             _introTimer = introTime;
-        }
+        }*/
     }
 
     void TrackPlayer()
