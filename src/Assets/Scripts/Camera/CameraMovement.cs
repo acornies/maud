@@ -37,12 +37,13 @@ public class CameraMovement : MonoBehaviour
         StartPlatform.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
 		StartPlatform.OnReturnCameraSpeed += HandleReturnCameraSpeed;
 		//IntroTrigger.OnNewIntroLedgePosition += HandleNewIntroLedgePosition;
-		//GameController.OnGameStart += HandleOnGameStart;
+		IntroTrigger.OnZoomToGamePosition += HandleOnGameStart;
     }
 
 	private void HandleOnGameStart()
 	{
 		_zoomToGame = true;
+	    isTracking = true;
 	}
 
     private void HandleReturnCameraSpeed()
@@ -80,7 +81,7 @@ public class CameraMovement : MonoBehaviour
         StartPlatform.OnUpdateCameraSpeed -= HandleUpdateCameraSpeed;
 		StartPlatform.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
 		//IntroTrigger.OnNewIntroLedgePosition -= HandleNewIntroLedgePosition;
-		//GameController.OnGameStart -= HandleOnGameStart;
+        IntroTrigger.OnZoomToGamePosition -= HandleOnGameStart;
     }
 
     void Awake()
@@ -162,11 +163,6 @@ public class CameraMovement : MonoBehaviour
 
         On_DestroyLowerPlatforms(checkpointPlatform - PlatformController.Instance.checkpointBuffer - PlatformController.Instance.platformSpawnBuffer, childPlatformToDeleteIndex);
     }
-
-	void HandleNewIntroLedgePosition(Vector3 position)
-	{
-		isTracking = true;
-	}
 
     void HandleNewPlatform(float yPosition)
     {

@@ -93,10 +93,10 @@ public class PlayerMovement : MonoBehaviour
         GameController.OnPlayerResurrection += HandleOnPlayerResurrection;
         CloudBehaviour.On_CloudDestroy += HandleOnCloudDestroy;
 		GameController.OnGameStart += HandleOnGameStart;
-		IntroLedge.OnShowPlayButton += HandleOnShowPlayButton;
+		IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
     }
 
-    void HandleOnShowPlayButton ()
+    void HandleOnShowMenuButtons ()
     {
 		_animator.SetBool ("shake", true);
 		_shakeTimer = shakeTimeout;
@@ -126,7 +126,7 @@ public class PlayerMovement : MonoBehaviour
         GameController.OnPlayerResurrection -= HandleOnPlayerResurrection;
         CloudBehaviour.On_CloudDestroy -= HandleOnCloudDestroy;
 		GameController.OnGameStart -= HandleOnGameStart;
-		IntroLedge.OnShowPlayButton -= HandleOnShowPlayButton;
+		IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
     }
 
     void Awake()
@@ -279,6 +279,7 @@ public class PlayerMovement : MonoBehaviour
 	void HandleOnGameStart()
 	{
 		rigidbody.AddForceAtPosition(new Vector3(0, jumpForce, 0), transform.position);
+        PlayJumpSound(jumpForce);
 	}
 
     void HandlePlayerPowersEnd()

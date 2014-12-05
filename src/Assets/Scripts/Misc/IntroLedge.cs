@@ -5,8 +5,8 @@ public class IntroLedge : MonoBehaviour
 {
     private Vector3 _introLocation = Vector3.zero;
 
-    public delegate void ShowPlayButton();
-    public static event ShowPlayButton OnShowPlayButton;
+    public delegate void ShowMenuButtons();
+    public static event ShowMenuButtons OnShowMenuButtons;
     
     // Use this for initialization
     void Start()
@@ -52,9 +52,9 @@ public class IntroLedge : MonoBehaviour
 
 		if (GameController.Instance.gameState == LegendPeak.GameState.Running) return;
 
-        if (OnShowPlayButton != null)
+        if (OnShowMenuButtons != null)
         {
-            OnShowPlayButton();
+            OnShowMenuButtons();
         }
     }
 }

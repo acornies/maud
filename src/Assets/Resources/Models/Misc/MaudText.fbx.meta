@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 35d8ba90695a48148b455f3246a37fd6
+guid: ab347c7eb551a4245a1e847fc22963b6
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
@@ -25,6 +25,8 @@ ModelImporter:
     4300002: A
     4300004: U
     4300006: D
+    7400000: Intro
+    7400002: Start
     9500000: //RootNode
   materials:
     importMaterials: 0
@@ -41,7 +43,207 @@ ModelImporter:
     animationScaleError: .5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Intro
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 188
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: -Infinity
+        functionName: TriggerNewPosition
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: NewEvent
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerNewPosition
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 1
+        functionName: TriggerNewPosition
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask:
+      - path: 
+        weight: 1
+      - path: A
+        weight: 1
+      - path: D
+        weight: 1
+      - path: M
+        weight: 1
+      - path: U
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Start
+      takeName: Take 001
+      firstFrame: 211
+      lastFrame: 234
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: NewEvent
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: NewEvent
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask:
+      - path: 
+        weight: 1
+      - path: A
+        weight: 1
+      - path: D
+        weight: 1
+      - path: M
+        weight: 1
+      - path: U
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
     isReadable: 1
   meshes:
     lODScreenPercentages: []

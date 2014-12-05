@@ -16,8 +16,8 @@ public class GameController : MonoBehaviour
     private bool _initiatingResume;
     private GameObject _menuButton;
     private GameObject _restartButton;
-	private GameObject _playButton;
-	private GameObject _recordButton;
+    private GameObject _playButton;
+    private GameObject _recordButton;
     private EnergyBar _powerBar;
     private Text _heightCounter;
     private CameraMovement _cameraMovement;
@@ -47,7 +47,7 @@ public class GameController : MonoBehaviour
 
     public delegate void GameStart();
     public static event GameStart OnGameStart;
-    
+
     public delegate void GamePause();
     public static event GamePause OnGamePause;
 
@@ -77,7 +77,7 @@ public class GameController : MonoBehaviour
         OnGameResume += HandleOnGameResume;
         OnGameOver += HandleOnGameOver;
         PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickUp;
-		IntroLedge.OnShowPlayButton += HandleOnShowPlayButton;
+        IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
     }
 
     void OnDisable()
@@ -100,23 +100,23 @@ public class GameController : MonoBehaviour
         OnGameResume -= HandleOnGameResume;
         OnGameOver -= HandleOnGameOver;
         PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
-		IntroLedge.OnShowPlayButton -= HandleOnShowPlayButton;
+        IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
     }
 
     // Use this for initialization
     void Awake()
     {
-		Application.targetFrameRate = 60;
-		
-		if (Instance == null)
-		{
-			//DontDestroyOnLoad(gameObject);
-			Instance = this;
-		}
-		else if (Instance != this)
-		{
-			Destroy(gameObject);
-		}
+        Application.targetFrameRate = 60;
+
+        if (Instance == null)
+        {
+            //DontDestroyOnLoad(gameObject);
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
 
         _player = GameObject.Find("Player").transform;
         _telekinesisControl = GameObject.Find("TelekinesisControl");
@@ -127,8 +127,8 @@ public class GameController : MonoBehaviour
         _menuButton = GameObject.Find("MenuButton");
         _restartButton = GameObject.Find("RestartButton");
         _heightCounter = GameObject.Find("HeightCounter").GetComponent<Text>();
-		_playButton = GameObject.Find ("PlayButton");
-		_recordButton = GameObject.Find ("RecordButton");
+        _playButton = GameObject.Find("PlayButton");
+        _recordButton = GameObject.Find("RecordButton");
 
         if (mainCamera == null)
         {
@@ -139,7 +139,7 @@ public class GameController : MonoBehaviour
             _cameraMovement = mainCamera.GetComponent<CameraMovement>();
         }
 
-		gameState = GameState.Started;
+        gameState = GameState.Started;
         gameMode = GameMode.Story; // TODO: change from menu
 
         switch (gameMode)
@@ -185,12 +185,12 @@ public class GameController : MonoBehaviour
     {
         Time.timeScale = (gameState == GameState.Paused && !_initiatingResume) ? 0 : 1;
 
-		if (gameState == GameState.Paused && _initiatingResume)
+        if (gameState == GameState.Paused && _initiatingResume)
         {
             _resumeTimer -= Time.deltaTime;
             if (_resumeTimer <= 0)
             {
-				gameState = GameState.Running;
+                gameState = GameState.Running;
                 _initiatingResume = false;
                 if (OnGameResume != null)
                 {
@@ -304,23 +304,23 @@ public class GameController : MonoBehaviour
         {
             OnGameStart();
         }
-		_playButton.GetComponent<Image> ().enabled = false;
+        _playButton.GetComponent<Image>().enabled = false;
     }
 
     public void ButtonMenu()
     {
-        if (gameState == GameState.Started) 
-		{
-			// TODO: show settings
-			Debug.Log ("Toggle settings.");
-		}
-		else if (gameState != GameState.Paused)
+        if (gameState == GameState.Started)
+        {
+            // TODO: show settings
+            Debug.Log("Toggle settings.");
+        }
+        else if (gameState != GameState.Paused)
         {
             if (OnGamePause != null)
             {
                 OnGamePause();
             }
-			Debug.Log ("Toggle settings.");
+            Debug.Log("Toggle settings.");
         }
         else
         {
@@ -334,17 +334,17 @@ public class GameController : MonoBehaviour
         _initiatingResume = true;
     }
 
-	void HandleOnShowPlayButton()
-	{
-		Debug.Log("Show play button");
-		_playButton.GetComponent<Image>().enabled = true;
-		_menuButton.GetComponent<Image>().enabled = true;
-		_recordButton.GetComponent<Image> ().enabled = true;
-	}
+    void HandleOnShowMenuButtons()
+    {
+        Debug.Log("Show play button");
+        _playButton.GetComponent<Image>().enabled = true;
+        _menuButton.GetComponent<Image>().enabled = true;
+        _recordButton.GetComponent<Image>().enabled = true;
+    }
 
     void HandleOnGameStart()
     {
-         gameState = GameState.Running;
+        gameState = GameState.Running;
         _cameraMovement.CameraTarget = _player.FindChild("CharacterTarget");
     }
 
