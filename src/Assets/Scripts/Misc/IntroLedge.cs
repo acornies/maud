@@ -16,7 +16,7 @@ public class IntroLedge : MonoBehaviour
 
     void OnEnable()
     {
-        IntroTrigger.OnNewIntroLedegePosition += OnNewIntroLedegePosition;
+        IntroTrigger.OnNewIntroLedgePosition += OnNewIntroLedegePosition;
     }
 
     void OnDisable()
@@ -31,7 +31,7 @@ public class IntroLedge : MonoBehaviour
 
     void UnsubscribeEvent()
     {
-        IntroTrigger.OnNewIntroLedegePosition -= OnNewIntroLedegePosition;
+        IntroTrigger.OnNewIntroLedgePosition -= OnNewIntroLedegePosition;
     }
 
     // Update is called once per frame
@@ -49,6 +49,8 @@ public class IntroLedge : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         if (collision.transform.name != "Player" || _introLocation == Vector3.zero) return;
+
+		if (GameController.Instance.gameState == LegendPeak.GameState.Running) return;
 
         if (OnShowPlayButton != null)
         {

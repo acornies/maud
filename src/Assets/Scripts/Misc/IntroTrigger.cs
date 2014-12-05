@@ -5,8 +5,8 @@ public class IntroTrigger : MonoBehaviour {
 
     public Vector3 introLedgePosition;
 
-    public delegate void NewIntroLedegePosition(Vector3 newPosition);
-    public static event NewIntroLedegePosition OnNewIntroLedegePosition;
+    public delegate void NewIntroLedgePosition(Vector3 newPosition);
+    public static event NewIntroLedgePosition OnNewIntroLedgePosition;
     
     // Use this for initialization
 	void Start () {
@@ -20,9 +20,9 @@ public class IntroTrigger : MonoBehaviour {
 
     public void TriggerNewPosition()
     {
-        if (OnNewIntroLedegePosition != null)
+        if (OnNewIntroLedgePosition != null)
         {
-            OnNewIntroLedegePosition(introLedgePosition);
+            OnNewIntroLedgePosition(introLedgePosition);
         }
     }
 }

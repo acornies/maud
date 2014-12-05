@@ -5,7 +5,9 @@ using System.Linq;
 [RequireComponent(typeof(AudioSource))]
 public class PlayerMovement : MonoBehaviour
 {
-    private float _moveDirection;
+	private float _shakeTimer;
+	private float _moveDirection;
+	private bool _shouldTimeoutShake;
     private Transform _groundCheck;
     private Transform _heightCheck;
     private int _additionalJumpCount;
@@ -44,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
     public float sphereColliderRadius;
 
     public bool isHittingHead;
+	public float shakeTimeout = 1f;
     public float maxSpeed = 6.0f;
     public float ghostSpeed = 1f;
     public float jumpForce = 900.0f;
@@ -89,6 +92,15 @@ public class PlayerMovement : MonoBehaviour
         BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
         GameController.OnPlayerResurrection += HandleOnPlayerResurrection;
         CloudBehaviour.On_CloudDestroy += HandleOnCloudDestroy;
+		GameController.OnGameStart += HandleOnGameStart;
+		IntroLedge.OnShowPlayButton += HandleOnShowPlayButton;
+    }
+
+    void HandleOnShowPlayButton ()
+    {
+		_animator.SetBool ("shake", true);
+		_shakeTimer = shakeTimeout;
+		_shouldTimeoutShake = true;
     }
 
     void OnDisable()
@@ -113,6 +125,8 @@ public class PlayerMovement : MonoBehaviour
         BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
         GameController.OnPlayerResurrection -= HandleOnPlayerResurrection;
         CloudBehaviour.On_CloudDestroy -= HandleOnCloudDestroy;
+		GameController.OnGameStart -= HandleOnGameStart;
+		IntroLedge.OnShowPlayButton -= HandleOnShowPlayButton;
     }
 
     void Awake()
@@ -166,6 +180,15 @@ public class PlayerMovement : MonoBehaviour
                 //_ghostTouchTargetPosition = Vector3.zero;
             }
         }
+
+		if (_shouldTimeoutShake){
+			_shakeTimer -= Time.deltaTime;
+			if (_shakeTimer <= 0)
+			{
+				_shouldTimeoutShake = false;
+				_animator.SetBool ("shake", false);
+			}
+		}
     }
 
     public void SetSpawnPosition(Vector3 newPosition)
@@ -251,6 +274,12 @@ public class PlayerMovement : MonoBehaviour
             Flip();
         }
     }
+
+	// Handles jump for the intro
+	void HandleOnGameStart()
+	{
+		rigidbody.AddForceAtPosition(new Vector3(0, jumpForce, 0), transform.position);
+	}
 
     void HandlePlayerPowersEnd()
     {

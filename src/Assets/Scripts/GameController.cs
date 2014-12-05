@@ -16,6 +16,8 @@ public class GameController : MonoBehaviour
     private bool _initiatingResume;
     private GameObject _menuButton;
     private GameObject _restartButton;
+	private GameObject _playButton;
+	private GameObject _recordButton;
     private EnergyBar _powerBar;
     private Text _heightCounter;
     private CameraMovement _cameraMovement;
@@ -75,6 +77,7 @@ public class GameController : MonoBehaviour
         OnGameResume += HandleOnGameResume;
         OnGameOver += HandleOnGameOver;
         PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickUp;
+		IntroLedge.OnShowPlayButton += HandleOnShowPlayButton;
     }
 
     void OnDisable()
@@ -97,26 +100,24 @@ public class GameController : MonoBehaviour
         OnGameResume -= HandleOnGameResume;
         OnGameOver -= HandleOnGameOver;
         PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
-    }
-
-    void Awake()
-    {
-        Application.targetFrameRate = 60;
-
-        if (Instance == null)
-        {
-            //DontDestroyOnLoad(gameObject);
-            Instance = this;
-        }
-        else if (Instance != this)
-        {
-            Destroy(gameObject);
-        }
+		IntroLedge.OnShowPlayButton -= HandleOnShowPlayButton;
     }
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
+		Application.targetFrameRate = 60;
+		
+		if (Instance == null)
+		{
+			//DontDestroyOnLoad(gameObject);
+			Instance = this;
+		}
+		else if (Instance != this)
+		{
+			Destroy(gameObject);
+		}
+
         _player = GameObject.Find("Player").transform;
         _telekinesisControl = GameObject.Find("TelekinesisControl");
         _powerBar = GetComponentInChildren<EnergyBar>();
@@ -126,6 +127,8 @@ public class GameController : MonoBehaviour
         _menuButton = GameObject.Find("MenuButton");
         _restartButton = GameObject.Find("RestartButton");
         _heightCounter = GameObject.Find("HeightCounter").GetComponent<Text>();
+		_playButton = GameObject.Find ("PlayButton");
+		_recordButton = GameObject.Find ("RecordButton");
 
         if (mainCamera == null)
         {
@@ -301,16 +304,23 @@ public class GameController : MonoBehaviour
         {
             OnGameStart();
         }
+		_playButton.GetComponent<Image> ().enabled = false;
     }
 
     public void ButtonMenu()
     {
-        if (gameState != GameState.Paused)
+        if (gameState == GameState.Started) 
+		{
+			// TODO: show settings
+			Debug.Log ("Toggle settings.");
+		}
+		else if (gameState != GameState.Paused)
         {
             if (OnGamePause != null)
             {
                 OnGamePause();
             }
+			Debug.Log ("Toggle settings.");
         }
         else
         {
@@ -323,6 +333,14 @@ public class GameController : MonoBehaviour
         Restart();
         _initiatingResume = true;
     }
+
+	void HandleOnShowPlayButton()
+	{
+		Debug.Log("Show play button");
+		_playButton.GetComponent<Image>().enabled = true;
+		_menuButton.GetComponent<Image>().enabled = true;
+		_recordButton.GetComponent<Image> ().enabled = true;
+	}
 
     void HandleOnGameStart()
     {

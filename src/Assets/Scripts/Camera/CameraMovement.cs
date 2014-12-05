@@ -3,8 +3,10 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour
 {
-    private float _introTimer;
+	private bool _zoomToGame;
 
+	public Vector3 gameCameraPosition;
+	public float zoomSpeed = 10f;
     public bool isTracking;
     public float XMargin = 1.0f;
     public float YMargin = 1.0f;
@@ -34,7 +36,14 @@ public class CameraMovement : MonoBehaviour
         UpAndDown.OnReturnCameraSpeed += HandleReturnCameraSpeed;
         StartPlatform.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
 		StartPlatform.OnReturnCameraSpeed += HandleReturnCameraSpeed;
+		//IntroTrigger.OnNewIntroLedgePosition += HandleNewIntroLedgePosition;
+		//GameController.OnGameStart += HandleOnGameStart;
     }
+
+	private void HandleOnGameStart()
+	{
+		_zoomToGame = true;
+	}
 
     private void HandleReturnCameraSpeed()
     {
@@ -70,6 +79,8 @@ public class CameraMovement : MonoBehaviour
         UpAndDown.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
         StartPlatform.OnUpdateCameraSpeed -= HandleUpdateCameraSpeed;
 		StartPlatform.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
+		//IntroTrigger.OnNewIntroLedgePosition -= HandleNewIntroLedgePosition;
+		//GameController.OnGameStart -= HandleOnGameStart;
     }
 
     void Awake()
@@ -86,6 +97,14 @@ public class CameraMovement : MonoBehaviour
     {
         return Mathf.Abs(transform.position.y - this.CameraTarget.position.y) > this.YMargin;
     }
+
+	void Update()
+	{
+		if (_zoomToGame)
+		{
+			transform.position = Vector3.Lerp(transform.position, gameCameraPosition, zoomSpeed * Time.deltaTime);
+		}
+	}
 
     void LateUpdate()
     {
@@ -143,6 +162,11 @@ public class CameraMovement : MonoBehaviour
 
         On_DestroyLowerPlatforms(checkpointPlatform - PlatformController.Instance.checkpointBuffer - PlatformController.Instance.platformSpawnBuffer, childPlatformToDeleteIndex);
     }
+
+	void HandleNewIntroLedgePosition(Vector3 position)
+	{
+		isTracking = true;
+	}
 
     void HandleNewPlatform(float yPosition)
     {

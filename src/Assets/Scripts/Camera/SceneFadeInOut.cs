@@ -27,12 +27,6 @@ public class SceneFadeInOut : MonoBehaviour
         GameController.OnGameOver += HandleOnGameOver;
     }
 
-    private void HandleOnGameStart()
-    {
-        _sceneStarting = false;
-        _sceneRunning = true;
-    }
-
     void OnDisable()
     {
         UnsubscribeEvent();
@@ -149,6 +143,12 @@ public class SceneFadeInOut : MonoBehaviour
             Application.LoadLevel(sceneIndex);   
         }
     }
+
+	private void HandleOnGameStart()
+	{
+		_sceneStarting = false;
+		_sceneRunning = true;
+	}
 
     private void HandleOnGameRestart(int sceneIndex)
     {
