@@ -118,6 +118,10 @@ public class GameController : MonoBehaviour
             Destroy(gameObject);
         }
 
+	}
+
+	void Start()
+	{
         _player = GameObject.Find("Player").transform;
         _telekinesisControl = GameObject.Find("TelekinesisControl");
         _powerBar = GetComponentInChildren<EnergyBar>();
@@ -299,7 +303,7 @@ public class GameController : MonoBehaviour
 
     public void ButtonStart()
     {
-        Debug.Log("Pressed play button");
+        //Debug.Log("Pressed play button");
         if (OnGameStart != null)
         {
             OnGameStart();

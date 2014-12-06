@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     private bool _canMove;
     private bool _isUsingPowers;
     private bool _facingRight = true;
-    private bool _isFacingCamera;
+    private bool _isFacingCamera = true;
     //private Collider _playerCollider;
     private Transform _sparkEffect;
     private GameObject[] _playerModelObjects;
@@ -91,9 +91,18 @@ public class PlayerMovement : MonoBehaviour
         KillBox.On_PlayerDeath += HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
         GameController.OnPlayerResurrection += HandleOnPlayerResurrection;
+		CameraMovement.OnMovePlayerToGamePosition += HandleOnMovePlayerToGamePosition;
         CloudBehaviour.On_CloudDestroy += HandleOnCloudDestroy;
-		GameController.OnGameStart += HandleOnGameStart;
+		IntroTrigger.OnZoomToGamePosition += HandleOnZoomToGamePosition;
 		IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
+    }
+
+    void HandleOnMovePlayerToGamePosition (Vector3 playerPosition)
+    {
+		transform.position = playerPosition;
+		//disabled = false;
+		transform.rotation = new Quaternion (0, 0, 0, transform.rotation.w);
+		_isFacingCamera = false;
     }
 
     void HandleOnShowMenuButtons ()
@@ -124,8 +133,9 @@ public class PlayerMovement : MonoBehaviour
         KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
         GameController.OnPlayerResurrection -= HandleOnPlayerResurrection;
+		CameraMovement.OnMovePlayerToGamePosition -= HandleOnMovePlayerToGamePosition;
         CloudBehaviour.On_CloudDestroy -= HandleOnCloudDestroy;
-		GameController.OnGameStart -= HandleOnGameStart;
+		IntroTrigger.OnZoomToGamePosition -= HandleOnZoomToGamePosition;
 		IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
     }
 
@@ -164,7 +174,6 @@ public class PlayerMovement : MonoBehaviour
 
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
-
             collider.enabled = false;
 
             if (_isGhostMoving)
@@ -276,12 +285,13 @@ public class PlayerMovement : MonoBehaviour
     }
 
 	// Handles jump for the intro
-	void HandleOnGameStart()
+	void HandleOnZoomToGamePosition()
 	{
-		rigidbody.AddForceAtPosition(new Vector3(0, jumpForce, 0), transform.position);
-        PlayJumpSound(jumpForce);
+		var theForce = jumpForce + highJumpForce;
+		rigidbody.AddForceAtPosition(new Vector3(0, theForce , 0), transform.position);
+		PlayJumpSound(theForce);
 	}
-
+	
     void HandlePlayerPowersEnd()
     {
         _isUsingPowers = false;

@@ -30,14 +30,11 @@ public class StartPlatform : PlatformBehaviour
     {
         base.FixedUpdate();
 
+		if (isStopped)return;
+
         if (child.localPosition.y < maxLocalY)
         {
             child.localPosition = Vector3.Lerp(child.localPosition, new Vector3(child.localPosition.x, maxLocalY, child.localPosition.z), speed * Time.deltaTime);
-        }
-
-        if (child.localPosition.y >= (maxLocalY - 0.3f))
-        {
-            _playerMovement.disabled = false;
         }
 
         if (!(child.localPosition.y >= (maxLocalY - 0.05f)) || _cameraMovement.MinXandY.y != 1) return;
@@ -60,6 +57,13 @@ public class StartPlatform : PlatformBehaviour
         {
             OnUpdateCameraSpeed(cameraSpeed);
         }
+
+		if (isStopped)
+		{
+			isStopped = false;
+			_cameraMovement.isTracking = true;
+			_playerMovement.disabled = false;
+		}
     }
 
     public override void HandlePlayerAirborne(Transform player)

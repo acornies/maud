@@ -168,30 +168,6 @@ ModelImporter:
         intParameter: 0
         messageOptions: 0
       - time: -Infinity
-        functionName: NewEvent
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: -Infinity
-        functionName: TriggerCameraZoom
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: -Infinity
-        functionName: TriggerCameraZoom
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: -Infinity
         functionName: TriggerCameraZoom
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
@@ -224,6 +200,38 @@ ModelImporter:
         intParameter: 0
         messageOptions: 0
       - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: TriggerCameraZoom
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: NewEvent
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 1
         functionName: TriggerCameraZoom
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: c1eac9be459396840959b47d778257c6,

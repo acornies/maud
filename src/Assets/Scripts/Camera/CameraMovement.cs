@@ -4,7 +4,9 @@ using System.Collections;
 public class CameraMovement : MonoBehaviour
 {
 	private bool _zoomToGame;
+	private float _zoomTimer;
 
+	public float zoomWarmTime = 0.5f;
 	public Vector3 gameCameraPosition;
 	public float zoomSpeed = 10f;
     public bool isTracking;
@@ -23,6 +25,9 @@ public class CameraMovement : MonoBehaviour
 
     public delegate void DestroyLowerPlatforms(int platformNumber, int childPlatformToDeleteIndex);
     public static event DestroyLowerPlatforms On_DestroyLowerPlatforms;
+
+	public delegate void MovePlayerToGamePosition(Vector3 playerPosition);
+	public static event MovePlayerToGamePosition OnMovePlayerToGamePosition;
 
     // Subscribe to events
     void OnEnable()
@@ -43,7 +48,8 @@ public class CameraMovement : MonoBehaviour
 	private void HandleOnGameStart()
 	{
 		_zoomToGame = true;
-	    isTracking = true;
+		_zoomTimer = zoomWarmTime;
+	    //isTracking = true;
 	}
 
     private void HandleReturnCameraSpeed()
@@ -103,7 +109,23 @@ public class CameraMovement : MonoBehaviour
 	{
 		if (_zoomToGame)
 		{
-			transform.position = Vector3.Lerp(transform.position, gameCameraPosition, zoomSpeed * Time.deltaTime);
+			_zoomTimer -= Time.deltaTime;
+			if (_zoomTimer <= 0){
+				transform.position = Vector3.Lerp(transform.position, gameCameraPosition, zoomSpeed * Time.deltaTime);
+				_zoomTimer = 0;
+			}
+
+			if (transform.position.z >= (gameCameraPosition.z - 0.1f)){
+				//Debug.Log("Fully zoomed in");
+				transform.position = new Vector3(transform.position.x, transform.position.y, gameCameraPosition.z);
+				_zoomToGame = false;
+				if (OnMovePlayerToGamePosition != null)
+				{
+					OnMovePlayerToGamePosition(new Vector3(0, 10f, GameController.Instance.playerZPosition));
+				}
+				//isTracking = true;
+			}
+
 		}
 	}
 
