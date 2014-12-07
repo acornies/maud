@@ -63,7 +63,7 @@ public class SceneFadeInOut : MonoBehaviour
             StartScene();
         }
 
-        if (_sceneRunning)
+        else if (_sceneRunning)
         {
             // ... call the StartScene function.
             RunScene();
@@ -95,7 +95,7 @@ public class SceneFadeInOut : MonoBehaviour
 		var blackWithAlpha = new Color (0, 0, 0, alpha);
 		//guiTexture.color = blackWithAlpha;
 
-		guiTexture.color = Color.Lerp(guiTexture.color, blackWithAlpha, fadeSpeed * Time.deltaTime);
+		_black.color = Color.Lerp(_black.color, blackWithAlpha, fadeSpeed * Time.deltaTime);
 
     }
 
@@ -111,7 +111,7 @@ public class SceneFadeInOut : MonoBehaviour
         FadeToClear();
 
         // If the texture is almost clear...
-        if (_black.color.a <= 0.05f)
+        if (_black.color.a <= 0.01f)
         {
             // ... set the colour to clear and disable the GUITexture.
             _black.color = Color.clear;
@@ -125,8 +125,8 @@ public class SceneFadeInOut : MonoBehaviour
     public void EndScene()
     {
         // Make sure the texture is enabled.
-        if (!guiTexture.enabled) {
-			guiTexture.enabled = true;
+        if (!_black.enabled) {
+			_black.enabled = true;
 		}
 
         // Start fading towards black.
@@ -137,7 +137,7 @@ public class SceneFadeInOut : MonoBehaviour
     {  
         EndScene();
         // If the screen is almost black...
-        if (guiTexture.color.a >= 0.95f && shouldRestart)
+        if (_black.color.a >= 0.99f && shouldRestart)
         {
             // ... reload the level.
             Application.LoadLevel(sceneIndex);   
@@ -152,7 +152,8 @@ public class SceneFadeInOut : MonoBehaviour
 
     private void HandleOnGameRestart(int sceneIndex)
     {
-        _sceneEnding = true;
+		_sceneRunning = false;
+		_sceneEnding = true;
         _shouldRestart = true;
         _sceneToEnd = sceneIndex;
     }
@@ -171,6 +172,8 @@ public class SceneFadeInOut : MonoBehaviour
 		_black.enabled = true;
 		//FadeToBlack (0.75f);
         _black.color = overlayColour;
+
+		transform.localPosition = new Vector3 (0, 0, 1f);
     }
 
     private void HandleOnGameOver()

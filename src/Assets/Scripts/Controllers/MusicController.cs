@@ -8,8 +8,9 @@ public class MusicController : MonoBehaviour
 {
 
     private IDictionary<string, AudioSource> _allSongs;
-
-    public float musicFadeSpeed = 0.1f;
+	private bool fadeIntroMusic;
+    
+	public float musicFadeSpeed = 0.1f;
     public int forestMusicSlowLimit = 50;
     public int forestMusicFastLimit = 100;
     public int cloudMusicSlowLimit = 200;
@@ -27,6 +28,18 @@ public class MusicController : MonoBehaviour
     // Subscribe to events
     void OnEnable()
     {
+		GameController.OnGameStart += HandleOnGameStart;
+		CameraMovement.OnMovePlayerToGamePosition += HandleOnMovePlayerToGamePosition;
+    }
+
+    void HandleOnMovePlayerToGamePosition (Vector3 playerPosition)
+    {
+		forestMusicSlow.Play ();
+    }
+
+    void HandleOnGameStart ()
+    {
+		fadeIntroMusic = true;
     }
 
     void OnDisable()
@@ -41,6 +54,8 @@ public class MusicController : MonoBehaviour
 
     void UnsubscribeEvent()
     {
+		GameController.OnGameStart -= HandleOnGameStart;
+		CameraMovement.OnMovePlayerToGamePosition -= HandleOnMovePlayerToGamePosition;
     }
 
     void Awake()
@@ -69,7 +84,17 @@ public class MusicController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var currentPlatform = PlatformController.Instance.GetCurrentPlatformNumber();
+        if (fadeIntroMusic) 
+		{
+			stratosphereMusic.volume = Mathf.Lerp(stratosphereMusic.volume, 0, musicFadeSpeed * Time.deltaTime);
+			if (stratosphereMusic.volume <= 0.01f){
+				//stratosphereMusic.volume = 0;
+				stratosphereMusic.Stop();
+				fadeIntroMusic = false;
+			}
+		}
+
+		var currentPlatform = PlatformController.Instance.GetCurrentPlatformNumber();
         NextSong(currentPlatform, forestMusicSlowLimit, forestMusicSlow, forestMusicFast);
         FadeTransition(currentPlatform, forestMusicFastLimit, forestMusicFast, cloudMusicSlow);
         NextSong(currentPlatform, cloudMusicSlowLimit, cloudMusicSlow, cloudMusicFast);

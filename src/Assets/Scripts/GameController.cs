@@ -189,7 +189,7 @@ public class GameController : MonoBehaviour
     {
         Time.timeScale = (gameState == GameState.Paused && !_initiatingResume) ? 0 : 1;
 
-        if (gameState == GameState.Paused && _initiatingResume)
+        /*if (gameState == GameState.Paused && _initiatingResume)
         {
             _resumeTimer -= Time.deltaTime;
             if (_resumeTimer <= 0)
@@ -205,7 +205,7 @@ public class GameController : MonoBehaviour
         else
         {
             _resumeTimer = resumeTime;
-        }
+        }*/
 
         if (_player.position.y > highestPoint)
         {
@@ -274,6 +274,8 @@ public class GameController : MonoBehaviour
     {
         //Debug.Log("Calling GameController.Restart");
         _menuButton.GetComponent<Button>().interactable = false;
+		_restartButton.GetComponent<Image>().enabled = false;
+		_restartButton.GetComponent<Button>().interactable = false;
         //button.enable = false; 
         if (OnGameRestart != null)
         {
@@ -328,14 +330,20 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            _initiatingResume = true;
+			if (OnGameResume != null)
+			{
+				OnGameResume();
+			}
+			gameState = GameState.Running;
         }
     }
 
     public void ButtonRestart()
     {
         Restart();
-        _initiatingResume = true;
+		gameState = GameState.Running;
+		_player.GetComponent<PlayerMovement>().disabled = false;
+
     }
 
     void HandleOnShowMenuButtons()
@@ -365,7 +373,8 @@ public class GameController : MonoBehaviour
 
     void HandleOnGameResume()
     {
-        _player.GetComponent<PlayerMovement>().disabled = false;
+		gameState = GameState.Running;
+		_player.GetComponent<PlayerMovement>().disabled = false;
         _telekinesisControl.SetActive(true);
         //_mainCamera.GetComponent<BlurEffect>().enabled = false;
         _restartButton.GetComponent<Image>().enabled = false;
