@@ -179,5 +179,7 @@ public class SceneFadeInOut : MonoBehaviour
     private void HandleOnGameOver()
     {
         _sceneEnding = true;
+        _sceneRunning = false;
+        _black.enabled = true;
     }
 }
