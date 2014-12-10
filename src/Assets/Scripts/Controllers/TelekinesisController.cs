@@ -24,6 +24,7 @@ public class TelekinesisController : MonoBehaviour
     private AudioSource _teleLoop;
     private AudioSource _teleTail;
     private AudioSource _noTele;
+    private PlayerMovement _player;
 
     public float rotationSensitivity = 0.5f;
     public float cloneScaleMultiplier = 1.5f;
@@ -98,7 +99,7 @@ public class TelekinesisController : MonoBehaviour
 
     void Awake()
     {
-        GameObject.Find("Player").transform.GetComponent<PlayerMovement>();
+        _player = GameObject.Find("Player").transform.GetComponent<PlayerMovement>();
         _teleSources = GetComponents<AudioSource>();
         if (_teleSources == null || _teleSources.Length <= 0) return;
         _teleAttack = _teleSources[0];
@@ -132,6 +133,8 @@ public class TelekinesisController : MonoBehaviour
 
     void HandleLongTapStart(Gesture gesture)
     {
+        if (_player.disabled) return;
+        
         if (GameController.Instance.powerMeter < stabilizeCost)
         {
             _noTele.Play();
@@ -205,6 +208,8 @@ public class TelekinesisController : MonoBehaviour
 
     void On_SwipeStart(Gesture gesture)
     {
+        if (_player.disabled) return;
+
         if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
 
         if (GameController.Instance.powerMeter <= 0)

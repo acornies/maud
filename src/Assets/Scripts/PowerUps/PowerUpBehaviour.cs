@@ -5,7 +5,6 @@ using System.Collections;
 public class PowerUpBehaviour : MonoBehaviour
 {
     private Animator _animator;
-    private ParticleSystem _particles;
 
     public float pickUpPower = 2f;
     //public Vector3 newLocation = Vector2.zero;
@@ -37,8 +36,7 @@ public class PowerUpBehaviour : MonoBehaviour
     // Use this for initialization
     private void Start()
     {
-        _animator = GetComponentInChildren<Animator>();
-        _particles = GetComponentInChildren<ParticleSystem>();
+        _animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -52,7 +50,7 @@ public class PowerUpBehaviour : MonoBehaviour
         if (otherCollider.name != "Player") return;
 
         _animator.enabled = false;
-        _particles.Stop();
+        particleSystem.Stop();
 
         if (OnPowerPickUp != null)
         {
@@ -63,7 +61,7 @@ public class PowerUpBehaviour : MonoBehaviour
     public void Reactivate()
     {
         _animator.enabled = true;
-        _particles.Play();
+        particleSystem.Play();
     }
 
     private void HandleOnNewPowerUpLocation(Vector3 location)

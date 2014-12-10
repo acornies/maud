@@ -97,21 +97,6 @@ public class PlayerMovement : MonoBehaviour
 		IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
     }
 
-    void HandleOnMovePlayerToGamePosition (Vector3 playerPosition)
-    {
-		transform.position = playerPosition;
-		//disabled = false;
-		transform.rotation = new Quaternion (0, 0, 0, transform.rotation.w);
-		_isFacingCamera = false;
-    }
-
-    void HandleOnShowMenuButtons ()
-    {
-		_animator.SetBool ("shake", true);
-		_shakeTimer = shakeTimeout;
-		_shouldTimeoutShake = true;
-    }
-
     void OnDisable()
     {
         UnsubscribeEvent();
@@ -284,16 +269,33 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void HandleOnMovePlayerToGamePosition(Vector3 playerPosition)
+    {
+        transform.position = playerPosition;
+        //disabled = false;
+        transform.rotation = new Quaternion(0, 0, 0, transform.rotation.w);
+        _isFacingCamera = false;
+    }
+
+    void HandleOnShowMenuButtons()
+    {
+        _animator.SetBool("shake", true);
+        _shakeTimer = shakeTimeout;
+        _shouldTimeoutShake = true;
+    }
+
 	// Handles jump for the intro
 	void HandleOnZoomToGamePosition()
 	{
 		var theForce = jumpForce + highJumpForce;
 		rigidbody.AddForceAtPosition(new Vector3(0, theForce , 0), transform.position);
+	    _isHighJumping = true;
 		PlayJumpSound(theForce);
 	}
 	
     void HandlePlayerPowersEnd()
     {
+        if (disabled) return;
         _isUsingPowers = false;
         _sparkEffect.GetComponent<ParticleSystem>().Stop();
         if (!_isFacingCamera) return;     
@@ -302,6 +304,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandlePlayerPowersStart()
     {
+        if (disabled) return;
         _isUsingPowers = true;
         if (_isFacingCamera) return;
         _sparkEffect.GetComponent<ParticleSystem>().Play();
