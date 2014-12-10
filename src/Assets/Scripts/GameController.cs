@@ -1,9 +1,6 @@
-﻿using System;
-using Assets.Scripts.GameState;
-using EnergyBarToolkit;
+﻿using EnergyBarToolkit;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 using LegendPeak;
 
 public class GameController : MonoBehaviour
@@ -18,12 +15,15 @@ public class GameController : MonoBehaviour
     private GameObject _restartButton;
     private GameObject _playButton;
     private GameObject _recordButton;
+    private GameObject _musicButton;
+    private GameObject _handButton;
     private EnergyBar _powerBar;
     private Text _heightCounter;
     private CameraMovement _cameraMovement;
 	private bool _isMenuOpen;
 
     public GameObject mainCamera;
+    public bool playMusic = true;
     public GameState gameState;
     public GameMode gameMode;
     public bool inSafeZone = true;
@@ -66,6 +66,9 @@ public class GameController : MonoBehaviour
 
     public delegate void MaxHeightIncrease(float amount);
     public static event MaxHeightIncrease OnMaxHeightIncrease;
+
+    public delegate void ToggleMusic(bool playMusic);
+    public static event ToggleMusic OnToggleMusic;
 
     // Subscribe to events
     void OnEnable()
@@ -119,10 +122,6 @@ public class GameController : MonoBehaviour
             Destroy(gameObject);
         }
 
-	}
-
-	void Start()
-	{
         _player = GameObject.Find("Player").transform;
         _telekinesisControl = GameObject.Find("TelekinesisControl");
         _powerBar = GetComponentInChildren<EnergyBar>();
@@ -134,6 +133,8 @@ public class GameController : MonoBehaviour
         _heightCounter = GameObject.Find("HeightCounter").GetComponent<Text>();
         _playButton = GameObject.Find("PlayButton");
         _recordButton = GameObject.Find("RecordButton");
+        _musicButton = GameObject.Find("MusicButton");
+        _handButton = GameObject.Find("HandButton");
 
         if (mainCamera == null)
         {
@@ -157,6 +158,12 @@ public class GameController : MonoBehaviour
             default:
                 break;
         }
+
+	}
+
+	void Start()
+	{
+        
     }
 
     void OnGUI()
@@ -318,15 +325,7 @@ public class GameController : MonoBehaviour
     {
 		if (gameState == GameState.Started)
         {
-            // TODO: show settings
-            //Debug.Log("Toggle settings.");
-			if (!_isMenuOpen)
-			{
-				_isMenuOpen = true;
-			}
-			else{
-				_isMenuOpen = false;
-			}
+			_isMenuOpen = !_isMenuOpen;
 
         }
         else if (gameState != GameState.Paused)
@@ -335,7 +334,6 @@ public class GameController : MonoBehaviour
             {
                 OnGamePause();
             }
-            //Debug.Log("Toggle settings.");
         }
         else
         {
@@ -355,6 +353,20 @@ public class GameController : MonoBehaviour
 		{
 			menuAnimator.enabled = false;
 		}
+
+        if (_isMenuOpen)
+        {
+            _musicButton.GetComponent<Image>().enabled = true;
+            _handButton.GetComponent<Image>().enabled = true;
+            // TODO: FUCKING DISABLE HAND BUTTON FOR NOW
+            _handButton.GetComponent<Button>().interactable = true; // TODO enable when ready
+            _handButton.GetComponent<Button>().interactable = false; // TODO enable when ready
+        }
+        else
+        {
+            _musicButton.GetComponent<Image>().enabled = false;
+            _handButton.GetComponent<Image>().enabled = false;
+        }
     }
 
     public void ButtonRestart()
@@ -363,6 +375,16 @@ public class GameController : MonoBehaviour
 		gameState = GameState.Running;
 		_player.GetComponent<PlayerMovement>().disabled = false;
 
+    }
+
+    public void ButtonMusic()
+    {
+        playMusic = !playMusic;
+
+        if (OnToggleMusic != null)
+        {    
+            OnToggleMusic(playMusic);
+        }
     }
 
     void HandleOnShowMenuButtons()
@@ -377,6 +399,11 @@ public class GameController : MonoBehaviour
     {
         gameState = GameState.Running;
         _cameraMovement.CameraTarget = _player.FindChild("CharacterTarget");
+        _musicButton.GetComponent<Image>().enabled = false;
+        _handButton.GetComponent<Image>().enabled = false;
+        _isMenuOpen = false;
+        _menuButton.GetComponent<Animator>().enabled = false;
+        //ButtonMenu();
     }
 
     void HandleOnGamePause()

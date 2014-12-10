@@ -9,6 +9,9 @@ public class MusicController : MonoBehaviour
 
     private IDictionary<string, AudioSource> _allSongs;
 	private bool fadeIntroMusic;
+
+    [Range(0, 1)]
+    public float maxMusicVolume = 0.5f;
     
 	public float musicFadeSpeed = 0.1f;
     public int forestMusicSlowLimit = 50;
@@ -30,11 +33,13 @@ public class MusicController : MonoBehaviour
     {
 		GameController.OnGameStart += HandleOnGameStart;
 		CameraMovement.OnMovePlayerToGamePosition += HandleOnMovePlayerToGamePosition;
+        GameController.OnToggleMusic += ToggleMusic;
     }
 
     void HandleOnMovePlayerToGamePosition (Vector3 playerPosition)
     {
-		forestMusicSlow.Play ();
+        forestMusicSlow.Play ();
+        forestMusicSlow.volume = GameController.Instance.playMusic ? maxMusicVolume : 0;
     }
 
     void HandleOnGameStart ()
@@ -56,6 +61,7 @@ public class MusicController : MonoBehaviour
     {
 		GameController.OnGameStart -= HandleOnGameStart;
 		CameraMovement.OnMovePlayerToGamePosition -= HandleOnMovePlayerToGamePosition;
+        GameController.OnToggleMusic -= ToggleMusic;
     }
 
     void Awake()
@@ -112,7 +118,7 @@ public class MusicController : MonoBehaviour
 		if (next.isPlaying && next.volume < 0.5f && current.isPlaying)
 		{
 			Debug.Log("Fade in: " + next.clip.name + " from: " + current.clip.name);
-			next.volume = Mathf.Lerp(next.volume, 0.5f, musicFadeSpeed * Time.deltaTime);
+            next.volume = Mathf.Lerp(next.volume, maxMusicVolume, musicFadeSpeed * Time.deltaTime);
 			current.volume = Mathf.Lerp(current.volume, 0f, musicFadeSpeed * Time.deltaTime);
 
 			if (current.volume <= 0.01f)
@@ -122,7 +128,7 @@ public class MusicController : MonoBehaviour
 		}
 	}
 
-    private static void NextSong(int currentPlatform, int limit, AudioSource current, AudioSource next)
+    private void NextSong(int currentPlatform, int limit, AudioSource current, AudioSource next)
     {
         if (currentPlatform > limit && current.isPlaying)
         {
@@ -135,13 +141,22 @@ public class MusicController : MonoBehaviour
         }
     }
 
-    static void MusicTransition(AudioSource currentSong, AudioSource nextSong)
+    void MusicTransition(AudioSource currentSong, AudioSource nextSong)
     {
         if (nextSong == null) return;
         Debug.Log("Start transition from " + currentSong.clip.name + " to " + nextSong.clip.name);
         nextSong.Play();
         currentSong.volume = 0.0f;
         currentSong.Stop();
-        nextSong.volume = 0.5f;
+        nextSong.volume = (GameController.Instance.playMusic) ? maxMusicVolume : 0;
+    }
+
+    void ToggleMusic(bool playMusic)
+    {
+        AudioSource currentSong = _allSongs.Values.FirstOrDefault(x => x.isPlaying);
+        if (currentSong != null)
+        {
+            currentSong.volume = playMusic ? maxMusicVolume : 0;
+        }
     }
 }
