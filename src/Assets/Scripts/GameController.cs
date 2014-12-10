@@ -13,7 +13,7 @@ public class GameController : MonoBehaviour
     private float _deathTimer;
     private int _previousPlatformNumber;
     private float _resumeTimer;
-    private bool _initiatingResume;
+    //private bool _initiatingResume;
     private GameObject _menuButton;
     private GameObject _restartButton;
     private GameObject _playButton;
@@ -21,6 +21,7 @@ public class GameController : MonoBehaviour
     private EnergyBar _powerBar;
     private Text _heightCounter;
     private CameraMovement _cameraMovement;
+	private bool _isMenuOpen;
 
     public GameObject mainCamera;
     public GameState gameState;
@@ -187,7 +188,7 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Time.timeScale = (gameState == GameState.Paused && !_initiatingResume) ? 0 : 1;
+        Time.timeScale = (gameState == GameState.Paused) ? 0 : 1;
 
         /*if (gameState == GameState.Paused && _initiatingResume)
         {
@@ -274,7 +275,7 @@ public class GameController : MonoBehaviour
     {
         //Debug.Log("Calling GameController.Restart");
         _menuButton.GetComponent<Button>().interactable = false;
-		_restartButton.GetComponent<Image>().enabled = false;
+		//_restartButton.GetComponent<Image>().enabled = false;
 		_restartButton.GetComponent<Button>().interactable = false;
         //button.enable = false; 
         if (OnGameRestart != null)
@@ -315,10 +316,18 @@ public class GameController : MonoBehaviour
 
     public void ButtonMenu()
     {
-        if (gameState == GameState.Started)
+		if (gameState == GameState.Started)
         {
             // TODO: show settings
-            Debug.Log("Toggle settings.");
+            //Debug.Log("Toggle settings.");
+			if (!_isMenuOpen)
+			{
+				_isMenuOpen = true;
+			}
+			else{
+				_isMenuOpen = false;
+			}
+
         }
         else if (gameState != GameState.Paused)
         {
@@ -326,7 +335,7 @@ public class GameController : MonoBehaviour
             {
                 OnGamePause();
             }
-            Debug.Log("Toggle settings.");
+            //Debug.Log("Toggle settings.");
         }
         else
         {
@@ -336,6 +345,16 @@ public class GameController : MonoBehaviour
 			}
 			gameState = GameState.Running;
         }
+
+		var menuAnimator = _menuButton.GetComponent<Animator>();
+		if (_isMenuOpen && !menuAnimator.enabled)
+		{
+			menuAnimator.enabled = true;
+		}
+		else
+		{
+			menuAnimator.enabled = false;
+		}
     }
 
     public void ButtonRestart()
@@ -368,7 +387,7 @@ public class GameController : MonoBehaviour
         //_mainCamera.GetComponent<BlurEffect>().enabled = true;
         _restartButton.GetComponent<Image>().enabled = true;
         _restartButton.GetComponent<Button>().interactable = true;
-
+		_isMenuOpen = true;
     }
 
     void HandleOnGameResume()
@@ -379,6 +398,7 @@ public class GameController : MonoBehaviour
         //_mainCamera.GetComponent<BlurEffect>().enabled = false;
         _restartButton.GetComponent<Image>().enabled = false;
         _restartButton.GetComponent<Button>().interactable = false;
+		_isMenuOpen = false;
     }
 
     void HandleOnGameOver()

@@ -37,6 +37,7 @@ public class PlatformController : MonoBehaviour
     {
         PlayerMovement.On_PlatformReached += HandlePlatformReached;
         CameraMovement.On_DestroyLowerPlatforms += HandleDestroyLowerPlatforms;
+		CameraMovement.OnMovePlayerToGamePosition += HandleMovePlayerToGamePosition;
     }
 
     void OnDisable()
@@ -53,6 +54,7 @@ public class PlatformController : MonoBehaviour
     {
         PlayerMovement.On_PlatformReached -= HandlePlatformReached;
         CameraMovement.On_DestroyLowerPlatforms -= HandleDestroyLowerPlatforms;
+		CameraMovement.OnMovePlayerToGamePosition -= HandleMovePlayerToGamePosition;
     }
 
     void Awake()
@@ -269,4 +271,9 @@ public class PlatformController : MonoBehaviour
         if (child == null) return;
         Destroy(child.gameObject);
     }
+
+	void HandleMovePlayerToGamePosition(Vector3 newPosition)
+	{
+		platformSpawnBuffer = 5;
+	}
 }

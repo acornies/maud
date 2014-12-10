@@ -4,9 +4,15 @@ using System.Collections;
 public class IntroLedge : MonoBehaviour
 {
     private Vector3 _introLocation = Vector3.zero;
+	private ParticleSystem _sparkEffect;
 
     public delegate void ShowMenuButtons();
     public static event ShowMenuButtons OnShowMenuButtons;
+
+	void Awake()
+	{
+		_sparkEffect = transform.FindChild ("PowerEffect").GetComponent<ParticleSystem> ();
+	}
     
     // Use this for initialization
     void Start()
@@ -51,6 +57,8 @@ public class IntroLedge : MonoBehaviour
         if (collision.transform.name != "Player" || _introLocation == Vector3.zero) return;
 
 		if (GameController.Instance.gameState == LegendPeak.GameState.Running) return;
+
+		_sparkEffect.Play ();
 
         if (OnShowMenuButtons != null)
         {

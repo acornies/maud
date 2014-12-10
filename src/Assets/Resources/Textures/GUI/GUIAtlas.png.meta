@@ -3,14 +3,17 @@ guid: 5c9bd0bc086879447b766f46f63567a6
 TextureImporter:
   fileIDToRecycleName:
     21300000: Play
-    21300002: SoundOn
-    21300004: SoundOff
+    21300002: SoundOff
+    21300004: SoundOn
     21300006: Cog
     21300008: Restart
     21300010: Back
     21300012: RightHanded
     21300014: LeftHanded
     21300016: Record
+    21300018: Cart
+    21300020: Music
+    21300022: Heart
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -55,30 +58,30 @@ TextureImporter:
     - name: Play
       rect:
         serializedVersion: 2
-        x: 72
-        y: 1544
-        width: 269
-        height: 360
-      alignment: 0
-      pivot: {x: .5, y: .5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-    - name: SoundOn
-      rect:
-        serializedVersion: 2
-        x: 430
-        y: 1544
-        width: 480
-        height: 360
+        x: 59
+        y: 1587
+        width: 319
+        height: 317
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
     - name: SoundOff
       rect:
         serializedVersion: 2
-        x: 1008
-        y: 1545
-        width: 481
-        height: 360
+        x: 430
+        y: 1543
+        width: 360
+        height: 363
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: SoundOn
+      rect:
+        serializedVersion: 2
+        x: 863
+        y: 1544
+        width: 431
+        height: 362
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -139,6 +142,36 @@ TextureImporter:
         y: 537
         width: 431
         height: 431
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Cart
+      rect:
+        serializedVersion: 2
+        x: 1363
+        y: 1543
+        width: 455
+        height: 435
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Music
+      rect:
+        serializedVersion: 2
+        x: 1003
+        y: 535
+        width: 399
+        height: 435
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Heart
+      rect:
+        serializedVersion: 2
+        x: 1507
+        y: 596
+        width: 435
+        height: 374
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

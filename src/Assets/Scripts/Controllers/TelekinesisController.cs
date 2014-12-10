@@ -67,6 +67,7 @@ public class TelekinesisController : MonoBehaviour
         On_PlayerPowersStart += HandleOnPowersStart;
         On_PlayerPowersEnd += HandleOnPlayerPowersEnd;
         On_TelekinesisStabilize += HandleOnTelekinesisStabilize;
+		IntroTrigger.OnNewIntroLedgePosition += OnNewIntroLedegePosition;
     }
 
     void OnDisable()
@@ -92,6 +93,7 @@ public class TelekinesisController : MonoBehaviour
         On_PlayerPowersStart -= HandleOnPowersStart;
         On_PlayerPowersEnd -= HandleOnPlayerPowersEnd;
         On_TelekinesisStabilize -= HandleOnTelekinesisStabilize;
+		IntroTrigger.OnNewIntroLedgePosition -= OnNewIntroLedegePosition;
     }
 
     void Awake()
@@ -441,7 +443,7 @@ public class TelekinesisController : MonoBehaviour
     {
         if (_teleTail.clip == null || !_teleLoop.isPlaying) return;
 
-        _teleTail.Play();
+        _teleTail.PlayOneShot(_teleTail.clip);
         _teleLoop.Stop();
     }
 
@@ -456,4 +458,11 @@ public class TelekinesisController : MonoBehaviour
             }
         }
     }
+
+	void OnNewIntroLedegePosition(Vector3 newPosition)
+	{
+		var initialDelay = .2f;
+		_teleAttack.PlayDelayed (initialDelay);
+		_teleTail.PlayDelayed (initialDelay + _teleAttack.clip.length);
+	}
 }
