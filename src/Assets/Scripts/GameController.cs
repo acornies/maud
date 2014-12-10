@@ -16,11 +16,11 @@ public class GameController : MonoBehaviour
     private GameObject _playButton;
     private GameObject _recordButton;
     private GameObject _musicButton;
-    private GameObject _handButton;
+    private GameObject _cartButton;
     private EnergyBar _powerBar;
     private Text _heightCounter;
     private CameraMovement _cameraMovement;
-	private bool _isMenuOpen;
+    private bool _isMenuOpen;
 
     public GameObject mainCamera;
     public bool playMusic = true;
@@ -43,6 +43,8 @@ public class GameController : MonoBehaviour
     public float deathIconWidth = 20f;
     public float deathIconOffset = 10f;
     public EnergyBarRenderer powerBarRenderer;
+    public Sprite soundOnImage;
+    public Sprite soundOffImage;
 
     public static GameController Instance { get; private set; }
 
@@ -80,6 +82,7 @@ public class GameController : MonoBehaviour
         OnGamePause += HandleOnGamePause;
         OnGameResume += HandleOnGameResume;
         OnGameOver += HandleOnGameOver;
+        OnGameRestart += HandleOnGameRestart;
         PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
     }
@@ -103,6 +106,7 @@ public class GameController : MonoBehaviour
         OnGamePause -= HandleOnGamePause;
         OnGameResume -= HandleOnGameResume;
         OnGameOver -= HandleOnGameOver;
+        OnGameRestart -= HandleOnGameRestart;
         PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
     }
@@ -134,7 +138,7 @@ public class GameController : MonoBehaviour
         _playButton = GameObject.Find("PlayButton");
         _recordButton = GameObject.Find("RecordButton");
         _musicButton = GameObject.Find("MusicButton");
-        _handButton = GameObject.Find("HandButton");
+        _cartButton = GameObject.Find("CartButton");
 
         if (mainCamera == null)
         {
@@ -159,11 +163,11 @@ public class GameController : MonoBehaviour
                 break;
         }
 
-	}
+    }
 
-	void Start()
-	{
-        
+    void Start()
+    {
+
     }
 
     void OnGUI()
@@ -282,8 +286,8 @@ public class GameController : MonoBehaviour
     {
         //Debug.Log("Calling GameController.Restart");
         _menuButton.GetComponent<Button>().interactable = false;
-		//_restartButton.GetComponent<Image>().enabled = false;
-		_restartButton.GetComponent<Button>().interactable = false;
+        //_restartButton.GetComponent<Image>().enabled = false;
+        _restartButton.GetComponent<Button>().interactable = false;
         //button.enable = false; 
         if (OnGameRestart != null)
         {
@@ -314,18 +318,30 @@ public class GameController : MonoBehaviour
     public void ButtonStart()
     {
         //Debug.Log("Pressed play button");
-        if (OnGameStart != null)
+        switch (gameState)
         {
-            OnGameStart();
+            case GameState.Started:
+                if (OnGameStart != null)
+                {
+                    OnGameStart();
+                }
+                break;
+            case GameState.Paused:
+                if (OnGameResume != null)
+                {
+                    OnGameResume();
+                }
+                gameState = GameState.Running;
+                break;
         }
-        _playButton.GetComponent<Image>().enabled = false;
+
     }
 
     public void ButtonMenu()
     {
-		if (gameState == GameState.Started)
+        if (gameState == GameState.Started)
         {
-			_isMenuOpen = !_isMenuOpen;
+            _isMenuOpen = !_isMenuOpen;
 
         }
         else if (gameState != GameState.Paused)
@@ -337,43 +353,43 @@ public class GameController : MonoBehaviour
         }
         else
         {
-			if (OnGameResume != null)
-			{
-				OnGameResume();
-			}
-			gameState = GameState.Running;
+            if (OnGameResume != null)
+            {
+                OnGameResume();
+            }
+            gameState = GameState.Running;
         }
 
-		var menuAnimator = _menuButton.GetComponent<Animator>();
-		if (_isMenuOpen && !menuAnimator.enabled)
-		{
-			menuAnimator.enabled = true;
-		}
-		else
-		{
-			menuAnimator.enabled = false;
-		}
-
-        if (_isMenuOpen)
+        var menuAnimator = _menuButton.GetComponent<Animator>();
+        if (_isMenuOpen && !menuAnimator.enabled)
         {
-            _musicButton.GetComponent<Image>().enabled = true;
-            _handButton.GetComponent<Image>().enabled = true;
-            // TODO: FUCKING DISABLE HAND BUTTON FOR NOW
-            _handButton.GetComponent<Button>().interactable = true; // TODO enable when ready
-            _handButton.GetComponent<Button>().interactable = false; // TODO enable when ready
+            menuAnimator.enabled = true;
         }
         else
         {
+            menuAnimator.enabled = false;
+        }
+
+        if (_isMenuOpen && gameState == GameState.Started)
+        {
+            _musicButton.GetComponent<Image>().enabled = true;
+            _cartButton.GetComponent<Image>().enabled = true;
+            // TODO: FUCKING DISABLE HAND BUTTON FOR NOW
+            _cartButton.GetComponent<Button>().interactable = true; // TODO enable when ready
+            _cartButton.GetComponent<Button>().interactable = false; // TODO enable when ready
+        }
+        else if (!_isMenuOpen && gameState == GameState.Started)
+        {
             _musicButton.GetComponent<Image>().enabled = false;
-            _handButton.GetComponent<Image>().enabled = false;
+            _cartButton.GetComponent<Image>().enabled = false;
         }
     }
 
     public void ButtonRestart()
     {
         Restart();
-		gameState = GameState.Running;
-		_player.GetComponent<PlayerMovement>().disabled = false;
+        //gameState = GameState.Running;
+        _player.GetComponent<PlayerMovement>().disabled = false; // TODO move to playerMovement
 
     }
 
@@ -382,9 +398,11 @@ public class GameController : MonoBehaviour
         playMusic = !playMusic;
 
         if (OnToggleMusic != null)
-        {    
+        {
             OnToggleMusic(playMusic);
         }
+
+        _musicButton.GetComponent<Image>().sprite = !playMusic ? soundOffImage : soundOnImage;
     }
 
     void HandleOnShowMenuButtons()
@@ -400,9 +418,16 @@ public class GameController : MonoBehaviour
         gameState = GameState.Running;
         _cameraMovement.CameraTarget = _player.FindChild("CharacterTarget");
         _musicButton.GetComponent<Image>().enabled = false;
-        _handButton.GetComponent<Image>().enabled = false;
+        _cartButton.GetComponent<Image>().enabled = false;
         _isMenuOpen = false;
         _menuButton.GetComponent<Animator>().enabled = false;
+
+        _playButton.GetComponent<Image>().enabled = false;
+        ((RectTransform)_playButton.transform).anchorMin = new Vector2(.5f, .5f);
+        ((RectTransform)_playButton.transform).anchorMax = new Vector2(.5f, .5f);
+        ((RectTransform)_playButton.transform).anchoredPosition = new Vector3(0, 0, 0);
+
+
         //ButtonMenu();
     }
 
@@ -414,18 +439,30 @@ public class GameController : MonoBehaviour
         //_mainCamera.GetComponent<BlurEffect>().enabled = true;
         _restartButton.GetComponent<Image>().enabled = true;
         _restartButton.GetComponent<Button>().interactable = true;
-		_isMenuOpen = true;
+        _playButton.GetComponent<Image>().enabled = true;
+        _playButton.GetComponent<Button>().interactable = true;
+        _musicButton.GetComponent<Image>().enabled = true;
+        _cartButton.GetComponent<Image>().enabled = true;
+        // TODO: FUCKING DISABLE HAND BUTTON FOR NOW
+        _cartButton.GetComponent<Button>().interactable = true; // TODO enable when ready
+        _cartButton.GetComponent<Button>().interactable = false; // TODO enable when ready
+        _isMenuOpen = true;
     }
 
     void HandleOnGameResume()
     {
-		gameState = GameState.Running;
-		_player.GetComponent<PlayerMovement>().disabled = false;
+        gameState = GameState.Running;
+        _player.GetComponent<PlayerMovement>().disabled = false;
         _telekinesisControl.SetActive(true);
         //_mainCamera.GetComponent<BlurEffect>().enabled = false;
         _restartButton.GetComponent<Image>().enabled = false;
         _restartButton.GetComponent<Button>().interactable = false;
-		_isMenuOpen = false;
+        _playButton.GetComponent<Image>().enabled = false;
+        _playButton.GetComponent<Button>().interactable = false;
+        _menuButton.GetComponent<Animator>().enabled = false;
+        _musicButton.GetComponent<Image>().enabled = false;
+        _cartButton.GetComponent<Image>().enabled = false;
+        _isMenuOpen = false;
     }
 
     void HandleOnGameOver()
@@ -441,5 +478,15 @@ public class GameController : MonoBehaviour
     {
         //Debug.Log("Add " + powerToAdd + " to power meter.");
         powerMeter += powerToAdd;
+    }
+
+    private void HandleOnGameRestart(int sceneindex)
+    {
+        gameState = GameState.Running;
+        _playButton.GetComponent<Image>().enabled = false;
+        _playButton.GetComponent<Button>().interactable = false;
+        _musicButton.GetComponent<Image>().enabled = false;
+        _cartButton.GetComponent<Image>().enabled = false;
+        _menuButton.GetComponent<Animator>().enabled = false;
     }
 }
