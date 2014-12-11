@@ -41,7 +41,8 @@ public class StartPlatform : PlatformBehaviour
 
         _cameraMovement.MinXandY = new Vector2(0, cameraUpdateY);
         cameraSpeed = 4.5f;
-        Debug.Log("Update min camera to " + cameraUpdateY);
+        //Debug.Log("Update min camera to " + cameraUpdateY);
+		//_playerMovement.disabled = false;
         
     }
 

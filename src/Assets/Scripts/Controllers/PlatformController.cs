@@ -185,7 +185,7 @@ public class PlatformController : MonoBehaviour
             {
                 upAndDownComponent.speed = Random.Range(1f, 3f);
                 upAndDownComponent.cameraSpeed = upAndDownComponent.speed / 2;
-                upAndDownComponent.waitTime = 0.5f;
+                upAndDownComponent.waitTime = 0.2f;
             }
         }
 

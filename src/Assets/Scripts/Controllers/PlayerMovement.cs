@@ -596,6 +596,7 @@ public class PlayerMovement : MonoBehaviour
     public void Jump(Gesture gesture, float extraForce = 0)
     {
 		if (GameController.Instance.playerIsDead) return;
+		if (GameController.Instance.gameState != LegendPeak.GameState.Running) return;
         if (disabled) return;
 
 		if (gesture.touchCount > 1) return; // prevents dual tap super jump

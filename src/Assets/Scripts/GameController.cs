@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour
     private float _deathTimer;
     private int _previousPlatformNumber;
     private float _resumeTimer;
-    //private bool _initiatingResume;
+    private bool _initiatingResume;
     private Image _menuButtonImage;
 	private Button _menuButtonBehaviour;
     private Image _restartButtonImage;
@@ -221,9 +221,9 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Time.timeScale = (gameState == GameState.Paused) ? 0 : 1;
+		Time.timeScale = (gameState == GameState.Paused && !_initiatingResume) ? 0 : 1;
 
-        /*if (gameState == GameState.Paused && _initiatingResume)
+        if (gameState == GameState.Paused && _initiatingResume)
         {
             _resumeTimer -= Time.deltaTime;
             if (_resumeTimer <= 0)
@@ -239,7 +239,7 @@ public class GameController : MonoBehaviour
         else
         {
             _resumeTimer = resumeTime;
-        }*/
+        }
 
         if (_player.position.y > highestPoint)
         {
@@ -349,11 +349,7 @@ public class GameController : MonoBehaviour
                 }
                 break;
             case GameState.Paused:
-                if (OnGameResume != null)
-                {
-                    OnGameResume();
-                }
-                gameState = GameState.Running;
+				_initiatingResume = true;
                 break;
         }
 
@@ -375,11 +371,12 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            if (OnGameResume != null)
+			_initiatingResume = true;
+            /*if (OnGameResume != null)
             {
                 OnGameResume();
             }
-            gameState = GameState.Running;
+            gameState = GameState.Running;*/
         }
 
         var menuAnimator = _menuButtonImage.GetComponent<Animator>();
@@ -410,6 +407,7 @@ public class GameController : MonoBehaviour
     public void ButtonRestart()
     {
         Restart();
+		//_initiatingResume = true;
         //gameState = GameState.Running;
         _player.GetComponent<PlayerMovement>().disabled = false; // TODO move to playerMovement
 
@@ -504,7 +502,8 @@ public class GameController : MonoBehaviour
 
     private void HandleOnGameRestart(int sceneindex)
     {
-        gameState = GameState.Running;
+        //gameState = GameState.Running;
+		_initiatingResume = true;
         _playButtonImage.enabled = false;
         _playButtonBehaviour.interactable = false;
         _musicButtonImage.enabled = false;

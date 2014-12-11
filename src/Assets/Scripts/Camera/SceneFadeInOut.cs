@@ -181,5 +181,7 @@ public class SceneFadeInOut : MonoBehaviour
         _sceneEnding = true;
         _sceneRunning = false;
         _black.enabled = true;
+
+		transform.localPosition = new Vector3 (0, 0, 1f);
     }
 }
