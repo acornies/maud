@@ -188,17 +188,21 @@ public class TelekinesisController : MonoBehaviour
             x.isClone = true;
         });
 
-        var upAndDownClone = objectWithScripts.GetComponentInChildren<UpAndDown>();
-        var upAndDownReal = _platform.GetComponentInChildren<UpAndDown>();
-        if (upAndDownClone != null && upAndDownReal != null)
-        {
-            upAndDownClone.waitTimer = upAndDownReal.waitTimer;
-            upAndDownClone.speed = upAndDownReal.speed;
-            upAndDownClone.waitTime = upAndDownReal.waitTime;
-            upAndDownClone.maxLocalY = upAndDownReal.maxLocalY;
-            upAndDownClone.minLocalY = upAndDownReal.minLocalY;
-            upAndDownClone.moveDirection = upAndDownReal.moveDirection;
-        }
+        if (_platform != null) 
+		{
+			var upAndDownClone = objectWithScripts.GetComponentInChildren<UpAndDown>();
+			var upAndDownReal = _platform.GetComponentInChildren<UpAndDown>();
+			if (upAndDownClone != null && upAndDownReal != null)
+			{
+				upAndDownClone.waitTimer = upAndDownReal.waitTimer;
+				upAndDownClone.speed = upAndDownReal.speed;
+				upAndDownClone.waitTime = upAndDownReal.waitTime;
+				upAndDownClone.maxLocalY = upAndDownReal.maxLocalY;
+				upAndDownClone.minLocalY = upAndDownReal.minLocalY;
+				upAndDownClone.moveDirection = upAndDownReal.moveDirection;
+			}
+		}
+
     }
 
     void HandleLongTapEnd(Gesture gesture)

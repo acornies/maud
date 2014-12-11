@@ -67,7 +67,7 @@ public class PowerUpBehaviour : MonoBehaviour
     private void HandleOnNewPowerUpLocation(Vector3 location)
     {
         Debug.Log("New pick-up position: " + location);
-        transform.position = location;
+        transform.parent.position = location;
         Reactivate();
     }
 
