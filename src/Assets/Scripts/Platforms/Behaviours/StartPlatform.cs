@@ -30,7 +30,7 @@ public class StartPlatform : PlatformBehaviour
     {
         base.FixedUpdate();
 
-		if (isStopped)return;
+		if (isStopped) return;
 
         if (child.localPosition.y < maxLocalY)
         {

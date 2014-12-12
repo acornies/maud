@@ -24,10 +24,10 @@ public class GameController : MonoBehaviour
     private Image _cartButtonImage;
 	private Button _cartButtonBehaviour;
     private EnergyBar _powerBar;
-    private Text _heightCounter;
     //private CameraMovement _cameraMovement;
     private bool _isMenuOpen;
 
+    public Text heightCounter;
     public GameObject mainCamera;
     public bool playMusic = true;
     public GameState gameState;
@@ -136,7 +136,7 @@ public class GameController : MonoBehaviour
         _telekinesisControl = GameObject.Find("TelekinesisControl");
         _powerBar = GetComponentInChildren<EnergyBar>();
         powerBarRenderer = GetComponentInChildren<EnergyBarRenderer>();
-		_heightCounter = GameObject.Find("HeightCounter").GetComponent<Text>();
+		heightCounter = GameObject.Find("HeightCounter").GetComponent<Text>();
 
 		var menuButton = GameObject.Find ("MenuButton");
 		_menuButtonImage = menuButton.GetComponent<Image>();
@@ -194,9 +194,9 @@ public class GameController : MonoBehaviour
 
     void OnGUI()
     {
-        if (_heightCounter.enabled)
+        if (heightCounter.enabled)
         {
-            _heightCounter.text = highestPoint + "m"; // TODO: localize
+            heightCounter.text = highestPoint + "m"; // TODO: localize
         }
 
         if (!inSafeZone && powerBarRenderer.texturesBackground[0].color.a == 0f)
@@ -407,9 +407,9 @@ public class GameController : MonoBehaviour
     public void ButtonRestart()
     {
         Restart();
-		//_initiatingResume = true;
+		_initiatingResume = true;
         //gameState = GameState.Running;
-        _player.GetComponent<PlayerMovement>().disabled = false; // TODO move to playerMovement
+        _player.GetComponent<PlayerMovement>().disabled = true; // TODO move to playerMovement
 
     }
 
@@ -427,7 +427,6 @@ public class GameController : MonoBehaviour
 
     void HandleOnShowMenuButtons()
     {
-        //Debug.Log("Show play button");
         _playButtonImage.enabled = true;
         _menuButtonImage.enabled = true;
         _recordButtonImage.enabled = true;
@@ -436,16 +435,15 @@ public class GameController : MonoBehaviour
     void HandleOnGameStart()
     {
         gameState = GameState.Running;
-        //_cameraMovement.CameraTarget = _player.FindChild("CharacterTarget");
         _musicButtonImage.enabled = false;
         _cartButtonImage.enabled = false;
         _isMenuOpen = false;
         _menuButtonImage.GetComponent<Animator>().enabled = false;
 
         _playButtonImage.enabled = false;
-        ((RectTransform)_playButtonImage.transform).anchorMin = new Vector2(.5f, .5f);
-        ((RectTransform)_playButtonImage.transform).anchorMax = new Vector2(.5f, .5f);
-        ((RectTransform)_playButtonImage.transform).anchoredPosition = new Vector3(0, 0, 0);
+        _playButtonImage.rectTransform.anchorMin = new Vector2(.5f, .5f);
+        _playButtonImage.rectTransform.anchorMax = new Vector2(.5f, .5f);
+        _playButtonImage.rectTransform.anchoredPosition = new Vector3(0, 0, 0);
 
 
         //ButtonMenu();
@@ -456,7 +454,6 @@ public class GameController : MonoBehaviour
         gameState = GameState.Paused;
         _player.GetComponent<PlayerMovement>().disabled = true;
         _telekinesisControl.SetActive(false);
-        //_mainCamera.GetComponent<BlurEffect>().enabled = true;
         _restartButtonImage.enabled = true;
         _restartButtonBehaviour.interactable = true;
         _playButtonImage.enabled = true;
@@ -474,7 +471,6 @@ public class GameController : MonoBehaviour
         gameState = GameState.Running;
         _player.GetComponent<PlayerMovement>().disabled = false;
         _telekinesisControl.SetActive(true);
-        //_mainCamera.GetComponent<BlurEffect>().enabled = false;
         _restartButtonImage.enabled = false;
         _restartButtonBehaviour.interactable = false;
         _playButtonImage.enabled = false;
@@ -503,7 +499,6 @@ public class GameController : MonoBehaviour
     private void HandleOnGameRestart(int sceneindex)
     {
         //gameState = GameState.Running;
-		_initiatingResume = true;
         _playButtonImage.enabled = false;
         _playButtonBehaviour.interactable = false;
         _musicButtonImage.enabled = false;
