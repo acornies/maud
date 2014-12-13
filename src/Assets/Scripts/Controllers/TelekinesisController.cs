@@ -69,6 +69,12 @@ public class TelekinesisController : MonoBehaviour
         On_PlayerPowersEnd += HandleOnPlayerPowersEnd;
         On_TelekinesisStabilize += HandleOnTelekinesisStabilize;
 		IntroTrigger.OnNewIntroLedgePosition += OnNewIntroLedegePosition;
+		KillBox.On_PlayerDeath += HandleOnPlayerDeath;
+    }
+
+    void HandleOnPlayerDeath ()
+    {
+		TelekinesisEnd ();
     }
 
     void OnDisable()
@@ -95,6 +101,7 @@ public class TelekinesisController : MonoBehaviour
         On_PlayerPowersEnd -= HandleOnPlayerPowersEnd;
         On_TelekinesisStabilize -= HandleOnTelekinesisStabilize;
 		IntroTrigger.OnNewIntroLedgePosition -= OnNewIntroLedegePosition;
+		KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
     }
 
     void Awake()
