@@ -22,7 +22,7 @@ public class TelekinesisTrigger : MonoBehaviour
         if (other.name != "Player" || !GameController.Instance.inSafeZone) return;
         Debug.Log("Turn on tele bar.");
         GameController.Instance.UpdateSafeZone(false);
-        GameController.Instance.heightCounter.rectTransform.anchoredPosition = new Vector2(-20f, -20f);
+        //GameController.Instance.heightCounter.rectTransform.anchoredPosition = new Vector2(-20f, -20f);
         //Destroy(gameObject);
     }
 }

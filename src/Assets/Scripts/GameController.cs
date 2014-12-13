@@ -28,6 +28,7 @@ public class GameController : MonoBehaviour
     private bool _isMenuOpen;
 
     public Text heightCounter;
+	public bool countHeight; 
     public GameObject mainCamera;
     public bool playMusic = true;
     public GameState gameState;
@@ -241,7 +242,7 @@ public class GameController : MonoBehaviour
             _resumeTimer = resumeTime;
         }
 
-        if (_player.position.y > highestPoint)
+        if (_player.position.y > highestPoint && countHeight)
         {
             var roundedPosition = Mathf.Round(_player.position.y);
             highestPoint = roundedPosition;

@@ -121,9 +121,10 @@ public class CameraMovement : MonoBehaviour
 				_zoomToGame = false;
 				if (OnMovePlayerToGamePosition != null)
 				{
-					OnMovePlayerToGamePosition(new Vector3(0, 10f, GameController.Instance.playerZPosition));
+					OnMovePlayerToGamePosition(new Vector3(0, 2, GameController.Instance.playerZPosition));
 				}
 				//isTracking = true;
+				GameController.Instance.heightCounter.rectTransform.anchoredPosition = new Vector2(-20f, -20f);
 			}
 
 		}

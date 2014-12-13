@@ -37,12 +37,15 @@ public class StartPlatform : PlatformBehaviour
             child.localPosition = Vector3.Lerp(child.localPosition, new Vector3(child.localPosition.x, maxLocalY, child.localPosition.z), speed * Time.deltaTime);
         }
 
-        if (!(child.localPosition.y >= (maxLocalY - 0.05f)) || _cameraMovement.MinXandY.y != 1) return;
+		if (!(child.localPosition.y >= (maxLocalY - 7f)) || _cameraMovement.MinXandY.y != -6f) return;
+
+		_playerMovement.disabled = false;
+
+        if (!(child.localPosition.y >= (maxLocalY - 0.01f)) || _cameraMovement.MinXandY.y != -6f) return;
 
         _cameraMovement.MinXandY = new Vector2(0, cameraUpdateY);
         cameraSpeed = 4.5f;
         //Debug.Log("Update min camera to " + cameraUpdateY);
-		//_playerMovement.disabled = false;
         
     }
 
@@ -63,7 +66,8 @@ public class StartPlatform : PlatformBehaviour
 		{
 			isStopped = false;
 			_cameraMovement.isTracking = true;
-			_playerMovement.disabled = false;
+			//_playerMovement.disabled = false;
+			GameController.Instance.countHeight = true; // TODO: don't access here, move to event or public method
 		}
     }
 
