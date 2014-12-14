@@ -6,6 +6,8 @@ using LegendPeak.Platforms;
 
 public class PlatformController : MonoBehaviour
 {
+    public int TutorialHoldPlatform = 59;
+    
     //private Transform _currentPlatformObject;
     private int _currentPlatform;
     private PlatformBuilder _platformBuilder;
@@ -135,10 +137,21 @@ public class PlatformController : MonoBehaviour
 
                 if (!levelPlatforms.TryGetValue(nextPlatform, out newPlatform))
                 {
+                    //TODO: Fix with convention
+                    if (nextPlatform == TutorialHoldPlatform) // insert hold tutorial
+                    {
+                        newPlatform =
+                            (GameObject) Instantiate(Resources.Load<GameObject>("Prefabs/Platforms/Tutorial_Hold"),
+                                new Vector3(0, yAxisMultiplier, trunkZAxis), Quaternion.identity);
 
-                    newPlatform =
-                        (GameObject)Instantiate(platformTypes[_platformBuilder.GetPlatformPrefabByNumber(nextPlatform)],
-                            new Vector3(0, yAxisMultiplier, trunkZAxis), Quaternion.identity);
+                        Debug.Log("Loaded hold tutorial platform");
+                    }
+                    else
+                    {
+                        newPlatform =
+                       (GameObject)Instantiate(platformTypes[_platformBuilder.GetPlatformPrefabByNumber(nextPlatform)],
+                           new Vector3(0, yAxisMultiplier, trunkZAxis), Quaternion.identity);
+                    }        
 
                     //yAxisMultiplier += newPlatform.transform.localScale.y + platformSpacing;
 
@@ -183,7 +196,7 @@ public class PlatformController : MonoBehaviour
         {
             if (upAndDownComponent != null) //TODO: change to Editor value
             {
-                upAndDownComponent.speed = Random.Range(1f, 3f);
+                upAndDownComponent.speed = Random.Range(1.5f, 3f);
                 upAndDownComponent.cameraSpeed = upAndDownComponent.speed / 2;
                 upAndDownComponent.waitTime = 0.2f;
             }
@@ -217,6 +230,11 @@ public class PlatformController : MonoBehaviour
 
     private float GetRandomRotation(int index)
     {
+        if (index == TutorialHoldPlatform)
+        {
+            return 60f;
+        }
+
         if (index > 60)
         {
             maxRotationLeft = 90f;
