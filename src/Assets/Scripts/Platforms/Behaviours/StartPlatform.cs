@@ -19,6 +19,33 @@ public class StartPlatform : PlatformBehaviour
     public delegate void ReturnCameraSpeed();
     public static event ReturnCameraSpeed OnReturnCameraSpeed;
 
+    public override void OnEnable()
+    {
+        CameraMovement.OnMovePlayerToGamePosition += HandleOnMovePlayerToGamePosition;
+    }
+
+    private void HandleOnMovePlayerToGamePosition(Vector3 playerposition)
+    {
+        isStopped = false;
+        //_cameraMovement.isTracking = true;
+        //_playerMovement.disabled = false;
+        GameController.Instance.countHeight = true; // TODO: don't access here, move to event or public method
+    }
+
+    public override void OnDisable()
+    {
+        UnsubscribeEvent();
+    }
+
+    public override void OnDestroy()
+    {
+        UnsubscribeEvent();
+    }
+
+    public override void UnsubscribeEvent()
+    {
+        CameraMovement.OnMovePlayerToGamePosition -= HandleOnMovePlayerToGamePosition;
+    }
 
     void Awake()
     {
@@ -41,11 +68,13 @@ public class StartPlatform : PlatformBehaviour
 
 		//_playerMovement.disabled = false;
 
-        if (!(child.localPosition.y >= (maxLocalY - 0.1f)) || _cameraMovement.MinXandY.y != -6f) return;
+        //if (!(child.localPosition.y >= (maxLocalY - 0.1f))) return;
 
-        _cameraMovement.MinXandY = new Vector2(0, cameraUpdateY);
+        /*_cameraMovement.MinXandY = new Vector2(0, cameraUpdateY);
         cameraSpeed = 4.5f;
 		_playerMovement.disabled = false;
+        _cameraMovement.isTracking = true;
+         * */
         //Debug.Log("Update min camera to " + cameraUpdateY);
         
     }
@@ -63,13 +92,15 @@ public class StartPlatform : PlatformBehaviour
             OnUpdateCameraSpeed(cameraSpeed);
         }
 
-		if (isStopped)
+        _cameraMovement.isTracking = true;
+        _playerMovement.disabled = false;
+
+		/*if (isStopped)
 		{
 			isStopped = false;
-			_cameraMovement.isTracking = true;
-			//_playerMovement.disabled = false;
+			
 			GameController.Instance.countHeight = true; // TODO: don't access here, move to event or public method
-		}
+		}*/
     }
 
     public override void HandlePlayerAirborne(Transform player)

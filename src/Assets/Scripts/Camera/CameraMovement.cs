@@ -3,12 +3,12 @@ using System.Collections;
 
 public class CameraMovement : MonoBehaviour
 {
-	private bool _zoomToGame;
-	private float _zoomTimer;
+    private bool _zoomToGame;
+    private float _zoomTimer;
 
-	public float zoomWarmTime = 0.5f;
-	public Vector3 gameCameraPosition;
-	public float zoomSpeed = 10f;
+    public float zoomWarmTime = 0.5f;
+    public Vector3 gameCameraPosition;
+    public float zoomSpeed = 10f;
     public bool isTracking;
     public float XMargin = 1.0f;
     public float YMargin = 1.0f;
@@ -26,31 +26,31 @@ public class CameraMovement : MonoBehaviour
     public delegate void DestroyLowerPlatforms(int platformNumber, int childPlatformToDeleteIndex);
     public static event DestroyLowerPlatforms On_DestroyLowerPlatforms;
 
-	public delegate void MovePlayerToGamePosition(Vector3 playerPosition);
-	public static event MovePlayerToGamePosition OnMovePlayerToGamePosition;
+    public delegate void MovePlayerToGamePosition(Vector3 playerPosition);
+    public static event MovePlayerToGamePosition OnMovePlayerToGamePosition;
 
     // Subscribe to events
     void OnEnable()
     {
         PlatformController.On_ReachedCheckpoint += UpdateMinYFromCheckpoint;
-        PlatformController.On_NewPlatform += HandleNewPlatform;;
+        PlatformController.On_NewPlatform += HandleNewPlatform; ;
         KillBox.On_PlayerDeath += HandlePlayerDeath;
         BoundaryController.On_PlayerDeath += HandlePlayerDeath;
         GameController.OnPlayerResurrection += HandlePlayerResurrection;
         UpAndDown.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
         UpAndDown.OnReturnCameraSpeed += HandleReturnCameraSpeed;
         StartPlatform.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
-		StartPlatform.OnReturnCameraSpeed += HandleReturnCameraSpeed;
-		//IntroTrigger.OnNewIntroLedgePosition += HandleNewIntroLedgePosition;
-		IntroTrigger.OnZoomToGamePosition += HandleOnGameStart;
+        StartPlatform.OnReturnCameraSpeed += HandleReturnCameraSpeed;
+        //IntroTrigger.OnNewIntroLedgePosition += HandleNewIntroLedgePosition;
+        IntroTrigger.OnZoomToGamePosition += HandleOnGameStart;
     }
 
-	private void HandleOnGameStart()
-	{
-		_zoomToGame = true;
-		_zoomTimer = zoomWarmTime;
-	    //isTracking = true;
-	}
+    private void HandleOnGameStart()
+    {
+        _zoomToGame = true;
+        _zoomTimer = zoomWarmTime;
+        //isTracking = true;
+    }
 
     private void HandleReturnCameraSpeed()
     {
@@ -85,14 +85,14 @@ public class CameraMovement : MonoBehaviour
         UpAndDown.OnUpdateCameraSpeed -= HandleUpdateCameraSpeed;
         UpAndDown.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
         StartPlatform.OnUpdateCameraSpeed -= HandleUpdateCameraSpeed;
-		StartPlatform.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
-		//IntroTrigger.OnNewIntroLedgePosition -= HandleNewIntroLedgePosition;
+        StartPlatform.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
+        //IntroTrigger.OnNewIntroLedgePosition -= HandleNewIntroLedgePosition;
         IntroTrigger.OnZoomToGamePosition -= HandleOnGameStart;
     }
 
     void Awake()
     {
-        
+
     }
 
     bool CheckXMargin()
@@ -105,30 +105,39 @@ public class CameraMovement : MonoBehaviour
         return Mathf.Abs(transform.position.y - this.CameraTarget.position.y) > this.YMargin;
     }
 
-	void Update()
-	{
-		if (_zoomToGame)
-		{
-			_zoomTimer -= Time.deltaTime;
-			if (_zoomTimer <= 0){
-				transform.position = Vector3.Lerp(transform.position, gameCameraPosition, zoomSpeed * Time.deltaTime);
-				_zoomTimer = 0;
-			}
+    void Update()
+    {
+        if (_zoomToGame)
+        {
+            _zoomTimer -= Time.deltaTime;
+            if (_zoomTimer <= 0)
+            {
+                transform.position = Vector3.Lerp(transform.position, gameCameraPosition, zoomSpeed * Time.deltaTime);
+                _zoomTimer = 0;
+            }
 
-			if (transform.position.z >= (gameCameraPosition.z - 0.1f)){
-				//Debug.Log("Fully zoomed in");
-				transform.position = new Vector3(transform.position.x, transform.position.y, gameCameraPosition.z);
-				_zoomToGame = false;
-				if (OnMovePlayerToGamePosition != null)
-				{
-					OnMovePlayerToGamePosition(new Vector3(0, 2, GameController.Instance.playerZPosition));
-				}
-				//isTracking = true;
-				GameController.Instance.heightCounter.rectTransform.anchoredPosition = new Vector2(-20f, -20f);
-			}
+            if (transform.position.z >= (gameCameraPosition.z - 1f))
+            {
+                if (OnMovePlayerToGamePosition != null && CameraTarget.parent.position.z != GameController.Instance.playerZPosition)
+                {
+                    Debug.Log("Move player once");
+                    OnMovePlayerToGamePosition(new Vector3(-1, 23.5f, GameController.Instance.playerZPosition));
+                }
+            }
 
-		}
-	}
+            if (transform.position.z >= (gameCameraPosition.z - 0.1f))
+            {
+                //Debug.Log("Fully zoomed in");
+                transform.position = new Vector3(transform.position.x, transform.position.y, gameCameraPosition.z);
+                _zoomToGame = false;
+                isTracking = true;
+                //isTracking = true;
+                GameController.Instance.heightCounter.rectTransform.anchoredPosition = new Vector2(-20f, -20f);
+                GameController.Instance.countHeight = true;
+            }
+
+        }
+    }
 
     void LateUpdate()
     {
