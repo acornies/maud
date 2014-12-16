@@ -116,7 +116,7 @@ public class CameraMovement : MonoBehaviour
                 _zoomTimer = 0;
             }
 
-            if (transform.position.z >= (gameCameraPosition.z - 1f))
+            if (transform.position.z >= (gameCameraPosition.z - 2f))
             {
                 if (OnMovePlayerToGamePosition != null && CameraTarget.parent.position.z != GameController.Instance.playerZPosition)
                 {
@@ -130,7 +130,10 @@ public class CameraMovement : MonoBehaviour
                 //Debug.Log("Fully zoomed in");
                 transform.position = new Vector3(transform.position.x, transform.position.y, gameCameraPosition.z);
                 _zoomToGame = false;
-                isTracking = true;
+                if (!GameController.Instance.playerIsDead)
+                {
+                    isTracking = true;   
+                }
                 //isTracking = true;
                 GameController.Instance.heightCounter.rectTransform.anchoredPosition = new Vector2(-20f, -20f);
                 GameController.Instance.countHeight = true;
