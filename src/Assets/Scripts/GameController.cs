@@ -92,6 +92,14 @@ public class GameController : MonoBehaviour
         OnGameRestart += HandleOnGameRestart;
         PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
+        
+    }
+
+    private void HandleOnReadyToRecord(bool isReady)
+    {
+        _recordButtonBehaviour.interactable = isReady && Everyplay.IsRecordingSupported();
+        //GameObject.Find("EveryplayDebug").GetComponent<Text>().text = isReady.ToString();
+        Debug.Log("Turn on record button");
     }
 
     void OnDisable()
@@ -116,6 +124,7 @@ public class GameController : MonoBehaviour
         OnGameRestart -= HandleOnGameRestart;
         PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
+        Everyplay.ReadyForRecording -= HandleOnReadyToRecord;
     }
 
     // Use this for initialization
@@ -190,7 +199,7 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-
+        Everyplay.ReadyForRecording += HandleOnReadyToRecord;
     }
 
     void OnGUI()
@@ -395,8 +404,8 @@ public class GameController : MonoBehaviour
             _musicButtonImage.enabled = true;
             _cartButtonImage.enabled = true;
             // TODO: FUCKING DISABLE HAND BUTTON FOR NOW
-            _cartButtonBehaviour.interactable = true; // TODO enable when ready
-			_cartButtonBehaviour.interactable = false; // TODO enable when ready
+           // _cartButtonBehaviour.interactable = true; // TODO enable when ready
+			//_cartButtonBehaviour.interactable = false; // TODO enable when ready
         }
         else if (!_isMenuOpen && gameState == GameState.Started)
         {
@@ -462,8 +471,8 @@ public class GameController : MonoBehaviour
         _musicButtonImage.enabled = true;
         _cartButtonImage.enabled = true;
         // TODO: FUCKING DISABLE HAND BUTTON FOR NOW
-        _cartButtonBehaviour.interactable = true; // TODO enable when ready
-        _cartButtonBehaviour.interactable = false; // TODO enable when ready
+        //_cartButtonBehaviour.interactable = true; // TODO enable when ready
+        //_cartButtonBehaviour.interactable = false; // TODO enable when ready
         _isMenuOpen = true;
     }
 
