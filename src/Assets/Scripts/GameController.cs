@@ -494,6 +494,10 @@ public class GameController : MonoBehaviour
     private void HandleOnPowerPickUp(float powerToAdd)
     {
         //Debug.Log("Add " + powerToAdd + " to power meter.");
+		if (inSafeZone) 
+		{
+			UpdateSafeZone(false);		
+		}
         powerMeter += powerToAdd;
     }
 
