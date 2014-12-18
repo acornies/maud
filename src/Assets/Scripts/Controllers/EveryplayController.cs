@@ -87,7 +87,7 @@ public class EveryplayController : MonoBehaviour
 
     void HandleOnReadyForRecording(bool serviceReady)
     {
-        GameObject.Find("EveryplayDebug").GetComponent<Text>().text = "Support";
+        //GameObject.Find("EveryplayDebug").GetComponent<Text>().text = "Support";
 		_serviceReady = serviceReady;
 		_recordButtonBehaviour.interactable = serviceReady && Everyplay.IsRecordingSupported();
     }
@@ -107,7 +107,7 @@ public class EveryplayController : MonoBehaviour
 			Everyplay.StartRecording();
 		}
 
-		GameObject.Find ("EveryplayDebug").GetComponent<Text> ().text = isRecording.ToString ();
+		//GameObject.Find ("EveryplayDebug").GetComponent<Text> ().text = isRecording.ToString ();
 	}
 
 	public void StopRecording()
