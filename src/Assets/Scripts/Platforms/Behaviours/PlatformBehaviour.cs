@@ -105,6 +105,12 @@ public class PlatformBehaviour : MonoBehaviour
             player.parent = child;
         }*/
 
+		if (GameController.Instance.inSafeZone && PlatformController.Instance.GetCurrentPlatformNumber() >= 11) 
+		{
+			Debug.Log("Exit safe zone");
+			GameController.Instance.UpdateSafeZone(false);
+		}
+
         if (innerLight == null || !Mathf.Approximately(innerLight.intensity, 0)) return;
 
         //innerLight.color = GetPowerBarColor();

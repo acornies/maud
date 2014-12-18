@@ -91,15 +91,7 @@ public class GameController : MonoBehaviour
         OnGameOver += HandleOnGameOver;
         OnGameRestart += HandleOnGameRestart;
         PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickUp;
-        IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
-        
-    }
-
-    private void HandleOnReadyToRecord(bool isReady)
-    {
-        _recordButtonBehaviour.interactable = isReady && Everyplay.IsRecordingSupported();
-        //GameObject.Find("EveryplayDebug").GetComponent<Text>().text = isReady.ToString();
-        Debug.Log("Turn on record button");
+        IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;      
     }
 
     void OnDisable()
@@ -124,7 +116,7 @@ public class GameController : MonoBehaviour
         OnGameRestart -= HandleOnGameRestart;
         PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
-        Everyplay.ReadyForRecording -= HandleOnReadyToRecord;
+        //Everyplay.ReadyForRecording -= HandleOnReadyToRecord;
     }
 
     // Use this for initialization
@@ -199,7 +191,13 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        Everyplay.ReadyForRecording += HandleOnReadyToRecord;
+        //Everyplay.ReadyForRecording += HandleOnReadyToRecord;      
+    }
+
+    private void HandleOnReadyToRecord(bool serviceReady)
+    {
+        _recordButtonBehaviour.interactable = serviceReady && Everyplay.IsRecordingSupported();
+        GameObject.Find("EveryplayDebug").GetComponent<Text>().text = serviceReady.ToString();
     }
 
     void OnGUI()
@@ -440,6 +438,7 @@ public class GameController : MonoBehaviour
         _playButtonImage.enabled = true;
         _menuButtonImage.enabled = true;
         _recordButtonImage.enabled = true;
+        _recordButtonBehaviour.interactable = EveryplayController.Instance.isReady;
     }
 
     void HandleOnGameStart()
@@ -455,7 +454,8 @@ public class GameController : MonoBehaviour
         _playButtonImage.rectTransform.anchorMax = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchoredPosition = new Vector3(0, 0, 0);
 
-
+        // TODO: remove
+        GameObject.Find("EveryplayDebug").GetComponent<Text>().enabled = false;
         //ButtonMenu();
     }
 
@@ -503,6 +503,10 @@ public class GameController : MonoBehaviour
     private void HandleOnPowerPickUp(float powerToAdd)
     {
         //Debug.Log("Add " + powerToAdd + " to power meter.");
+		if (inSafeZone) 
+		{
+			UpdateSafeZone(false);		
+		}
         powerMeter += powerToAdd;
     }
 

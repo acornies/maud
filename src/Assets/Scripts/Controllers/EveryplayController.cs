@@ -1,14 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class EveryplayController : MonoBehaviour
 {
+    public static EveryplayController Instance { get; private set; }
+    
     public bool isReady;
-    private bool _isSupported;
 
     void Awake()
     {
         //_isSupported = Everyplay.IsRecordingSupported();
+        if (Instance == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void OnEnable()
@@ -44,10 +55,11 @@ public class EveryplayController : MonoBehaviour
 
     }
 
-    public void HandleOnReadyForRecording(bool isReady)
+    public void HandleOnReadyForRecording(bool serviceReady)
     {
         //Debug.Log("Everyplay ready? " + isReady);
-        this.isReady = isReady;
+        GameObject.Find("EveryplayDebug").GetComponent<Text>().text = serviceReady.ToString();
+        this.isReady = serviceReady && Everyplay.IsRecordingSupported();
     }
 
 }
