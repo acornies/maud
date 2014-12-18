@@ -10,10 +10,11 @@ TextureImporter:
     21300010: Back
     21300012: RightHanded
     21300014: LeftHanded
-    21300016: Record
+    21300016: Everyplay
     21300018: Cart
     21300020: Music
     21300022: Heart
+    21300024: Share
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -135,13 +136,13 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: Record
+    - name: Everyplay
       rect:
         serializedVersion: 2
-        x: 502
-        y: 537
-        width: 431
-        height: 431
+        x: 511
+        y: 543
+        width: 422
+        height: 423
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -172,6 +173,16 @@ TextureImporter:
         y: 596
         width: 435
         height: 374
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Share
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 34
+        width: 435
+        height: 436
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

@@ -152,13 +152,13 @@ public class GameController : MonoBehaviour
 		_playButtonImage = playButton.GetComponent<Image>();
 		_playButtonBehaviour = playButton.GetComponent<Button>();
 
-		var recordButton = GameObject.Find ("RecordButton");
-		_recordButtonImage = recordButton.GetComponent<Image>();
-		_recordButtonBehaviour = recordButton.GetComponent<Button>();
-
 		var musicButton = GameObject.Find ("MusicButton");
 		_musicButtonImage = musicButton.GetComponent<Image>();
 		_musicButtonBehaviour = musicButton.GetComponent<Button>();
+
+		var recordButton = GameObject.Find ("RecordButton");
+		_recordButtonImage = recordButton.GetComponent<Image>();
+		_recordButtonBehaviour = recordButton.GetComponent<Button>();
 
 		var cartButton = GameObject.Find ("CartButton");
         _cartButtonImage = cartButton.GetComponent<Image>();
@@ -191,12 +191,13 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        //Everyplay.ReadyForRecording += HandleOnReadyToRecord;      
+        //Everyplay.ReadyForRecording += HandleOnReadyToRecord;
+		//_recordButtonBehaviour.interactable = EveryplayController.Instance.isReady;
     }
 
     private void HandleOnReadyToRecord(bool serviceReady)
     {
-        _recordButtonBehaviour.interactable = serviceReady && Everyplay.IsRecordingSupported();
+        //_recordButtonBehaviour.interactable = serviceReady && Everyplay.IsRecordingSupported();
         GameObject.Find("EveryplayDebug").GetComponent<Text>().text = serviceReady.ToString();
     }
 
@@ -436,9 +437,9 @@ public class GameController : MonoBehaviour
     void HandleOnShowMenuButtons()
     {
         _playButtonImage.enabled = true;
-        _menuButtonImage.enabled = true;
-        _recordButtonImage.enabled = true;
-        _recordButtonBehaviour.interactable = EveryplayController.Instance.isReady;
+        //_menuButtonImage.enabled = true;
+        //_recordButtonImage.enabled = true;
+        //_recordButtonBehaviour.interactable = EveryplayController.Instance.isReady;
     }
 
     void HandleOnGameStart()
@@ -455,7 +456,7 @@ public class GameController : MonoBehaviour
         _playButtonImage.rectTransform.anchoredPosition = new Vector3(0, 0, 0);
 
         // TODO: remove
-        GameObject.Find("EveryplayDebug").GetComponent<Text>().enabled = false;
+        //GameObject.Find("EveryplayDebug").GetComponent<Text>().enabled = false;
         //ButtonMenu();
     }
 

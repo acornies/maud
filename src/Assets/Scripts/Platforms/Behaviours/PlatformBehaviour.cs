@@ -107,7 +107,7 @@ public class PlatformBehaviour : MonoBehaviour
 
 		if (GameController.Instance.inSafeZone && PlatformController.Instance.GetCurrentPlatformNumber() >= 11) 
 		{
-			Debug.Log("Exit safe zone");
+			//Debug.Log("Exit safe zone");
 			GameController.Instance.UpdateSafeZone(false);
 		}
 
