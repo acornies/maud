@@ -116,24 +116,25 @@ public class CameraMovement : MonoBehaviour
                 _zoomTimer = 0;
             }
 
-            if (transform.position.z >= (gameCameraPosition.z - 2f))
+            /*if (transform.position.z >= (gameCameraPosition.z - 2f))
             {
-                if (OnMovePlayerToGamePosition != null && CameraTarget.parent.position.z != GameController.Instance.playerZPosition)
-                {
-                    Debug.Log("Move player once");
-                    OnMovePlayerToGamePosition(new Vector3(-1, 23.5f, GameController.Instance.playerZPosition));
-                }
-            }
+                
+            }*/
 
             if (transform.position.z >= (gameCameraPosition.z - 0.1f))
             {
                 //Debug.Log("Fully zoomed in");
+				if (OnMovePlayerToGamePosition != null && CameraTarget.parent.position.z != GameController.Instance.playerZPosition)
+				{
+					//Debug.Log("Move player once");
+					OnMovePlayerToGamePosition(new Vector3(-1, 23.5f, GameController.Instance.playerZPosition));
+				}
                 transform.position = new Vector3(transform.position.x, transform.position.y, gameCameraPosition.z);
                 _zoomToGame = false;
-                if (!GameController.Instance.playerIsDead)
+                /*if (!GameController.Instance.playerIsDead)
                 {
                     isTracking = true;   
-                }
+                }*/
                 //isTracking = true;
                 GameController.Instance.heightCounter.rectTransform.anchoredPosition = new Vector2(-20f, -20f);
                 GameController.Instance.countHeight = true;

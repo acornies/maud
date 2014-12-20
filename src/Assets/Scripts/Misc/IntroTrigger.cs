@@ -4,8 +4,11 @@ using System.Collections;
 public class IntroTrigger : MonoBehaviour
 {
     private Animator _animator;
+	private bool _canSkip = true;
     
     public Vector3 introLedgePosition;
+	public float skipIntroSpeed = 10f;
+	public float startSpeed = 1.5f;
 
     public delegate void NewIntroLedgePosition(Vector3 newPosition);
     public static event NewIntroLedgePosition OnNewIntroLedgePosition;
@@ -17,11 +20,22 @@ public class IntroTrigger : MonoBehaviour
     void OnEnable()
     {
         GameController.OnGameStart += HandleOnGameStart;
+		EasyTouch.On_SimpleTap += HandleOnSimpleTap;
     }
 
-    private void HandleOnGameStart()
+	private void HandleOnGameStart()
+	{
+		_canSkip = false;
+		_animator.speed = startSpeed;
+		_animator.SetBool("started", true);
+	}
+
+	private void HandleOnSimpleTap(Gesture gesture)
     {
-        _animator.SetBool("started", true);
+		if (_canSkip)
+		{
+			_animator.speed = skipIntroSpeed;
+		}
     }
 
     void OnDisable()
@@ -37,6 +51,7 @@ public class IntroTrigger : MonoBehaviour
     void UnsubscribeEvent()
     {
         GameController.OnGameStart -= HandleOnGameStart;
+		EasyTouch.On_SimpleTap -= HandleOnSimpleTap;
     }
 
     void Awake()

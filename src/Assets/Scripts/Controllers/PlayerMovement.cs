@@ -275,7 +275,7 @@ public class PlayerMovement : MonoBehaviour
         //disabled = false;
         transform.rotation = new Quaternion(0, 0, 0, transform.rotation.w);
         _isFacingCamera = false;
-        disabled = false;
+        //disabled = false;
     }
 
     void HandleOnShowMenuButtons()

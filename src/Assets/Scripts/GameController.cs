@@ -21,6 +21,7 @@ public class GameController : MonoBehaviour
 	private Button _recordButtonBehaviour;
     private Image _musicButtonImage;
 	private Button _musicButtonBehaviour;
+	private Button _shareButtonBehaviour;
     //private Image _cartButtonImage;
 	//private Button _cartButtonBehaviour;
     private EnergyBar _powerBar;
@@ -161,6 +162,9 @@ public class GameController : MonoBehaviour
 		_recordButtonImage = recordButton.GetComponent<Image>();
 		_recordButtonBehaviour = recordButton.GetComponent<Button>();
 
+		var shareButton = GameObject.Find ("ShareButton");
+		_shareButtonBehaviour = shareButton.GetComponent<Button> ();
+
 		//var cartButton = GameObject.Find ("CartButton");
         //_cartButtonImage = cartButton.GetComponent<Image>();
 		//_cartButtonBehaviour = cartButton.GetComponent<Button> ();
@@ -253,8 +257,8 @@ public class GameController : MonoBehaviour
 
         if (_player.position.y > highestPoint && countHeight)
         {
-            var roundedPosition = Mathf.Round(_player.position.y);
-            highestPoint = roundedPosition;
+            var roundedPosition = Mathf.Round(_player.position.y) - highestPoint;
+            highestPoint += roundedPosition;
             if (OnMaxHeightIncrease != null)
             {
                 OnMaxHeightIncrease(roundedPosition * SkyboxCameraMovement.speedMultiplier);
@@ -551,6 +555,8 @@ public class GameController : MonoBehaviour
         _playButtonImage.enabled = false;
         _playButtonBehaviour.interactable = false;
         _musicButtonImage.enabled = false;
+		_shareButtonBehaviour.interactable = false;
+
         //_cartButtonImage.enabled = false;
         _menuButtonImage.GetComponent<Animator>().enabled = false;
     }
