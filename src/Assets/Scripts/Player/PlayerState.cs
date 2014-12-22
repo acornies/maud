@@ -6,11 +6,39 @@ using LegendPeak.Player;
 
 public class PlayerState : MonoBehaviour
 {
-    public string dataPath;
+	private float lastTime;
 
+	public string dataPath;
     public PlayerState Instance { get; private set; }
-
     public PlayerData Data { get; private set; }
+
+	void OnEnable()
+	{
+		//GameController.OnGameStart += HandleOnGameStart;
+		GameController.OnGamePause += HandleOnGamePause;
+		//OnGameResume += HandleOnGameResume;
+		GameController.OnGameOver += HandleOnGameOver;
+		GameController.OnGameRestart += HandleOnGameRestart;     
+	}
+
+	void OnDisable()
+	{
+		UnsubscribeEvent();
+	}
+	
+	void OnDestroy()
+	{
+		UnsubscribeEvent();
+	}
+
+	void UnsubscribeEvent()
+	{
+		//GameController.OnGameStart -= HandleOnGameStart;
+		GameController.OnGamePause -= HandleOnGamePause;
+		//OnGameResume -= HandleOnGameResume;
+		GameController.OnGameOver -= HandleOnGameOver;
+		GameController.OnGameRestart -= HandleOnGameRestart;
+	}
 
     void Awake()
     {
@@ -34,8 +62,25 @@ public class PlayerState : MonoBehaviour
 
     public void Save()
     {
-        var binaryFormatter = new BinaryFormatter();
-        var playerFile = File.Open(string.Format(dataPath, Application.persistentDataPath), FileMode.Open);
+		FileStream playerFile;
+		var binaryFormatter = new BinaryFormatter();
+
+		if (GameController.Instance.highestPoint > Data.highestPoint) 
+		{
+			Data.highestPoint = GameController.Instance.highestPoint;
+			//Data.highestPoint = 0;
+		}
+
+		Debug.Log("Before: " + lastTime);
+		var toAdd = GameController.Instance.highestPoint - lastTime;
+		lastTime = GameController.Instance.highestPoint;
+		Debug.Log ("After: " + lastTime);
+
+		Debug.Log("Added: " + toAdd);
+		Data.totalHeight += toAdd;
+		//Data.totalHeight = 0;
+
+		playerFile = File.Open(string.Format(dataPath, Application.persistentDataPath), FileMode.OpenOrCreate);       
         
         binaryFormatter.Serialize(playerFile, Data);
         playerFile.Close();
@@ -47,7 +92,9 @@ public class PlayerState : MonoBehaviour
 
         var binaryFormatter = new BinaryFormatter();
         var playerFile = File.Open(string.Format(dataPath, Application.persistentDataPath), FileMode.Open);
+
         Data = binaryFormatter.Deserialize(playerFile) as PlayerData;
+		playerFile.Close ();
     }
 
     // Update is called once per frame
@@ -55,4 +102,19 @@ public class PlayerState : MonoBehaviour
     {
 
     }
+
+	void HandleOnGamePause()
+	{
+		this.Save ();
+	}
+
+	void HandleOnGameOver()
+	{
+		this.Save ();
+	}
+
+	void HandleOnGameRestart(int levelToLoad)
+	{
+		lastTime = 0;
+	}
 }

@@ -257,8 +257,8 @@ public class GameController : MonoBehaviour
 
         if (_player.position.y > highestPoint && countHeight)
         {
-            var roundedPosition = Mathf.Round(_player.position.y) - highestPoint;
-            highestPoint += roundedPosition;
+            var roundedPosition = Mathf.Round(_player.position.y);
+            highestPoint = roundedPosition;
             if (OnMaxHeightIncrease != null)
             {
                 OnMaxHeightIncrease(roundedPosition * SkyboxCameraMovement.speedMultiplier);
@@ -305,7 +305,7 @@ public class GameController : MonoBehaviour
             initiatingRestart = true;
             _menuButtonBehaviour.interactable = false;
             _restartButtonBehaviour.interactable = true;
-            if (OnGameOver != null)
+            if (OnGameOver != null && gameState != GameState.Over)
             {
                 OnGameOver();
             }

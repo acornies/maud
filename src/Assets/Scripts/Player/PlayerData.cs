@@ -8,8 +8,8 @@ namespace LegendPeak.Player
     [Serializable]
     public class PlayerData
     {
-        public int highestPoint { get; set; }
-        public int totalHeight { get; set; }
+        public float highestPoint { get; set; }
+        public float totalHeight { get; set; }
         public MonetizedState monetizedState { get; set; }
     }
 }
