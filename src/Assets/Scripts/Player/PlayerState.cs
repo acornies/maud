@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using System.Collections;
@@ -42,7 +43,9 @@ public class PlayerState : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null)
+		Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
+		
+		if (Instance == null)
         {
             DontDestroyOnLoad(gameObject);
             Instance = this;
@@ -80,7 +83,14 @@ public class PlayerState : MonoBehaviour
 		Data.totalHeight += toAdd;
 		//Data.totalHeight = 0;
 
-		playerFile = File.Open(string.Format(dataPath, Application.persistentDataPath), FileMode.OpenOrCreate);       
+		if (!File.Exists(string.Format(dataPath, Application.persistentDataPath)))
+		{
+			playerFile = File.Create(string.Format(dataPath, Application.persistentDataPath));
+		}
+		else
+		{
+			playerFile = File.OpenWrite(string.Format(dataPath, Application.persistentDataPath));
+		}		      
         
         binaryFormatter.Serialize(playerFile, Data);
         playerFile.Close();
@@ -88,13 +98,19 @@ public class PlayerState : MonoBehaviour
 
     public void Load()
     {
-        if (!File.Exists(string.Format(dataPath, Application.persistentDataPath))) return;
-
-        var binaryFormatter = new BinaryFormatter();
-        var playerFile = File.Open(string.Format(dataPath, Application.persistentDataPath), FileMode.Open);
-
-        Data = binaryFormatter.Deserialize(playerFile) as PlayerData;
-		playerFile.Close ();
+        if (!File.Exists(string.Format(dataPath, Application.persistentDataPath)))
+		{
+			Data = new PlayerData();
+		}
+		else
+		{
+			var binaryFormatter = new BinaryFormatter();
+			var playerFile = File.Open(string.Format(dataPath, Application.persistentDataPath), FileMode.Open);
+			
+			Data = binaryFormatter.Deserialize(playerFile) as PlayerData;
+			playerFile.Close ();
+		}
+       
     }
 
     // Update is called once per frame
