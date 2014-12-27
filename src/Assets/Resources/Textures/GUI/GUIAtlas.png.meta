@@ -7,7 +7,7 @@ TextureImporter:
     21300004: SoundOn
     21300006: Cog
     21300008: Restart
-    21300010: Back
+    21300010: Stop
     21300012: RightHanded
     21300014: LeftHanded
     21300016: Capture
@@ -109,13 +109,13 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: Back
+    - name: Stop
       rect:
         serializedVersion: 2
-        x: 1152
-        y: 1040
-        width: 432
-        height: 432
+        x: 1167
+        y: 1123
+        width: 325
+        height: 323
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

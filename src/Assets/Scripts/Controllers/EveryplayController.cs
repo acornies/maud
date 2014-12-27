@@ -11,6 +11,8 @@ public class EveryplayController : MonoBehaviour
 
 	public static EveryplayController Instance { get; private set; }
     
+	public Sprite recordStop;
+	public Sprite recordCapture;
     public bool isReady 
 	{
 		get
@@ -84,13 +86,15 @@ public class EveryplayController : MonoBehaviour
     // Update is called once per frame
     void OnGUI()
     {
-		if (Everyplay.IsRecording() && !_recIndicator.enabled)
+		if (this.isRecording && !_recIndicator.enabled)
 		{
 			_recIndicator.enabled = true;
+			_recordButtonImage.sprite = recordStop;
 		}
-		else if (!Everyplay.IsRecording() && _recIndicator.enabled)
+		else if (!this.isRecording && _recIndicator.enabled)
 		{
 			_recIndicator.enabled = false;
+			_recordButtonImage.sprite = recordCapture;
 		}
     }
 
