@@ -28,6 +28,8 @@ public class GameController : MonoBehaviour
     //private CameraMovement _cameraMovement;
     private bool _isSettingsOpen;
 	private bool _isSharingOpen;
+	private Text _highestPointText;
+	private Text _totalHeightText;
 
     public Text heightCounter;
 	public bool countHeight; 
@@ -54,6 +56,7 @@ public class GameController : MonoBehaviour
     public EnergyBarRenderer powerBarRenderer;
     public Sprite soundOnImage;
     public Sprite soundOffImage;
+	public Color heightCounterColor;
 
     public static GameController Instance { get; private set; }
 
@@ -165,6 +168,9 @@ public class GameController : MonoBehaviour
 		var shareButton = GameObject.Find ("ShareButton");
 		_shareButtonBehaviour = shareButton.GetComponent<Button> ();
 
+		_totalHeightText = GameObject.Find ("TotalText").GetComponent<Text>();
+		_highestPointText = GameObject.Find ("HighestText").GetComponent<Text>();
+
 		//var cartButton = GameObject.Find ("CartButton");
         //_cartButtonImage = cartButton.GetComponent<Image>();
 		//_cartButtonBehaviour = cartButton.GetComponent<Button> ();
@@ -210,7 +216,7 @@ public class GameController : MonoBehaviour
     {
         if (heightCounter.enabled)
         {
-            heightCounter.text = highestPoint + "m"; // TODO: localize
+			heightCounter.text = highestPoint.ToString();;
         }
 
         if (!inSafeZone && powerBarRenderer.texturesBackground[0].color.a == 0f)
@@ -463,6 +469,8 @@ public class GameController : MonoBehaviour
     void HandleOnShowMenuButtons()
     {
         _playButtonImage.enabled = true;
+		_highestPointText.text = PlayerState.Instance.Data.highestPoint.ToString();
+		_totalHeightText.text = PlayerState.Instance.Data.totalHeight.ToString();
     }
 
 	private void CloseSettingsAndSharing()
@@ -494,6 +502,8 @@ public class GameController : MonoBehaviour
         _playButtonImage.rectTransform.anchorMin = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchorMax = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchoredPosition = new Vector3(0, 0, 0);
+		_highestPointText.text = string.Empty;
+		_totalHeightText.text = string.Empty;
     }
 
     void HandleOnGamePause()
@@ -511,6 +521,9 @@ public class GameController : MonoBehaviour
         //_cartButtonBehaviour.interactable = true; // TODO enable when ready
         //_cartButtonBehaviour.interactable = false; // TODO enable when ready
         //_isSettingsOpen = true;
+		_highestPointText.text = PlayerState.Instance.Data.highestPoint.ToString();
+		_totalHeightText.text = PlayerState.Instance.Data.totalHeight.ToString();
+		heightCounter.color = Color.white;
     }
 
     void HandleOnGameResume()
@@ -524,6 +537,10 @@ public class GameController : MonoBehaviour
         _playButtonBehaviour.interactable = false;
 
 		CloseSettingsAndSharing ();
+
+		_highestPointText.text = string.Empty;
+		_totalHeightText.text = string.Empty;
+		heightCounter.color = heightCounterColor;
         //_menuButtonImage.GetComponent<Animator>().enabled = false;
         //_musicButtonImage.enabled = false;
         //_cartButtonImage.enabled = false;
@@ -537,6 +554,9 @@ public class GameController : MonoBehaviour
         _telekinesisControl.SetActive(false);
         _restartButtonImage.enabled = true;
         _restartButtonBehaviour.interactable = true;
+		_highestPointText.text = PlayerState.Instance.Data.highestPoint.ToString();
+		_totalHeightText.text = PlayerState.Instance.Data.totalHeight.ToString();
+		heightCounter.color = Color.white;
     }
 
     private void HandleOnPowerPickUp(float powerToAdd)

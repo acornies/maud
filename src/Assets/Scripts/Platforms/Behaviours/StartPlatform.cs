@@ -37,6 +37,7 @@ public class StartPlatform : PlatformBehaviour
 			Debug.Log("Start platform turn on tracking");
 
 			_playerMovement.disabled = false;
+			GameController.Instance.countHeight = true;
 		}
     }
 

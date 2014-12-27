@@ -139,7 +139,7 @@ public class CameraMovement : MonoBehaviour
                 }*/
                 //isTracking = true;
                 GameController.Instance.heightCounter.rectTransform.anchoredPosition = new Vector2(-20f, -20f);
-                GameController.Instance.countHeight = true;
+                //GameController.Instance.countHeight = true;
             }
 
         }

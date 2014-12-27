@@ -7,7 +7,8 @@ public class EveryplayController : MonoBehaviour
 	private Image _recordButtonImage;
 	private Button _recordButtonBehaviour;
 	private bool _serviceReady;
-	
+	private Image _recIndicator;
+
 	public static EveryplayController Instance { get; private set; }
     
     public bool isReady 
@@ -48,6 +49,7 @@ public class EveryplayController : MonoBehaviour
 		var recordButton = GameObject.Find ("RecordButton");
 		_recordButtonImage = recordButton.GetComponent<Image>();
 		_recordButtonBehaviour = recordButton.GetComponent<Button>();
+		_recIndicator = GameObject.Find ("RecIndicator").GetComponent<Image>();
     }
 
     void OnEnable()
@@ -80,9 +82,16 @@ public class EveryplayController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void OnGUI()
     {
-
+		if (Everyplay.IsRecording() && !_recIndicator.enabled)
+		{
+			_recIndicator.enabled = true;
+		}
+		else if (!Everyplay.IsRecording() && _recIndicator.enabled)
+		{
+			_recIndicator.enabled = false;
+		}
     }
 
     void HandleOnReadyForRecording(bool serviceReady)
@@ -105,6 +114,7 @@ public class EveryplayController : MonoBehaviour
 		else
 		{
 			Everyplay.StartRecording();
+			//_recIndicator.enabled = true;
 		}
 
 		//GameObject.Find ("EveryplayDebug").GetComponent<Text> ().text = isRecording.ToString ();

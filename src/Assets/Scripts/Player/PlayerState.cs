@@ -10,7 +10,7 @@ public class PlayerState : MonoBehaviour
 	private float lastTime;
 
 	public string dataPath;
-    public PlayerState Instance { get; private set; }
+    public static PlayerState Instance { get; private set; }
     public PlayerData Data { get; private set; }
 
 	void OnEnable()
@@ -19,7 +19,8 @@ public class PlayerState : MonoBehaviour
 		GameController.OnGamePause += HandleOnGamePause;
 		//OnGameResume += HandleOnGameResume;
 		GameController.OnGameOver += HandleOnGameOver;
-		GameController.OnGameRestart += HandleOnGameRestart;     
+		GameController.OnGameRestart += HandleOnGameRestart; 
+		IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
 	}
 
 	void OnDisable()
@@ -39,6 +40,7 @@ public class PlayerState : MonoBehaviour
 		//OnGameResume -= HandleOnGameResume;
 		GameController.OnGameOver -= HandleOnGameOver;
 		GameController.OnGameRestart -= HandleOnGameRestart;
+		IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
 	}
 
     void Awake()
@@ -132,5 +134,10 @@ public class PlayerState : MonoBehaviour
 	void HandleOnGameRestart(int levelToLoad)
 	{
 		lastTime = 0;
+	}
+
+	void HandleOnShowMenuButtons()
+	{
+
 	}
 }
