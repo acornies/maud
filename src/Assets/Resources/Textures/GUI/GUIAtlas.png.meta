@@ -7,13 +7,17 @@ TextureImporter:
     21300004: SoundOn
     21300006: Cog
     21300008: Restart
-    21300010: Back
+    21300010: Stop
     21300012: RightHanded
     21300014: LeftHanded
-    21300016: Record
-    21300018: Cart
+    21300016: Capture
+    21300018: RecIndicator
     21300020: Music
     21300022: Heart
+    21300024: Share
+    21300026: Star
+    21300028: Facebook
+    21300030: Twitter
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -105,13 +109,13 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: Back
+    - name: Stop
       rect:
         serializedVersion: 2
-        x: 1152
-        y: 1040
-        width: 432
-        height: 432
+        x: 1167
+        y: 1123
+        width: 325
+        height: 323
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -135,23 +139,23 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: Record
+    - name: Capture
       rect:
         serializedVersion: 2
-        x: 502
-        y: 537
-        width: 431
-        height: 431
+        x: 504
+        y: 696
+        width: 470
+        height: 258
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: Cart
+    - name: RecIndicator
       rect:
         serializedVersion: 2
         x: 1363
-        y: 1543
-        width: 455
-        height: 435
+        y: 1539
+        width: 367
+        height: 365
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -172,6 +176,46 @@ TextureImporter:
         y: 596
         width: 435
         height: 374
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Share
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 34
+        width: 435
+        height: 436
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Star
+      rect:
+        serializedVersion: 2
+        x: 572
+        y: 27
+        width: 458
+        height: 439
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Facebook
+      rect:
+        serializedVersion: 2
+        x: 1071
+        y: 27
+        width: 435
+        height: 437
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Twitter
+      rect:
+        serializedVersion: 2
+        x: 1541
+        y: 27
+        width: 482
+        height: 399
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

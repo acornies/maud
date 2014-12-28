@@ -21,11 +21,15 @@ public class GameController : MonoBehaviour
 	private Button _recordButtonBehaviour;
     private Image _musicButtonImage;
 	private Button _musicButtonBehaviour;
-    private Image _cartButtonImage;
-	private Button _cartButtonBehaviour;
+	private Button _shareButtonBehaviour;
+    //private Image _cartButtonImage;
+	//private Button _cartButtonBehaviour;
     private EnergyBar _powerBar;
     //private CameraMovement _cameraMovement;
-    private bool _isMenuOpen;
+    private bool _isSettingsOpen;
+	private bool _isSharingOpen;
+	private Text _highestPointText;
+	private Text _totalHeightText;
 
     public Text heightCounter;
 	public bool countHeight; 
@@ -52,6 +56,7 @@ public class GameController : MonoBehaviour
     public EnergyBarRenderer powerBarRenderer;
     public Sprite soundOnImage;
     public Sprite soundOffImage;
+	public Color heightCounterColor;
 
     public static GameController Instance { get; private set; }
 
@@ -91,7 +96,7 @@ public class GameController : MonoBehaviour
         OnGameOver += HandleOnGameOver;
         OnGameRestart += HandleOnGameRestart;
         PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickUp;
-        IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
+        IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;      
     }
 
     void OnDisable()
@@ -116,6 +121,7 @@ public class GameController : MonoBehaviour
         OnGameRestart -= HandleOnGameRestart;
         PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
+        //Everyplay.ReadyForRecording -= HandleOnReadyToRecord;
     }
 
     // Use this for initialization
@@ -151,17 +157,23 @@ public class GameController : MonoBehaviour
 		_playButtonImage = playButton.GetComponent<Image>();
 		_playButtonBehaviour = playButton.GetComponent<Button>();
 
-		var recordButton = GameObject.Find ("RecordButton");
-		_recordButtonImage = recordButton.GetComponent<Image>();
-		_recordButtonBehaviour = recordButton.GetComponent<Button>();
-
 		var musicButton = GameObject.Find ("MusicButton");
 		_musicButtonImage = musicButton.GetComponent<Image>();
 		_musicButtonBehaviour = musicButton.GetComponent<Button>();
 
-		var cartButton = GameObject.Find ("CartButton");
-        _cartButtonImage = cartButton.GetComponent<Image>();
-		_cartButtonBehaviour = cartButton.GetComponent<Button> ();
+		var recordButton = GameObject.Find ("RecordButton");
+		_recordButtonImage = recordButton.GetComponent<Image>();
+		_recordButtonBehaviour = recordButton.GetComponent<Button>();
+
+		var shareButton = GameObject.Find ("ShareButton");
+		_shareButtonBehaviour = shareButton.GetComponent<Button> ();
+
+		_totalHeightText = GameObject.Find ("TotalText").GetComponent<Text>();
+		_highestPointText = GameObject.Find ("HighestText").GetComponent<Text>();
+
+		//var cartButton = GameObject.Find ("CartButton");
+        //_cartButtonImage = cartButton.GetComponent<Image>();
+		//_cartButtonBehaviour = cartButton.GetComponent<Button> ();
 
         /*if (mainCamera == null)
         {
@@ -190,14 +202,21 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
+        //Everyplay.ReadyForRecording += HandleOnReadyToRecord;
+		//_recordButtonBehaviour.interactable = EveryplayController.Instance.isReady;
+    }
 
+    private void HandleOnReadyToRecord(bool serviceReady)
+    {
+        //_recordButtonBehaviour.interactable = serviceReady && Everyplay.IsRecordingSupported();
+        GameObject.Find("EveryplayDebug").GetComponent<Text>().text = serviceReady.ToString();
     }
 
     void OnGUI()
     {
         if (heightCounter.enabled)
         {
-            heightCounter.text = highestPoint + "m"; // TODO: localize
+			heightCounter.text = highestPoint.ToString();;
         }
 
         if (!inSafeZone && powerBarRenderer.texturesBackground[0].color.a == 0f)
@@ -292,7 +311,7 @@ public class GameController : MonoBehaviour
             initiatingRestart = true;
             _menuButtonBehaviour.interactable = false;
             _restartButtonBehaviour.interactable = true;
-            if (OnGameOver != null)
+            if (OnGameOver != null && gameState != GameState.Over)
             {
                 OnGameOver();
             }
@@ -338,7 +357,7 @@ public class GameController : MonoBehaviour
         powerMeter -= amount;
     }
 
-    public void ButtonStart()
+    public void ButtonPlay()
     {
         //Debug.Log("Pressed play button");
         switch (gameState)
@@ -356,53 +375,74 @@ public class GameController : MonoBehaviour
 
     }
 
+	public void ButtonShare()
+	{
+		if (!_isSharingOpen)
+		{
+			_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
+			_recordButtonBehaviour.interactable = EveryplayController.Instance.isReady;
+		}
+		else if (_isSharingOpen)
+		{
+			_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
+			_recordButtonBehaviour.interactable = false;
+		}
+
+		_isSharingOpen = !_isSharingOpen;
+		
+		if (gameState == GameState.Running)
+		{
+			if (OnGamePause != null)
+			{
+				OnGamePause();
+				//_isSharingOpen = !_isSharingOpen;
+			}
+			
+		}
+		/*else
+		{
+			_initiatingResume = true;
+		}*/
+	}
+
     public void ButtonMenu()
     {
-        if (gameState == GameState.Started)
-        {
-            _isMenuOpen = !_isMenuOpen;
+		if (!_isSettingsOpen)
+		{
+			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
+			_musicButtonBehaviour.interactable = true;
+		}
+		else if (_isSettingsOpen)
+		{
+			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
+			_musicButtonBehaviour.interactable = false;
+		}
+		
+		_isSettingsOpen = !_isSettingsOpen;
 
-        }
-        else if (gameState != GameState.Paused)
-        {
-            if (OnGamePause != null)
-            {
-                OnGamePause();
-            }
-        }
-        else
-        {
+		var menuAnimator = _menuButtonImage.GetComponent<Animator>();
+		if (_isSettingsOpen && !menuAnimator.enabled)
+		{
+			menuAnimator.enabled = true;
+		}
+		else
+		{
+			menuAnimator.enabled = false;
+		}
+		
+		if (gameState == GameState.Running)
+		{
+			if (OnGamePause != null)
+			{
+				OnGamePause();
+				//_isSharingOpen = !_isSharingOpen;
+			}
+			
+		}
+		/*else
+		{
 			_initiatingResume = true;
-            /*if (OnGameResume != null)
-            {
-                OnGameResume();
-            }
-            gameState = GameState.Running;*/
-        }
-
-        var menuAnimator = _menuButtonImage.GetComponent<Animator>();
-        if (_isMenuOpen && !menuAnimator.enabled)
-        {
-            menuAnimator.enabled = true;
-        }
-        else
-        {
-            menuAnimator.enabled = false;
-        }
-
-        if (_isMenuOpen && gameState == GameState.Started)
-        {
-            _musicButtonImage.enabled = true;
-            _cartButtonImage.enabled = true;
-            // TODO: FUCKING DISABLE HAND BUTTON FOR NOW
-            _cartButtonBehaviour.interactable = true; // TODO enable when ready
-			_cartButtonBehaviour.interactable = false; // TODO enable when ready
-        }
-        else if (!_isMenuOpen && gameState == GameState.Started)
-        {
-            _musicButtonImage.enabled = false;
-            _cartButtonImage.enabled = false;
-        }
+		}*/
     }
 
     public void ButtonRestart()
@@ -429,25 +469,41 @@ public class GameController : MonoBehaviour
     void HandleOnShowMenuButtons()
     {
         _playButtonImage.enabled = true;
-        _menuButtonImage.enabled = true;
-        _recordButtonImage.enabled = true;
+		_highestPointText.text = PlayerState.Instance.Data.highestPoint.ToString();
+		_totalHeightText.text = PlayerState.Instance.Data.totalHeight.ToString();
     }
+
+	private void CloseSettingsAndSharing()
+	{
+		if (_isSettingsOpen) 
+		{
+			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
+			_musicButtonBehaviour.interactable = false;
+			_isSettingsOpen = false;
+			
+			_menuButtonImage.GetComponent<Animator>().enabled = false;
+		}
+		
+		if (_isSharingOpen) 
+		{
+			_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
+			_recordButtonBehaviour.interactable = false;
+			_isSharingOpen = false;
+		}
+	}
 
     void HandleOnGameStart()
     {
         gameState = GameState.Running;
-        _musicButtonImage.enabled = false;
-        _cartButtonImage.enabled = false;
-        _isMenuOpen = false;
-        _menuButtonImage.GetComponent<Animator>().enabled = false;
 
+		CloseSettingsAndSharing ();
+		
         _playButtonImage.enabled = false;
         _playButtonImage.rectTransform.anchorMin = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchorMax = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchoredPosition = new Vector3(0, 0, 0);
-
-
-        //ButtonMenu();
+		_highestPointText.text = string.Empty;
+		_totalHeightText.text = string.Empty;
     }
 
     void HandleOnGamePause()
@@ -459,12 +515,15 @@ public class GameController : MonoBehaviour
         _restartButtonBehaviour.interactable = true;
         _playButtonImage.enabled = true;
         _playButtonBehaviour.interactable = true;
-        _musicButtonImage.enabled = true;
-        _cartButtonImage.enabled = true;
+        //_musicButtonImage.enabled = true;
+        //_cartButtonImage.enabled = true;
         // TODO: FUCKING DISABLE HAND BUTTON FOR NOW
-        _cartButtonBehaviour.interactable = true; // TODO enable when ready
-        _cartButtonBehaviour.interactable = false; // TODO enable when ready
-        _isMenuOpen = true;
+        //_cartButtonBehaviour.interactable = true; // TODO enable when ready
+        //_cartButtonBehaviour.interactable = false; // TODO enable when ready
+        //_isSettingsOpen = true;
+		_highestPointText.text = PlayerState.Instance.Data.highestPoint.ToString();
+		_totalHeightText.text = PlayerState.Instance.Data.totalHeight.ToString();
+		heightCounter.color = Color.white;
     }
 
     void HandleOnGameResume()
@@ -476,10 +535,16 @@ public class GameController : MonoBehaviour
         _restartButtonBehaviour.interactable = false;
         _playButtonImage.enabled = false;
         _playButtonBehaviour.interactable = false;
-        _menuButtonImage.GetComponent<Animator>().enabled = false;
-        _musicButtonImage.enabled = false;
-        _cartButtonImage.enabled = false;
-        _isMenuOpen = false;
+
+		CloseSettingsAndSharing ();
+
+		_highestPointText.text = string.Empty;
+		_totalHeightText.text = string.Empty;
+		heightCounter.color = heightCounterColor;
+        //_menuButtonImage.GetComponent<Animator>().enabled = false;
+        //_musicButtonImage.enabled = false;
+        //_cartButtonImage.enabled = false;
+        //_isSettingsOpen = false;
     }
 
     void HandleOnGameOver()
@@ -489,6 +554,9 @@ public class GameController : MonoBehaviour
         _telekinesisControl.SetActive(false);
         _restartButtonImage.enabled = true;
         _restartButtonBehaviour.interactable = true;
+		_highestPointText.text = PlayerState.Instance.Data.highestPoint.ToString();
+		_totalHeightText.text = PlayerState.Instance.Data.totalHeight.ToString();
+		heightCounter.color = Color.white;
     }
 
     private void HandleOnPowerPickUp(float powerToAdd)
@@ -507,7 +575,9 @@ public class GameController : MonoBehaviour
         _playButtonImage.enabled = false;
         _playButtonBehaviour.interactable = false;
         _musicButtonImage.enabled = false;
-        _cartButtonImage.enabled = false;
+		_shareButtonBehaviour.interactable = false;
+
+        //_cartButtonImage.enabled = false;
         _menuButtonImage.GetComponent<Animator>().enabled = false;
     }
 }

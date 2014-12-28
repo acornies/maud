@@ -5,10 +5,12 @@ public class CameraMovement : MonoBehaviour
 {
     private bool _zoomToGame;
     private float _zoomTimer;
+	private bool _shouldZoomOut;
 
     public float zoomWarmTime = 0.5f;
     public Vector3 gameCameraPosition;
     public float zoomSpeed = 10f;
+	public float ghostZoomDepth = -25f;
     public bool isTracking;
     public float XMargin = 1.0f;
     public float YMargin = 1.0f;
@@ -116,31 +118,46 @@ public class CameraMovement : MonoBehaviour
                 _zoomTimer = 0;
             }
 
-            if (transform.position.z >= (gameCameraPosition.z - 2f))
+            /*if (transform.position.z >= (gameCameraPosition.z - 2f))
             {
-                if (OnMovePlayerToGamePosition != null && CameraTarget.parent.position.z != GameController.Instance.playerZPosition)
-                {
-                    Debug.Log("Move player once");
-                    OnMovePlayerToGamePosition(new Vector3(-1, 23.5f, GameController.Instance.playerZPosition));
-                }
-            }
+                
+            }*/
 
             if (transform.position.z >= (gameCameraPosition.z - 0.1f))
             {
                 //Debug.Log("Fully zoomed in");
+				if (OnMovePlayerToGamePosition != null && CameraTarget.parent.position.z != GameController.Instance.playerZPosition)
+				{
+					//Debug.Log("Move player once");
+					OnMovePlayerToGamePosition(new Vector3(-1, 23.5f, GameController.Instance.playerZPosition));
+				}
                 transform.position = new Vector3(transform.position.x, transform.position.y, gameCameraPosition.z);
                 _zoomToGame = false;
-                if (!GameController.Instance.playerIsDead)
+                /*if (!GameController.Instance.playerIsDead)
                 {
                     isTracking = true;   
-                }
+                }*/
                 //isTracking = true;
                 GameController.Instance.heightCounter.rectTransform.anchoredPosition = new Vector2(-20f, -20f);
-                GameController.Instance.countHeight = true;
+                //GameController.Instance.countHeight = true;
             }
 
         }
     }
+
+	void HandleGhostZoom()
+	{
+		if (_shouldZoomOut)
+		{
+			//Debug.Log ("Zoom out");
+			transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, transform.position.y, ghostZoomDepth), zoomSpeed * Time.deltaTime);
+		}
+		else
+		{
+			//Debug.Log("Zoom in");
+			transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, transform.position.y, gameCameraPosition.z), zoomSpeed * Time.deltaTime);
+		}
+	}
 
     void LateUpdate()
     {
@@ -148,6 +165,12 @@ public class CameraMovement : MonoBehaviour
         {
             TrackPlayer();
         }
+
+		if (GameController.Instance.countHeight) 
+		{
+			HandleGhostZoom();
+		}
+
         /*else if (!isTracking && !GameController.Instance.playerIsDead)
         {
             _introTimer -= Time.deltaTime;
@@ -207,12 +230,14 @@ public class CameraMovement : MonoBehaviour
     void HandlePlayerDeath()
     {
         isTracking = false;
+		_shouldZoomOut = true;
         //Debug.Log("Turn off tracking");
     }
 
     void HandlePlayerResurrection()
     {
         isTracking = true;
+		_shouldZoomOut = false;
         //Debug.Log("Turn on tracking");
     }
 }
