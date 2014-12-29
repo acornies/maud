@@ -5,6 +5,12 @@ using System.Collections;
 
 /// <summary>
 /// Release notes:
+/// EasyJoystick V2.3.5 November 2014
+/// =============================
+/// 	* Bug fixed
+/// 	-----------
+/// 	Fixe Joystick dynamic resizing & positionning
+/// 
 /// EasyJoystick V2.3.4 May 2014
 /// =============================
 /// 	* Bug fixed
@@ -253,18 +259,18 @@ public class EasyJoystick : MonoBehaviour {
 			return this.dynamicJoystick;
 		}
 		set {
-			if (!Application.isPlaying){
-			joystickIndex=-1;
-			
-			dynamicJoystick = value;
-			if (dynamicJoystick){
-				virtualJoystick=false;
-			}
-			else{
-				virtualJoystick=true;
-				joystickCenter = joystickPositionOffset;
-			}	
-			}
+			//if (!Application.isPlaying){
+				joystickIndex=-1;
+				
+				dynamicJoystick = value;
+				if (dynamicJoystick){
+					virtualJoystick=false;
+				}
+				else{
+					virtualJoystick=true;
+					joystickCenter = joystickPositionOffset;
+				}	
+			//}
 		}
 	}
 	
@@ -916,7 +922,7 @@ public class EasyJoystick : MonoBehaviour {
 				Vector2 oldJoystickAxis = new Vector2(joystickAxis.x,joystickAxis.y);
    				float deadCoef = ComputeDeadZone();
     			joystickAxis= new Vector2(joystickTouch.x*deadCoef, joystickTouch.y*deadCoef);				
-				
+
 				// Inverse axis ?
 				if (inverseXAxis){
 					joystickAxis.x *= -1;	
@@ -1023,7 +1029,7 @@ public class EasyJoystick : MonoBehaviour {
 			
 			VirtualScreen.SetGuiScaleMatrix();
 			
-			
+			ComputeJoystickAnchor( joyAnchor);
 			
 			// area zone
 			if ((showZone && areaTexture!=null && !dynamicJoystick) || (showZone && dynamicJoystick && virtualJoystick && areaTexture!=null) 
@@ -1606,6 +1612,8 @@ public class EasyJoystick : MonoBehaviour {
 				}
 			}
 		}
+
+
 	}
 	
 	// Touch end

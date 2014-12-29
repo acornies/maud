@@ -279,7 +279,7 @@ public class EasyButton : MonoBehaviour {
 	#endregion
 	
 	#region Private member
-	private Rect buttonRect;
+	public Rect buttonRect;
 	private int buttonFingerIndex=-1;
 	private Texture2D currentTexture;
 	private Color currentColor;

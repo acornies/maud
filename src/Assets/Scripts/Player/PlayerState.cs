@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using LegendPeak.Player;
 
@@ -9,8 +10,12 @@ public class PlayerState : MonoBehaviour
 {
 	private float lastTime;
 	private GameObject _telekinesisControl;
+	private Image _controlModeImage;
 
 	public string dataPath;
+	public Sprite controlAccelerometerImage;
+	public Sprite controlFingerSwipeImage;
+
     public static PlayerState Instance { get; private set; }
     public PlayerData Data { get; private set; }
 
@@ -57,6 +62,8 @@ public class PlayerState : MonoBehaviour
         }
 
 		_telekinesisControl = GameObject.Find ("TelekinesisControl");
+		_controlModeImage = GameObject.Find ("ControlButton").GetComponent<Image>();
+
         this.Load();
     }
     
@@ -65,6 +72,18 @@ public class PlayerState : MonoBehaviour
     {
 		//Data.controlMode = ControlMode.FingerSwipe; // TODO:// remove
     }
+
+	void OnGUI()
+	{
+		if (Data.controlMode == ControlMode.Accelerometer && _controlModeImage.sprite != controlAccelerometerImage) 
+		{
+			_controlModeImage.sprite = controlAccelerometerImage;
+		}
+		else if (Data.controlMode == ControlMode.FingerSwipe && _controlModeImage.sprite != controlFingerSwipeImage)
+		{
+			_controlModeImage.sprite = controlFingerSwipeImage;
+		}
+	}
 
     public void Save()
     {
@@ -124,15 +143,19 @@ public class PlayerState : MonoBehaviour
 		if (Data.controlMode == ControlMode.Accelerometer) 
 		{
 			Data.controlMode = ControlMode.FingerSwipe;
+			//_controlModeImage.sprite = controlFingerSwipeImage;
 		}
 		else if (Data.controlMode == ControlMode.FingerSwipe) 
 		{
 			Data.controlMode = ControlMode.Accelerometer;
+			//_controlModeImage.sprite = controlAccelerometerImage;
 		}
 
 		// HACK to trigger control mode change with EasyTouch events
 		_telekinesisControl.SetActive (false);
 		_telekinesisControl.SetActive (true);
+
+		Save ();
 		
 	}
 

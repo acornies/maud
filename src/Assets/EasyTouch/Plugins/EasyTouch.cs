@@ -3,9 +3,15 @@
 
 /// <summary>
 /// TO DO:
-/// - Priority between two finger gesture
+/// - Parametrage du commportement du touchup avec NGUI
 /// 
 /// Release notes:
+/// EasyTouch V3.1.10 November 2014
+/// =================================
+/// 	* Bugs fixed
+/// 	-----------
+/// 	Fixe Joystick dynamic resizing & positionning
+/// 
 /// EasyTouch V3.1.9 October 2014
 /// =================================
 /// 
@@ -1217,7 +1223,7 @@ public class EasyTouch : MonoBehaviour {
 	float actionTime, SwipeType swipe, float swipeLength,Vector2 swipeVector,float twist,float pinch, float twoDistance){
 
 		if (message == EventName.On_TouchStart2Fingers){
-			isStartHoverNGUI = IsTouchHoverNGui(twoFinger1) & IsTouchHoverNGui(twoFinger0);
+			isStartHoverNGUI = IsTouchHoverNGui(twoFinger1) && IsTouchHoverNGui(twoFinger0);
 		}
 				
 		if (!isStartHoverNGUI){
@@ -1580,14 +1586,11 @@ public class EasyTouch : MonoBehaviour {
 				Ray ray = nGUICameras[i].ScreenPointToRay( fingers[touchIndex].position );
 
 				returnValue =  Physics.Raycast( ray, out hit,float.MaxValue,mask );
-				//returnValue = returnValue && hit.transform.parent != null;
 				i++;
 			}
 
 		}
-		
 		return returnValue;
-	
 	}
 	
 	private bool IsTouchReservedArea(int touchIndex){

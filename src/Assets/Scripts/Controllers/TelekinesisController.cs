@@ -62,6 +62,7 @@ public class TelekinesisController : MonoBehaviour
 			EasyTouch.On_Swipe2Fingers += On_Swipe;
 			EasyTouch.On_SwipeStart2Fingers += On_SwipeStart;
 			EasyTouch.On_SwipeEnd2Fingers += On_SwipeEnd;
+			EasyTouch.On_SwipeEnd += On_SwipeEnd;
 			EasyTouch.On_LongTapStart2Fingers += HandleLongTapStart;
 			EasyTouch.On_LongTapEnd2Fingers += HandleLongTapEnd;
 		}
@@ -105,6 +106,7 @@ public class TelekinesisController : MonoBehaviour
 			EasyTouch.On_Swipe2Fingers -= On_Swipe;
 			EasyTouch.On_SwipeStart2Fingers -= On_SwipeStart;
 			EasyTouch.On_SwipeEnd2Fingers -= On_SwipeEnd;
+			EasyTouch.On_SwipeEnd -= On_SwipeEnd;
 			EasyTouch.On_LongTapStart2Fingers -= HandleLongTapStart;
 			EasyTouch.On_LongTapEnd2Fingers -= HandleLongTapEnd;
 		}
@@ -339,7 +341,7 @@ public class TelekinesisController : MonoBehaviour
 
     void On_Swipe(Gesture gesture)
     {
-		//if (gesture.touchCount == 1 && PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe) return;
+		//if (gesture.touchCount > 2 && PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe) return;
 
         if (GameController.Instance.powerMeter <= 0) return;
 
