@@ -57,14 +57,25 @@ public class TelekinesisController : MonoBehaviour
     // Subscribe to events
     void OnEnable()
     {
-        EasyTouch.On_Swipe2Fingers += On_Swipe;
-        EasyTouch.On_SwipeStart2Fingers += On_SwipeStart;
-        EasyTouch.On_SwipeEnd2Fingers += On_SwipeEnd;
-        EasyTouch.On_Swipe += On_Swipe;
-        EasyTouch.On_SwipeStart += On_SwipeStart;
-        EasyTouch.On_SwipeEnd += On_SwipeEnd;
-        EasyTouch.On_LongTapStart += HandleLongTapStart;
-        EasyTouch.On_LongTapEnd += HandleLongTapEnd;
+        if (PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe)
+		{
+			EasyTouch.On_Swipe2Fingers += On_Swipe;
+			EasyTouch.On_SwipeStart2Fingers += On_SwipeStart;
+			EasyTouch.On_SwipeEnd2Fingers += On_SwipeEnd;
+			EasyTouch.On_LongTapStart2Fingers += HandleLongTapStart;
+			EasyTouch.On_LongTapEnd2Fingers += HandleLongTapEnd;
+		}
+
+		if (PlayerState.Instance.Data.controlMode == ControlMode.Accelerometer)
+		{
+			EasyTouch.On_Swipe += On_Swipe;
+			EasyTouch.On_SwipeStart += On_SwipeStart;
+			EasyTouch.On_SwipeEnd += On_SwipeEnd;
+			EasyTouch.On_LongTapStart += HandleLongTapStart;
+			EasyTouch.On_LongTapEnd += HandleLongTapEnd;
+		}
+       
+
         On_PlayerPowersStart += HandleOnPowersStart;
         On_PlayerPowersEnd += HandleOnPlayerPowersEnd;
         On_TelekinesisStabilize += HandleOnTelekinesisStabilize;
@@ -89,14 +100,26 @@ public class TelekinesisController : MonoBehaviour
 
     void UnsubscribeEvent()
     {
-        EasyTouch.On_Swipe2Fingers -= On_Swipe;
-        EasyTouch.On_SwipeStart2Fingers -= On_SwipeStart;
-        EasyTouch.On_SwipeEnd2Fingers -= On_SwipeEnd;
-        EasyTouch.On_Swipe -= On_Swipe;
-        EasyTouch.On_SwipeStart -= On_SwipeStart;
-        EasyTouch.On_SwipeEnd -= On_SwipeEnd;
-        EasyTouch.On_LongTapStart -= HandleLongTapStart;
-        EasyTouch.On_LongTapEnd -= HandleLongTapEnd;
+		if (PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe)
+		{
+			EasyTouch.On_Swipe2Fingers -= On_Swipe;
+			EasyTouch.On_SwipeStart2Fingers -= On_SwipeStart;
+			EasyTouch.On_SwipeEnd2Fingers -= On_SwipeEnd;
+			EasyTouch.On_LongTapStart2Fingers -= HandleLongTapStart;
+			EasyTouch.On_LongTapEnd2Fingers -= HandleLongTapEnd;
+		}
+
+		if (PlayerState.Instance.Data.controlMode == ControlMode.Accelerometer)
+		{
+			EasyTouch.On_Swipe -= On_Swipe;
+			EasyTouch.On_SwipeStart -= On_SwipeStart;
+			EasyTouch.On_SwipeEnd -= On_SwipeEnd;
+			EasyTouch.On_LongTapStart -= HandleLongTapStart;			
+			EasyTouch.On_LongTapEnd -= HandleLongTapEnd;
+
+		}
+
+        
         On_PlayerPowersStart -= HandleOnPowersStart;
         On_PlayerPowersEnd -= HandleOnPlayerPowersEnd;
         On_TelekinesisStabilize -= HandleOnTelekinesisStabilize;
@@ -221,7 +244,7 @@ public class TelekinesisController : MonoBehaviour
     {
         if (_player.disabled) return;
 
-        if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
+		//if (gesture.touchCount == 1 && PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe) return;
 
         if (GameController.Instance.powerMeter <= 0)
         {
@@ -316,7 +339,7 @@ public class TelekinesisController : MonoBehaviour
 
     void On_Swipe(Gesture gesture)
     {
-        if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
+		//if (gesture.touchCount == 1 && PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe) return;
 
         if (GameController.Instance.powerMeter <= 0) return;
 
@@ -369,7 +392,7 @@ public class TelekinesisController : MonoBehaviour
 
     void On_SwipeEnd(Gesture gesture)
     {
-        if (gesture.touchCount == 1 && !GameController.Instance.useAcceleration) return;
+		//if (gesture.touchCount == 1 && PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe) return;
 
         if (_platform != null)
         {

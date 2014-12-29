@@ -63,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
     public float highJumpTimeout = 0.5f;
     public float swipeJumpTolerenceTime = 1f;
     public float moveThreshold = 0.1f;
+	public float swipeControlModeDivider = 2f;
 
     public Material normalBodyMaterial;
     public Material ghostBodyMaterial;
@@ -323,7 +324,8 @@ public class PlayerMovement : MonoBehaviour
     private void HandleOnPlayerResurrection()
     {
         //Debug.Log("Resurrection event handler!");
-        if (!_isFacingCamera) return;
+		_consectutiveJumpCounter = 0;
+		if (!_isFacingCamera) return;
         TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
     }
 
@@ -393,12 +395,12 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleSwipeEnd(Gesture gesture)
     {
-        if (!GameController.Instance.useAcceleration)
+		if (PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe)
         {
             _moveDirection = 0;
         }
 
-        if (gesture.actionTime < swipeJumpTolerenceTime)
+        if (gesture.actionTime < swipeJumpTolerenceTime && PlayerState.Instance.Data.controlMode == ControlMode.Accelerometer)
         {
             Jump(gesture);
         }
@@ -412,16 +414,18 @@ public class PlayerMovement : MonoBehaviour
             _isGhostMoving = true;
             //GameController.Instance.movedFromSpawnPosition = true;
         }
-        /* TODO: support additional control mode
-         * else
+        
+		// handle swipe control mode
+		else if (!GameController.Instance.playerIsDead && PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe)
         {
-            if (gesture.swipe == EasyTouch.SwipeType.Left || gesture.swipe == EasyTouch.SwipeType.Right && !GameController.Instance.useAcceleration)
+			if( disabled) return;
+			if (gesture.swipe == EasyTouch.SwipeType.Left || gesture.swipe == EasyTouch.SwipeType.Right)
             {
                 var touchDir = (gesture.position.x - gesture.startPosition.x);
                 float touchDirMultiplied = touchDir * 0.01f;
                 _moveDirection = Mathf.Clamp(touchDirMultiplied, -1f, 1f);
             }
-        }*/
+        }
 
     }
 
@@ -560,7 +564,7 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         if (disabled) return;
-        if (GameController.Instance.useAcceleration)
+		if (PlayerState.Instance.Data.controlMode == ControlMode.Accelerometer)
         {
             //Debug.Log(Input.acceleration.x);
             _moveDirection = Input.acceleration.x;
@@ -576,10 +580,15 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 ApplyVelocity()
     {
         //Debug.Log (_moveDirection);
-        if (_canMove && !_isUsingPowers && (_moveDirection < -moveThreshold || _moveDirection > moveThreshold))
+        if (PlayerState.Instance.Data.controlMode == ControlMode.Accelerometer && 
+		    _canMove && !_isUsingPowers && (_moveDirection < -moveThreshold || _moveDirection > moveThreshold))
         {
             return new Vector2(_moveDirection * maxSpeed, rigidbody.velocity.y);
         }
+		else if (PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe && _canMove && !_isUsingPowers)
+		{
+			return new Vector2(_moveDirection * (maxSpeed / swipeControlModeDivider), rigidbody.velocity.y);
+		}
 
         return new Vector2(0, rigidbody.velocity.y);
     }

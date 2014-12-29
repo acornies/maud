@@ -8,6 +8,7 @@ using LegendPeak.Player;
 public class PlayerState : MonoBehaviour
 {
 	private float lastTime;
+	private GameObject _telekinesisControl;
 
 	public string dataPath;
     public static PlayerState Instance { get; private set; }
@@ -19,8 +20,7 @@ public class PlayerState : MonoBehaviour
 		GameController.OnGamePause += HandleOnGamePause;
 		//OnGameResume += HandleOnGameResume;
 		GameController.OnGameOver += HandleOnGameOver;
-		GameController.OnGameRestart += HandleOnGameRestart; 
-		IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
+		GameController.OnGameRestart += HandleOnGameRestart;
 	}
 
 	void OnDisable()
@@ -40,7 +40,6 @@ public class PlayerState : MonoBehaviour
 		//OnGameResume -= HandleOnGameResume;
 		GameController.OnGameOver -= HandleOnGameOver;
 		GameController.OnGameRestart -= HandleOnGameRestart;
-		IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
 	}
 
     void Awake()
@@ -57,12 +56,14 @@ public class PlayerState : MonoBehaviour
             Destroy(gameObject);
         }
 
+		_telekinesisControl = GameObject.Find ("TelekinesisControl");
         this.Load();
     }
     
     // Use this for initialization
     void Start()
     {
+		//Data.controlMode = ControlMode.FingerSwipe; // TODO:// remove
     }
 
     public void Save()
@@ -76,12 +77,12 @@ public class PlayerState : MonoBehaviour
 			//Data.highestPoint = 0;
 		}
 
-		Debug.Log("Before: " + lastTime);
+		//Debug.Log("Before: " + lastTime);
 		var toAdd = GameController.Instance.highestPoint - lastTime;
 		lastTime = GameController.Instance.highestPoint;
-		Debug.Log ("After: " + lastTime);
+		//Debug.Log ("After: " + lastTime);
 
-		Debug.Log("Added: " + toAdd);
+		//Debug.Log("Added: " + toAdd);
 		Data.totalHeight += toAdd;
 		//Data.totalHeight = 0;
 
@@ -102,7 +103,10 @@ public class PlayerState : MonoBehaviour
     {
         if (!File.Exists(string.Format(dataPath, Application.persistentDataPath)))
 		{
-			Data = new PlayerData();
+			Data = new PlayerData(){
+				controlMode = (MobileHelper.isTablet) ? ControlMode.FingerSwipe : ControlMode.Accelerometer,
+				playMusic = true
+			};
 		}
 		else
 		{
@@ -114,6 +118,23 @@ public class PlayerState : MonoBehaviour
 		}
        
     }
+
+	public void ButtonControlMode()
+	{
+		if (Data.controlMode == ControlMode.Accelerometer) 
+		{
+			Data.controlMode = ControlMode.FingerSwipe;
+		}
+		else if (Data.controlMode == ControlMode.FingerSwipe) 
+		{
+			Data.controlMode = ControlMode.Accelerometer;
+		}
+
+		// HACK to trigger control mode change with EasyTouch events
+		_telekinesisControl.SetActive (false);
+		_telekinesisControl.SetActive (true);
+		
+	}
 
     // Update is called once per frame
     void Update()
@@ -134,10 +155,5 @@ public class PlayerState : MonoBehaviour
 	void HandleOnGameRestart(int levelToLoad)
 	{
 		lastTime = 0;
-	}
-
-	void HandleOnShowMenuButtons()
-	{
-
 	}
 }

@@ -20,6 +20,8 @@ public class GameController : MonoBehaviour
     private Image _recordButtonImage;
 	private Button _recordButtonBehaviour;
     private Image _musicButtonImage;
+	private Image _controlModeImage;
+	private Button _controlModeBehaviour;
 	private Button _musicButtonBehaviour;
 	private Button _shareButtonBehaviour;
     //private Image _cartButtonImage;
@@ -47,7 +49,8 @@ public class GameController : MonoBehaviour
     public Vector3 playerSpawnPosition;
     public bool playerIsDead;
     public bool initiatingRestart;
-    public bool useAcceleration;
+    //public bool useAcceleration;
+	//public ControlMode controlMode;
     public float lifeCost = 5f;
     public float powerAccumulationRate = 0.25f;
     public float resurrectionSpeed = 15f;
@@ -170,6 +173,10 @@ public class GameController : MonoBehaviour
 
 		_totalHeightText = GameObject.Find ("TotalText").GetComponent<Text>();
 		_highestPointText = GameObject.Find ("HighestText").GetComponent<Text>();
+
+		var controlMode = GameObject.Find ("ControlButton");
+		_controlModeImage = controlMode.GetComponent<Image>();
+		_controlModeBehaviour = controlMode.GetComponent<Button>();
 
 		//var cartButton = GameObject.Find ("CartButton");
         //_cartButtonImage = cartButton.GetComponent<Image>();
@@ -411,11 +418,15 @@ public class GameController : MonoBehaviour
 		{
 			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
 			_musicButtonBehaviour.interactable = true;
+			_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
+			_controlModeBehaviour.interactable = true;
 		}
 		else if (_isSettingsOpen)
 		{
 			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
 			_musicButtonBehaviour.interactable = false;
+			_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
+			_controlModeBehaviour.interactable = false;
 		}
 		
 		_isSettingsOpen = !_isSettingsOpen;
@@ -479,6 +490,8 @@ public class GameController : MonoBehaviour
 		{
 			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
 			_musicButtonBehaviour.interactable = false;
+			_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
+			_controlModeBehaviour.interactable = false;
 			_isSettingsOpen = false;
 			
 			_menuButtonImage.GetComponent<Animator>().enabled = false;

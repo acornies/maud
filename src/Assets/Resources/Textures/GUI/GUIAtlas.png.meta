@@ -8,8 +8,8 @@ TextureImporter:
     21300006: Cog
     21300008: Restart
     21300010: Stop
-    21300012: RightHanded
-    21300014: LeftHanded
+    21300012: Handheld
+    21300014: Tablet
     21300016: Capture
     21300018: RecIndicator
     21300020: Music
@@ -119,23 +119,23 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: RightHanded
+    - name: Handheld
       rect:
         serializedVersion: 2
-        x: 1654
-        y: 1040
-        width: 355
-        height: 432
+        x: 1583
+        y: 1037
+        width: 359
+        height: 437
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: LeftHanded
+    - name: Tablet
       rect:
         serializedVersion: 2
-        x: 72
-        y: 536
-        width: 355
-        height: 432
+        x: 71
+        y: 531
+        width: 363
+        height: 439
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
