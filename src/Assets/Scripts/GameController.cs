@@ -471,9 +471,9 @@ public class GameController : MonoBehaviour
                 break;
         }
 
-        // HACK to trigger control mode change with EasyTouch events
+        // HACK to trigger control mode change with EasyTouch events       
+		_telekinesisControl.SetActive(true);
         _telekinesisControl.SetActive(false);
-        _telekinesisControl.SetActive(true);
     }
 
     public void ButtonRestart()
