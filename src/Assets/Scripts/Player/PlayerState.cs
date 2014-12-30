@@ -9,26 +9,23 @@ using LegendPeak.Player;
 public class PlayerState : MonoBehaviour
 {
 	private float lastTime;
-	private GameObject _telekinesisControl;
-	private Image _controlModeImage;
+    private Image _controlModeImage;
 
 	public string dataPath;
-	public Sprite controlAccelerometerImage;
-	public Sprite controlFingerSwipeImage;
 
     public static PlayerState Instance { get; private set; }
     public PlayerData Data { get; private set; }
 
 	void OnEnable()
 	{
-		//GameController.OnGameStart += HandleOnGameStart;
 		GameController.OnGamePause += HandleOnGamePause;
-		//OnGameResume += HandleOnGameResume;
+		GameController.OnGameResume += HandleOnGameResume;
 		GameController.OnGameOver += HandleOnGameOver;
 		GameController.OnGameRestart += HandleOnGameRestart;
+        GameController.OnGameStart += HandleOnGameStart;
 	}
 
-	void OnDisable()
+    void OnDisable()
 	{
 		UnsubscribeEvent();
 	}
@@ -40,11 +37,11 @@ public class PlayerState : MonoBehaviour
 
 	void UnsubscribeEvent()
 	{
-		//GameController.OnGameStart -= HandleOnGameStart;
 		GameController.OnGamePause -= HandleOnGamePause;
-		//OnGameResume -= HandleOnGameResume;
+		GameController.OnGameResume -= HandleOnGameResume;
 		GameController.OnGameOver -= HandleOnGameOver;
 		GameController.OnGameRestart -= HandleOnGameRestart;
+        GameController.OnGameStart -= HandleOnGameStart;
 	}
 
     void Awake()
@@ -61,34 +58,17 @@ public class PlayerState : MonoBehaviour
             Destroy(gameObject);
         }
 
-		_telekinesisControl = GameObject.Find ("TelekinesisControl");
-		_controlModeImage = GameObject.Find ("ControlButton").GetComponent<Image>();
-
         this.Load();
     }
     
     // Use this for initialization
     void Start()
     {
-		//Data.controlMode = ControlMode.FingerSwipe; // TODO:// remove
     }
-
-	void OnGUI()
-	{
-		if (Data.controlMode == ControlMode.Accelerometer && _controlModeImage.sprite != controlAccelerometerImage) 
-		{
-			_controlModeImage.sprite = controlAccelerometerImage;
-		}
-		else if (Data.controlMode == ControlMode.FingerSwipe && _controlModeImage.sprite != controlFingerSwipeImage)
-		{
-			_controlModeImage.sprite = controlFingerSwipeImage;
-		}
-	}
 
     public void Save()
     {
-		FileStream playerFile;
-		var binaryFormatter = new BinaryFormatter();
+        var binaryFormatter = new BinaryFormatter();
 
 		if (GameController.Instance.highestPoint > Data.highestPoint) 
 		{
@@ -105,14 +85,9 @@ public class PlayerState : MonoBehaviour
 		Data.totalHeight += toAdd;
 		//Data.totalHeight = 0;
 
-		if (!File.Exists(string.Format(dataPath, Application.persistentDataPath)))
-		{
-			playerFile = File.Create(string.Format(dataPath, Application.persistentDataPath));
-		}
-		else
-		{
-			playerFile = File.OpenWrite(string.Format(dataPath, Application.persistentDataPath));
-		}		      
+		FileStream playerFile = !File.Exists(string.Format(dataPath, Application.persistentDataPath)) 
+		    ? File.Create(string.Format(dataPath, Application.persistentDataPath)) 
+		    : File.OpenWrite(string.Format(dataPath, Application.persistentDataPath));		      
         
         binaryFormatter.Serialize(playerFile, Data);
         playerFile.Close();
@@ -138,27 +113,6 @@ public class PlayerState : MonoBehaviour
        
     }
 
-	public void ButtonControlMode()
-	{
-		if (Data.controlMode == ControlMode.Accelerometer) 
-		{
-			Data.controlMode = ControlMode.FingerSwipe;
-			//_controlModeImage.sprite = controlFingerSwipeImage;
-		}
-		else if (Data.controlMode == ControlMode.FingerSwipe) 
-		{
-			Data.controlMode = ControlMode.Accelerometer;
-			//_controlModeImage.sprite = controlAccelerometerImage;
-		}
-
-		// HACK to trigger control mode change with EasyTouch events
-		_telekinesisControl.SetActive (false);
-		_telekinesisControl.SetActive (true);
-
-		Save ();
-		
-	}
-
     // Update is called once per frame
     void Update()
     {
@@ -174,6 +128,16 @@ public class PlayerState : MonoBehaviour
 	{
 		this.Save ();
 	}
+
+    private void HandleOnGameStart()
+    {
+        this.Save();
+    }
+
+    private void HandleOnGameResume()
+    {
+        this.Save();
+    }
 
 	void HandleOnGameRestart(int levelToLoad)
 	{

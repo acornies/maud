@@ -18,7 +18,6 @@ public class TelekinesisController : MonoBehaviour
     private Transform _platformClone;
     private Transform _hazard;
     private Transform _hazzardClone;
-    private float _rotationTimer;
     private AudioSource[] _teleSources;
     private AudioSource _teleAttack;
     private AudioSource _teleLoop;
@@ -246,7 +245,7 @@ public class TelekinesisController : MonoBehaviour
     {
         if (_player.disabled) return;
 
-		//if (gesture.touchCount == 1 && PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe) return;
+		if (gesture.touchCount > 1 && PlayerState.Instance.Data.controlMode == ControlMode.Accelerometer) return;
 
         if (GameController.Instance.powerMeter <= 0)
         {
@@ -341,7 +340,7 @@ public class TelekinesisController : MonoBehaviour
 
     void On_Swipe(Gesture gesture)
     {
-		//if (gesture.touchCount > 2 && PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe) return;
+        if (gesture.touchCount > 1 && PlayerState.Instance.Data.controlMode == ControlMode.Accelerometer) return;
 
         if (GameController.Instance.powerMeter <= 0) return;
 

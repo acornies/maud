@@ -59,6 +59,8 @@ public class GameController : MonoBehaviour
     public EnergyBarRenderer powerBarRenderer;
     public Sprite soundOnImage;
     public Sprite soundOffImage;
+    public Sprite controlAccelerometerImage;
+    public Sprite controlFingerSwipeImage;
 	public Color heightCounterColor;
 
     public static GameController Instance { get; private set; }
@@ -178,19 +180,6 @@ public class GameController : MonoBehaviour
 		_controlModeImage = controlMode.GetComponent<Image>();
 		_controlModeBehaviour = controlMode.GetComponent<Button>();
 
-		//var cartButton = GameObject.Find ("CartButton");
-        //_cartButtonImage = cartButton.GetComponent<Image>();
-		//_cartButtonBehaviour = cartButton.GetComponent<Button> ();
-
-        /*if (mainCamera == null)
-        {
-            Debug.LogError("Please set a main camera GameObject to GameController.cs");
-        }
-        else
-        {
-            _cameraMovement = mainCamera.GetComponent<CameraMovement>();
-        }*/
-
         gameState = GameState.Started;
         gameMode = GameMode.Story; // TODO: change from menu
 
@@ -221,6 +210,8 @@ public class GameController : MonoBehaviour
 
     void OnGUI()
     {
+        ToggleControlModeGUI();
+        
         if (heightCounter.enabled)
         {
 			heightCounter.text = highestPoint.ToString();;
@@ -242,6 +233,18 @@ public class GameController : MonoBehaviour
         else if (powerMeter >= lifeCost)
         {
             powerBarRenderer.texturesForeground[0].color.a = 0f;
+        }
+    }
+
+    private void ToggleControlModeGUI()
+    {
+        if (PlayerState.Instance.Data.controlMode == ControlMode.Accelerometer && _controlModeImage.sprite != controlAccelerometerImage)
+        {
+            _controlModeImage.sprite = controlAccelerometerImage;
+        }
+        else if (PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe && _controlModeImage.sprite != controlFingerSwipeImage)
+        {
+            _controlModeImage.sprite = controlFingerSwipeImage;
         }
     }
 
@@ -454,6 +457,23 @@ public class GameController : MonoBehaviour
 		{
 			_initiatingResume = true;
 		}*/
+    }
+
+    public void ButtonControlMode()
+    {
+        switch (PlayerState.Instance.Data.controlMode)
+        {
+            case ControlMode.Accelerometer:
+                PlayerState.Instance.Data.controlMode = ControlMode.FingerSwipe;
+                break;
+            case ControlMode.FingerSwipe:
+                PlayerState.Instance.Data.controlMode = ControlMode.Accelerometer;
+                break;
+        }
+
+        // HACK to trigger control mode change with EasyTouch events
+        _telekinesisControl.SetActive(false);
+        _telekinesisControl.SetActive(true);
     }
 
     public void ButtonRestart()
