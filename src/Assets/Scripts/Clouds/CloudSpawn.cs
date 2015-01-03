@@ -9,7 +9,11 @@ public class CloudSpawn : MonoBehaviour
     private bool _reachedMinPlatform;
     private int _cloudCount;
 
-    public Transform leftBoundary;
+    public Transform destinationBoundary;
+	[Range(-4f, 0)]
+	public float minHorizontalRange;
+	[Range(0, 4f)]
+	public float maxHorizontalRange;
     public Transform player;
     public float spawnInterval = 10;
     public int minPlatformNumber = 100;
@@ -69,20 +73,21 @@ public class CloudSpawn : MonoBehaviour
     void SpawnCloud()
     {
         var cloud = Instantiate(Resources.Load<GameObject>("Prefabs/Clouds/CloudProto_1"),
-            new Vector3(transform.position.x, Random.Range((transform.position.y - transform.localScale.y/2), (transform.position.y + transform.localScale.y/2)), player.position.z),
+		                        new Vector3(Random.Range(minHorizontalRange, maxHorizontalRange), transform.position.y, player.position.z),
             Quaternion.identity) as GameObject;
 
         if (cloud == null) return;
 
         _cloudCount++;
         cloud.renderer.material.color = new Color(1, 1, 1, 0.6f);
+		cloud.name = "cloud_" + _cloudCount;
 
 
         var cloudBehaviour = cloud.GetComponent<CloudBehaviour>();
-        if (leftBoundary != null && cloudBehaviour != null)
+        if (destinationBoundary != null && cloudBehaviour != null)
         {
-            cloudBehaviour.targetPosition = new Vector3(leftBoundary.position.x, cloud.transform.position.y, cloud.transform.position.z);
-            cloudBehaviour.speed = Random.Range(.5f, 1.5f);
+			cloudBehaviour.targetPosition = new Vector3(cloud.transform.position.x, destinationBoundary.position.y, cloud.transform.position.z);
+            cloudBehaviour.speed = Random.Range(1f, 2f);
         }
     }
 

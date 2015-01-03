@@ -65,19 +65,20 @@ public class CloudBehaviour : MonoBehaviour
     void HandleOnPlatformReached(Transform platform, Transform player)
     {
         if (platform.GetInstanceID() != transform.GetInstanceID()) return;
-		if (player.rigidbody.velocity.y > 5f) return;
+		if (player.rigidbody.velocity.y > 1f) return;
  
         //Debug.Log("Stand on cloud!");
         collider.isTrigger = false;
+		player.rigidbody.velocity = new Vector3(player.rigidbody.velocity.x, 0, player.rigidbody.velocity.z);
         _disappearTimer -= Time.deltaTime;
 
-        player.parent = transform;
+        //player.parent = transform;
 
     }
 
     void HandleOnPlayerAirborne(Transform player)
     {
         collider.isTrigger = true;
-        player.parent = null;
+        //player.parent = null;
     }
 }
