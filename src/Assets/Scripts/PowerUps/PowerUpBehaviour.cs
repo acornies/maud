@@ -51,7 +51,7 @@ public class PowerUpBehaviour : MonoBehaviour
 
         _animator.enabled = false;
         particleSystem.Stop();
-
+        collider.enabled = false;
         if (OnPowerPickUp != null)
         {
             OnPowerPickUp(pickUpPower);
@@ -62,6 +62,7 @@ public class PowerUpBehaviour : MonoBehaviour
     {
         _animator.enabled = true;
         particleSystem.Play();
+        collider.enabled = true;
     }
 
     private void HandleOnNewPowerUpLocation(Vector3 location)

@@ -3,17 +3,21 @@ using UnityEngine;
 using System.Collections;
 
 public class SkyboxCameraMovement : MonoBehaviour
-{   
-    public Transform directionalLight;
+{
+    private Light _sunlightComponent;
+    
+    public Transform sunlightDirectionalLight;
     public static float speedMultiplier = 0.02f;
     public float rotationSpeed = 1f;
     public Material[] skyboxes;
-    public bool rotateLight;
     public float maxRotationSpeed = 100f;
 
     public int dawnSkyboxTransitionPlatform = 61;
     public int cloudSkyboxTransitionPlatform = 150;
     public float transitionSpeed = 3f;
+
+    public Color sunlightColorDawn;
+    public Color sunlightColorAboveClouds;
     //public int aboveSkyboxTransitionPlatform = 150;
 
     void OnEnable()
@@ -40,11 +44,15 @@ public class SkyboxCameraMovement : MonoBehaviour
     void Start()
     {
         RenderSettings.skybox = skyboxes[0];
-        RenderSettings.skybox.SetFloat("_Blend",0);
-        
-        if (directionalLight == null)
+        RenderSettings.skybox.SetFloat("_Blend", 0);
+
+        if (sunlightDirectionalLight == null)
         {
-            Debug.LogError("No directional light set on Directional Light property of SkyboxCameraMovement.cs");
+            Debug.LogError("No directional light set on Sunlight Directional Light property of SkyboxCameraMovement.cs");
+        }
+        else
+        {
+            _sunlightComponent = sunlightDirectionalLight.GetComponent<Light>();
         }
     }
 
@@ -52,18 +60,32 @@ public class SkyboxCameraMovement : MonoBehaviour
     void Update()
     {
         transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
-        if (rotateLight)
-        {
-            directionalLight.Rotate(0, (-rotationSpeed * 2) * Time.deltaTime, 0);
-        }
+        // rotate light opposite of skybox camera, x2 speed since light is rotating due to it's parent
+        sunlightDirectionalLight.Rotate(0, (-rotationSpeed * 2) * Time.deltaTime, 0);
 
-        if (PlatformController.Instance.GetCurrentPlatformNumber() >= dawnSkyboxTransitionPlatform)
-        {
-            var blend = Mathf.Lerp(RenderSettings.skybox.GetFloat("_Blend"), 1f, transitionSpeed * Time.deltaTime);
-            RenderSettings.skybox.SetFloat("_Blend", blend);
-            //TODO: transition/change directional light
-        }
+        var currentPlatform = PlatformController.Instance.GetCurrentPlatformNumber();
+        SkyboxTransition(0, currentPlatform, dawnSkyboxTransitionPlatform, sunlightColorAboveClouds);
+        SkyboxTransition(1, currentPlatform, cloudSkyboxTransitionPlatform, sunlightColorAboveClouds);
 
+    }
+
+    void SkyboxTransition(int currentSkybox, int currentPlatform, int transitionPlatform, Color sunlightColor)
+    {
+        if (currentPlatform < transitionPlatform) return;
+
+        if (RenderSettings.skybox != skyboxes[currentSkybox]) return;
+
+        var blend = Mathf.Lerp(RenderSettings.skybox.GetFloat("_Blend"), 1f, transitionSpeed * Time.deltaTime);
+        RenderSettings.skybox.SetFloat("_Blend", blend);
+
+        _sunlightComponent.color = Color.Lerp(_sunlightComponent.color, sunlightColor, transitionSpeed*Time.deltaTime);
+
+        var nextSkybox = (currentSkybox + 1);
+        if (!(RenderSettings.skybox.GetFloat("_Blend") >= 0.95f) || nextSkybox > (skyboxes.Length - 1)) return;
+
+        Debug.Log("Set RenderSettings to " + nextSkybox + " skybox");
+        RenderSettings.skybox = skyboxes[nextSkybox];
+        RenderSettings.skybox.SetFloat("_Blend", 0);
     }
 
     private void HandleOnMaxHeightIncrease(float amount)
