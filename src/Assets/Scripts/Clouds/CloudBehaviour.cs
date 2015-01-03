@@ -4,10 +4,12 @@ using System.Collections;
 public class CloudBehaviour : MonoBehaviour
 {
     private float _disappearTimer;
+    private bool _shouldDisappear;
     
     public float disappearTime = 2;
     public float speed = 1;
     public Vector3? targetPosition;
+    public float disappearingSpeed = 10f;
 
     public delegate void CloudDestroy();
     public static event CloudDestroy On_CloudDestroy;
@@ -51,14 +53,28 @@ public class CloudBehaviour : MonoBehaviour
 
         if (_disappearTimer <= 0)
         {
-            On_CloudDestroy();
-            Destroy(transform.gameObject);
+            //On_CloudDestroy();
+            //Destroy(transform.gameObject);
+            _shouldDisappear = true;
         }
 
-        if (transform.position == targetPosition)
+        else if (transform.position == targetPosition)
         {
-            On_CloudDestroy();
-            Destroy(transform.gameObject);
+            //On_CloudDestroy();
+           // Destroy(transform.gameObject);
+            _shouldDisappear = true;
+        }
+
+        if (_shouldDisappear)
+        {
+            renderer.material.color = Color.Lerp(renderer.material.color,
+           new Color(renderer.material.color.r, renderer.material.color.g, renderer.material.color.b,
+               0f), disappearingSpeed * Time.deltaTime);
+            if (renderer.material.color.a <= 0.05)
+            {
+                On_CloudDestroy();
+                Destroy(transform.gameObject);
+            }
         }
     }
 
@@ -68,17 +84,17 @@ public class CloudBehaviour : MonoBehaviour
 		if (player.rigidbody.velocity.y > 1f) return;
  
         //Debug.Log("Stand on cloud!");
-        collider.isTrigger = false;
+        collider.isTrigger = player.GetComponent<PlayerMovement>().isHittingHead;
 		player.rigidbody.velocity = new Vector3(player.rigidbody.velocity.x, 0, player.rigidbody.velocity.z);
         _disappearTimer -= Time.deltaTime;
 
-        //player.parent = transform;
+        player.parent = transform;
 
     }
 
     void HandleOnPlayerAirborne(Transform player)
     {
         collider.isTrigger = true;
-        //player.parent = null;
+        player.parent = null;
     }
 }
