@@ -96,6 +96,12 @@ public class PlayerMovement : MonoBehaviour
         CloudBehaviour.On_CloudDestroy += HandleOnCloudDestroy;
 		IntroTrigger.OnZoomToGamePosition += HandleOnZoomToGamePosition;
 		IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
+		SkyboxCameraMovement.OnPlayerMaterialUpdate += HandleOnPlayerMaterialUpdate;
+    }
+
+    void HandleOnPlayerMaterialUpdate (Material newMaterial)
+    {
+		normalBodyMaterial = newMaterial;
     }
 
     void OnDisable()
@@ -123,6 +129,7 @@ public class PlayerMovement : MonoBehaviour
         CloudBehaviour.On_CloudDestroy -= HandleOnCloudDestroy;
 		IntroTrigger.OnZoomToGamePosition -= HandleOnZoomToGamePosition;
 		IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
+		SkyboxCameraMovement.OnPlayerMaterialUpdate -= HandleOnPlayerMaterialUpdate;
     }
 
     void Awake()
