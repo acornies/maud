@@ -221,7 +221,7 @@ public class GameController : MonoBehaviour
         {
             powerBarRenderer.texturesBackground[0].color.a = 1f;
             //powerBarRenderer.textureBarColor.a = 0f;
-            powerBarRenderer.screenPosition = new Vector2(20f, 20f);
+            powerBarRenderer.screenPosition = new Vector2(30f, 30f);
         }
 
         //if (!powerBarRenderer.enabled) return;

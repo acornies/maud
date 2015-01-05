@@ -11,7 +11,6 @@ public class SkyboxCameraMovement : MonoBehaviour
     public float rotationSpeed = 1f;
     public Material[] skyboxes;
     public float maxRotationSpeed = 100f;
-    public float sunlightHorizontalRotation = 1f;
 
     public int dawnSkyboxTransitionPlatform = 61;
     public int cloudSkyboxTransitionPlatform = 150;
@@ -70,12 +69,12 @@ public class SkyboxCameraMovement : MonoBehaviour
         //sunlightDirectionalLight.Rotate(new Vector3(0, -rotationSpeed * Time.deltaTime, 0), Space.Self);
 
         var currentPlatform = PlatformController.Instance.GetCurrentPlatformNumber();
-        SkyboxTransition(0, currentPlatform, dawnSkyboxTransitionPlatform, sunlightColorAboveClouds, playerCloudMaterial);
-        SkyboxTransition(1, currentPlatform, cloudSkyboxTransitionPlatform, sunlightColorAboveClouds, playerAboveCloudMaterial);
+        SkyboxTransition(0, currentPlatform, dawnSkyboxTransitionPlatform, sunlightColorAboveClouds, playerCloudMaterial, 40f);
+        SkyboxTransition(1, currentPlatform, cloudSkyboxTransitionPlatform, sunlightColorAboveClouds, playerAboveCloudMaterial, 20f);
 
     }
 
-    void SkyboxTransition(int currentSkybox, int currentPlatform, int transitionPlatform, Color sunlightColor, Material playerMaterial)
+    void SkyboxTransition(int currentSkybox, int currentPlatform, int transitionPlatform, Color sunlightColor, Material playerMaterial, float sunlghtAngle)
     {
         if (currentPlatform < transitionPlatform) return;
 
@@ -86,12 +85,12 @@ public class SkyboxCameraMovement : MonoBehaviour
 
         _sunlightComponent.color = Color.Lerp(_sunlightComponent.color, sunlightColor, transitionSpeed * Time.deltaTime);
 
-        if (currentSkybox == 0)
-        {
-            sunlightDirectionalLight.rotation = Quaternion.Lerp(sunlightDirectionalLight.rotation, 
-                Quaternion.Euler(40f, sunlightDirectionalLight.rotation.y, sunlightDirectionalLight.rotation.z), 
+        //if (currentSkybox == 0)
+        //{
+            sunlightDirectionalLight.localRotation = Quaternion.Lerp(sunlightDirectionalLight.localRotation, 
+                Quaternion.AngleAxis(sunlghtAngle, Vector3.right), 
                 transitionSpeed * Time.deltaTime);
-        }
+        //}
 
         //sunlightDirectionalLight.localEulerAngles.y = 0;
         //sunlightDirectionalLight.localEulerAngles.z = 0;
