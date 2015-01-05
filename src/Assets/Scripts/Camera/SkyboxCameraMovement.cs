@@ -15,14 +15,12 @@ public class SkyboxCameraMovement : MonoBehaviour
     public int dawnSkyboxTransitionPlatform = 61;
     public int cloudSkyboxTransitionPlatform = 150;
     public float transitionSpeed = 3f;
-
-    public Material playerCloudMaterial;
-    public Material playerAboveCloudMaterial;
+	
     public Color sunlightColorDawn;
     public Color sunlightColorAboveClouds;
     //public int aboveSkyboxTransitionPlatform = 150;
 
-    public delegate void PlayerMaterialUpdate(Material newMaterial);
+    public delegate void PlayerMaterialUpdate(int materialIndex);
     public static event PlayerMaterialUpdate OnPlayerMaterialUpdate;
 
     void OnEnable()
@@ -69,12 +67,12 @@ public class SkyboxCameraMovement : MonoBehaviour
         //sunlightDirectionalLight.Rotate(new Vector3(0, -rotationSpeed * Time.deltaTime, 0), Space.Self);
 
         var currentPlatform = PlatformController.Instance.GetCurrentPlatformNumber();
-        SkyboxTransition(0, currentPlatform, dawnSkyboxTransitionPlatform, sunlightColorAboveClouds, playerCloudMaterial, 40f);
-        SkyboxTransition(1, currentPlatform, cloudSkyboxTransitionPlatform, sunlightColorAboveClouds, playerAboveCloudMaterial, 20f);
+        SkyboxTransition(0, currentPlatform, dawnSkyboxTransitionPlatform, sunlightColorAboveClouds, 40f);
+        SkyboxTransition(1, currentPlatform, cloudSkyboxTransitionPlatform, sunlightColorAboveClouds, 20f);
 
     }
 
-    void SkyboxTransition(int currentSkybox, int currentPlatform, int transitionPlatform, Color sunlightColor, Material playerMaterial, float sunlghtAngle)
+    void SkyboxTransition(int currentSkybox, int currentPlatform, int transitionPlatform, Color sunlightColor, float sunlghtAngle)
     {
         if (currentPlatform < transitionPlatform) return;
 
@@ -103,10 +101,10 @@ public class SkyboxCameraMovement : MonoBehaviour
 
         if (OnPlayerMaterialUpdate != null)
         {
-            OnPlayerMaterialUpdate(playerMaterial);
-        }
-
-        if (nextSkybox > (skyboxes.Length -1)) return;
+			OnPlayerMaterialUpdate(nextSkybox);
+		}
+		
+		if (nextSkybox > (skyboxes.Length -1)) return;
 
         Debug.Log("Set RenderSettings to " + nextSkybox + " skybox");
         RenderSettings.skybox = skyboxes[nextSkybox];

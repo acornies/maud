@@ -319,7 +319,7 @@ public class GameController : MonoBehaviour
         else if (playerIsDead && powerMeter < lifeCost)
         {
             initiatingRestart = true;
-            _menuButtonBehaviour.interactable = false;
+            //_menuButtonBehaviour.interactable = false;
             _restartButtonBehaviour.interactable = true;
             if (OnGameOver != null && gameState != GameState.Over)
             {
@@ -400,7 +400,7 @@ public class GameController : MonoBehaviour
 
 		_isSharingOpen = !_isSharingOpen;
 		
-		if (gameState == GameState.Running)
+		/*if (gameState == GameState.Running)
 		{
 			if (OnGamePause != null)
 			{
@@ -408,7 +408,7 @@ public class GameController : MonoBehaviour
 				//_isSharingOpen = !_isSharingOpen;
 			}
 			
-		}
+		}*/
 		/*else
 		{
 			_initiatingResume = true;

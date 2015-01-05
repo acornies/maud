@@ -18,6 +18,7 @@ public class CloudSpawn : MonoBehaviour
     public float spawnInterval = 10;
     public int minPlatformNumber = 100;
     public int maxClouds = 5;
+	public int cloudFastStartPlatform = 101;
 
     public virtual void OnEnable()
     {
@@ -80,16 +81,24 @@ public class CloudSpawn : MonoBehaviour
 
         _cloudCount++;
         cloud.renderer.material.color = new Color(1, 1, 1, 0.6f);
-		cloud.name = "cloud_" + _cloudCount;
+		cloud.name = "Cloud_" + _cloudCount;
 
-
-        var cloudBehaviour = cloud.GetComponent<CloudBehaviour>();
-        if (destinationBoundary != null && cloudBehaviour != null)
-        {
-			cloudBehaviour.targetPosition = new Vector3(cloud.transform.position.x, destinationBoundary.position.y, cloud.transform.position.z);
-            cloudBehaviour.speed = Random.Range(1f, 2f);
-        }
+		HeightAdjustments (cloud);
     }
+
+	private void HeightAdjustments(GameObject cloud)
+	{
+		var cloudBehaviour = cloud.GetComponent<CloudBehaviour>();
+		if (destinationBoundary == null && cloudBehaviour == null) return;
+
+		cloudBehaviour.targetPosition = new Vector3(cloud.transform.position.x, destinationBoundary.position.y, cloud.transform.position.z);
+		cloudBehaviour.speed = Random.Range(1f, 2f);
+		
+		if (_currentPlatformNumber >= cloudFastStartPlatform)
+		{
+			cloudBehaviour.speed = Random.Range(2f, 3f);
+		}
+	}
 
     void HandleOnCloudDestroy()
     {

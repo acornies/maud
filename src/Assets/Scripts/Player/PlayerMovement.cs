@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Linq;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(AudioSource))]
@@ -29,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
     private Transform _modelBody;
     private Transform _leftEye;
     private Transform _rightEye;
+	private int _currentMaterialIndex;
 
     public bool disabled;
     public bool isGrounded;
@@ -65,7 +67,7 @@ public class PlayerMovement : MonoBehaviour
     public float moveThreshold = 0.1f;
 	public float swipeControlModeDivider = 2f;
 
-    public Material normalBodyMaterial;
+    public Material[] bodyMaterials;
     public Material ghostBodyMaterial;
     public Material normalEyeMaterial;
     public Material ghostEyeMaterial;
@@ -99,9 +101,12 @@ public class PlayerMovement : MonoBehaviour
 		SkyboxCameraMovement.OnPlayerMaterialUpdate += HandleOnPlayerMaterialUpdate;
     }
 
-    void HandleOnPlayerMaterialUpdate (Material newMaterial)
+    void HandleOnPlayerMaterialUpdate (int materialIndex)
     {
-		normalBodyMaterial = newMaterial;
+		//normalBodyMaterial = newMaterial;
+		//TODO: Complete during skin pack work
+		_currentMaterialIndex = materialIndex;
+		Debug.Log ("Update skin to material index: " + materialIndex);
     }
 
     void OnDisable()
@@ -151,17 +156,17 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        if (GameController.Instance.playerIsDead)
-        {
-            _modelBody.renderer.material = ghostBodyMaterial;
+		if (GameController.Instance.playerIsDead && _modelBody.renderer.material != ghostBodyMaterial)
+		{
+			_modelBody.renderer.material = ghostBodyMaterial;
             _leftEye.renderer.material = ghostEyeMaterial;
             _rightEye.renderer.material = ghostEyeMaterial;
         }
-        else
-        {
-            collider.enabled = true;
-            _modelBody.renderer.material = normalBodyMaterial;
-            _leftEye.renderer.material = normalEyeMaterial;
+		else if (!GameController.Instance.playerIsDead && _modelBody.renderer.material != bodyMaterials[_currentMaterialIndex])
+		{
+			collider.enabled = true;
+			_modelBody.renderer.material = bodyMaterials[_currentMaterialIndex];
+			_leftEye.renderer.material = normalEyeMaterial;
             _rightEye.renderer.material = normalEyeMaterial;
         }
 
