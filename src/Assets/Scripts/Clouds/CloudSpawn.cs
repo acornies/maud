@@ -89,7 +89,7 @@ public class CloudSpawn : MonoBehaviour
 	private void HeightAdjustments(GameObject cloud)
 	{
 		var cloudBehaviour = cloud.GetComponent<CloudBehaviour>();
-		if (destinationBoundary == null && cloudBehaviour == null) return;
+		if (destinationBoundary == null || cloudBehaviour == null) return;
 
 		cloudBehaviour.targetPosition = new Vector3(cloud.transform.position.x, destinationBoundary.position.y, cloud.transform.position.z);
 		cloudBehaviour.speed = Random.Range(1f, 2f);
