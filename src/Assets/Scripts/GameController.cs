@@ -20,8 +20,8 @@ public class GameController : MonoBehaviour
     private Image _recordButtonImage;
 	private Button _recordButtonBehaviour;
     private Image _musicButtonImage;
-	private Image _controlModeImage;
-	private Button _controlModeBehaviour;
+	//private Image _controlModeImage; // TODO finish later
+	//private Button _controlModeBehaviour;
 	private Button _musicButtonBehaviour;
 	private Button _shareButtonBehaviour;
     //private Image _cartButtonImage;
@@ -36,7 +36,6 @@ public class GameController : MonoBehaviour
     public Text heightCounter;
 	public bool countHeight; 
     public GameObject mainCamera;
-    public bool playMusic = true;
     public GameState gameState;
     public GameMode gameMode;
     public bool inSafeZone = true;
@@ -126,7 +125,6 @@ public class GameController : MonoBehaviour
         OnGameRestart -= HandleOnGameRestart;
         PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
-        //Everyplay.ReadyForRecording -= HandleOnReadyToRecord;
     }
 
     // Use this for initialization
@@ -177,8 +175,8 @@ public class GameController : MonoBehaviour
 		_highestPointText = GameObject.Find ("HighestText").GetComponent<Text>();
 
 		var controlMode = GameObject.Find ("ControlButton");
-		_controlModeImage = controlMode.GetComponent<Image>();
-		_controlModeBehaviour = controlMode.GetComponent<Button>();
+		//_controlModeImage = controlMode.GetComponent<Image>();
+		//_controlModeBehaviour = controlMode.GetComponent<Button>();
 
         gameState = GameState.Started;
         gameMode = GameMode.Story; // TODO: change from menu
@@ -198,19 +196,12 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        //Everyplay.ReadyForRecording += HandleOnReadyToRecord;
-		//_recordButtonBehaviour.interactable = EveryplayController.Instance.isReady;
-    }
-
-    private void HandleOnReadyToRecord(bool serviceReady)
-    {
-        //_recordButtonBehaviour.interactable = serviceReady && Everyplay.IsRecordingSupported();
-        GameObject.Find("EveryplayDebug").GetComponent<Text>().text = serviceReady.ToString();
+        _musicButtonImage.sprite = !PlayerState.Instance.Data.playMusic ? soundOffImage : soundOnImage;
     }
 
     void OnGUI()
     {
-        ToggleControlModeGUI();
+        //ToggleControlModeGUI();
         
         if (heightCounter.enabled)
         {
@@ -236,7 +227,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private void ToggleControlModeGUI()
+    /*private void ToggleControlModeGUI()
     {
         if (PlayerState.Instance.Data.controlMode == ControlMode.Accelerometer && _controlModeImage.sprite != controlAccelerometerImage)
         {
@@ -246,7 +237,7 @@ public class GameController : MonoBehaviour
         {
             _controlModeImage.sprite = controlFingerSwipeImage;
         }
-    }
+    }*/
 
     // Update is called once per frame
     void Update()
@@ -421,15 +412,15 @@ public class GameController : MonoBehaviour
 		{
 			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
 			_musicButtonBehaviour.interactable = true;
-			_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
-			_controlModeBehaviour.interactable = true;
+			//_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
+			//_controlModeBehaviour.interactable = true;
 		}
 		else if (_isSettingsOpen)
 		{
 			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
 			_musicButtonBehaviour.interactable = false;
-			_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
-			_controlModeBehaviour.interactable = false;
+			//_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
+			//_controlModeBehaviour.interactable = false;
 		}
 		
 		_isSettingsOpen = !_isSettingsOpen;
@@ -487,14 +478,14 @@ public class GameController : MonoBehaviour
 
     public void ButtonMusic()
     {
-        playMusic = !playMusic;
+        PlayerState.Instance.Data.playMusic = !PlayerState.Instance.Data.playMusic;
 
         if (OnToggleMusic != null)
         {
-            OnToggleMusic(playMusic);
+            OnToggleMusic(PlayerState.Instance.Data.playMusic);
         }
 
-        _musicButtonImage.sprite = !playMusic ? soundOffImage : soundOnImage;
+        _musicButtonImage.sprite = !PlayerState.Instance.Data.playMusic ? soundOffImage : soundOnImage;
     }
 
     void HandleOnShowMenuButtons()
@@ -510,8 +501,8 @@ public class GameController : MonoBehaviour
 		{
 			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
 			_musicButtonBehaviour.interactable = false;
-			_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
-			_controlModeBehaviour.interactable = false;
+			//_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
+			//_controlModeBehaviour.interactable = false;
 			_isSettingsOpen = false;
 			
 			_menuButtonImage.GetComponent<Animator>().enabled = false;

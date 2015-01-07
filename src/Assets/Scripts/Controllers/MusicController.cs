@@ -39,7 +39,7 @@ public class MusicController : MonoBehaviour
     void HandleOnMovePlayerToGamePosition (Vector3 playerPosition)
     {
         forestMusicSlow.Play ();
-        forestMusicSlow.volume = GameController.Instance.playMusic ? maxMusicVolume : 0;
+        forestMusicSlow.volume = PlayerState.Instance.Data.playMusic ? maxMusicVolume : 0;
     }
 
     void HandleOnGameStart ()
@@ -85,6 +85,7 @@ public class MusicController : MonoBehaviour
         //forestMusicFast = transform.FindChild("ForestFast").audio;
         //forestMusicSlow.Play();
         stratosphereMusic.Play();
+        this.ToggleMusic(PlayerState.Instance.Data.playMusic);
     }
 
     // Update is called once per frame
@@ -148,7 +149,7 @@ public class MusicController : MonoBehaviour
         nextSong.Play();
         currentSong.volume = 0.0f;
         currentSong.Stop();
-        nextSong.volume = (GameController.Instance.playMusic) ? maxMusicVolume : 0;
+        nextSong.volume = (PlayerState.Instance.Data.playMusic) ? maxMusicVolume : 0;
     }
 
     void ToggleMusic(bool playMusic)

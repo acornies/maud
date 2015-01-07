@@ -23,7 +23,15 @@ public class PlayerState : MonoBehaviour
 		GameController.OnGameOver += HandleOnGameOver;
 		GameController.OnGameRestart += HandleOnGameRestart;
         GameController.OnGameStart += HandleOnGameStart;
+	    GameController.OnToggleMusic += HandleToggleMusic;
 	}
+
+    private void HandleToggleMusic(bool playmusic)
+    {
+        Data.playMusic = playmusic;
+        Debug.Log("Save music preference");
+        this.Save();
+    }
 
     void OnDisable()
 	{
@@ -42,6 +50,7 @@ public class PlayerState : MonoBehaviour
 		GameController.OnGameOver -= HandleOnGameOver;
 		GameController.OnGameRestart -= HandleOnGameRestart;
         GameController.OnGameStart -= HandleOnGameStart;
+        GameController.OnToggleMusic -= HandleToggleMusic;
 	}
 
     void Awake()

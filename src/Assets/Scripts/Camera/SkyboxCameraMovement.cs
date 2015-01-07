@@ -5,6 +5,7 @@ using System.Collections;
 public class SkyboxCameraMovement : MonoBehaviour
 {
     private Light _sunlightComponent;
+    private bool _changeToStartColor;
 
     public Transform sunlightDirectionalLight;
     public static float speedMultiplier = 0.015f;
@@ -26,6 +27,12 @@ public class SkyboxCameraMovement : MonoBehaviour
     void OnEnable()
     {
         GameController.OnMaxHeightIncrease += HandleOnMaxHeightIncrease;
+        GameController.OnGameStart += HandleOnGameStart;
+    }
+
+    private void HandleOnGameStart()
+    {
+        _changeToStartColor = true;
     }
 
     void OnDisable()
@@ -41,6 +48,7 @@ public class SkyboxCameraMovement : MonoBehaviour
     void UnsubscribeEvent()
     {
         GameController.OnMaxHeightIncrease -= HandleOnMaxHeightIncrease;
+        GameController.OnGameStart -= HandleOnGameStart;
     }
 
     // Use this for initialization
@@ -63,12 +71,19 @@ public class SkyboxCameraMovement : MonoBehaviour
     void Update()
     {
         transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.Self);
+
         // rotate light opposite of skybox camera, x2 speed since light is rotating due to it's parent
         //sunlightDirectionalLight.Rotate(new Vector3(0, -rotationSpeed * Time.deltaTime, 0), Space.Self);
 
         var currentPlatform = PlatformController.Instance.GetCurrentPlatformNumber();
         SkyboxTransition(0, currentPlatform, dawnSkyboxTransitionPlatform, sunlightColorAboveClouds, 40f);
         SkyboxTransition(1, currentPlatform, cloudSkyboxTransitionPlatform, sunlightColorAboveClouds, 20f);
+
+        if (_changeToStartColor && _sunlightComponent.color != sunlightColorDawn)
+        {
+            _sunlightComponent.color = Color.Lerp(_sunlightComponent.color, sunlightColorDawn, transitionSpeed * Time.deltaTime);
+            Debug.Log("Changing to dawn color...");
+        }
 
     }
 
@@ -77,6 +92,8 @@ public class SkyboxCameraMovement : MonoBehaviour
         if (currentPlatform < transitionPlatform) return;
 
         if (RenderSettings.skybox != skyboxes[currentSkybox]) return;
+
+        _changeToStartColor = false;
 
         var blend = Mathf.Lerp(RenderSettings.skybox.GetFloat("_Blend"), 1f, transitionSpeed * Time.deltaTime);
         RenderSettings.skybox.SetFloat("_Blend", blend);
