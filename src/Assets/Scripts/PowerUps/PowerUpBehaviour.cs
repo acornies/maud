@@ -56,20 +56,14 @@ public class PowerUpBehaviour : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        _light.intensity = Mathf.Lerp(_light.intensity, !collider.enabled ? 0 : lightIntensity, lightDimSpeed * Time.deltaTime);
-        if (_newLocation != Vector3.zero)
+        _light.intensity = Mathf.Lerp(_light.intensity, (_shouldOrbitAroundPlayer || _newLocation != Vector3.zero) ? 0 : lightIntensity, lightDimSpeed * Time.deltaTime);
+        
+		if (_newLocation != Vector3.zero)
         {
-            if (particleSystem.isPlaying)
-            {
-                particleSystem.Stop();
-                collider.enabled = false;
-            }
-            else if (!particleSystem.isPlaying)
+			if (_light.intensity <= 0.01f)
             {               
                 transform.parent.position = _newLocation;
                 Reactivate();
-                _newLocation = Vector3.zero;
-               
             }
         }
 
@@ -99,16 +93,17 @@ public class PowerUpBehaviour : MonoBehaviour
 
     public void Reactivate()
     {
-        _animator.enabled = true;
+		_animator.enabled = true;
         particleSystem.Play();
         collider.enabled = true;
-        
+		_newLocation = Vector3.zero;
     }
 
     private void HandleOnNewPowerUpLocation(Vector3 location)
     {
         //Debug.Log("New pick-up position: " + location);
         //transform.parent.position = location;
+		particleSystem.Stop();
         _shouldOrbitAroundPlayer = false;
         orbitCenter = null;
         _newLocation = location;   
