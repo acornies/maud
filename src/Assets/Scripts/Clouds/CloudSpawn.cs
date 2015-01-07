@@ -59,6 +59,11 @@ public class CloudSpawn : MonoBehaviour
             _reachedMinPlatform = true;
         }
 
+        if (_currentPlatformNumber >= cloudFastStartPlatform)
+        {
+            maxClouds = 10;
+        }
+
         if (_currentPlatformNumber >= minPlatformNumber || _reachedMinPlatform)
         {
             _spawnTimer -= Time.deltaTime;
@@ -96,7 +101,8 @@ public class CloudSpawn : MonoBehaviour
 		
 		if (_currentPlatformNumber >= cloudFastStartPlatform)
 		{
-			cloudBehaviour.speed = Random.Range(2f, 3f);
+		    //maxClouds = 10;
+            cloudBehaviour.speed = Random.Range(2f, 3f);
 		}
 	}
 

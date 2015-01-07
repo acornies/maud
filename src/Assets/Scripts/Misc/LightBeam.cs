@@ -5,9 +5,8 @@ public class LightBeam : MonoBehaviour {
 
 	private LineRenderer _lineRenderer;
 	private float _width;
-	private float _previousWidth;
-		
-	public float maxWidth;
+
+    public float maxWidth;
 	public float minWidth;
 	public float flickerInterval = .1f;
 	public float widthFluxInterval = .5f;
@@ -38,9 +37,8 @@ public class LightBeam : MonoBehaviour {
 	{
 		_lineRenderer = GetComponent<LineRenderer> ();
 		_width = minWidth;
-		_previousWidth = minWidth;
 
-		while (true) 
+	    while (true) 
 		{
 			yield return StartCoroutine("Flucuate");
 		}
@@ -55,8 +53,7 @@ public class LightBeam : MonoBehaviour {
 
 	IEnumerator Flucuate()
 	{
-		_previousWidth = _width;
-		_width = Random.Range (minWidth, maxWidth);
+	    _width = Random.Range (minWidth, maxWidth);
 		_lineRenderer.SetWidth (_width, _width);
 		yield return new WaitForSeconds (widthFluxInterval);
 	}
@@ -64,6 +61,6 @@ public class LightBeam : MonoBehaviour {
 	void HandleOnNewPlatform(float newPlatformYPosition)
 	{
 		_lineRenderer.SetPosition (1, new Vector3 (0, newPlatformYPosition, transform.position.z));
-		Debug.Log ("Light beam height: " + newPlatformYPosition);
+		//Debug.Log ("Light beam height: " + newPlatformYPosition);
 	}
 }
