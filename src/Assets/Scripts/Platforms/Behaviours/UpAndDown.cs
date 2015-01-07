@@ -20,11 +20,6 @@ public class UpAndDown : PlatformBehaviour
     public delegate void ReturnCameraSpeed();
     public static event ReturnCameraSpeed OnReturnCameraSpeed;
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-
     public override void HandleOnPlatformReached(Transform platform, Transform player)
     {
         base.HandleOnPlatformReached(platform, player);
@@ -32,7 +27,7 @@ public class UpAndDown : PlatformBehaviour
         //if (platform == null || child == null) return;
         if (platform.GetInstanceID() != child.GetInstanceID()) return;
 
-        if (isOnPlatform && isBeingAffected)
+        /*if (isOnPlatform && isBeingAffected)
         {
             player.parent = null;
         }
@@ -40,7 +35,7 @@ public class UpAndDown : PlatformBehaviour
         if (isOnPlatform && !isBeingAffected)
         {
             player.parent = child;
-        }
+        }*/
         
         if (OnUpdateCameraSpeed != null)
         {

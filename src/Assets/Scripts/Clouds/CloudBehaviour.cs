@@ -10,9 +10,16 @@ public class CloudBehaviour : MonoBehaviour
     public float speed = 1;
     public Vector3? targetPosition;
     public float disappearingSpeed = 10f;
+    public float cameraSpeed = 1f;
 
     public delegate void CloudDestroy();
     public static event CloudDestroy On_CloudDestroy;
+
+    public delegate void UpdateCameraSpeed(float speed);
+    public static event UpdateCameraSpeed OnUpdateCameraSpeed;
+
+    public delegate void ReturnCameraSpeed();
+    public static event ReturnCameraSpeed OnReturnCameraSpeed;
 
     void OnEnable()
     {
@@ -85,10 +92,15 @@ public class CloudBehaviour : MonoBehaviour
  
         //Debug.Log("Stand on cloud!");
         collider.isTrigger = player.GetComponent<PlayerMovement>().isHittingHead;
-		player.rigidbody.velocity = new Vector3(player.rigidbody.velocity.x, 0, player.rigidbody.velocity.z);
+		//player.rigidbody.velocity = new Vector3(player.rigidbody.velocity.x, 0, player.rigidbody.velocity.z);
         _disappearTimer -= Time.deltaTime;
 
         player.parent = transform;
+
+        if (OnUpdateCameraSpeed != null)
+        {
+            OnUpdateCameraSpeed(cameraSpeed);
+        }
 
     }
 
@@ -96,5 +108,9 @@ public class CloudBehaviour : MonoBehaviour
     {
         collider.isTrigger = true;
         player.parent = null;
+        if (OnReturnCameraSpeed != null)
+        {
+            OnReturnCameraSpeed();
+        }
     }
 }

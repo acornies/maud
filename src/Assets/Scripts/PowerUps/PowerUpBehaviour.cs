@@ -106,7 +106,8 @@ public class PowerUpBehaviour : MonoBehaviour
 		particleSystem.Stop();
         _shouldOrbitAroundPlayer = false;
         orbitCenter = null;
-        _newLocation = location;   
+        _newLocation = location;
+        collider.enabled = false;
         //Reactivate();
     }
 

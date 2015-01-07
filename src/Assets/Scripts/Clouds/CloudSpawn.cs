@@ -104,6 +104,8 @@ public class CloudSpawn : MonoBehaviour
 		    //maxClouds = 10;
             cloudBehaviour.speed = Random.Range(2f, 3f);
 		}
+
+	    cloudBehaviour.cameraSpeed = (cloudBehaviour.cameraSpeed/2);
 	}
 
     void HandleOnCloudDestroy()

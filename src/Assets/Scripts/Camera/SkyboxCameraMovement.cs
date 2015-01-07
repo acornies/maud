@@ -82,7 +82,7 @@ public class SkyboxCameraMovement : MonoBehaviour
         if (_changeToStartColor && _sunlightComponent.color != sunlightColorDawn)
         {
             _sunlightComponent.color = Color.Lerp(_sunlightComponent.color, sunlightColorDawn, transitionSpeed * Time.deltaTime);
-            Debug.Log("Changing to dawn color...");
+            //Debug.Log("Changing to dawn color...");
         }
 
     }

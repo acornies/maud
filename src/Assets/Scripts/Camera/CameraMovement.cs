@@ -41,6 +41,8 @@ public class CameraMovement : MonoBehaviour
         GameController.OnPlayerResurrection += HandlePlayerResurrection;
         UpAndDown.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
         UpAndDown.OnReturnCameraSpeed += HandleReturnCameraSpeed;
+        CloudBehaviour.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
+        CloudBehaviour.OnReturnCameraSpeed += HandleReturnCameraSpeed;
         StartPlatform.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
         StartPlatform.OnReturnCameraSpeed += HandleReturnCameraSpeed;
         //IntroTrigger.OnNewIntroLedgePosition += HandleNewIntroLedgePosition;
@@ -86,6 +88,8 @@ public class CameraMovement : MonoBehaviour
         GameController.OnPlayerResurrection -= HandlePlayerResurrection;
         UpAndDown.OnUpdateCameraSpeed -= HandleUpdateCameraSpeed;
         UpAndDown.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
+        CloudBehaviour.OnUpdateCameraSpeed -= HandleUpdateCameraSpeed;
+        CloudBehaviour.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
         StartPlatform.OnUpdateCameraSpeed -= HandleUpdateCameraSpeed;
         StartPlatform.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
         //IntroTrigger.OnNewIntroLedgePosition -= HandleNewIntroLedgePosition;
