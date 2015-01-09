@@ -1,13 +1,15 @@
 fileFormatVersion: 2
-guid: 35c9e8b5c835629498fa15e9a9103db3
+guid: 7b3283eebdaf10d46bd9a42ed5baa9e5
 ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Tower1
+    100000: pasted__Tower_Tutorial_UVs
+    100002: //RootNode
+    400000: pasted__Tower_Tutorial_UVs
+    400002: //RootNode
+    2300000: pasted__Tower_Tutorial_UVs
+    3300000: pasted__Tower_Tutorial_UVs
+    4300000: pasted__Tower_Tutorial_UVs
     9500000: //RootNode
   materials:
     importMaterials: 0
