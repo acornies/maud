@@ -8,6 +8,7 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: Tower_Tutorial_UVs
+    4300002: Tower_UpAndDown
     9500000: //RootNode
   materials:
     importMaterials: 0

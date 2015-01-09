@@ -12,8 +12,11 @@ ModelImporter:
     400004: pasted__pasted__pasted__Tower_Tutorial_UVs
     400006: //RootNode
     2300000: pasted__pasted__pasted__Tower_Tutorial_UVs
+    2300002: //RootNode
     3300000: pasted__pasted__pasted__Tower_Tutorial_UVs
+    3300002: //RootNode
     4300000: pasted__pasted__pasted__Tower_Tutorial_UVs
+    4300002: Tower_Rotate
     9500000: //RootNode
   materials:
     importMaterials: 0

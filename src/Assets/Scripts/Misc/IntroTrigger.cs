@@ -83,5 +83,7 @@ public class IntroTrigger : MonoBehaviour
         {
             OnZoomToGamePosition();
         }
+
+        gameObject.SetActive(false);
     }
 }
