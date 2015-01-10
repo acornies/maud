@@ -625,6 +625,7 @@ public class PlayerMovement : MonoBehaviour
         if (this.isGrounded)
         {
             var theForce = (jumpForce + extraForce);
+			rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z); // reset for consistent jump
             rigidbody.AddForceAtPosition(new Vector3(0, theForce, 0), transform.position);
             PlayJumpSound(theForce);
             _isHighJumping = extraForce > 0;
