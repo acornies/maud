@@ -9,8 +9,14 @@ public class MusicController : MonoBehaviour
 
     private IDictionary<string, AudioSource> _allSongs;
 	private bool fadeIntroMusic;
+	private AudioSource forestMusicSlow;
+	private AudioSource forestMusicFast;
+	private AudioSource cloudMusicSlow;
+	private AudioSource cloudMusicFast;
+	private AudioSource stratosphereMusic;
 
-    [Range(0, 1)]
+	public static MusicController Instance { get; private set;}
+	[Range(0, 1)]
     public float maxMusicVolume = 0.5f;
     
 	public float musicFadeSpeed = 0.1f;
@@ -20,11 +26,15 @@ public class MusicController : MonoBehaviour
     public int cloudMusicFastLimit = 300;
     public int stratosphereLimit = 500;
 
-    private AudioSource forestMusicSlow;
-    private AudioSource forestMusicFast;
-    private AudioSource cloudMusicSlow;
-    private AudioSource cloudMusicFast;
-    private AudioSource stratosphereMusic;
+	public float forestMusicFastDestroySpeed = 1f;
+	public float cloudMusicFastDestroySpeed = 1f;
+	public float stratosphereMusicFastDestroySpeed = 1f;
+
+	public delegate void FastMusicStart(float timedSpeed);
+	public static event FastMusicStart OnFastMusicStart;
+
+	public delegate void FastMusicStop();
+	public static event FastMusicStop OnFastMusicStop;
 
     //public AudioClip deathSound;
 
@@ -66,7 +76,17 @@ public class MusicController : MonoBehaviour
 
     void Awake()
     {
-        _allSongs = GetComponents<AudioSource>().ToDictionary(s => s.clip.name);
+		if (Instance == null)
+		{
+			//DontDestroyOnLoad(gameObject);
+			Instance = this;
+		}
+		else if (Instance != this)
+		{
+			Destroy(gameObject);
+		}
+
+		_allSongs = GetComponents<AudioSource>().ToDictionary(s => s.clip.name);
         foreach (AudioSource source in _allSongs.Values)
         {
             source.playOnAwake = false;
@@ -118,7 +138,7 @@ public class MusicController : MonoBehaviour
 
 		if (next.isPlaying && next.volume < 0.5f && current.isPlaying)
 		{
-			Debug.Log("Fade in: " + next.clip.name + " from: " + current.clip.name);
+			//Debug.Log("Fade in: " + next.clip.name + " from: " + current.clip.name);
             next.volume = Mathf.Lerp(next.volume, maxMusicVolume, musicFadeSpeed * Time.deltaTime);
 			current.volume = Mathf.Lerp(current.volume, 0f, musicFadeSpeed * Time.deltaTime);
 
@@ -145,8 +165,12 @@ public class MusicController : MonoBehaviour
     void MusicTransition(AudioSource currentSong, AudioSource nextSong)
     {
         if (nextSong == null) return;
-        Debug.Log("Start transition from " + currentSong.clip.name + " to " + nextSong.clip.name);
+        //Debug.Log("Start transition from " + currentSong.clip.name + " to " + nextSong.clip.name);
         nextSong.Play();
+		if (OnFastMusicStart != null && nextSong == forestMusicFast)
+		{
+			OnFastMusicStart(forestMusicFastDestroySpeed);
+		}
         currentSong.volume = 0.0f;
         currentSong.Stop();
         nextSong.volume = (PlayerState.Instance.Data.playMusic) ? maxMusicVolume : 0;

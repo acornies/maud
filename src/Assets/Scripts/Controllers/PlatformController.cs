@@ -12,7 +12,7 @@ public class PlatformController : MonoBehaviour
     private int _currentPlatform;
     private PlatformBuilder _platformBuilder;
     private Vector3[] _orbitAxis;
-    //private float _timer;
+    private float _timedDestroyTimer;
 
     public static PlatformController Instance { get; private set; }
     public IDictionary<int, GameObject> levelPlatforms { get; private set; }
@@ -28,11 +28,17 @@ public class PlatformController : MonoBehaviour
 
     public GameObject[] platformTypes;
 
+	public float timedDestroySpeed = 1f;
+	public bool useTimedDestroy;
+
     public delegate void ReachedNextCheckpoint(int platform, int childPlatformToDeleteIndex);
     public static event ReachedNextCheckpoint On_ReachedCheckpoint;
 
     public delegate void NewPlatform(float yPosition);
     public static event NewPlatform On_NewPlatform;
+
+	public delegate void TimedDestroy(GameObject objectToDestroy);
+	public static event TimedDestroy OnTimedDestroy;
 
     // Subscribe to events
     void OnEnable()
@@ -40,6 +46,21 @@ public class PlatformController : MonoBehaviour
         PlayerMovement.On_PlatformReached += HandlePlatformReached;
         CameraMovement.On_DestroyLowerPlatforms += HandleDestroyLowerPlatforms;
 		CameraMovement.OnMovePlayerToGamePosition += HandleMovePlayerToGamePosition;
+		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
+		MusicController.OnFastMusicStop += HandleOnFastMusicStop;
+    }
+
+    void HandleOnFastMusicStop ()
+    {
+		useTimedDestroy = false;
+		StopCoroutine ("Destroyer");
+    }
+
+    void HandleOnFastMusicStart (float timedSpeed)
+    {
+		useTimedDestroy = true;
+		timedDestroySpeed = timedSpeed;
+		_timedDestroyTimer = timedDestroySpeed;
     }
 
     void OnDisable()
@@ -57,6 +78,8 @@ public class PlatformController : MonoBehaviour
         PlayerMovement.On_PlatformReached -= HandlePlatformReached;
         CameraMovement.On_DestroyLowerPlatforms -= HandleDestroyLowerPlatforms;
 		CameraMovement.OnMovePlayerToGamePosition -= HandleMovePlayerToGamePosition;
+		MusicController.OnFastMusicStart -= HandleOnFastMusicStart;
+		MusicController.OnFastMusicStop -= HandleOnFastMusicStop;
     }
 
     void Awake()
@@ -98,10 +121,23 @@ public class PlatformController : MonoBehaviour
         }
     }
 
-    public int GetCurrentPlatformNumber()
-    {
-        return _currentPlatform;
-    }
+	void Update()
+	{
+		if ( useTimedDestroy)
+		{
+			_timedDestroyTimer -= Time.deltaTime;
+			if (_timedDestroyTimer <= 0)
+			{
+				TimedDestroyer();
+				_timedDestroyTimer = timedDestroySpeed;
+			}
+		}
+	}
+
+	public int GetCurrentPlatformNumber()
+	{
+		return _currentPlatform;
+	}
 
     // Spawn platforms based on player location
     IEnumerator SpawnPlatforms()
@@ -267,31 +303,54 @@ public class PlatformController : MonoBehaviour
 
     void HandleDestroyLowerPlatforms(int platformIndex, int childPlatformToDeleteIndex)
     {
-        //Debug.Log ("Destroy platforms under: " + platformIndex);
-        DestroyChildPlatformUnderCheckpoint(childPlatformToDeleteIndex);
+		if (useTimedDestroy) return;
+		//Debug.Log ("Destroy platforms under: " + platformIndex);
+        
+		DisableChildPlatformsUnderCheckpoint(childPlatformToDeleteIndex);
 
         var buffer = (from platform in levelPlatforms where platform.Key <= platformIndex select platform.Key).ToList();
 
         foreach (var item in buffer)
         {
-            levelPlatforms.Remove(item);
-            Destroy(GameObject.Find("Platform_" + item));
+			var platformToDestroy = levelPlatforms[item];
+			levelPlatforms.Remove(item);
+			Destroy(platformToDestroy.gameObject);
             //Debug.Log("Removed Platform_" + item);
         }
     }
 
-    private void DestroyChildPlatformUnderCheckpoint(int platformIndex)
+    private void DisableChildPlatformsUnderCheckpoint(int platformIndex)
     {
         GameObject parent;
         if (!this.levelPlatforms.TryGetValue(platformIndex, out parent)) return;
         if (parent == null) return;
         var child = parent.transform.Find("Cube");
         if (child == null) return;
-        Destroy(child.gameObject);
+        //Destroy(child.gameObject);
+		child.collider.enabled = false;
     }
 
 	void HandleMovePlayerToGamePosition(Vector3 newPosition)
 	{
-		platformSpawnBuffer = 5;
+		platformSpawnBuffer = 8;
+	}
+
+	void TimedDestroyer()
+	{
+		var bottom = levelPlatforms.Keys.Min();
+		var buffer = levelPlatforms [bottom];
+		//var platformToDestroy = levelPlatforms[buffer];
+		levelPlatforms.Remove(bottom);
+		//Destroy(platformToDestroy.gameObject);
+
+		if (OnTimedDestroy != null)
+		{
+			OnTimedDestroy(buffer);
+
+			//Debug.Log ("Triggered timed destroy on platform: " + buffer.name);
+		}
+
+		Debug.Log ("Timed destroy speed: " + timedDestroySpeed + "s");
+		//yield return new WaitForSeconds(timedDestroySpeed);
 	}
 }

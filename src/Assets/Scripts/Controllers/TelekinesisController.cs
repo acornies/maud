@@ -247,6 +247,8 @@ public class TelekinesisController : MonoBehaviour
 
 		if (gesture.touchCount > 1 && PlayerState.Instance.Data.controlMode == ControlMode.Accelerometer) return;
 
+		//if (!_player.isGrounded) return; disable powers mid-jump
+
         if (GameController.Instance.powerMeter <= 0)
         {
             _noTele.Play();
@@ -437,10 +439,6 @@ public class TelekinesisController : MonoBehaviour
 
     private void ActivateObject(Gesture gesture, out Transform teleObject)
     {
-        //if (!_player.isGrounded) return;
-
-        // Guard against slower taps
-        //if (gesture.actionTime < minimumSwipeTime) return;
         Transform teleTransform = null;
         _pointerReference = gesture.position;
         RaycastHit hitInfo = new RaycastHit();

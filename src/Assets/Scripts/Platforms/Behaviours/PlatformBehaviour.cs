@@ -28,6 +28,18 @@ public class PlatformBehaviour : MonoBehaviour
         PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
         TelekinesisHandler.OnAffectStart += HandleOnAffectStart;
         TelekinesisHandler.OnAffectEnd += HandleOnAffectEnd;
+		PlatformController.OnTimedDestroy += HandleOnTimedDestroy;
+    }
+
+    void HandleOnTimedDestroy (GameObject objectToDestroy)
+    {
+		if (objectToDestroy.GetInstanceID() != gameObject.GetInstanceID()) return;
+
+		Debug.Log ("Time destroy " + name);
+
+		//Destroy (child.gameObject);
+		child.DetachChildren ();
+		Destroy (gameObject);
     }
 
     public virtual void OnDisable()
@@ -46,6 +58,7 @@ public class PlatformBehaviour : MonoBehaviour
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
         TelekinesisHandler.OnAffectStart -= HandleOnAffectStart;
         TelekinesisHandler.OnAffectEnd -= HandleOnAffectEnd;
+		PlatformController.OnTimedDestroy -= HandleOnTimedDestroy;
     }
 
     protected virtual void Start()

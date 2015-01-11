@@ -16,10 +16,11 @@ namespace LegendPeak.Platforms
         {
             _heightLevelDescriptions = new Dictionary<string, PlatformRangeInfo>();
             _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("ForestSlowLimit", new PlatformRangeInfo(20, 0, 1)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("ForestFastLimit", new PlatformRangeInfo(60, 0, 3)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("CloudSlowLimit", new PlatformRangeInfo(100, 0, 4)));
-            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("CloudFast", new PlatformRangeInfo(150, 0, 5)));
-			_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("StratosphereLimit", new PlatformRangeInfo(250, 1, 6)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("ForestFastLimit", new PlatformRangeInfo(80, 0, 2)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("CloudSlowLimit", new PlatformRangeInfo(130, 0, 4)));
+            _heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("CloudFast", new PlatformRangeInfo(180, 0, 4)));
+			_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("StratosphereSlowLimit", new PlatformRangeInfo(240, 0, 6)));
+			_heightLevelDescriptions.Add(new KeyValuePair<string, PlatformRangeInfo>("StratosphereFastLimit", new PlatformRangeInfo(300, 0, 6)));
 
         }
 
@@ -33,7 +34,7 @@ namespace LegendPeak.Platforms
             // if there are no defined height levels, generate the last range forever
             else
             {
-                var lastRange = _heightLevelDescriptions.First(i => i.Key == "StratosphereLimit");
+				var lastRange = _heightLevelDescriptions.First(i => i.Key == "StratosphereFastLimit");
                 return GetPrefab(lastRange.Value.prefabRangeStart, lastRange.Value.prefabRangeEnd);
             }
         }
