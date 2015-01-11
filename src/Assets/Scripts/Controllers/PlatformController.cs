@@ -40,6 +40,9 @@ public class PlatformController : MonoBehaviour
 	public delegate void TimedDestroy(GameObject objectToDestroy);
 	public static event TimedDestroy OnTimedDestroy;
 
+	public delegate void TimedDestroyGameOver();
+	public static event TimedDestroyGameOver OnTimedDestroyGameOver;
+
     // Subscribe to events
     void OnEnable()
     {
@@ -346,11 +349,23 @@ public class PlatformController : MonoBehaviour
 		if (OnTimedDestroy != null)
 		{
 			OnTimedDestroy(buffer);
-
-			//Debug.Log ("Triggered timed destroy on platform: " + buffer.name);
 		}
 
 		Debug.Log ("Timed destroy speed: " + timedDestroySpeed + "s");
+		if (bottom == _currentPlatform + checkpointBuffer)
+		{
+			Debug.Log ("Next death should be game over.");
+			if (OnTimedDestroyGameOver != null)
+			{
+				OnTimedDestroyGameOver();
+			}
+			//useTimedDestroy = false;
+		}
+		// delete the platform above the checkpoint buffer
+		else if (bottom == (_currentPlatform + checkpointBuffer + 1))
+		{
+			useTimedDestroy = false;
+		}
 		//yield return new WaitForSeconds(timedDestroySpeed);
 	}
 }

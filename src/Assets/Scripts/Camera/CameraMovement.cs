@@ -233,7 +233,7 @@ public class CameraMovement : MonoBehaviour
 
     void HandlePlayerDeath()
     {
-        isTracking =  (PlatformController.Instance.useTimedDestroy) ? true : false;
+        isTracking = false;
 		_shouldZoomOut = true;
         //Debug.Log("Turn off tracking");
     }

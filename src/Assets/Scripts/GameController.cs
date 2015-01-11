@@ -32,6 +32,7 @@ public class GameController : MonoBehaviour
 	private bool _isSharingOpen;
 	private Text _highestPointText;
 	private Text _totalHeightText;
+	private bool _timeDestroyed;
 
     public Text heightCounter;
 	public bool countHeight; 
@@ -100,7 +101,13 @@ public class GameController : MonoBehaviour
         OnGameOver += HandleOnGameOver;
         OnGameRestart += HandleOnGameRestart;
         PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickUp;
-        IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;      
+        IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons; 
+		PlatformController.OnTimedDestroyGameOver += HandleOnTimedDestroyGameOver;
+    }
+
+    void HandleOnTimedDestroyGameOver ()
+    {
+		_timeDestroyed = true;
     }
 
     void OnDisable()
@@ -125,6 +132,7 @@ public class GameController : MonoBehaviour
         OnGameRestart -= HandleOnGameRestart;
         PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
+		PlatformController.OnTimedDestroyGameOver -= HandleOnTimedDestroyGameOver;
     }
 
     // Use this for initialization
@@ -285,7 +293,7 @@ public class GameController : MonoBehaviour
         _powerBar.SetValueMax(Mathf.CeilToInt(maxPower));
 
         // time delay between player deaths
-        if (playerIsDead && powerMeter >= lifeCost)
+		if (playerIsDead && powerMeter >= lifeCost)
         {
             _telekinesisControl.SetActive(false);
 
@@ -309,13 +317,7 @@ public class GameController : MonoBehaviour
 
         else if (playerIsDead && powerMeter < lifeCost)
         {
-            initiatingRestart = true;
-            //_menuButtonBehaviour.interactable = false;
-            _restartButtonBehaviour.interactable = true;
-            if (OnGameOver != null && gameState != GameState.Over)
-            {
-                OnGameOver();
-            }
+			TriggerRestart();
         }
         else
         {
@@ -324,6 +326,17 @@ public class GameController : MonoBehaviour
             initiatingRestart = false;
         }
     }
+
+	void TriggerRestart()
+	{
+		initiatingRestart = true;
+		//_menuButtonBehaviour.interactable = false;
+		_restartButtonBehaviour.interactable = true;
+		if (OnGameOver != null && gameState != GameState.Over)
+		{
+			OnGameOver();
+		}
+	}
 
     void Restart()
     {
@@ -345,12 +358,19 @@ public class GameController : MonoBehaviour
 
     void HandleOnPlayerDeath()
     {
-        playerIsDead = true;
+		playerIsDead = true;
 
-        var screenCenterToWorld =
-            Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
-
-        _player.GetComponent<PlayerMovement>().SetSpawnPosition(new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition));
+		if (_timeDestroyed)
+		{
+			TriggerRestart();
+		}
+		else
+		{
+			var screenCenterToWorld =
+				Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
+			
+			_player.GetComponent<PlayerMovement>().SetSpawnPosition(new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition));
+		}       
     }
 
     void HandleOnPlayerPowerDeplete(float amount)
