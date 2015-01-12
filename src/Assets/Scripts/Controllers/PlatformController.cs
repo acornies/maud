@@ -63,7 +63,7 @@ public class PlatformController : MonoBehaviour
     {
 		useTimedDestroy = true;
 		timedDestroySpeed = timedSpeed;
-		_timedDestroyTimer = timedDestroySpeed;
+		//_timedDestroyTimer = timedDestroySpeed;
     }
 
     void OnDisable()
@@ -335,7 +335,7 @@ public class PlatformController : MonoBehaviour
 
 	void HandleMovePlayerToGamePosition(Vector3 newPosition)
 	{
-		platformSpawnBuffer = 8;
+		platformSpawnBuffer = 6;
 	}
 
 	void TimedDestroyer()

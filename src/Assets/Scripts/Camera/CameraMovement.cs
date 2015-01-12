@@ -6,11 +6,14 @@ public class CameraMovement : MonoBehaviour
     private bool _zoomToGame;
     private float _zoomTimer;
 	private bool _shouldZoomOut;
+	private bool _useTimedDestroyZoom;
+	private float _timedDestroyZoomTimer;
 
     public float zoomWarmTime = 0.5f;
     public Vector3 gameCameraPosition;
     public float zoomSpeed = 10f;
 	public float ghostZoomDepth = -25f;
+	public float timedDestroyZoomDepth = -40f;
     public bool isTracking;
     public float XMargin = 1.0f;
     public float YMargin = 1.0f;
@@ -21,6 +24,7 @@ public class CameraMovement : MonoBehaviour
     public Vector2 MinXandY;
     public Transform CameraTarget;
     public static float defaultCameraSpeed = 4.5f;
+	public float timedDestroyZoomTime = 3f;
 
     public delegate void UpdatedCameraMinY(float yPosition, int checkpointPlatform);
     public static event UpdatedCameraMinY On_CameraUpdatedMinY;
@@ -47,6 +51,14 @@ public class CameraMovement : MonoBehaviour
         StartPlatform.OnReturnCameraSpeed += HandleReturnCameraSpeed;
         //IntroTrigger.OnNewIntroLedgePosition += HandleNewIntroLedgePosition;
         IntroTrigger.OnZoomToGamePosition += HandleOnGameStart;
+		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
+    }
+
+    void HandleOnFastMusicStart (float timedSpeed)
+    {
+		_useTimedDestroyZoom = true;
+		_shouldZoomOut = true;
+		_timedDestroyZoomTimer = timedDestroyZoomTime;
     }
 
     private void HandleOnGameStart()
@@ -94,6 +106,7 @@ public class CameraMovement : MonoBehaviour
         StartPlatform.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
         //IntroTrigger.OnNewIntroLedgePosition -= HandleNewIntroLedgePosition;
         IntroTrigger.OnZoomToGamePosition -= HandleOnGameStart;
+		MusicController.OnFastMusicStart -= HandleOnFastMusicStart;
     }
 
     void Awake()
@@ -147,14 +160,24 @@ public class CameraMovement : MonoBehaviour
             }
 
         }
+
+		if (_useTimedDestroyZoom)
+		{
+			_timedDestroyZoomTimer -=Time.deltaTime;
+			if (_timedDestroyZoomTimer <= 0)
+			{
+				_useTimedDestroyZoom = false;
+				_shouldZoomOut = false;
+			}
+		}
     }
 
-	void HandleGhostZoom()
+	void HandleZoomInAndOut(float zoomDepth)
 	{
 		if (_shouldZoomOut)
 		{
 			//Debug.Log ("Zoom out");
-			transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, transform.position.y, ghostZoomDepth), zoomSpeed * Time.deltaTime);
+			transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, transform.position.y, zoomDepth), zoomSpeed * Time.deltaTime);
 		}
 		else
 		{
@@ -172,7 +195,7 @@ public class CameraMovement : MonoBehaviour
 
 		if (GameController.Instance.countHeight) 
 		{
-			HandleGhostZoom();
+			HandleZoomInAndOut(_useTimedDestroyZoom ? timedDestroyZoomDepth : ghostZoomDepth);
 		}
 
         /*else if (!isTracking && !GameController.Instance.playerIsDead)

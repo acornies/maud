@@ -38,6 +38,11 @@ public class PlatformBehaviour : MonoBehaviour
 		Debug.Log ("Time destroy " + name);
 
 		//Destroy (child.gameObject);
+		var stabilizeEffect = child.FindChild("StabilizeEffect");
+		var powerEffect = child.FindChild("PowerEffect");
+		Destroy (stabilizeEffect.gameObject);
+		Destroy (powerEffect.gameObject);
+
 		child.DetachChildren ();
 		Destroy (gameObject);
     }
