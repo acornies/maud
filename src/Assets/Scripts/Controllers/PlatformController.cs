@@ -30,6 +30,7 @@ public class PlatformController : MonoBehaviour
 
 	public float timedDestroySpeed = 1f;
 	public bool useTimedDestroy;
+    public GameObject timedDestroyCameraTarget;
 
     public delegate void ReachedNextCheckpoint(int platform, int childPlatformToDeleteIndex);
     public static event ReachedNextCheckpoint On_ReachedCheckpoint;
@@ -56,14 +57,19 @@ public class PlatformController : MonoBehaviour
     void HandleOnFastMusicStop ()
     {
 		useTimedDestroy = false;
-		StopCoroutine ("Destroyer");
     }
 
     void HandleOnFastMusicStart (float timedSpeed)
     {
 		useTimedDestroy = true;
 		timedDestroySpeed = timedSpeed;
-		//_timedDestroyTimer = timedDestroySpeed;
+
+        var bottom = levelPlatforms.Keys.Min() + 2;
+		var buffer = levelPlatforms [bottom];
+        
+		_timedDestroyTimer = timedDestroySpeed;
+        timedDestroyCameraTarget = new GameObject("TimedDestroyCameraTarget");
+        timedDestroyCameraTarget.transform.position = buffer.transform.position;
     }
 
     void OnDisable()
@@ -335,7 +341,7 @@ public class PlatformController : MonoBehaviour
 
 	void HandleMovePlayerToGamePosition(Vector3 newPosition)
 	{
-		platformSpawnBuffer = 6;
+		platformSpawnBuffer = 8;
 	}
 
 	void TimedDestroyer()

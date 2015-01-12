@@ -1,8 +1,10 @@
+using System.Linq;
 using UnityEngine;
 using System.Collections;
 
 public class CameraMovement : MonoBehaviour
 {
+    private Transform _playerTarget;
     private bool _zoomToGame;
     private float _zoomTimer;
 	private bool _shouldZoomOut;
@@ -111,7 +113,7 @@ public class CameraMovement : MonoBehaviour
 
     void Awake()
     {
-
+        _playerTarget = GameObject.Find("Player").transform.FindChild("CharacterTarget");
     }
 
     bool CheckXMargin()
@@ -161,29 +163,31 @@ public class CameraMovement : MonoBehaviour
 
         }
 
-		if (_useTimedDestroyZoom)
-		{
-			_timedDestroyZoomTimer -=Time.deltaTime;
-			if (_timedDestroyZoomTimer <= 0)
-			{
-				_useTimedDestroyZoom = false;
-				_shouldZoomOut = false;
-			}
-		}
+        if (_useTimedDestroyZoom)
+        {
+            if (CameraTarget != PlatformController.Instance.timedDestroyCameraTarget.transform &&
+                PlatformController.Instance.timedDestroyCameraTarget != null)
+            {
+                CameraTarget = PlatformController.Instance.timedDestroyCameraTarget.transform;
+            }
+
+            YSmooth = defaultCameraSpeed / 2;
+
+            MinXandY = new Vector2(0, PlatformController.Instance.timedDestroyCameraTarget.transform.position.y);
+            _timedDestroyZoomTimer -= Time.deltaTime;
+            if (_timedDestroyZoomTimer <= 0)
+            {
+                _useTimedDestroyZoom = false;
+                _shouldZoomOut = false;
+                CameraTarget = _playerTarget;
+                YSmooth = defaultCameraSpeed;
+            }
+        }
     }
 
 	void HandleZoomInAndOut(float zoomDepth)
 	{
-		if (_shouldZoomOut)
-		{
-			//Debug.Log ("Zoom out");
-			transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, transform.position.y, zoomDepth), zoomSpeed * Time.deltaTime);
-		}
-		else
-		{
-			//Debug.Log("Zoom in");
-			transform.position = Vector3.Lerp(transform.position, new Vector3(transform.position.x, transform.position.y, gameCameraPosition.z), zoomSpeed * Time.deltaTime);
-		}
+	    transform.position = Vector3.Lerp(transform.position, _shouldZoomOut ? new Vector3(transform.position.x, transform.position.y, zoomDepth) : new Vector3(transform.position.x, transform.position.y, gameCameraPosition.z), zoomSpeed * Time.deltaTime);
 	}
 
     void LateUpdate()

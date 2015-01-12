@@ -134,6 +134,10 @@ public class MusicController : MonoBehaviour
 			next.volume = 0f;
 			next.Play();
 			next.loop = true;
+		    if (OnFastMusicStop != null)
+		    {
+		        OnFastMusicStop();
+		    }
 		}
 
 		if (next.isPlaying && next.volume < 0.5f && current.isPlaying)
