@@ -303,6 +303,7 @@ public class TelekinesisController : MonoBehaviour
         _platformClone.renderer.enabled = false;
         //TelekinesisMaterial(_platformClone);
         var cloneChild = _platformClone.FindChild("Cube");
+		cloneChild.gameObject.layer = 0;
         if (cloneChild != null)
         {
             // if player is parented to the platform, DESTROY lest we spawn her N times

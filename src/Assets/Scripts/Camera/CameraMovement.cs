@@ -10,6 +10,11 @@ public class CameraMovement : MonoBehaviour
 	private bool _shouldZoomOut;
 	private float _timedDestroyZoomTimer;
 	private float _previousMinY;
+	private float _previousCameraY;
+
+	//HACK
+	private float _playerVisibleTimer = 1f;
+	private bool _visibleAfterCutscene;
 
     public float zoomWarmTime = 0.5f;
     public Vector3 gameCameraPosition;
@@ -55,10 +60,9 @@ public class CameraMovement : MonoBehaviour
         CloudBehaviour.OnReturnCameraSpeed += HandleReturnCameraSpeed;
         StartPlatform.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
         StartPlatform.OnReturnCameraSpeed += HandleReturnCameraSpeed;
-        //IntroTrigger.OnNewIntroLedgePosition += HandleNewIntroLedgePosition;
         IntroTrigger.OnZoomToGamePosition += HandleOnGameStart;
 		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
-		PlayerMovement.OnPlayerBecameVisible += HandleOnPlayerBecameVisible;
+		PlayerRenderer.OnPlayerBecameVisible += HandleOnPlayerBecameVisible;
     }
 
     void HandleOnPlayerBecameVisible (Transform player)
@@ -66,7 +70,8 @@ public class CameraMovement : MonoBehaviour
 		if (GameController.Instance.playerIsDead)
 		{
 			Debug.Log("Turn off tracking if dead, after cutscene");
-			isTracking = false;
+			_visibleAfterCutscene = true;
+			//isTracking = false;
 		}
     }
 
@@ -121,10 +126,9 @@ public class CameraMovement : MonoBehaviour
         CloudBehaviour.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
         StartPlatform.OnUpdateCameraSpeed -= HandleUpdateCameraSpeed;
         StartPlatform.OnReturnCameraSpeed -= HandleReturnCameraSpeed;
-        //IntroTrigger.OnNewIntroLedgePosition -= HandleNewIntroLedgePosition;
         IntroTrigger.OnZoomToGamePosition -= HandleOnGameStart;
 		MusicController.OnFastMusicStart -= HandleOnFastMusicStart;
-		PlayerMovement.OnPlayerBecameVisible -= HandleOnPlayerBecameVisible;
+		PlayerRenderer.OnPlayerBecameVisible -= HandleOnPlayerBecameVisible;
     }
 
     void Awake()
@@ -195,9 +199,9 @@ public class CameraMovement : MonoBehaviour
             {
                 isTimedDestroyCutscene = false;
                 _shouldZoomOut = false;
-                CameraTarget = _playerTarget;
-                YSmooth = defaultCameraSpeed;
+				YSmooth = defaultCameraSpeed;
 				MinXandY = new Vector2(0, _previousMinY);
+                CameraTarget = _playerTarget;
 
 				if (OnRestorePlayerState != null)
 				{
@@ -205,6 +209,17 @@ public class CameraMovement : MonoBehaviour
 				}
             }
         }
+
+		// HACK
+		if (!isTimedDestroyCutscene && _visibleAfterCutscene)
+		{
+			_playerVisibleTimer -= Time.deltaTime;
+			if (_playerVisibleTimer <= 0)
+			{
+				isTracking = false;
+				_visibleAfterCutscene = false;
+			}
+		}
     }
 
 	void HandleZoomInAndOut(float zoomDepth)

@@ -84,9 +84,6 @@ public class PlayerMovement : MonoBehaviour
     public delegate void PlayerAirborne(Transform player);
     public static event PlayerAirborne On_PlayerAirborne;
 
-	public delegate void PlayerBecameVisible(Transform player);
-	public static event PlayerBecameVisible OnPlayerBecameVisible;
-	
     // Subscribe to events
     void OnEnable()
     {
@@ -394,28 +391,6 @@ public class PlayerMovement : MonoBehaviour
             _isFacingCamera = false;
         }
     }
-
-	void OnBecameVisible()
-	{
-		// TODO: migrate intro stuff to here
-		if (OnPlayerBecameVisible != null)
-		{
-			OnPlayerBecameVisible(transform);
-		}
-	}
-
-    /*private bool SetGravity()
-    {
-        if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
-        {
-            return false;
-        }
-        if (GameController.Instance.playerIsDead && GameController.Instance.initiatingRestart)
-        {
-            return true;
-        }
-        return true;
-    }*/
 
     void HandleForcePushed()
     {
