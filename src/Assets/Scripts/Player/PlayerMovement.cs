@@ -31,6 +31,8 @@ public class PlayerMovement : MonoBehaviour
     private Transform _leftEye;
     private Transform _rightEye;
 	private int _currentMaterialIndex;
+	private Vector3 _savedVelocity;
+	private Vector3 _savedAngularVelocity;
 
     public bool disabled;
     public bool isGrounded;
@@ -94,11 +96,37 @@ public class PlayerMovement : MonoBehaviour
         KillBox.On_PlayerDeath += HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
         GameController.OnPlayerResurrection += HandleOnPlayerResurrection;
+		GameController.OnGameOver += HandleOnGameOver;
 		CameraMovement.OnMovePlayerToGamePosition += HandleOnMovePlayerToGamePosition;
+		CameraMovement.OnRestorePlayerState += HandleOnRestorePlayerState;
         CloudBehaviour.On_CloudDestroy += HandleOnCloudDestroy;
 		IntroTrigger.OnZoomToGamePosition += HandleOnZoomToGamePosition;
 		IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
 		SkyboxCameraMovement.OnPlayerMaterialUpdate += HandleOnPlayerMaterialUpdate;
+		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
+    }
+
+    void HandleOnRestorePlayerState ()
+    {
+		rigidbody.isKinematic = false;
+		rigidbody.velocity = _savedVelocity;
+		rigidbody.angularVelocity = _savedAngularVelocity;
+		disabled = false;
+    }
+
+    void HandleOnGameOver ()
+    {
+		rigidbody.isKinematic = false;
+    }
+
+    void HandleOnFastMusicStart (float timedSpeed)
+    {
+		disabled = true;
+		rigidbody.isKinematic = true;
+
+		// save velocity
+		_savedVelocity = rigidbody.velocity;
+		_savedAngularVelocity = rigidbody.angularVelocity;
     }
 
     void HandleOnPlayerMaterialUpdate (int materialIndex)
@@ -106,7 +134,7 @@ public class PlayerMovement : MonoBehaviour
 		//normalBodyMaterial = newMaterial;
 		//TODO: Complete during skin pack work
 		_currentMaterialIndex = materialIndex;
-		Debug.Log ("Update skin to material index: " + materialIndex);
+		//Debug.Log ("Update skin to material index: " + materialIndex);
     }
 
     void OnDisable()
@@ -130,11 +158,14 @@ public class PlayerMovement : MonoBehaviour
         KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
         GameController.OnPlayerResurrection -= HandleOnPlayerResurrection;
+		GameController.OnGameOver -= HandleOnGameOver;
 		CameraMovement.OnMovePlayerToGamePosition -= HandleOnMovePlayerToGamePosition;
+		CameraMovement.OnRestorePlayerState -= HandleOnRestorePlayerState;
         CloudBehaviour.On_CloudDestroy -= HandleOnCloudDestroy;
 		IntroTrigger.OnZoomToGamePosition -= HandleOnZoomToGamePosition;
 		IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
 		SkyboxCameraMovement.OnPlayerMaterialUpdate -= HandleOnPlayerMaterialUpdate;
+		MusicController.OnFastMusicStart -= HandleOnFastMusicStart;
     }
 
     void Awake()
@@ -207,8 +238,8 @@ public class PlayerMovement : MonoBehaviour
     // Use this for physics updates
     void FixedUpdate()
     {
-        rigidbody.useGravity = SetGravity();
-        rigidbody.isKinematic = GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart;
+        //rigidbody.useGravity = SetGravity();
+        //rigidbody.isKinematic = GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart;
 
         HandleAnimations();
 
@@ -329,13 +360,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleOnPlayerDeath()
     {
-        if (_isFacingCamera) return;
+		rigidbody.isKinematic = true;
+		//rigidbody.useGravity = f
+		if (_isFacingCamera) return;
         TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
     }
 
     private void HandleOnPlayerResurrection()
     {
         //Debug.Log("Resurrection event handler!");
+		rigidbody.isKinematic = false;
 		_consectutiveJumpCounter = 0;
 		if (!_isFacingCamera) return;
         TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
@@ -355,7 +389,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private bool SetGravity()
+    /*private bool SetGravity()
     {
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
@@ -366,7 +400,7 @@ public class PlayerMovement : MonoBehaviour
             return true;
         }
         return true;
-    }
+    }*/
 
     void HandleForcePushed()
     {

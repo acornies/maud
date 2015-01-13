@@ -10,6 +10,7 @@ public class CameraMovement : MonoBehaviour
 	private bool _shouldZoomOut;
 	private bool _useTimedDestroyZoom;
 	private float _timedDestroyZoomTimer;
+	private float _previousMinY;
 
     public float zoomWarmTime = 0.5f;
     public Vector3 gameCameraPosition;
@@ -36,6 +37,9 @@ public class CameraMovement : MonoBehaviour
 
     public delegate void MovePlayerToGamePosition(Vector3 playerPosition);
     public static event MovePlayerToGamePosition OnMovePlayerToGamePosition;
+
+	public delegate void RestorePlayerState();
+	public static event RestorePlayerState OnRestorePlayerState;
 
     // Subscribe to events
     void OnEnable()
@@ -172,7 +176,7 @@ public class CameraMovement : MonoBehaviour
             }
 
             YSmooth = defaultCameraSpeed / 2;
-
+			_previousMinY = MinXandY.y;
             MinXandY = new Vector2(0, PlatformController.Instance.timedDestroyCameraTarget.transform.position.y);
             _timedDestroyZoomTimer -= Time.deltaTime;
             if (_timedDestroyZoomTimer <= 0)
@@ -181,6 +185,16 @@ public class CameraMovement : MonoBehaviour
                 _shouldZoomOut = false;
                 CameraTarget = _playerTarget;
                 YSmooth = defaultCameraSpeed;
+				MinXandY = new Vector2(0, _previousMinY);
+
+				if (OnRestorePlayerState != null)
+				{
+					OnRestorePlayerState();
+				}
+
+				//_playerTarget.parent.rigidbody.isKinematic = false; // HACK move to PlayerMovement via event
+				//_playerTarget.parent.rigidbody.useGravity = true; // HACK move to PlayerMovement via event
+				//_playerTarget.parent.GetComponent<PlayerMovement>().disabled = false; // HACK move to PlayerMovement via event
             }
         }
     }

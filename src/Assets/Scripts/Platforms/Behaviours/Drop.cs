@@ -48,17 +48,20 @@ public class Drop : PlatformBehaviour
     public override void HandleOnPlatformReached(Transform platform, Transform player)
     {
 		base.HandleOnPlatformReached (platform, player);
+
 		if (platform.GetInstanceID() != child.GetInstanceID()) return;
+
         _isDropping = true;
-        /*isOnPlatform = true;
-        if (isOnPlatform && isBeingAffected)
-        {
-            player.parent = null;
-        }
-        else if (isOnPlatform && !isBeingAffected)
-        {
-            player.parent = child;
-        }*/
+        
+		if (isOnPlatform && isBeingAffected)
+		{
+			player.parent = null;
+		}
+		
+		if (isOnPlatform && !isBeingAffected)
+		{
+			player.parent = child;
+		}
     }
 
     public override void HandlePlayerAirborne(Transform player)

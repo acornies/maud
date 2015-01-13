@@ -27,7 +27,7 @@ public class UpAndDown : PlatformBehaviour
         //if (platform == null || child == null) return;
         if (platform.GetInstanceID() != child.GetInstanceID()) return;
 
-        /*if (isOnPlatform && isBeingAffected)
+        if (isOnPlatform && isBeingAffected)
         {
             player.parent = null;
         }
@@ -35,7 +35,7 @@ public class UpAndDown : PlatformBehaviour
         if (isOnPlatform && !isBeingAffected)
         {
             player.parent = child;
-        }*/
+        }
         
         if (OnUpdateCameraSpeed != null)
         {

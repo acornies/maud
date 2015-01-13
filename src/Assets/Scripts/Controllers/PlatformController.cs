@@ -64,7 +64,7 @@ public class PlatformController : MonoBehaviour
 		useTimedDestroy = true;
 		timedDestroySpeed = timedSpeed;
 
-        var bottom = levelPlatforms.Keys.Min() + 2;
+        var bottom = levelPlatforms.Keys.Min() + 1;
 		var buffer = levelPlatforms [bottom];
         
 		_timedDestroyTimer = timedDestroySpeed;
@@ -237,17 +237,7 @@ public class PlatformController : MonoBehaviour
             }
         }
 
-        if (index > 50)
-        {
-            if (upAndDownComponent != null) //TODO: change to Editor value
-            {
-                upAndDownComponent.speed = Random.Range(1.5f, 3f);
-                upAndDownComponent.cameraSpeed = upAndDownComponent.speed / 2;
-                upAndDownComponent.waitTime = 0.2f;
-            }
-        }
-
-        if (index > 60)
+        if (index > 80)
         {
             if (orbitComponent != null) //TODO: change to Editor value
             {
@@ -256,13 +246,13 @@ public class PlatformController : MonoBehaviour
             }
         }
 
-        if (index > 100)
+        if (index > 130)
         {
             if (upAndDownComponent != null) //TODO: change to Editor value
             {
                 upAndDownComponent.speed = Random.Range(2f, 4f);
                 upAndDownComponent.cameraSpeed = upAndDownComponent.speed/2;
-                //upAndDownComponent.waitTime = 0.5f;
+                upAndDownComponent.waitTime = 0.2f;
             }
 
             if (orbitComponent != null) //TODO: change to Editor value
@@ -312,10 +302,10 @@ public class PlatformController : MonoBehaviour
 
     void HandleDestroyLowerPlatforms(int platformIndex, int childPlatformToDeleteIndex)
     {
+		DisableChildPlatformsUnderCheckpoint(childPlatformToDeleteIndex);
+
 		if (useTimedDestroy) return;
 		//Debug.Log ("Destroy platforms under: " + platformIndex);
-        
-		DisableChildPlatformsUnderCheckpoint(childPlatformToDeleteIndex);
 
         var buffer = (from platform in levelPlatforms where platform.Key <= platformIndex select platform.Key).ToList();
 
