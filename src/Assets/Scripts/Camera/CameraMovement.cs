@@ -8,7 +8,6 @@ public class CameraMovement : MonoBehaviour
     private bool _zoomToGame;
     private float _zoomTimer;
 	private bool _shouldZoomOut;
-	private bool _useTimedDestroyZoom;
 	private float _timedDestroyZoomTimer;
 	private float _previousMinY;
 
@@ -28,7 +27,8 @@ public class CameraMovement : MonoBehaviour
     public Transform CameraTarget;
     public static float defaultCameraSpeed = 4.5f;
 	public float timedDestroyZoomTime = 3f;
-
+	public bool isTimedDestroyCutscene;
+	
     public delegate void UpdatedCameraMinY(float yPosition, int checkpointPlatform);
     public static event UpdatedCameraMinY On_CameraUpdatedMinY;
 
@@ -58,11 +58,22 @@ public class CameraMovement : MonoBehaviour
         //IntroTrigger.OnNewIntroLedgePosition += HandleNewIntroLedgePosition;
         IntroTrigger.OnZoomToGamePosition += HandleOnGameStart;
 		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
+		PlayerMovement.OnPlayerBecameVisible += HandleOnPlayerBecameVisible;
+    }
+
+    void HandleOnPlayerBecameVisible (Transform player)
+    {
+		if (GameController.Instance.playerIsDead)
+		{
+			Debug.Log("Turn off tracking if dead, after cutscene");
+			isTracking = false;
+		}
     }
 
     void HandleOnFastMusicStart (float timedSpeed)
     {
-		_useTimedDestroyZoom = true;
+		isTracking = true;
+		isTimedDestroyCutscene = true;
 		_shouldZoomOut = true;
 		_timedDestroyZoomTimer = timedDestroyZoomTime;
     }
@@ -113,6 +124,7 @@ public class CameraMovement : MonoBehaviour
         //IntroTrigger.OnNewIntroLedgePosition -= HandleNewIntroLedgePosition;
         IntroTrigger.OnZoomToGamePosition -= HandleOnGameStart;
 		MusicController.OnFastMusicStart -= HandleOnFastMusicStart;
+		PlayerMovement.OnPlayerBecameVisible -= HandleOnPlayerBecameVisible;
     }
 
     void Awake()
@@ -167,7 +179,7 @@ public class CameraMovement : MonoBehaviour
 
         }
 
-        if (_useTimedDestroyZoom)
+        if (isTimedDestroyCutscene)
         {
             if (CameraTarget != PlatformController.Instance.timedDestroyCameraTarget.transform &&
                 PlatformController.Instance.timedDestroyCameraTarget != null)
@@ -181,7 +193,7 @@ public class CameraMovement : MonoBehaviour
             _timedDestroyZoomTimer -= Time.deltaTime;
             if (_timedDestroyZoomTimer <= 0)
             {
-                _useTimedDestroyZoom = false;
+                isTimedDestroyCutscene = false;
                 _shouldZoomOut = false;
                 CameraTarget = _playerTarget;
                 YSmooth = defaultCameraSpeed;
@@ -191,10 +203,6 @@ public class CameraMovement : MonoBehaviour
 				{
 					OnRestorePlayerState();
 				}
-
-				//_playerTarget.parent.rigidbody.isKinematic = false; // HACK move to PlayerMovement via event
-				//_playerTarget.parent.rigidbody.useGravity = true; // HACK move to PlayerMovement via event
-				//_playerTarget.parent.GetComponent<PlayerMovement>().disabled = false; // HACK move to PlayerMovement via event
             }
         }
     }
@@ -213,7 +221,7 @@ public class CameraMovement : MonoBehaviour
 
 		if (GameController.Instance.countHeight) 
 		{
-			HandleZoomInAndOut(_useTimedDestroyZoom ? timedDestroyZoomDepth : ghostZoomDepth);
+			HandleZoomInAndOut(isTimedDestroyCutscene ? timedDestroyZoomDepth : ghostZoomDepth);
 		}
 
         /*else if (!isTracking && !GameController.Instance.playerIsDead)

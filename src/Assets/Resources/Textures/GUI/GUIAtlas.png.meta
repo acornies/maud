@@ -15,7 +15,7 @@ TextureImporter:
     21300020: Music
     21300022: Heart
     21300024: Share
-    21300026: Star
+    21300026: Caution
     21300028: Facebook
     21300030: Twitter
   serializedVersion: 2
@@ -189,13 +189,13 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: Star
+    - name: Caution
       rect:
         serializedVersion: 2
-        x: 572
+        x: 571
         y: 27
-        width: 458
-        height: 439
+        width: 439
+        height: 441
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

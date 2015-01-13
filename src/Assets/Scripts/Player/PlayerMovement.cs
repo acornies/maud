@@ -84,6 +84,9 @@ public class PlayerMovement : MonoBehaviour
     public delegate void PlayerAirborne(Transform player);
     public static event PlayerAirborne On_PlayerAirborne;
 
+	public delegate void PlayerBecameVisible(Transform player);
+	public static event PlayerBecameVisible OnPlayerBecameVisible;
+	
     // Subscribe to events
     void OnEnable()
     {
@@ -108,9 +111,12 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleOnRestorePlayerState ()
     {
-		rigidbody.isKinematic = false;
-		rigidbody.velocity = _savedVelocity;
-		rigidbody.angularVelocity = _savedAngularVelocity;
+		if (!GameController.Instance.playerIsDead)
+		{
+			rigidbody.isKinematic = false;
+			rigidbody.velocity = _savedVelocity;
+			rigidbody.angularVelocity = _savedAngularVelocity;
+		}
 		disabled = false;
     }
 
@@ -340,7 +346,7 @@ public class PlayerMovement : MonoBehaviour
 	
     void HandlePlayerPowersEnd()
     {
-		if (disabled) return;
+		//if (disabled) return;
         _isUsingPowers = false;
         _sparkEffect.GetComponent<ParticleSystem>().Stop();
         if (!_isFacingCamera) return;
@@ -388,6 +394,15 @@ public class PlayerMovement : MonoBehaviour
             _isFacingCamera = false;
         }
     }
+
+	void OnBecameVisible()
+	{
+		// TODO: migrate intro stuff to here
+		if (OnPlayerBecameVisible != null)
+		{
+			OnPlayerBecameVisible(transform);
+		}
+	}
 
     /*private bool SetGravity()
     {

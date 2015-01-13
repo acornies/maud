@@ -36,7 +36,7 @@ public class GameController : MonoBehaviour
 
     public Text heightCounter;
 	public bool countHeight; 
-    public GameObject mainCamera;
+    private CameraMovement _cameraMovement;
     public GameState gameState;
     public GameMode gameMode;
     public bool inSafeZone = true;
@@ -155,6 +155,7 @@ public class GameController : MonoBehaviour
         _powerBar = GetComponentInChildren<EnergyBar>();
         powerBarRenderer = GetComponentInChildren<EnergyBarRenderer>();
 		heightCounter = GameObject.Find("HeightCounter").GetComponent<Text>();
+		_cameraMovement = GameObject.Find ("Main Camera").GetComponent<CameraMovement>();
 
 		var menuButton = GameObject.Find ("MenuButton");
 		_menuButtonImage = menuButton.GetComponent<Image>();
@@ -297,7 +298,10 @@ public class GameController : MonoBehaviour
         {
             _telekinesisControl.SetActive(false);
 
-            _deathTimer -= Time.deltaTime;
+            if (!_cameraMovement.isTimedDestroyCutscene){
+				_deathTimer -= Time.deltaTime;
+			}
+
             if (!(_deathTimer <= 0)) return;
 
             _telekinesisControl.SetActive(true);

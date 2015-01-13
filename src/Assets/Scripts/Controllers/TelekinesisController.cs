@@ -81,6 +81,12 @@ public class TelekinesisController : MonoBehaviour
         On_TelekinesisStabilize += HandleOnTelekinesisStabilize;
 		IntroTrigger.OnNewIntroLedgePosition += OnNewIntroLedegePosition;
 		KillBox.On_PlayerDeath += HandleOnPlayerDeath;
+		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
+    }
+
+    void HandleOnFastMusicStart (float timedSpeed)
+    {
+		TelekinesisEnd ();
     }
 
     void HandleOnPlayerDeath ()
@@ -126,6 +132,7 @@ public class TelekinesisController : MonoBehaviour
         On_TelekinesisStabilize -= HandleOnTelekinesisStabilize;
 		IntroTrigger.OnNewIntroLedgePosition -= OnNewIntroLedegePosition;
 		KillBox.On_PlayerDeath -= HandleOnPlayerDeath;
+		MusicController.OnFastMusicStart -= HandleOnFastMusicStart;
     }
 
     void Awake()

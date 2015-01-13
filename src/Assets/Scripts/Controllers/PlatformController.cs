@@ -302,7 +302,7 @@ public class PlatformController : MonoBehaviour
 
     void HandleDestroyLowerPlatforms(int platformIndex, int childPlatformToDeleteIndex)
     {
-		DisableChildPlatformsUnderCheckpoint(childPlatformToDeleteIndex);
+		//DisableChildPlatformsUnderCheckpoint(childPlatformToDeleteIndex);
 
 		if (useTimedDestroy) return;
 		//Debug.Log ("Destroy platforms under: " + platformIndex);
@@ -318,7 +318,7 @@ public class PlatformController : MonoBehaviour
         }
     }
 
-    private void DisableChildPlatformsUnderCheckpoint(int platformIndex)
+    /*private void DisableChildPlatformsUnderCheckpoint(int platformIndex)
     {
         GameObject parent;
         if (!this.levelPlatforms.TryGetValue(platformIndex, out parent)) return;
@@ -327,7 +327,7 @@ public class PlatformController : MonoBehaviour
         if (child == null) return;
         //Destroy(child.gameObject);
 		child.collider.enabled = false;
-    }
+    }*/
 
 	void HandleMovePlayerToGamePosition(Vector3 newPosition)
 	{
