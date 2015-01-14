@@ -13,10 +13,11 @@ public class CameraMovement : MonoBehaviour
 	private float _previousCameraY;
 
 	//HACK
-	private float _playerVisibleTimer = 1f;
+	private float _playerVisibleTimer;
 	private bool _visibleAfterCutscene;
 
-    public float zoomWarmTime = 0.5f;
+	public float playerVisibleTime = 1f;
+	public float zoomWarmTime = 0.5f;
     public Vector3 gameCameraPosition;
     public float zoomSpeed = 10f;
 	public float ghostZoomDepth = -25f;
@@ -157,11 +158,6 @@ public class CameraMovement : MonoBehaviour
                 _zoomTimer = 0;
             }
 
-            /*if (transform.position.z >= (gameCameraPosition.z - 2f))
-            {
-                
-            }*/
-
             if (transform.position.z >= (gameCameraPosition.z - 0.1f))
             {
                 //Debug.Log("Fully zoomed in");
@@ -191,27 +187,26 @@ public class CameraMovement : MonoBehaviour
                 CameraTarget = PlatformController.Instance.timedDestroyCameraTarget.transform;
             }
 
-            YSmooth = defaultCameraSpeed / 2;
+            //YSmooth = defaultCameraSpeed / 2;
 			_previousMinY = MinXandY.y;
             MinXandY = new Vector2(0, PlatformController.Instance.timedDestroyCameraTarget.transform.position.y);
             _timedDestroyZoomTimer -= Time.deltaTime;
             if (_timedDestroyZoomTimer <= 0)
             {
-                isTimedDestroyCutscene = false;
+				_playerVisibleTimer = playerVisibleTime;
+				isTimedDestroyCutscene = false;
                 _shouldZoomOut = false;
-				YSmooth = defaultCameraSpeed;
+				//YSmooth = defaultCameraSpeed;
 				MinXandY = new Vector2(0, _previousMinY);
                 CameraTarget = _playerTarget;
-
 				if (OnRestorePlayerState != null)
 				{
 					OnRestorePlayerState();
 				}
             }
         }
-
 		// HACK
-		if (!isTimedDestroyCutscene && _visibleAfterCutscene)
+		else if (!isTimedDestroyCutscene && _visibleAfterCutscene)
 		{
 			_playerVisibleTimer -= Time.deltaTime;
 			if (_playerVisibleTimer <= 0)

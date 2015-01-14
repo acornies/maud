@@ -410,8 +410,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
-            _ghostTouchTargetPosition = gesture.GetTouchToWordlPoint(transform.position.z, true);
-            _isGhostMoving = true;
+			GhostMovement(gesture);
             //GameController.Instance.movedFromSpawnPosition = true;
         }
         else
@@ -442,12 +441,18 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+	private void GhostMovement(Gesture gesture)
+	{
+		if (disabled) return;
+		_ghostTouchTargetPosition = gesture.GetTouchToWordlPoint(transform.position.z, true);
+		_isGhostMoving = true;
+	}
+
     void HandleSwipe(Gesture gesture)
     {
         if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
         {
-            _ghostTouchTargetPosition = gesture.GetTouchToWordlPoint(transform.position.z, true);
-            _isGhostMoving = true;
+			GhostMovement(gesture);
             //GameController.Instance.movedFromSpawnPosition = true;
         }
         
