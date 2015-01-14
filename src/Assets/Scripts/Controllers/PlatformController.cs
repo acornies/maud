@@ -347,7 +347,7 @@ public class PlatformController : MonoBehaviour
 			OnTimedDestroy(buffer);
 		}
 
-		Debug.Log ("Timed destroy speed: " + timedDestroySpeed + "s");
+		//Debug.Log ("Timed destroy speed: " + timedDestroySpeed + "s");
 		if (bottom == _currentPlatform + checkpointBuffer)
 		{
 			Debug.Log ("Next death should be game over.");

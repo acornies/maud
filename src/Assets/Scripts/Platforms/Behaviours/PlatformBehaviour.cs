@@ -4,22 +4,27 @@ using System.Collections;
 
 public class PlatformBehaviour : MonoBehaviour
 {
-	protected Color _originalColor;
-
-	protected bool shouldBurnOut;
+    private GameObject _objectToDestroy;
+    private float _postDestroyTimeout = 3f;
     
-	//protected Quaternion? rotationTarget;
+    protected Material _originalMaterial;
+
+    //protected bool shouldBurnOut;
+    protected bool shouldDestroy;
+
+    //protected Quaternion? rotationTarget;
     protected Transform child;
     protected bool isBeingAffected;
-	protected Light innerLight;
+    //protected Light innerLight;
     //protected InAndOut inAndOutScript;
-	protected Color towerColor;
+    protected Color towerColor;
 
     //public float rotationSpeed = 1;
     public bool isOnPlatform;
     public bool isStopped;
-	public float lightIntensity = 2.75f;
-	public float lightBurnoutSpeed = 1f;
+    public float destroyTransitionSpeed = 10f;
+    //public float lightIntensity = 2.75f;
+    //public float lightBurnoutSpeed = 1f;
 
     // Subscribe to events
     public virtual void OnEnable()
@@ -28,23 +33,22 @@ public class PlatformBehaviour : MonoBehaviour
         PlayerMovement.On_PlayerAirborne += HandlePlayerAirborne;
         TelekinesisHandler.OnAffectStart += HandleOnAffectStart;
         TelekinesisHandler.OnAffectEnd += HandleOnAffectEnd;
-		PlatformController.OnTimedDestroy += HandleOnTimedDestroy;
+        PlatformController.OnTimedDestroy += HandleOnTimedDestroy;
     }
 
-    void HandleOnTimedDestroy (GameObject objectToDestroy)
+    void HandleOnTimedDestroy(GameObject objectToDestroy)
     {
-		if (objectToDestroy.GetInstanceID() != gameObject.GetInstanceID()) return;
+        if (objectToDestroy.GetInstanceID() != gameObject.GetInstanceID()) return;
 
-		Debug.Log ("Time destroy " + name);
+        _objectToDestroy = objectToDestroy;
 
-		//Destroy (child.gameObject);
-		var stabilizeEffect = child.FindChild("StabilizeEffect");
-		var powerEffect = child.FindChild("PowerEffect");
-		Destroy (stabilizeEffect.gameObject);
-		Destroy (powerEffect.gameObject);
-
-		child.DetachChildren ();
-		Destroy (gameObject);
+        //Debug.Log ("Time destroy " + name);
+        var stabilizeEffect = child.FindChild("StabilizeEffect");
+        var powerEffect = child.FindChild("PowerEffect");
+        Destroy(powerEffect.gameObject);
+        Destroy(stabilizeEffect.gameObject);      
+        shouldDestroy = true;
+        transform.tag = null;
     }
 
     public virtual void OnDisable()
@@ -63,25 +67,25 @@ public class PlatformBehaviour : MonoBehaviour
         PlayerMovement.On_PlayerAirborne -= HandlePlayerAirborne;
         TelekinesisHandler.OnAffectStart -= HandleOnAffectStart;
         TelekinesisHandler.OnAffectEnd -= HandleOnAffectEnd;
-		PlatformController.OnTimedDestroy -= HandleOnTimedDestroy;
+        PlatformController.OnTimedDestroy -= HandleOnTimedDestroy;
     }
 
     protected virtual void Start()
     {
         child = transform.Find("Cube");
-		innerLight = GetComponentInChildren<Light> ();
+        //innerLight = GetComponentInChildren<Light> ();
         //inAndOutScript = transform.GetComponent<InAndOut>();
 
-		if (renderer != null) 
-		{
-			_originalColor = renderer.material.color;;
-			towerColor = renderer.material.color;
-		}
+        if (renderer != null)
+        {
+            _originalMaterial = renderer.material;
+            towerColor = renderer.material.color;
+        }
     }
 
-	protected virtual void Update()
-	{
-        if (shouldBurnOut && innerLight.intensity >= 0.1f)
+    protected virtual void Update()
+    {
+        /*if (shouldBurnOut && innerLight.intensity >= 0.1f)
 		{
 			innerLight.intensity = Mathf.Lerp(innerLight.intensity, 0, lightBurnoutSpeed * Time.deltaTime);
 		}
@@ -89,16 +93,38 @@ public class PlatformBehaviour : MonoBehaviour
         {
             innerLight.enabled = false;
             shouldBurnOut = false;
+        }*/
+
+        if (shouldDestroy && _objectToDestroy.GetInstanceID() == gameObject.GetInstanceID())
+        {
+            renderer.material.color = Color.Lerp(renderer.material.color, Color.white, destroyTransitionSpeed * Time.deltaTime);
+            if (renderer.material.color != Color.white) return;
+
+            child.DetachChildren(); // don't delete player if it's a child of the platform
+            var childRigidbody = child.GetComponent<Rigidbody>();
+            if (childRigidbody != null && !childRigidbody.useGravity)
+            {
+                //childRigidbody.col
+                childRigidbody.constraints = RigidbodyConstraints.None;
+                childRigidbody.useGravity = true;
+                childRigidbody.isKinematic = false;
+                //childRigidbody.AddForce(Vector3.down * 10f);
+                //childRigidbody.AddForce(Vector3.down, ForceMode.Impulse);
+            }
+            /*if (GetComponent<Rigidbody>() == null)
+            {
+                gameObject.AddComponent<Rigidbody>().useGravity = true;
+            }*/
+            
+
+            _postDestroyTimeout -= Time.deltaTime;
+            if (!(_postDestroyTimeout <= 0)) return;
+
+            // destroy all the things
+            Destroy (child.gameObject);
+            Destroy (gameObject);
         }
-
-		if (renderer == null) return;
-
-		if (renderer.material.color != towerColor)
-		{
-			//Debug.Log ("Change tower color");
-			renderer.material.color = Color.Lerp(renderer.material.color, towerColor, lightBurnoutSpeed * Time.deltaTime);
-		}
-	}
+    }
 
     protected virtual void FixedUpdate()
     {
@@ -110,8 +136,8 @@ public class PlatformBehaviour : MonoBehaviour
         if (platform == null || child == null) return;
         //isOnPlatform = platform.GetInstanceID() == child.GetInstanceID();
 
-		if (platform.GetInstanceID() != child.GetInstanceID()) return;
-		isOnPlatform = true;
+        if (platform.GetInstanceID() != child.GetInstanceID()) return;
+        isOnPlatform = true;
         //if (inAndOutScript != null) return;
 
         /*if (isOnPlatform && isBeingAffected)
@@ -123,46 +149,46 @@ public class PlatformBehaviour : MonoBehaviour
             player.parent = child;
         }*/
 
-		if (GameController.Instance.inSafeZone && PlatformController.Instance.GetCurrentPlatformNumber() >= 11) 
-		{
-			//Debug.Log("Exit safe zone");
-			GameController.Instance.UpdateSafeZone(false);
-		}
+        if (GameController.Instance.inSafeZone && PlatformController.Instance.GetCurrentPlatformNumber() >= 11)
+        {
+            //Debug.Log("Exit safe zone");
+            GameController.Instance.UpdateSafeZone(false);
+        }
 
-        if (innerLight == null || !Mathf.Approximately(innerLight.intensity, 0)) return;
+        // if (innerLight == null || !Mathf.Approximately(innerLight.intensity, 0)) return;
 
         //innerLight.color = GetPowerBarColor();
-        innerLight.intensity = lightIntensity;
-        shouldBurnOut = true;
+        //innerLight.intensity = lightIntensity;
+        //shouldBurnOut = true;
     }
 
-	private Color GetPowerBarColor()
-	{
-		Color newColor = GameController.Instance.powerBarRenderer.textureBarColor;
-		var colorKeys = GameController.Instance.powerBarRenderer.textureBarGradient.colorKeys;
-		var powerPercentage = GameController.Instance.powerMeter / GameController.Instance.maxPower;
+    private Color GetPowerBarColor()
+    {
+        Color newColor = GameController.Instance.powerBarRenderer.textureBarColor;
+        var colorKeys = GameController.Instance.powerBarRenderer.textureBarGradient.colorKeys;
+        var powerPercentage = GameController.Instance.powerMeter / GameController.Instance.maxPower;
 
-		/*var barColor = colorKeys.FirstOrDefault (x => powerPercentage <= x.time).color;
+        /*var barColor = colorKeys.FirstOrDefault (x => powerPercentage <= x.time).color;
 
-		if (barColor.r != 0 || barColor.g != 0 || barColor.b != 0) 
-		{
-			return barColor;
-		}
-		else
-		{
-			return newColor;
-		}*/
+        if (barColor.r != 0 || barColor.g != 0 || barColor.b != 0) 
+        {
+            return barColor;
+        }
+        else
+        {
+            return newColor;
+        }*/
 
-		foreach (GradientColorKey key in colorKeys)
-		{
-			if (powerPercentage >= key.time)
-			{
-				newColor = key.color;
-			}
-		}
+        foreach (GradientColorKey key in colorKeys)
+        {
+            if (powerPercentage >= key.time)
+            {
+                newColor = key.color;
+            }
+        }
 
-		return newColor;
-	}
+        return newColor;
+    }
 
     public virtual void HandlePlayerAirborne(Transform player)
     {
@@ -174,7 +200,7 @@ public class PlatformBehaviour : MonoBehaviour
     {
         if (platform.GetInstanceID() != transform.GetInstanceID()) return;
         isBeingAffected = true;
-		towerColor = this.GetPowerBarColor ();
+        towerColor = this.GetPowerBarColor();
     }
 
     public virtual void HandleOnAffectEnd(Transform platform)
