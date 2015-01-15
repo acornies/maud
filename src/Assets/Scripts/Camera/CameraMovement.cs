@@ -35,10 +35,10 @@ public class CameraMovement : MonoBehaviour
 	public float timedDestroyZoomTime = 3f;
 	public bool isTimedDestroyCutscene;
 	
-    public delegate void UpdatedCameraMinY(float yPosition, int checkpointPlatform);
+    public delegate void UpdatedCameraMinY(float yPosition);
     public static event UpdatedCameraMinY On_CameraUpdatedMinY;
 
-    public delegate void DestroyLowerPlatforms(int platformNumber, int childPlatformToDeleteIndex);
+    public delegate void DestroyLowerPlatforms(int platformNumber);
     public static event DestroyLowerPlatforms On_DestroyLowerPlatforms;
 
     public delegate void MovePlayerToGamePosition(Vector3 playerPosition);
@@ -185,6 +185,10 @@ public class CameraMovement : MonoBehaviour
                 PlatformController.Instance.timedDestroyCameraTarget != null)
             {
                 CameraTarget = PlatformController.Instance.timedDestroyCameraTarget.transform;
+				if (On_CameraUpdatedMinY != null)
+				{
+					On_CameraUpdatedMinY(PlatformController.Instance.levelPlatforms.Keys.Min());
+				}
             }
 
             //YSmooth = defaultCameraSpeed / 2;
@@ -195,7 +199,7 @@ public class CameraMovement : MonoBehaviour
             {
 				_playerVisibleTimer = playerVisibleTime;
 				isTimedDestroyCutscene = false;
-                _shouldZoomOut = false;
+                _shouldZoomOut = (GameController.Instance.playerIsDead) ? true : false;
 				//YSmooth = defaultCameraSpeed;
 				MinXandY = new Vector2(0, _previousMinY);
                 CameraTarget = _playerTarget;
@@ -280,9 +284,9 @@ public class CameraMovement : MonoBehaviour
 
         MinXandY = new Vector2(MinXandY.x, newCameraMinY);
 
-        On_CameraUpdatedMinY(newCameraMinY, checkpointPlatform);
+        On_CameraUpdatedMinY(newCameraMinY);
 
-        On_DestroyLowerPlatforms(checkpointPlatform - PlatformController.Instance.checkpointBuffer - PlatformController.Instance.platformSpawnBuffer, childPlatformToDeleteIndex);
+        On_DestroyLowerPlatforms(checkpointPlatform - PlatformController.Instance.checkpointBuffer - PlatformController.Instance.platformSpawnBuffer);
     }
 
     void HandleNewPlatform(float yPosition)

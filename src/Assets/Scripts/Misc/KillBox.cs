@@ -68,7 +68,7 @@ public class KillBox : MonoBehaviour
         On_HazzardDestroy();
     }
 
-    void UpdateKillBoxAndCheckpointPosition(float newYPosition, int checkpointPlatform)
+    void UpdateKillBoxAndCheckpointPosition(float newYPosition)
     {
         transform.position = new Vector3(transform.position.x, newYPosition - cameraPositionBuffer, transform.position.z);
     }

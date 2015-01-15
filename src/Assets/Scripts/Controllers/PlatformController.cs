@@ -67,7 +67,7 @@ public class PlatformController : MonoBehaviour
         var bottom = levelPlatforms.Keys.Min() + 1;
 		var buffer = levelPlatforms [bottom];
         
-		_timedDestroyTimer = timedDestroySpeed;
+		//_timedDestroyTimer = timedDestroySpeed;
         timedDestroyCameraTarget = new GameObject("TimedDestroyCameraTarget");
         timedDestroyCameraTarget.transform.position = buffer.transform.position;
     }
@@ -300,7 +300,7 @@ public class PlatformController : MonoBehaviour
         On_ReachedCheckpoint(newcheckpoint, newcheckpoint - 2);
     }
 
-    void HandleDestroyLowerPlatforms(int platformIndex, int childPlatformToDeleteIndex)
+    void HandleDestroyLowerPlatforms(int platformIndex)
     {
 		//DisableChildPlatformsUnderCheckpoint(childPlatformToDeleteIndex);
 

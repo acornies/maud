@@ -7,7 +7,7 @@ public class PlatformBehaviour : MonoBehaviour
     private GameObject _objectToDestroy;
     private float _postDestroyTimeout = 3f;
     
-    protected Material _originalMaterial;
+    private Material _originalMaterial;
 
     //protected bool shouldBurnOut;
     protected bool shouldDestroy;
@@ -22,6 +22,7 @@ public class PlatformBehaviour : MonoBehaviour
     //public float rotationSpeed = 1;
     public bool isOnPlatform;
     public bool isStopped;
+	public float colorChangeSpeed = 10f;
     public float destroyTransitionSpeed = 10f;
     //public float lightIntensity = 2.75f;
     //public float lightBurnoutSpeed = 1f;
@@ -43,12 +44,13 @@ public class PlatformBehaviour : MonoBehaviour
         _objectToDestroy = objectToDestroy;
 
         //Debug.Log ("Time destroy " + name);
-        var stabilizeEffect = child.FindChild("StabilizeEffect");
+        /*var stabilizeEffect = child.FindChild("StabilizeEffect");
         var powerEffect = child.FindChild("PowerEffect");
         Destroy(powerEffect.gameObject);
-        Destroy(stabilizeEffect.gameObject);      
+        Destroy(stabilizeEffect.gameObject);
+        */
         shouldDestroy = true;
-        transform.tag = null;
+        transform.tag = "Untagged";
     }
 
     public virtual void OnDisable()
@@ -73,8 +75,6 @@ public class PlatformBehaviour : MonoBehaviour
     protected virtual void Start()
     {
         child = transform.Find("Cube");
-        //innerLight = GetComponentInChildren<Light> ();
-        //inAndOutScript = transform.GetComponent<InAndOut>();
 
         if (renderer != null)
         {
@@ -85,43 +85,41 @@ public class PlatformBehaviour : MonoBehaviour
 
     protected virtual void Update()
     {
-        /*if (shouldBurnOut && innerLight.intensity >= 0.1f)
+
+		if (renderer != null && renderer.material.color != towerColor && !shouldDestroy)
 		{
-			innerLight.intensity = Mathf.Lerp(innerLight.intensity, 0, lightBurnoutSpeed * Time.deltaTime);
+			//Debug.Log ("Change tower color");
+			renderer.material.color = Color.Lerp(renderer.material.color, towerColor, colorChangeSpeed * Time.deltaTime);
 		}
-        else if (shouldBurnOut && innerLight.intensity <= 0.1f)
-        {
-            innerLight.enabled = false;
-            shouldBurnOut = false;
-        }*/
 
         if (shouldDestroy && _objectToDestroy.GetInstanceID() == gameObject.GetInstanceID())
         {
             renderer.material.color = Color.Lerp(renderer.material.color, Color.white, destroyTransitionSpeed * Time.deltaTime);
             if (renderer.material.color != Color.white) return;
 
-            child.DetachChildren(); // don't delete player if it's a child of the platform
-            var childRigidbody = child.GetComponent<Rigidbody>();
+			if (child == null) return;
+
+			var childRigidbody = child.GetComponent<Rigidbody>();
             if (childRigidbody != null && !childRigidbody.useGravity)
             {
-                //childRigidbody.col
-                childRigidbody.constraints = RigidbodyConstraints.None;
+				var stabilizeEffect = child.FindChild("StabilizeEffect");
+				var powerEffect = child.FindChild("PowerEffect");
+				Destroy(powerEffect.gameObject);
+				Destroy(stabilizeEffect.gameObject);
+				transform.DetachChildren(); // don't delete player if it's a child of the platform
+				childRigidbody.constraints = RigidbodyConstraints.None;
                 childRigidbody.useGravity = true;
                 childRigidbody.isKinematic = false;
-                //childRigidbody.AddForce(Vector3.down * 10f);
-                //childRigidbody.AddForce(Vector3.down, ForceMode.Impulse);
             }
-            /*if (GetComponent<Rigidbody>() == null)
-            {
-                gameObject.AddComponent<Rigidbody>().useGravity = true;
-            }*/
-            
+
+			transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(0.01f, 0.01f, 0.01f), destroyTransitionSpeed * Time.deltaTime);
 
             _postDestroyTimeout -= Time.deltaTime;
             if (!(_postDestroyTimeout <= 0)) return;
 
             // destroy all the things
             Destroy (child.gameObject);
+			//shouldDestroy = false;
             Destroy (gameObject);
         }
     }
@@ -154,12 +152,6 @@ public class PlatformBehaviour : MonoBehaviour
             //Debug.Log("Exit safe zone");
             GameController.Instance.UpdateSafeZone(false);
         }
-
-        // if (innerLight == null || !Mathf.Approximately(innerLight.intensity, 0)) return;
-
-        //innerLight.color = GetPowerBarColor();
-        //innerLight.intensity = lightIntensity;
-        //shouldBurnOut = true;
     }
 
     private Color GetPowerBarColor()
