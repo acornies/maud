@@ -175,6 +175,11 @@ public class MusicController : MonoBehaviour
 		{
 			OnFastMusicStart(forestMusicFastDestroySpeed);
 		}
+		else if (OnFastMusicStart != null && nextSong == cloudMusicFast)
+		{
+			OnFastMusicStart(cloudMusicFastDestroySpeed);
+		}
+
         currentSong.volume = 0.0f;
         currentSong.Stop();
         nextSong.volume = (PlayerState.Instance.Data.playMusic) ? maxMusicVolume : 0;

@@ -68,7 +68,10 @@ public class PlatformController : MonoBehaviour
 		var buffer = levelPlatforms [bottom];
         
 		//_timedDestroyTimer = timedDestroySpeed;
-        timedDestroyCameraTarget = new GameObject("TimedDestroyCameraTarget");
+		if (timedDestroyCameraTarget == null)
+		{
+			timedDestroyCameraTarget = new GameObject("TimedDestroyCameraTarget");
+		}
         timedDestroyCameraTarget.transform.position = buffer.transform.position;
     }
 
