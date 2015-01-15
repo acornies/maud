@@ -32,7 +32,7 @@ public class PlatformController : MonoBehaviour
 	public bool useTimedDestroy;
     public GameObject timedDestroyCameraTarget;
 
-    public delegate void ReachedNextCheckpoint(int platform, int childPlatformToDeleteIndex);
+    public delegate void ReachedNextCheckpoint(int platform);
     public static event ReachedNextCheckpoint On_ReachedCheckpoint;
 
     public delegate void NewPlatform(float yPosition);
@@ -297,7 +297,8 @@ public class PlatformController : MonoBehaviour
         //Debug.Log ("Current platform: " + _currentPlatform);
 
         int newcheckpoint = (_currentPlatform - checkpointBuffer);
-        On_ReachedCheckpoint(newcheckpoint, newcheckpoint - 2);
+
+        On_ReachedCheckpoint(useTimedDestroy ? _currentPlatform : newcheckpoint);
     }
 
     void HandleDestroyLowerPlatforms(int platformIndex)
@@ -348,7 +349,7 @@ public class PlatformController : MonoBehaviour
 		}
 
 		//Debug.Log ("Timed destroy speed: " + timedDestroySpeed + "s");
-		if (bottom == _currentPlatform + checkpointBuffer)
+		if (bottom == _currentPlatform + checkpointBuffer + 1) // TODO editable
 		{
 			Debug.Log ("Next death should be game over.");
 			if (OnTimedDestroyGameOver != null)
@@ -358,7 +359,7 @@ public class PlatformController : MonoBehaviour
 			//useTimedDestroy = false;
 		}
 		// delete the platform above the checkpoint buffer
-		else if (bottom == (_currentPlatform + checkpointBuffer + 1))
+		else if (bottom == (_currentPlatform + checkpointBuffer + 2)) // TODO editable
 		{
 			useTimedDestroy = false;
 		}

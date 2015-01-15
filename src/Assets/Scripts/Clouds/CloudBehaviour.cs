@@ -88,7 +88,7 @@ public class CloudBehaviour : MonoBehaviour
     void HandleOnPlatformReached(Transform platform, Transform player)
     {
         if (platform.GetInstanceID() != transform.GetInstanceID()) return;
-		if (player.rigidbody.velocity.y > 1f) return;
+		if (player.rigidbody.velocity.y > 5f) return;
  
         //Debug.Log("Stand on cloud!");
         collider.isTrigger = player.GetComponent<PlayerMovement>().isHittingHead;

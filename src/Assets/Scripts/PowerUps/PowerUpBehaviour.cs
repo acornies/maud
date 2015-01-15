@@ -2,12 +2,14 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(AudioSource))]
 public class PowerUpBehaviour : MonoBehaviour
 {
     private Animator _animator;
     private Light _light;
     private bool _shouldOrbitAroundPlayer;
     private Vector3 _newLocation = Vector3.zero;
+	private AudioSource _powerUpAudio;
 
     public float pickUpPower = 2f;
     public float lightDimSpeed = 5f;
@@ -19,6 +21,7 @@ public class PowerUpBehaviour : MonoBehaviour
     public float radius = 2.0f;
     public float radiusSpeed = 0.5f;
     public float orbitSpeed = 10.0f;
+	public AudioClip powerUpSound;
 
     //public Vector3 newLocation = Vector2.zero;
 
@@ -51,6 +54,7 @@ public class PowerUpBehaviour : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _light = transform.FindChild("Light").GetComponent<Light>();
+		_powerUpAudio = GetComponent<AudioSource> ();
     }
 
     // Update is called once per frame
@@ -81,7 +85,10 @@ public class PowerUpBehaviour : MonoBehaviour
 
         _animator.enabled = false;
         particleSystem.Stop();
-
+		if (powerUpSound != null && powerUpSound.isReadyToPlay)
+		{
+			_powerUpAudio.PlayOneShot(powerUpSound);
+		}
         collider.enabled = false;
         if (OnPowerPickUp != null)
         {

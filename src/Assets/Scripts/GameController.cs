@@ -103,6 +103,12 @@ public class GameController : MonoBehaviour
         PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons; 
 		PlatformController.OnTimedDestroyGameOver += HandleOnTimedDestroyGameOver;
+		MusicController.OnFastMusicStop += HandleOnFastMusicStop;
+    }
+
+    void HandleOnFastMusicStop ()
+    {
+		_timeDestroyed = false;
     }
 
     void HandleOnTimedDestroyGameOver ()
@@ -133,6 +139,7 @@ public class GameController : MonoBehaviour
         PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
 		PlatformController.OnTimedDestroyGameOver -= HandleOnTimedDestroyGameOver;
+		MusicController.OnFastMusicStop -= HandleOnFastMusicStop;
     }
 
     // Use this for initialization

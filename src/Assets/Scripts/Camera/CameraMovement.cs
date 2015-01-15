@@ -269,7 +269,7 @@ public class CameraMovement : MonoBehaviour
         transform.position = new Vector3(targetX, targetY, transform.position.z);
     }
 
-    void UpdateMinYFromCheckpoint(int checkpointPlatform, int childPlatformToDeleteIndex)
+    void UpdateMinYFromCheckpoint(int checkpointPlatform)
     {
         var levelPlatforms = PlatformController.Instance.levelPlatforms;
         if (levelPlatforms == null || levelPlatforms.Count <= 0) return;

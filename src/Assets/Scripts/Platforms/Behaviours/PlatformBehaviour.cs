@@ -94,8 +94,8 @@ public class PlatformBehaviour : MonoBehaviour
 
         if (shouldDestroy && _objectToDestroy.GetInstanceID() == gameObject.GetInstanceID())
         {
-            renderer.material.color = Color.Lerp(renderer.material.color, Color.white, destroyTransitionSpeed * Time.deltaTime);
-            if (renderer.material.color != Color.white) return;
+            renderer.material.color = Color.Lerp(renderer.material.color, Color.black, destroyTransitionSpeed * Time.deltaTime);
+            if (renderer.material.color != Color.black) return;
 
 			if (child == null) return;
 
