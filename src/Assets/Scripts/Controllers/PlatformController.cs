@@ -192,7 +192,7 @@ public class PlatformController : MonoBehaviour
                             (GameObject) Instantiate(Resources.Load<GameObject>("Prefabs/Platforms/Tutorial_Hold"),
                                 new Vector3(0, yAxisMultiplier, trunkZAxis), Quaternion.identity);
 
-                        Debug.Log("Loaded hold tutorial platform");
+                        //Debug.Log("Loaded hold tutorial platform");
                     }
                     else
                     {

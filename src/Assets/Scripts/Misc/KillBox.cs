@@ -16,7 +16,7 @@ public class KillBox : MonoBehaviour
     // Subscribe to events
     void OnEnable()
     {
-        CameraMovement.On_CameraUpdatedMinY += UpdateKillBoxAndCheckpointPosition;
+        //CameraMovement.On_CameraUpdatedMinY += UpdateKillBoxAndCheckpointPosition;
         On_PlayerDeath += HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
     }
@@ -33,7 +33,7 @@ public class KillBox : MonoBehaviour
 
     void UnsubscribeEvent()
     {
-        CameraMovement.On_CameraUpdatedMinY -= UpdateKillBoxAndCheckpointPosition;
+        //CameraMovement.On_CameraUpdatedMinY -= UpdateKillBoxAndCheckpointPosition;
         On_PlayerDeath -= HandleOnPlayerDeath;
         BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
     }

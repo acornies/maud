@@ -34,7 +34,7 @@ public class StartPlatform : PlatformBehaviour
        	if (!_cameraMovement.isTracking) 
 		{
 			_cameraMovement.isTracking = true;
-			Debug.Log("Start platform turn on tracking");
+			//Debug.Log("Start platform turn on tracking");
 
 			_playerMovement.disabled = false;
 			GameController.Instance.countHeight = true;

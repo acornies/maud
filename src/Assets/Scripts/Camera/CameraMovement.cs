@@ -13,8 +13,11 @@ public class CameraMovement : MonoBehaviour
 	private float _previousCameraY;
 
 	//HACK
+	private bool _playerSuspended; 
+
+	//HACK
 	private float _playerVisibleTimer;
-	private bool _visibleAfterCutscene;
+	private bool _playerIsVisible;
 
 	public float playerVisibleTime = 1f;
 	public float zoomWarmTime = 0.5f;
@@ -64,17 +67,18 @@ public class CameraMovement : MonoBehaviour
         IntroTrigger.OnZoomToGamePosition += HandleOnGameStart;
 		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
 		PlayerRenderer.OnPlayerBecameVisible += HandleOnPlayerBecameVisible;
+		PlayerRenderer.OnPlayerBecameInvisible += HandleOnPlayerBecameInvisible;
     }
 
     void HandleOnPlayerBecameVisible (Transform player)
     {
-		if (GameController.Instance.playerIsDead)
-		{
-			Debug.Log("Turn off tracking if dead, after cutscene");
-			_visibleAfterCutscene = true;
-			//isTracking = false;
-		}
+		_playerIsVisible = true;
     }
+
+	void HandleOnPlayerBecameInvisible (Transform player)
+	{
+		_playerIsVisible = false;
+	}
 
     void HandleOnFastMusicStart (float timedSpeed)
     {
@@ -82,6 +86,8 @@ public class CameraMovement : MonoBehaviour
 		isTimedDestroyCutscene = true;
 		_shouldZoomOut = true;
 		_timedDestroyZoomTimer = timedDestroyZoomTime;
+		_playerSuspended = true;
+
     }
 
     private void HandleOnGameStart()
@@ -130,6 +136,7 @@ public class CameraMovement : MonoBehaviour
         IntroTrigger.OnZoomToGamePosition -= HandleOnGameStart;
 		MusicController.OnFastMusicStart -= HandleOnFastMusicStart;
 		PlayerRenderer.OnPlayerBecameVisible -= HandleOnPlayerBecameVisible;
+		PlayerRenderer.OnPlayerBecameInvisible -= HandleOnPlayerBecameInvisible;
     }
 
     void Awake()
@@ -201,22 +208,23 @@ public class CameraMovement : MonoBehaviour
 				isTimedDestroyCutscene = false;
                 _shouldZoomOut = (GameController.Instance.playerIsDead) ? true : false;
 				//YSmooth = defaultCameraSpeed;
-				MinXandY = new Vector2(0, _previousMinY);
                 CameraTarget = _playerTarget;
-				if (OnRestorePlayerState != null)
-				{
-					OnRestorePlayerState();
-				}
             }
         }
 		// HACK
-		else if (!isTimedDestroyCutscene && _visibleAfterCutscene)
+		else if (!isTimedDestroyCutscene && _playerIsVisible && _playerSuspended)
 		{
 			_playerVisibleTimer -= Time.deltaTime;
 			if (_playerVisibleTimer <= 0)
 			{
-				isTracking = false;
-				_visibleAfterCutscene = false;
+				isTracking = (GameController.Instance.playerIsDead) ? false : true;
+				if (OnRestorePlayerState != null)
+				{
+					MinXandY = new Vector2(0, _previousMinY);
+					OnRestorePlayerState();
+					_playerSuspended = false;
+
+				}
 			}
 		}
     }
@@ -284,7 +292,10 @@ public class CameraMovement : MonoBehaviour
 
         MinXandY = new Vector2(MinXandY.x, newCameraMinY);
 
-        On_CameraUpdatedMinY(newCameraMinY);
+        if (On_CameraUpdatedMinY != null)
+		{
+			On_CameraUpdatedMinY(newCameraMinY);
+		}
 
         On_DestroyLowerPlatforms(checkpointPlatform - PlatformController.Instance.checkpointBuffer - PlatformController.Instance.platformSpawnBuffer);
     }

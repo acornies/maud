@@ -416,7 +416,10 @@ public class GameController : MonoBehaviour
 		}
 		else if (_isSharingOpen)
 		{
-			_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
+			if (!EveryplayController.Instance.isRecording)
+			{
+				_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
+			}
 			_recordButtonBehaviour.interactable = false;
 		}
 

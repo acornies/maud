@@ -6,8 +6,6 @@ public class PlatformBehaviour : MonoBehaviour
 {
     private GameObject _objectToDestroy;
     private float _postDestroyTimeout = 3f;
-    
-    private Material _originalMaterial;
 
     //protected bool shouldBurnOut;
     protected bool shouldDestroy;
@@ -78,7 +76,6 @@ public class PlatformBehaviour : MonoBehaviour
 
         if (renderer != null)
         {
-            _originalMaterial = renderer.material;
             towerColor = renderer.material.color;
         }
     }

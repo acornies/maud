@@ -25,7 +25,9 @@ public class PlayerMovement : MonoBehaviour
     private bool _facingRight = true;
     private bool _isFacingCamera = true;
     //private Collider _playerCollider;
-    private Transform _sparkEffect;
+    private ParticleSystem _spark;
+	private ParticleSystem _sparkElectricity;
+	private ParticleSystem _sparkElectricityBubble;
     private GameObject[] _playerModelObjects;
     private Transform _modelBody;
     private Transform _leftEye;
@@ -111,8 +113,8 @@ public class PlayerMovement : MonoBehaviour
 		if (!GameController.Instance.playerIsDead)
 		{
 			rigidbody.isKinematic = false;
-			rigidbody.velocity = _savedVelocity;
-			rigidbody.angularVelocity = _savedAngularVelocity;
+			//rigidbody.velocity = _savedVelocity;
+			//rigidbody.angularVelocity = _savedAngularVelocity;
 		}
 		disabled = false;
     }
@@ -177,7 +179,9 @@ public class PlayerMovement : MonoBehaviour
         _heightCheck = GameObject.Find("HeightCheck").transform;
         _playerModel = transform.FindChild("PlayerModel").gameObject;
         _animator = _playerModel.GetComponent<Animator>();
-        _sparkEffect = transform.FindChild("Spark").transform;
+        _spark = transform.FindChild("Spark").GetComponent<ParticleSystem>();
+		_sparkElectricity = transform.FindChild ("ConstantSpark").GetComponent<ParticleSystem> ();
+		_sparkElectricityBubble = _sparkElectricity.transform.FindChild("Bubble").GetComponent<ParticleSystem> ();
         _playerModelObjects = GameObject.FindGameObjectsWithTag("PlayerModel");
     }
 
@@ -345,7 +349,8 @@ public class PlayerMovement : MonoBehaviour
     {
 		//if (disabled) return;
         _isUsingPowers = false;
-        _sparkEffect.GetComponent<ParticleSystem>().Stop();
+		_sparkElectricity.Play ();
+        _spark.Stop();
         if (!_isFacingCamera) return;
 		if (GameController.Instance.playerIsDead) return;
         TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
@@ -356,7 +361,7 @@ public class PlayerMovement : MonoBehaviour
         if (disabled) return;
         _isUsingPowers = true;
         if (_isFacingCamera) return;
-        _sparkEffect.GetComponent<ParticleSystem>().Play();
+        _spark.Play();
         if (!isGrounded) return;           
         TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
     }
@@ -364,6 +369,10 @@ public class PlayerMovement : MonoBehaviour
     private void HandleOnPlayerDeath()
     {
 		rigidbody.isKinematic = true;
+
+		_sparkElectricity.loop = true;
+		_sparkElectricityBubble.loop = true;
+		_sparkElectricity.Play ();
 		//rigidbody.useGravity = f
 		if (_isFacingCamera) return;
         TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
@@ -373,6 +382,9 @@ public class PlayerMovement : MonoBehaviour
     {
         //Debug.Log("Resurrection event handler!");
 		rigidbody.isKinematic = false;
+		_sparkElectricity.loop = false;
+		_sparkElectricityBubble.loop = false;
+		_sparkElectricity.Stop ();
 		_consectutiveJumpCounter = 0;
 		if (!_isFacingCamera) return;
         TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);

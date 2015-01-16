@@ -36,7 +36,7 @@ public class PowerUpController : MonoBehaviour
 
         if (PlatformController.Instance.GetCurrentPlatformNumber() < minPlatform)
         {
-            Debug.Log("Hasn't reached min platform for pick-ups");
+            //Debug.Log("Hasn't reached min platform for pick-ups");
             yield return new WaitForSeconds(powerUpSpawnInterval);
         }
         else
