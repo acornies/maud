@@ -12,6 +12,7 @@ public class PlatformBehaviour : MonoBehaviour
 
     //protected Quaternion? rotationTarget;
     protected Transform child;
+	public GameObject flashEffect;
     protected bool isBeingAffected;
     //protected Light innerLight;
     //protected InAndOut inAndOutScript;
@@ -72,7 +73,7 @@ public class PlatformBehaviour : MonoBehaviour
 
     protected virtual void Start()
     {
-        child = transform.Find("Cube");
+        child = transform.FindChild("Cube");
 
         if (renderer != null)
         {
@@ -91,8 +92,8 @@ public class PlatformBehaviour : MonoBehaviour
 
         if (shouldDestroy && _objectToDestroy.GetInstanceID() == gameObject.GetInstanceID())
         {
-            renderer.material.color = Color.Lerp(renderer.material.color, Color.black, destroyTransitionSpeed * Time.deltaTime);
-            if (renderer.material.color != Color.black) return;
+            renderer.material.color = Color.Lerp(renderer.material.color, Color.white, destroyTransitionSpeed * Time.deltaTime);
+            if (renderer.material.color != Color.white) return;
 
 			if (child == null) return;
 
@@ -101,8 +102,14 @@ public class PlatformBehaviour : MonoBehaviour
             {
 				var stabilizeEffect = child.FindChild("StabilizeEffect");
 				var powerEffect = child.FindChild("PowerEffect");
+
 				Destroy(powerEffect.gameObject);
 				Destroy(stabilizeEffect.gameObject);
+				if (flashEffect != null)
+				{
+					GameObject flash = Instantiate(flashEffect, transform.position, Quaternion.identity) as GameObject;
+					flash.GetComponent<ParticleSystem>().Play();
+				}
 				transform.DetachChildren(); // don't delete player if it's a child of the platform
 				childRigidbody.constraints = RigidbodyConstraints.None;
                 childRigidbody.useGravity = true;
