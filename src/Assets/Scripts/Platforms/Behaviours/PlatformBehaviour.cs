@@ -155,7 +155,7 @@ public class PlatformBehaviour : MonoBehaviour
     {
         Color newColor = GameController.Instance.powerBarRenderer.textureBarColor;
         var colorKeys = GameController.Instance.powerBarRenderer.textureBarGradient.colorKeys;
-        var powerPercentage = GameController.Instance.powerMeter / GameController.Instance.maxPower;
+		var powerPercentage = GameController.Instance.powerMeter / PlayerState.Instance.playerLevel.maxEnergy;
 
         /*var barColor = colorKeys.FirstOrDefault (x => powerPercentage <= x.time).color;
 

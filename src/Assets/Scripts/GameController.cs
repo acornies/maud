@@ -38,13 +38,13 @@ public class GameController : MonoBehaviour
 	public bool countHeight; 
     private CameraMovement _cameraMovement;
     public GameState gameState;
-    public GameMode gameMode;
+    //public GameMode gameMode;
     public bool inSafeZone = true;
     public float resumeTime = 1;
     public float playerZPosition = -2.8f;
-    public float highestPoint = 0.0f;
+    public int highestPoint;
     public float powerMeter = 0;
-    public float maxPower = 20;
+    //public float maxPower = 20;
     public float timeBetweenDeaths = 3.0f;
     public Vector3 playerSpawnPosition;
     public bool playerIsDead;
@@ -195,7 +195,7 @@ public class GameController : MonoBehaviour
 		//_controlModeBehaviour = controlMode.GetComponent<Button>();
 
         gameState = GameState.Started;
-        gameMode = GameMode.Story; // TODO: change from menu
+        /*gameMode = GameMode.Story; // TODO: change from menu
 
         switch (gameMode)
         {
@@ -206,8 +206,8 @@ public class GameController : MonoBehaviour
                 break;
             default:
                 break;
-        }
-
+        }*/
+		powerBarRenderer.texturesBackground[0].color.a = 0f;
     }
 
     void Start()
@@ -278,13 +278,14 @@ public class GameController : MonoBehaviour
             _resumeTimer = resumeTime;
         }
 
-        if (_player.position.y > highestPoint && countHeight)
+		var currentPlatform = PlatformController.Instance.GetCurrentPlatformNumber ();
+		if (currentPlatform > highestPoint && countHeight)
         {
-            var roundedPosition = Mathf.Round(_player.position.y);
-            highestPoint = roundedPosition;
+			//var roundedPosition = currentPlatform;
+			highestPoint = currentPlatform;
             if (OnMaxHeightIncrease != null)
             {
-                OnMaxHeightIncrease(roundedPosition * SkyboxCameraMovement.speedMultiplier);
+				OnMaxHeightIncrease(currentPlatform * SkyboxCameraMovement.speedMultiplier);
             }
         }
 
@@ -294,11 +295,11 @@ public class GameController : MonoBehaviour
             powerMeter += powerAccumulationRate;
         }
 
-        powerMeter = Mathf.Clamp(powerMeter, 0, maxPower);
+        powerMeter = Mathf.Clamp(powerMeter, 0, PlayerState.Instance.playerLevel.maxEnergy);
 
         _powerBar.valueCurrent = Mathf.CeilToInt(powerMeter);
         _powerBar.SetValueMin(0);
-        _powerBar.SetValueMax(Mathf.CeilToInt(maxPower));
+		_powerBar.SetValueMax(Mathf.CeilToInt(PlayerState.Instance.playerLevel.maxEnergy));
 
         // time delay between player deaths
 		if (playerIsDead && powerMeter >= lifeCost)
@@ -416,10 +417,7 @@ public class GameController : MonoBehaviour
 		}
 		else if (_isSharingOpen)
 		{
-			if (!EveryplayController.Instance.isRecording)
-			{
-				_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
-			}
+			_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
 			_recordButtonBehaviour.interactable = false;
 		}
 
@@ -525,8 +523,8 @@ public class GameController : MonoBehaviour
     void HandleOnShowMenuButtons()
     {
         _playButtonImage.enabled = true;
-		_highestPointText.text = PlayerState.Instance.Data.highestPoint.ToString();
-		_totalHeightText.text = PlayerState.Instance.Data.totalHeight.ToString();
+		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
+		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
     }
 
 	private void CloseSettingsAndSharing()
@@ -579,8 +577,8 @@ public class GameController : MonoBehaviour
         //_cartButtonBehaviour.interactable = true; // TODO enable when ready
         //_cartButtonBehaviour.interactable = false; // TODO enable when ready
         //_isSettingsOpen = true;
-		_highestPointText.text = PlayerState.Instance.Data.highestPoint.ToString();
-		_totalHeightText.text = PlayerState.Instance.Data.totalHeight.ToString();
+		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
+		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
 		heightCounter.color = Color.white;
     }
 
@@ -612,8 +610,8 @@ public class GameController : MonoBehaviour
         _telekinesisControl.SetActive(false);
         _restartButtonImage.enabled = true;
         _restartButtonBehaviour.interactable = true;
-		_highestPointText.text = PlayerState.Instance.Data.highestPoint.ToString();
-		_totalHeightText.text = PlayerState.Instance.Data.totalHeight.ToString();
+		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
+		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
 		heightCounter.color = Color.white;
     }
 

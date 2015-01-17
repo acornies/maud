@@ -4,14 +4,16 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using LegendPeak;
 using LegendPeak.Player;
 
 public class PlayerState : MonoBehaviour
 {
-	private float lastTime;
+	private int lastTime;
     private Image _controlModeImage;
 
 	public string dataPath;
+	public PlayerLevel[] playerLevels;
 
     public static PlayerState Instance { get; private set; }
     public PlayerData Data { get; private set; }
@@ -79,9 +81,9 @@ public class PlayerState : MonoBehaviour
     {
         var binaryFormatter = new BinaryFormatter();
 
-		if (GameController.Instance.highestPoint > Data.highestPoint) 
+		if (GameController.Instance.highestPoint > Data.highestPlatform) 
 		{
-			Data.highestPoint = GameController.Instance.highestPoint;
+			Data.highestPlatform = GameController.Instance.highestPoint;
 			//Data.highestPoint = 0;
 		}
 
@@ -91,7 +93,7 @@ public class PlayerState : MonoBehaviour
 		//Debug.Log ("After: " + lastTime);
 
 		//Debug.Log("Added: " + toAdd);
-		Data.totalHeight += toAdd;
+		Data.totalPlatforms += toAdd;
 		//Data.totalHeight = 0;
 
 		FileStream playerFile = !File.Exists(string.Format(dataPath, Application.persistentDataPath)) 
@@ -108,7 +110,11 @@ public class PlayerState : MonoBehaviour
 		{
 			Data = new PlayerData(){
 				controlMode = (MobileHelper.isTablet) ? ControlMode.FingerSwipe : ControlMode.Accelerometer,
-				playMusic = true
+				playMusic = true,
+				highestPlatform = 0,
+				totalPlatforms = 0,
+				monetizedState = MonetizedState.Free,
+				playerLevel = 1
 			};
 		}
 		else
@@ -121,6 +127,11 @@ public class PlayerState : MonoBehaviour
 		}
        
     }
+
+	public PlayerLevel playerLevel
+	{
+		get { return playerLevels[Data.playerLevel - 1]; }
+	}
 
     // Update is called once per frame
     void Update()

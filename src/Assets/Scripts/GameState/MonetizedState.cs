@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Assets.Scripts.GameState
+namespace LegendPeak
 {
     [Serializable]
     public enum MonetizedState
