@@ -12,6 +12,7 @@ namespace LegendPeak.Player
 		public float rotationCostPerSecond;
 		public float stabilizeCost;
 		public float stabilizeTime;
-		public float deathCost;
+		public float lifeCost;
+		public float energyAccumulationRate;
 	}
 }

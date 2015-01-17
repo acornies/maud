@@ -21,7 +21,7 @@ public class TelekinesisHandler : MonoBehaviour
     public bool isClone;
     public bool isStable;
     public float rotationSpeed = 1;
-    public float stabilizationTime = 3;
+    //public float stabilizationTime = 3;
     public float teleportTime = 1;
 
     public delegate void AffectStart(Transform transformObj);
@@ -82,7 +82,7 @@ public class TelekinesisHandler : MonoBehaviour
         }
         else
         {
-            _stabilizeTimer = stabilizationTime;
+            _stabilizeTimer = PlayerState.Instance.playerLevel.stabilizeTime;
         }
 
         HandleStabilizePlatforms();

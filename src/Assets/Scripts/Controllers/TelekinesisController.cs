@@ -29,9 +29,9 @@ public class TelekinesisController : MonoBehaviour
     public float cloneScaleMultiplier = 1.5f;
     public float powerTimeout = 1.0f;
     //public float maxFlickGestureTime = 0.2f;
-    public float rotationCostPerSecond = 1f;
+    //public float rotationCostPerSecond = 1f;
     public float moveCostPerSecond = 1.5f;
-    public float stabilizeCost = 3;
+    //public float stabilizeCost = 3;
     //public float minimumSwipeTime = 0.15f;
     public Material telekinesisMaterial;
 
@@ -173,7 +173,7 @@ public class TelekinesisController : MonoBehaviour
     {
         if (_player.disabled) return;
         
-        if (GameController.Instance.powerMeter < stabilizeCost)
+        if (GameController.Instance.powerMeter < PlayerState.Instance.playerLevel.stabilizeCost)
         {
             _noTele.Play();
             return;   
@@ -197,7 +197,7 @@ public class TelekinesisController : MonoBehaviour
             On_TelekinesisStabilize(_platform);
             if (!GameController.Instance.inSafeZone)
             {
-                On_PlayerPowerDeplete(stabilizeCost);
+				On_PlayerPowerDeplete(PlayerState.Instance.playerLevel.stabilizeCost);
             }
         }
 
@@ -211,7 +211,7 @@ public class TelekinesisController : MonoBehaviour
             On_TelekinesisStabilize(_hazard);
             if (!GameController.Instance.inSafeZone)
             {
-                On_PlayerPowerDeplete(stabilizeCost);
+				On_PlayerPowerDeplete(PlayerState.Instance.playerLevel.stabilizeCost);
             }
         }
     }
@@ -386,7 +386,7 @@ public class TelekinesisController : MonoBehaviour
 
         if (!GameController.Instance.inSafeZone)
         {
-            On_PlayerPowerDeplete(rotationCostPerSecond * Time.deltaTime);
+            On_PlayerPowerDeplete(PlayerState.Instance.playerLevel.rotationCostPerSecond * Time.deltaTime);
         }
     }
 

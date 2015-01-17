@@ -51,7 +51,7 @@ public class GameController : MonoBehaviour
     public bool initiatingRestart;
     //public bool useAcceleration;
 	//public ControlMode controlMode;
-    public float lifeCost = 5f;
+    //public float lifeCost = 5f;
     public float powerAccumulationRate = 0.25f;
     public float resurrectionSpeed = 15f;
     public float deathIconWidth = 20f;
@@ -233,11 +233,11 @@ public class GameController : MonoBehaviour
 
         //if (!powerBarRenderer.enabled) return;
 
-        if (powerMeter < lifeCost)
+		if (powerMeter < PlayerState.Instance.playerLevel.lifeCost)
         {
             powerBarRenderer.texturesForeground[0].color.a = 1f;
         }
-        else if (powerMeter >= lifeCost)
+		else if (powerMeter >= PlayerState.Instance.playerLevel.stabilizeCost)
         {
             powerBarRenderer.texturesForeground[0].color.a = 0f;
         }
@@ -292,7 +292,7 @@ public class GameController : MonoBehaviour
         if (PlatformController.Instance.GetCurrentPlatformNumber() > _previousPlatformNumber)
         {
             _previousPlatformNumber = PlatformController.Instance.GetCurrentPlatformNumber();
-            powerMeter += powerAccumulationRate;
+			powerMeter += PlayerState.Instance.playerLevel.energyAccumulationRate;
         }
 
         powerMeter = Mathf.Clamp(powerMeter, 0, PlayerState.Instance.playerLevel.maxEnergy);
@@ -302,7 +302,7 @@ public class GameController : MonoBehaviour
 		_powerBar.SetValueMax(Mathf.CeilToInt(PlayerState.Instance.playerLevel.maxEnergy));
 
         // time delay between player deaths
-		if (playerIsDead && powerMeter >= lifeCost)
+		if (playerIsDead && powerMeter >= PlayerState.Instance.playerLevel.stabilizeCost)
         {
             _telekinesisControl.SetActive(false);
 
@@ -322,12 +322,12 @@ public class GameController : MonoBehaviour
                 OnPlayerResurrection();
                 if (!inSafeZone)
                 {
-                    powerMeter -= lifeCost;
+					powerMeter -= PlayerState.Instance.playerLevel.stabilizeCost;
                 }
             }
         }
 
-        else if (playerIsDead && powerMeter < lifeCost)
+		else if (playerIsDead && powerMeter < PlayerState.Instance.playerLevel.stabilizeCost)
         {
 			TriggerRestart();
         }
