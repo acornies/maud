@@ -211,7 +211,6 @@ public class CameraMovement : MonoBehaviour
                 CameraTarget = _playerTarget;
             }
         }
-		// HACK
 		else if (!isTimedDestroyCutscene && _playerIsVisible && _playerSuspended)
 		{
 			_playerVisibleTimer -= Time.deltaTime;
@@ -220,7 +219,8 @@ public class CameraMovement : MonoBehaviour
 				isTracking = (GameController.Instance.playerIsDead) ? false : true;
 				if (OnRestorePlayerState != null)
 				{
-					MinXandY = new Vector2(0, _previousMinY);
+					var bottom = PlatformController.Instance.levelPlatforms.Keys.Min();
+					MinXandY = new Vector2(0, PlatformController.Instance.levelPlatforms[bottom + PlatformController.Instance.checkpointBuffer].transform.position.y);
 					OnRestorePlayerState();
 					_playerSuspended = false;
 
