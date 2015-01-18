@@ -8,7 +8,7 @@ public class SkyboxCameraMovement : MonoBehaviour
     private bool _changeToStartColor;
 
     public Transform sunlightDirectionalLight;
-    public static float speedMultiplier = 0.015f;
+    public static float speedMultiplier = 0.1f;
     public float rotationSpeed = 1f;
     public Material[] skyboxes;
     public float maxRotationSpeed = 100f;

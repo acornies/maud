@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Linq;
 using System.Collections;
+using LegendPeak;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(AudioSource))]
@@ -349,10 +350,11 @@ public class PlayerMovement : MonoBehaviour
     {
 		//if (disabled) return;
         _isUsingPowers = false;
-		_sparkElectricity.Play ();
+		//_sparkElectricity.Stop ();
+		_sparkElectricity.loop = false;
         _spark.Stop();
         if (!_isFacingCamera) return;
-		if (GameController.Instance.playerIsDead) return;
+		if (GameController.Instance.playerIsDead || GameController.Instance.gameState == GameState.Started) return;
         TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
     }
 
@@ -361,6 +363,7 @@ public class PlayerMovement : MonoBehaviour
         if (disabled) return;
         _isUsingPowers = true;
         if (_isFacingCamera) return;
+		_sparkElectricity.Play ();
         _spark.Play();
         if (!isGrounded) return;           
         TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
@@ -369,7 +372,6 @@ public class PlayerMovement : MonoBehaviour
     private void HandleOnPlayerDeath()
     {
 		rigidbody.isKinematic = true;
-
 		_sparkElectricity.loop = true;
 		_sparkElectricityBubble.loop = true;
 		_sparkElectricity.Play ();
@@ -384,7 +386,7 @@ public class PlayerMovement : MonoBehaviour
 		rigidbody.isKinematic = false;
 		_sparkElectricity.loop = false;
 		_sparkElectricityBubble.loop = false;
-		_sparkElectricity.Stop ();
+		//_sparkElectricity.Stop ();
 		_consectutiveJumpCounter = 0;
 		if (!_isFacingCamera) return;
         TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
