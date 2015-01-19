@@ -24,7 +24,7 @@ public class SceneFadeInOut : MonoBehaviour
         GameController.OnGameRestart += HandleOnGameRestart;
         GameController.OnGamePause += HandleOnGamePause;
         GameController.OnGameResume += HandleOnGameResume;
-        GameController.OnGameOver += HandleOnGameOver;
+        //GameController.OnGameOver += HandleOnGameOver;
     }
 
     void OnDisable()
@@ -43,7 +43,7 @@ public class SceneFadeInOut : MonoBehaviour
         GameController.OnGameRestart -= HandleOnGameRestart;
         GameController.OnGamePause -= HandleOnGamePause;
         GameController.OnGameResume -= HandleOnGameResume;
-        GameController.OnGameOver -= HandleOnGameOver;
+        //GameController.OnGameOver -= HandleOnGameOver;
     }
 
 

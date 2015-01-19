@@ -100,6 +100,7 @@ public class PlayerMovement : MonoBehaviour
         BoundaryController.On_PlayerDeath += HandleOnPlayerDeath;
         GameController.OnPlayerResurrection += HandleOnPlayerResurrection;
 		GameController.OnGameOver += HandleOnGameOver;
+		GameController.OnPlayerReward += HandleOnPlayerReward;
 		CameraMovement.OnMovePlayerToGamePosition += HandleOnMovePlayerToGamePosition;
 		CameraMovement.OnRestorePlayerState += HandleOnRestorePlayerState;
         CloudBehaviour.On_CloudDestroy += HandleOnCloudDestroy;
@@ -107,6 +108,12 @@ public class PlayerMovement : MonoBehaviour
 		IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons;
 		SkyboxCameraMovement.OnPlayerMaterialUpdate += HandleOnPlayerMaterialUpdate;
 		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
+    }
+
+    void HandleOnPlayerReward ()
+    {
+		rigidbody.velocity = new Vector3 (rigidbody.velocity.x, 0, rigidbody.velocity.z);
+		rigidbody.isKinematic = true;
     }
 
     void HandleOnRestorePlayerState ()
@@ -165,6 +172,7 @@ public class PlayerMovement : MonoBehaviour
         BoundaryController.On_PlayerDeath -= HandleOnPlayerDeath;
         GameController.OnPlayerResurrection -= HandleOnPlayerResurrection;
 		GameController.OnGameOver -= HandleOnGameOver;
+		GameController.OnPlayerReward -= HandleOnPlayerReward;
 		CameraMovement.OnMovePlayerToGamePosition -= HandleOnMovePlayerToGamePosition;
 		CameraMovement.OnRestorePlayerState -= HandleOnRestorePlayerState;
         CloudBehaviour.On_CloudDestroy -= HandleOnCloudDestroy;
@@ -209,7 +217,7 @@ public class PlayerMovement : MonoBehaviour
             _rightEye.renderer.material = normalEyeMaterial;
         }
 
-        if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
+		if (GameController.Instance.playerIsDead && GameController.Instance.gameState == GameState.Running)
         {
             collider.enabled = false;
 

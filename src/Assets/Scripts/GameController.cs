@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using LegendPeak;
+using UnityEngine.Advertisements;
 
 public class GameController : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class GameController : MonoBehaviour
 	//private Image _controlModeImage; // TODO finish later
 	//private Button _controlModeBehaviour;
 	private Button _musicButtonBehaviour;
+	private Image _continueButtonImage;
+	private Button _continueButtonBehaviour;
+	private Text _continueButtonText;
 	private Button _shareButtonBehaviour;
     //private Image _cartButtonImage;
 	//private Button _cartButtonBehaviour;
@@ -34,7 +38,11 @@ public class GameController : MonoBehaviour
 	private Text _totalHeightText;
 	private bool _timeDestroyed;
 
-    public Text heightCounter;
+	public int targetFrameRate = 60;
+	public string advertisingAppIdIOS;
+	public string advertisingAppIdAndroid;
+	public bool advertisingTestMode;
+	public Text heightCounter;
 	public bool countHeight; 
     private CameraMovement _cameraMovement;
     public GameState gameState;
@@ -62,6 +70,12 @@ public class GameController : MonoBehaviour
     public Sprite controlAccelerometerImage;
     public Sprite controlFingerSwipeImage;
 	public Color heightCounterColor;
+	
+	public int gameOverContinues;
+	public bool promptAdContinue
+	{
+		get {return (gameOverContinues == 0) ? true : false; }
+	}
 
     public static GameController Instance { get; private set; }
 
@@ -89,6 +103,9 @@ public class GameController : MonoBehaviour
     public delegate void ToggleMusic(bool playMusic);
     public static event ToggleMusic OnToggleMusic;
 
+	public delegate void PlayerReward();
+	public static event PlayerReward OnPlayerReward;
+
     // Subscribe to events
     void OnEnable()
     {
@@ -104,6 +121,8 @@ public class GameController : MonoBehaviour
         IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons; 
 		PlatformController.OnTimedDestroyGameOver += HandleOnTimedDestroyGameOver;
 		MusicController.OnFastMusicStop += HandleOnFastMusicStop;
+		//UnityAds.OnVideoCompleted += HandleOnVideoCompleted;
+		OnPlayerReward += HandleOnPlayerReward;
     }
 
     void HandleOnFastMusicStop ()
@@ -140,12 +159,24 @@ public class GameController : MonoBehaviour
         IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
 		PlatformController.OnTimedDestroyGameOver -= HandleOnTimedDestroyGameOver;
 		MusicController.OnFastMusicStop -= HandleOnFastMusicStop;
+		//UnityAds.OnVideoCompleted -= HandleOnVideoCompleted;
+		OnPlayerReward -= HandleOnPlayerReward;
     }
 
     // Use this for initialization
     void Awake()
     {
-        Application.targetFrameRate = 60;
+		Application.targetFrameRate = targetFrameRate;
+
+		if (Advertisement.isSupported) 
+		{
+			Advertisement.allowPrecache = true;
+			Advertisement.Initialize (Application.platform == RuntimePlatform.Android ? advertisingAppIdAndroid : advertisingAppIdIOS, advertisingTestMode);
+		} 
+		else 
+		{
+			Debug.Log("Platform not supported");
+		}
 
         if (Instance == null)
         {
@@ -193,6 +224,12 @@ public class GameController : MonoBehaviour
 		var controlMode = GameObject.Find ("ControlButton");
 		//_controlModeImage = controlMode.GetComponent<Image>();
 		//_controlModeBehaviour = controlMode.GetComponent<Button>();
+
+		var continueButton = GameObject.Find("Continue");
+		_continueButtonImage = continueButton.GetComponent<Image> ();
+		_continueButtonBehaviour = continueButton.GetComponent<Button> ();
+		_continueButtonText = continueButton.transform.FindChild ("Text").GetComponent<Text>();
+
 
         gameState = GameState.Started;
         /*gameMode = GameMode.Story; // TODO: change from menu
@@ -329,7 +366,7 @@ public class GameController : MonoBehaviour
 
 		else if (playerIsDead && powerMeter < PlayerState.Instance.playerLevel.stabilizeCost)
         {
-			TriggerRestart();
+			TriggerGameOver();
         }
         else
         {
@@ -339,7 +376,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-	void TriggerRestart()
+	void TriggerGameOver()
 	{
 		initiatingRestart = true;
 		//_menuButtonBehaviour.interactable = false;
@@ -374,7 +411,7 @@ public class GameController : MonoBehaviour
 
 		if (_timeDestroyed)
 		{
-			TriggerRestart();
+			TriggerGameOver();
 		}
 		else
 		{
@@ -422,20 +459,6 @@ public class GameController : MonoBehaviour
 		}
 
 		_isSharingOpen = !_isSharingOpen;
-		
-		/*if (gameState == GameState.Running)
-		{
-			if (OnGamePause != null)
-			{
-				OnGamePause();
-				//_isSharingOpen = !_isSharingOpen;
-			}
-			
-		}*/
-		/*else
-		{
-			_initiatingResume = true;
-		}*/
 	}
 
     public void ButtonMenu()
@@ -508,7 +531,28 @@ public class GameController : MonoBehaviour
 
     }
 
-    public void ButtonMusic()
+	public void ButtonContinue()
+	{
+		if(Advertisement.isReady()) {
+			Advertisement.Show(null, new ShowOptions {
+				pause = true,
+				resultCallback = result => {
+					switch (result)
+					{
+						case ShowResult.Finished:
+							//HandleOnVideoCompleted();
+							if (OnPlayerReward != null)
+							{
+								OnPlayerReward();
+							}
+							break;
+					}
+				}
+			});
+		}
+	}
+	
+	public void ButtonMusic()
     {
         PlayerState.Instance.Data.playMusic = !PlayerState.Instance.Data.playMusic;
 
@@ -606,16 +650,24 @@ public class GameController : MonoBehaviour
     void HandleOnGameOver()
     {
         gameState = GameState.Over;
-        _player.GetComponent<PlayerMovement>().disabled = true;
+        //_player.GetComponent<PlayerMovement>().disabled = true;
         _telekinesisControl.SetActive(false);
         _restartButtonImage.enabled = true;
         _restartButtonBehaviour.interactable = true;
 		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
 		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
 		heightCounter.color = Color.white;
-    }
 
-    private void HandleOnPowerPickUp(float powerToAdd)
+		if (promptAdContinue)
+		{
+			// TODO display continue UI
+			_continueButtonImage.color = new Color(_continueButtonImage.color.r, _continueButtonImage.color.g, _continueButtonImage.color.b, 1f);;
+			_continueButtonText.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
+			_continueButtonBehaviour.interactable = true;
+		}
+	}
+	
+	private void HandleOnPowerPickUp(float powerToAdd)
     {
         //Debug.Log("Add " + powerToAdd + " to power meter.");
 		if (inSafeZone) 
@@ -636,4 +688,31 @@ public class GameController : MonoBehaviour
         //_cartButtonImage.enabled = false;
         _menuButtonImage.GetComponent<Animator>().enabled = false;
     }
+
+	void HandleOnPlayerReward()
+	{
+		gameOverContinues ++;
+		gameState = GameState.Running;
+		initiatingRestart = false;
+		_continueButtonImage.color = new Color(_continueButtonImage.color.r, _continueButtonImage.color.g, _continueButtonImage.color.b, 0);
+		_continueButtonText.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
+		_continueButtonBehaviour.interactable = false;
+		powerMeter += 50;
+
+		var screenCenterToWorld =
+			Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
+		
+		var newSpawnPosition = new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition);
+		_player.GetComponent<PlayerMovement>().SetSpawnPosition(newSpawnPosition);
+		//Debug.Log ("Player reward spawn: " + newSpawnPosition);
+		gameOverContinues --;
+		_restartButtonImage.enabled = false;
+		_restartButtonBehaviour.interactable = false;
+
+		_restartButtonImage.enabled = false;
+		_restartButtonBehaviour.interactable = false;
+
+		_highestPointText.text = string.Empty;
+		_totalHeightText.text = string.Empty;
+	}
 }

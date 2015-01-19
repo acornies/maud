@@ -61,6 +61,8 @@ public class PlatformController : MonoBehaviour
 
     void HandleOnFastMusicStart (float timedSpeed)
     {
+		if (GameController.Instance.gameState == LegendPeak.GameState.Over) return;
+
 		useTimedDestroy = true;
 		timedDestroySpeed = timedSpeed;
 
