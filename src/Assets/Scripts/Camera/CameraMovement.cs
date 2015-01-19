@@ -106,6 +106,7 @@ public class CameraMovement : MonoBehaviour
     private void HandleUpdateCameraSpeed(float speed)
     {
         //if (!(speed > YSmooth)) return;
+        if (_playerSuspended) return;
         YSmooth = speed;
         //Debug.Log("Match camera speed to: " + speed);
     }
