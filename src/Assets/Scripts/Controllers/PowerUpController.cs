@@ -4,20 +4,24 @@ using System.Collections;
 
 public class PowerUpController : MonoBehaviour
 {
-    public int minPlatform = 1;
+	private GameObject[] _powerUps;
+
+	public Vector3 holdingPosition;
+	public int minPlatform = 1;
     public float powerUpSpawnInterval = 1f;
     [Range(-4f, 0)]
     public float minXPosition = -1f;
     [Range(0, 4f)]
     public float maxXPosition = 1f;
 
-    public delegate void NewPowerUpLocation(Vector3 location);
+    public delegate void NewPowerUpLocation(Vector3 location, string name);
     public static event NewPowerUpLocation OnNewPowerUpLocation;
 
     // Use this for initialization
     IEnumerator Start()
     {
-        while (true)
+		_powerUps = GameObject.FindGameObjectsWithTag ("PowerUp");
+		while (true)
         {
             yield return StartCoroutine("SpawnPowerUps");
         }
@@ -43,6 +47,8 @@ public class PowerUpController : MonoBehaviour
         {
             var bottomPlatform = levelPlatforms.Keys.Min();
             var topPlatform = levelPlatforms.Keys.Max();
+
+
             //var screenLeftToWorld = Camera.main.ViewportToWorldPoint(new Vector3(1f, 1f));
 
             var newPosition = new Vector3(Random.Range(minXPosition, maxXPosition),
@@ -50,11 +56,13 @@ public class PowerUpController : MonoBehaviour
                     levelPlatforms[topPlatform].transform.position.y),
                     GameController.Instance.playerZPosition);
 
-            //Debug.Log("New pick-up position: " + newPosition);
+			var randomPowerUp = _powerUps[Random.Range(0, 3)].transform;
+
+			Debug.Log("New pick-up " + randomPowerUp + " position: " + newPosition);
 
             if (OnNewPowerUpLocation != null)
             {
-                OnNewPowerUpLocation(newPosition);
+                OnNewPowerUpLocation(newPosition, randomPowerUp.name);
             }
 
             yield return new WaitForSeconds(powerUpSpawnInterval);

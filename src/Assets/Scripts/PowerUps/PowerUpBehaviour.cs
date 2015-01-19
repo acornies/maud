@@ -106,14 +106,14 @@ public class PowerUpBehaviour : MonoBehaviour
 		_newLocation = Vector3.zero;
     }
 
-    private void HandleOnNewPowerUpLocation(Vector3 location)
+    private void HandleOnNewPowerUpLocation(Vector3 location, string transformName)
     {
         //Debug.Log("New pick-up position: " + location);
         //transform.parent.position = location;
 		particleSystem.Stop();
         _shouldOrbitAroundPlayer = false;
         orbitCenter = null;
-        _newLocation = location;
+        _newLocation = (transform.parent.name == transformName) ? location : new Vector3(0, -5.9f, 9.48f); // TODO move to editor
         collider.enabled = false;
         //Reactivate();
     }
