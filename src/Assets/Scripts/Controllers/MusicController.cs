@@ -171,11 +171,11 @@ public class MusicController : MonoBehaviour
         if (nextSong == null) return;
         //Debug.Log("Start transition from " + currentSong.clip.name + " to " + nextSong.clip.name);
         nextSong.Play();
-		if (OnFastMusicStart != null && nextSong == forestMusicFast)
+		if (OnFastMusicStart != null && nextSong == forestMusicFast && GameController.Instance.gameState != LegendPeak.GameState.Over)
 		{
 			OnFastMusicStart(forestMusicFastDestroySpeed);
 		}
-		else if (OnFastMusicStart != null && nextSong == cloudMusicFast)
+		else if (OnFastMusicStart != null && nextSong == cloudMusicFast && GameController.Instance.gameState != LegendPeak.GameState.Over)
 		{
 			OnFastMusicStart(cloudMusicFastDestroySpeed);
 		}

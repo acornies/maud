@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using LegendPeak;
 using LegendPeak.Platforms;
 
 public class PlatformController : MonoBehaviour
@@ -141,6 +142,8 @@ public class PlatformController : MonoBehaviour
 
 	void Update()
 	{
+
+
 		if ( useTimedDestroy)
 		{
 			_timedDestroyTimer -= Time.deltaTime;
@@ -149,6 +152,26 @@ public class PlatformController : MonoBehaviour
 				TimedDestroyer();
 				_timedDestroyTimer = timedDestroySpeed;
 			}
+		}
+	}
+
+	void EnsureTimedDestroyZones()
+	{
+		// TODO: don't reference Music Controller here
+		if (!useTimedDestroy 
+		    && _currentPlatform > MusicController.Instance.forestMusicSlowLimit 
+		    && _currentPlatform < MusicController.Instance.forestMusicFastLimit
+		    && GameController.Instance.gameState != GameState.Over)
+		{
+			Debug.Log ("Timed destroy turned on post-game over");
+			useTimedDestroy = true;
+		}
+		else if (!useTimedDestroy 
+		         && _currentPlatform > MusicController.Instance.cloudMusicSlowLimit 
+		         && _currentPlatform < MusicController.Instance.cloudMusicFastLimit
+		         && GameController.Instance.gameState != GameState.Over)
+		{
+			useTimedDestroy = true;
 		}
 	}
 
@@ -384,19 +407,7 @@ public class PlatformController : MonoBehaviour
 		//useTimedDestroy = false;
 	}
 
-	/*void HandleOnPlayerReward()
+	void HandleOnPlayerReward()
 	{
-		// TODO: don't reference Music Controller here
-		// restart timed destroy if player revives in the timed destroy "zone"
-		if (_currentPlatform > MusicController.Instance.forestMusicSlowLimit && _currentPlatform < MusicController.Instance.forestMusicFastLimit)
-		{
-			Debug.Log ("Restarted timed destroy (zone 1) after player reward");
-			useTimedDestroy = true;
-		}
-		else if (_currentPlatform > MusicController.Instance.cloudMusicSlowLimit && _currentPlatform < MusicController.Instance.cloudMusicFastLimit)
-		{
-			Debug.Log ("Restarted timed destroy (zone 2) after player reward");
-			useTimedDestroy = true;
-		}
-	}*/
+	}
 }

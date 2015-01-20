@@ -155,8 +155,8 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleOnGameOver ()
     {
-		rigidbody.isKinematic = false;
-		rigidbody.velocity = Vector3.zero;
+		//rigidbody.velocity = Vector3.zero;
+		rigidbody.isKinematic = true;
 		//rigidbody.useGravity = false;
 		disabled = true;
     }
