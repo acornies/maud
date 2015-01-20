@@ -224,7 +224,6 @@ public class CameraMovement : MonoBehaviour
 					MinXandY = new Vector2(0, PlatformController.Instance.levelPlatforms[bottom + PlatformController.Instance.checkpointBuffer].transform.position.y);
 					OnRestorePlayerState();
 					_playerSuspended = false;
-
 				}
 			}
 		}

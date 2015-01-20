@@ -418,7 +418,7 @@ public class GameController : MonoBehaviour
 			var screenCenterToWorld =
 				Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
 			
-			_player.GetComponent<PlayerMovement>().SetSpawnPosition(new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition));
+			_player.GetComponent<PlayerMovement>().SetSpawnPosition(new Vector3(0, screenCenterToWorld.y, playerZPosition));
 		}       
     }
 
@@ -440,6 +440,7 @@ public class GameController : MonoBehaviour
                 break;
             case GameState.Paused:
 				_initiatingResume = true;
+				Debug.Log ("Game resume through play button");
                 break;
         }
 
@@ -526,9 +527,6 @@ public class GameController : MonoBehaviour
     {
         Restart();
 		_initiatingResume = true;
-        //gameState = GameState.Running;
-        _player.GetComponent<PlayerMovement>().disabled = true; // TODO move to playerMovement
-
     }
 
 	public void ButtonContinue()
@@ -540,12 +538,12 @@ public class GameController : MonoBehaviour
 					switch (result)
 					{
 						case ShowResult.Finished:
-							//HandleOnVideoCompleted();
-							if (OnPlayerReward != null)
-							{
-								OnPlayerReward();
-							}
-							break;
+							//HandleOnPlayerReward();
+						if (OnPlayerReward != null)
+						{
+							OnPlayerReward();
+						}
+						break;
 					}
 				}
 			});
@@ -567,6 +565,7 @@ public class GameController : MonoBehaviour
     void HandleOnShowMenuButtons()
     {
         _playButtonImage.enabled = true;
+		_playButtonBehaviour.enabled = true;
 		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
 		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
     }
@@ -575,7 +574,7 @@ public class GameController : MonoBehaviour
 	{
 		if (_isSettingsOpen) 
 		{
-			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
+			_musicButtonImage.enabled = false;
 			_musicButtonBehaviour.interactable = false;
 			//_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
 			//_controlModeBehaviour.interactable = false;
@@ -586,7 +585,7 @@ public class GameController : MonoBehaviour
 		
 		if (_isSharingOpen) 
 		{
-			_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
+			_recordButtonImage.enabled = false;
 			_recordButtonBehaviour.interactable = false;
 			_isSharingOpen = false;
 		}
@@ -661,9 +660,9 @@ public class GameController : MonoBehaviour
 		if (promptAdContinue)
 		{
 			// TODO display continue UI
-			_continueButtonImage.color = new Color(_continueButtonImage.color.r, _continueButtonImage.color.g, _continueButtonImage.color.b, 1f);;
-			_continueButtonText.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
-			_continueButtonBehaviour.interactable = true;
+			_continueButtonImage.enabled = true;
+			_continueButtonText.enabled = true;
+			_continueButtonBehaviour.enabled = true;
 		}
 	}
 	
@@ -694,16 +693,10 @@ public class GameController : MonoBehaviour
 		gameOverContinues ++;
 		gameState = GameState.Running;
 		initiatingRestart = false;
-		_continueButtonImage.color = new Color(_continueButtonImage.color.r, _continueButtonImage.color.g, _continueButtonImage.color.b, 0);
-		_continueButtonText.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
-		_continueButtonBehaviour.interactable = false;
+		_continueButtonImage.enabled = false;
+		_continueButtonText.enabled = false;
 		powerMeter += 50;
 
-		var screenCenterToWorld =
-			Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
-		
-		var newSpawnPosition = new Vector3(screenCenterToWorld.x, screenCenterToWorld.y, playerZPosition);
-		_player.GetComponent<PlayerMovement>().SetSpawnPosition(newSpawnPosition);
 		//Debug.Log ("Player reward spawn: " + newSpawnPosition);
 		gameOverContinues --;
 		_restartButtonImage.enabled = false;

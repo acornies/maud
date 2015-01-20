@@ -36,6 +36,9 @@ public class PlayerMovement : MonoBehaviour
 	private int _currentMaterialIndex;
 	private Vector3 _savedVelocity;
 	private Vector3 _savedAngularVelocity;
+	private bool _rewardResurrection;
+	private float _rewardResurrectionTimer;
+	public float rewardResurrectionTime = .5f;
 
     public bool disabled;
     public bool isGrounded;
@@ -112,8 +115,17 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleOnPlayerReward ()
     {
-		rigidbody.velocity = new Vector3 (rigidbody.velocity.x, 0, rigidbody.velocity.z);
+		_rewardResurrection = true;
+		_rewardResurrectionTimer = rewardResurrectionTime;
+		var screenCenterToWorld =
+			Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
+		
+		var newSpawnPosition = new Vector3(0, screenCenterToWorld.y, GameController.Instance.playerZPosition);
+		SetSpawnPosition(newSpawnPosition);
+		//rigidbody.velocity = new Vector3 (rigidbody.velocity.x, 0, rigidbody.velocity.z);
 		rigidbody.isKinematic = true;
+		rigidbody.useGravity = true;
+		//disabled = false;
     }
 
     void HandleOnRestorePlayerState ()
@@ -130,6 +142,8 @@ public class PlayerMovement : MonoBehaviour
     void HandleOnGameOver ()
     {
 		rigidbody.isKinematic = false;
+		rigidbody.useGravity = false;
+		disabled = true;
     }
 
     void HandleOnFastMusicStart (float timedSpeed)
@@ -221,7 +235,7 @@ public class PlayerMovement : MonoBehaviour
         {
             collider.enabled = false;
 
-            if (_isGhostMoving)
+			if (_isGhostMoving && transform.position != _ghostTouchTargetPosition)
             {
                 //Debug.Log("Move ghost!");
                 transform.position = Vector3.Lerp(transform.position, _ghostTouchTargetPosition,
@@ -233,6 +247,16 @@ public class PlayerMovement : MonoBehaviour
                 _isGhostMoving = false;
                 //_ghostTouchTargetPosition = Vector3.zero;
             }
+
+			if (_rewardResurrection && disabled)
+			{
+				_rewardResurrectionTimer -= Time.deltaTime;
+				if (_rewardResurrectionTimer <= 0)
+				{
+					disabled = false;
+					_rewardResurrection = false;
+				}
+			}
         }
 
 		if (_shouldTimeoutShake){
@@ -248,7 +272,7 @@ public class PlayerMovement : MonoBehaviour
     public void SetSpawnPosition(Vector3 newPosition)
     {
         _ghostTouchTargetPosition = newPosition;
-        _isGhostMoving = true;
+        //_isGhostMoving = true;
     }
 
     // Use this for physics updates
@@ -360,7 +384,7 @@ public class PlayerMovement : MonoBehaviour
         _isUsingPowers = false;
 		//_sparkElectricity.Stop ();
 		_sparkElectricity.loop = false;
-        _spark.Stop();
+        //_spark.Stop();
         if (!_isFacingCamera) return;
 		if (GameController.Instance.playerIsDead || GameController.Instance.gameState == GameState.Started) return;
         TurnToAndAwayFromCamera((_facingRight) ? -90f : 90f);
@@ -372,6 +396,7 @@ public class PlayerMovement : MonoBehaviour
         _isUsingPowers = true;
         if (_isFacingCamera) return;
 		_sparkElectricity.Play ();
+		_sparkElectricity.loop = true;
         _spark.Play();
         if (!isGrounded) return;           
         TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
@@ -380,9 +405,10 @@ public class PlayerMovement : MonoBehaviour
     private void HandleOnPlayerDeath()
     {
 		rigidbody.isKinematic = true;
-		_sparkElectricity.loop = true;
-		_sparkElectricityBubble.loop = true;
-		_sparkElectricity.Play ();
+		_isGhostMoving = true;
+		//_sparkElectricity.loop = true;
+		//_sparkElectricityBubble.loop = true;
+		//_sparkElectricity.Play ();
 		//rigidbody.useGravity = f
 		if (_isFacingCamera) return;
         TurnToAndAwayFromCamera((_facingRight) ? 90f : -90f);
@@ -390,10 +416,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleOnPlayerResurrection()
     {
-        //Debug.Log("Resurrection event handler!");
+        if (disabled)
+		{
+			disabled = false;
+		}
+		//Debug.Log("Resurrection event handler!");
 		rigidbody.isKinematic = false;
-		_sparkElectricity.loop = false;
-		_sparkElectricityBubble.loop = false;
+		//_sparkElectricity.loop = false;
+		//_sparkElectricityBubble.loop = false;
 		//_sparkElectricity.Stop ();
 		_consectutiveJumpCounter = 0;
 		if (!_isFacingCamera) return;
