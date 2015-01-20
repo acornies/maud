@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Linq;
 using System.Collections.Generic;
 using LegendPeak;
@@ -7,8 +8,9 @@ using LegendPeak.Platforms;
 
 public class PlatformController : MonoBehaviour
 {
-    public int TutorialHoldPlatform = 59;
-    
+	private Image _timedDestroyAlert;
+
+	public int TutorialHoldPlatform = 59;
     //private Transform _currentPlatformObject;
     private int _currentPlatform;
     private PlatformBuilder _platformBuilder;
@@ -120,6 +122,7 @@ public class PlatformController : MonoBehaviour
         _orbitAxis[0] = Vector3.up;
         _orbitAxis[1] = Vector3.down;
 
+		_timedDestroyAlert = GameObject.Find ("DestroyAlert").GetComponent<Image>();
     }
 
     // Use this for initialization
@@ -142,7 +145,7 @@ public class PlatformController : MonoBehaviour
 
 	void Update()
 	{
-
+		EnsureTimedDestroyZones ();
 
 		if ( useTimedDestroy)
 		{
@@ -152,6 +155,18 @@ public class PlatformController : MonoBehaviour
 				TimedDestroyer();
 				_timedDestroyTimer = timedDestroySpeed;
 			}
+		}
+	}
+
+	void OnGUI()
+	{
+		if (useTimedDestroy && !_timedDestroyAlert.enabled)
+		{
+			_timedDestroyAlert.enabled = true;
+		}
+		else if (!useTimedDestroy && _timedDestroyAlert.enabled) 
+		{
+			_timedDestroyAlert.enabled = false;
 		}
 	}
 

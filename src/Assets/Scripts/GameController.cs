@@ -117,12 +117,18 @@ public class GameController : MonoBehaviour
         OnGameResume += HandleOnGameResume;
         OnGameOver += HandleOnGameOver;
         OnGameRestart += HandleOnGameRestart;
+		OnPlayerResurrection += HandleOnPlayerResurrection;
         PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons; 
 		PlatformController.OnTimedDestroyGameOver += HandleOnTimedDestroyGameOver;
 		MusicController.OnFastMusicStop += HandleOnFastMusicStop;
 		//UnityAds.OnVideoCompleted += HandleOnVideoCompleted;
 		OnPlayerReward += HandleOnPlayerReward;
+    }
+
+    void HandleOnPlayerResurrection ()
+    {
+		_timeDestroyed = false;
     }
 
     void HandleOnFastMusicStop ()
@@ -155,6 +161,7 @@ public class GameController : MonoBehaviour
         OnGameResume -= HandleOnGameResume;
         OnGameOver -= HandleOnGameOver;
         OnGameRestart -= HandleOnGameRestart;
+		OnPlayerResurrection -= HandleOnPlayerResurrection;
         PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
 		PlatformController.OnTimedDestroyGameOver -= HandleOnTimedDestroyGameOver;
