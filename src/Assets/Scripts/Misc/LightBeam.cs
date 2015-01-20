@@ -58,7 +58,7 @@ public class LightBeam : MonoBehaviour {
 		yield return new WaitForSeconds (widthFluxInterval);
 	}
 
-	void HandleOnNewPlatform(float newPlatformYPosition)
+	void HandleOnNewPlatform(float newPlatformYPosition, float maxCameraY)
 	{
 		_lineRenderer.SetPosition (1, new Vector3 (0, newPlatformYPosition, transform.position.z));
 		//Debug.Log ("Light beam height: " + newPlatformYPosition);

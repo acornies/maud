@@ -117,14 +117,28 @@ public class PlayerMovement : MonoBehaviour
     {
 		_rewardResurrection = true;
 		_rewardResurrectionTimer = rewardResurrectionTime;
-		var screenCenterToWorld =
-			Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
-		
-		var newSpawnPosition = new Vector3(0, screenCenterToWorld.y, GameController.Instance.playerZPosition);
-		SetSpawnPosition(newSpawnPosition);
+
+		var levelPlatforms = PlatformController.Instance.levelPlatforms;
+		Vector3 spawnPosition;
+
+		if (PlatformController.Instance.useTimedDestroy)
+		{
+			var bottom = levelPlatforms.Keys.Min();
+			spawnPosition = new Vector3(0, levelPlatforms[bottom + 2].transform.position.y, GameController.Instance.playerZPosition);
+			Debug.Log ("Timed destroy player reward spawn Y position: " + spawnPosition.y);
+		}
+		else
+		{
+			var screenCenterToWorld =
+				Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
+			
+			spawnPosition = new Vector3(0, screenCenterToWorld.y, GameController.Instance.playerZPosition);
+			Debug.Log ("Regular reward spawn Y position: " + spawnPosition.y);
+		}
+
+		SetSpawnPosition(spawnPosition);
 		//rigidbody.velocity = new Vector3 (rigidbody.velocity.x, 0, rigidbody.velocity.z);
 		rigidbody.isKinematic = true;
-		rigidbody.useGravity = true;
 		//disabled = false;
     }
 
@@ -142,7 +156,8 @@ public class PlayerMovement : MonoBehaviour
     void HandleOnGameOver ()
     {
 		rigidbody.isKinematic = false;
-		rigidbody.useGravity = false;
+		rigidbody.velocity = Vector3.zero;
+		//rigidbody.useGravity = false;
 		disabled = true;
     }
 
@@ -422,6 +437,7 @@ public class PlayerMovement : MonoBehaviour
 		}
 		//Debug.Log("Resurrection event handler!");
 		rigidbody.isKinematic = false;
+		//rigidbody.useGravity = true;
 		//_sparkElectricity.loop = false;
 		//_sparkElectricityBubble.loop = false;
 		//_sparkElectricity.Stop ();

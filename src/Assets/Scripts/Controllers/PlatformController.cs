@@ -35,7 +35,7 @@ public class PlatformController : MonoBehaviour
     public delegate void ReachedNextCheckpoint(int platform);
     public static event ReachedNextCheckpoint On_ReachedCheckpoint;
 
-    public delegate void NewPlatform(float yPosition);
+    public delegate void NewPlatform(float yPosition, float maxYCamera);
     public static event NewPlatform On_NewPlatform;
 
 	public delegate void TimedDestroy(GameObject objectToDestroy);
@@ -52,6 +52,8 @@ public class PlatformController : MonoBehaviour
 		CameraMovement.OnMovePlayerToGamePosition += HandleMovePlayerToGamePosition;
 		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
 		MusicController.OnFastMusicStop += HandleOnFastMusicStop;
+		GameController.OnGameOver += HandleOnGameOver;
+		//GameController.OnPlayerReward += HandleOnPlayerReward;
     }
 
     void HandleOnFastMusicStop ()
@@ -94,6 +96,8 @@ public class PlatformController : MonoBehaviour
 		CameraMovement.OnMovePlayerToGamePosition -= HandleMovePlayerToGamePosition;
 		MusicController.OnFastMusicStart -= HandleOnFastMusicStart;
 		MusicController.OnFastMusicStop -= HandleOnFastMusicStop;
+		GameController.OnGameOver -= HandleOnGameOver;
+		//GameController.OnPlayerReward -= HandleOnPlayerReward;
     }
 
     void Awake()
@@ -160,7 +164,9 @@ public class PlatformController : MonoBehaviour
         var highestPlatformIndex = (levelPlatforms.Keys.Count > 0) ? levelPlatforms.Keys.Max() : 0;
         //Debug.Log("Highest platform is: " + highestPlatformIndex);
 
-        if (_currentPlatform + platformSpawnBuffer > highestPlatformIndex)
+        if (_currentPlatform + platformSpawnBuffer > highestPlatformIndex 
+		    // spawn platforms if timed destroys has caught up to platformSpawnBuffer
+		    || levelPlatforms.Keys.Min() + platformSpawnBuffer > highestPlatformIndex) 
         {
             //GameObject highestPlatformObj;
             GameObject highestPlatform = null;
@@ -210,7 +216,7 @@ public class PlatformController : MonoBehaviour
                     AdjustProperties(newPlatform, nextPlatform);
                     levelPlatforms.Add(nextPlatform, newPlatform);
 
-                    On_NewPlatform(newPlatform.transform.position.y);
+                    On_NewPlatform(newPlatform.transform.position.y, levelPlatforms[nextPlatform - 2].transform.position.y);
                     //_timer = platformSpawnInterval;
                 }
             }
@@ -342,6 +348,8 @@ public class PlatformController : MonoBehaviour
 
 	void TimedDestroyer()
 	{
+		if (GameController.Instance.gameState == LegendPeak.GameState.Over) return;
+
 		var bottom = levelPlatforms.Keys.Min();
 		var buffer = levelPlatforms [bottom];
 		//var platformToDestroy = levelPlatforms[buffer];
@@ -364,10 +372,31 @@ public class PlatformController : MonoBehaviour
 			//useTimedDestroy = false;
 		}
 		// delete the platform above the checkpoint buffer
-		else if (bottom == (_currentPlatform + checkpointBuffer + 2)) // TODO editable
+		/*else if (bottom == (_currentPlatform + checkpointBuffer + 2)) // TODO editable
 		{
 			useTimedDestroy = false;
-		}
+		}*/
 		//yield return new WaitForSeconds(timedDestroySpeed);
 	}
+
+	void HandleOnGameOver()
+	{
+		//useTimedDestroy = false;
+	}
+
+	/*void HandleOnPlayerReward()
+	{
+		// TODO: don't reference Music Controller here
+		// restart timed destroy if player revives in the timed destroy "zone"
+		if (_currentPlatform > MusicController.Instance.forestMusicSlowLimit && _currentPlatform < MusicController.Instance.forestMusicFastLimit)
+		{
+			Debug.Log ("Restarted timed destroy (zone 1) after player reward");
+			useTimedDestroy = true;
+		}
+		else if (_currentPlatform > MusicController.Instance.cloudMusicSlowLimit && _currentPlatform < MusicController.Instance.cloudMusicFastLimit)
+		{
+			Debug.Log ("Restarted timed destroy (zone 2) after player reward");
+			useTimedDestroy = true;
+		}
+	}*/
 }

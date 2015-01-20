@@ -54,10 +54,11 @@ public class CameraMovement : MonoBehaviour
     void OnEnable()
     {
         PlatformController.On_ReachedCheckpoint += UpdateMinYFromCheckpoint;
-        PlatformController.On_NewPlatform += HandleNewPlatform; ;
+        PlatformController.On_NewPlatform += HandleNewPlatform;
         KillBox.On_PlayerDeath += HandlePlayerDeath;
         BoundaryController.On_PlayerDeath += HandlePlayerDeath;
         GameController.OnPlayerResurrection += HandlePlayerResurrection;
+		GameController.OnPlayerReward += HandleOnPlayerReward;
         UpAndDown.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
         UpAndDown.OnReturnCameraSpeed += HandleReturnCameraSpeed;
         CloudBehaviour.OnUpdateCameraSpeed += HandleUpdateCameraSpeed;
@@ -68,6 +69,11 @@ public class CameraMovement : MonoBehaviour
 		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
 		PlayerRenderer.OnPlayerBecameVisible += HandleOnPlayerBecameVisible;
 		PlayerRenderer.OnPlayerBecameInvisible += HandleOnPlayerBecameInvisible;
+    }
+
+    void HandleOnPlayerReward ()
+    {
+		isTracking = true;
     }
 
     void HandleOnPlayerBecameVisible (Transform player)
@@ -138,6 +144,7 @@ public class CameraMovement : MonoBehaviour
 		MusicController.OnFastMusicStart -= HandleOnFastMusicStart;
 		PlayerRenderer.OnPlayerBecameVisible -= HandleOnPlayerBecameVisible;
 		PlayerRenderer.OnPlayerBecameInvisible -= HandleOnPlayerBecameInvisible;
+		GameController.OnPlayerReward -= HandleOnPlayerReward;
     }
 
     void Awake()
@@ -300,9 +307,9 @@ public class CameraMovement : MonoBehaviour
         On_DestroyLowerPlatforms(checkpointPlatform - PlatformController.Instance.checkpointBuffer - PlatformController.Instance.platformSpawnBuffer);
     }
 
-    void HandleNewPlatform(float yPosition)
+    void HandleNewPlatform(float yPosition, float maxCameraY)
     {
-        MaxXandY = new Vector2(MaxXandY.x, yPosition);
+		MaxXandY = new Vector2(MaxXandY.x, maxCameraY);
     }
 
     void HandlePlayerDeath()

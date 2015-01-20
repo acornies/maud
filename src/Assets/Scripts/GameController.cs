@@ -339,7 +339,7 @@ public class GameController : MonoBehaviour
 		_powerBar.SetValueMax(Mathf.CeilToInt(PlayerState.Instance.playerLevel.maxEnergy));
 
         // time delay between player deaths
-		if (playerIsDead && powerMeter >= PlayerState.Instance.playerLevel.stabilizeCost)
+		if (playerIsDead && powerMeter >= PlayerState.Instance.playerLevel.stabilizeCost && gameState != GameState.Over)
         {
             _telekinesisControl.SetActive(false);
 
@@ -496,14 +496,9 @@ public class GameController : MonoBehaviour
 			if (OnGamePause != null)
 			{
 				OnGamePause();
-				//_isSharingOpen = !_isSharingOpen;
 			}
 			
 		}
-		/*else
-		{
-			_initiatingResume = true;
-		}*/
     }
 
     public void ButtonControlMode()
