@@ -92,8 +92,8 @@ public class MusicController : MonoBehaviour
             source.playOnAwake = false;
         }
 
-        forestMusicSlow = _allSongs["Sunset_Theme_1_loop"];
-        forestMusicFast = _allSongs["Jumpergame_280714"];
+		forestMusicSlow = _allSongs["Jumpergame90bpm_280714"];
+		forestMusicFast = _allSongs["Jumpergame_280714"];
         cloudMusicSlow = _allSongs["Cloudlevel121Bpm_280814"];
         cloudMusicFast = _allSongs["Cloudlevel141Bpm_280814"];
         stratosphereMusic = _allSongs["Stratosphere_w-tail_70bpm_281114"];

@@ -121,19 +121,25 @@ public class GameController : MonoBehaviour
         PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons += HandleOnShowMenuButtons; 
 		PlatformController.OnTimedDestroyGameOver += HandleOnTimedDestroyGameOver;
+		PlatformController.On_ReachedCheckpoint += HandleOnReachedCheckpoint;
 		MusicController.OnFastMusicStop += HandleOnFastMusicStop;
 		//UnityAds.OnVideoCompleted += HandleOnVideoCompleted;
 		OnPlayerReward += HandleOnPlayerReward;
     }
 
-    void HandleOnPlayerResurrection ()
+    void HandleOnReachedCheckpoint (int platform)
     {
 		_timeDestroyed = false;
     }
 
+    void HandleOnPlayerResurrection ()
+    {
+		//_timeDestroyed = false;
+    }
+
     void HandleOnFastMusicStop ()
     {
-		_timeDestroyed = false;
+		//_timeDestroyed = false;
     }
 
     void HandleOnTimedDestroyGameOver ()
@@ -165,6 +171,7 @@ public class GameController : MonoBehaviour
         PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickUp;
         IntroLedge.OnShowMenuButtons -= HandleOnShowMenuButtons;
 		PlatformController.OnTimedDestroyGameOver -= HandleOnTimedDestroyGameOver;
+		PlatformController.On_ReachedCheckpoint += HandleOnReachedCheckpoint;
 		MusicController.OnFastMusicStop -= HandleOnFastMusicStop;
 		//UnityAds.OnVideoCompleted -= HandleOnVideoCompleted;
 		OnPlayerReward -= HandleOnPlayerReward;

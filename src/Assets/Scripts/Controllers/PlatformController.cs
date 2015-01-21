@@ -56,7 +56,7 @@ public class PlatformController : MonoBehaviour
 		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
 		MusicController.OnFastMusicStop += HandleOnFastMusicStop;
 		GameController.OnGameOver += HandleOnGameOver;
-		//GameController.OnPlayerReward += HandleOnPlayerReward;
+		GameController.OnPlayerReward += HandleOnPlayerReward;
     }
 
     void HandleOnFastMusicStop ()
@@ -75,6 +75,7 @@ public class PlatformController : MonoBehaviour
 		var buffer = levelPlatforms [bottom];
         
 		//_timedDestroyTimer = timedDestroySpeed;
+		// TODO move to camera movement
 		if (timedDestroyCameraTarget == null)
 		{
 			timedDestroyCameraTarget = new GameObject("TimedDestroyCameraTarget");
@@ -100,7 +101,7 @@ public class PlatformController : MonoBehaviour
 		MusicController.OnFastMusicStart -= HandleOnFastMusicStart;
 		MusicController.OnFastMusicStop -= HandleOnFastMusicStop;
 		GameController.OnGameOver -= HandleOnGameOver;
-		//GameController.OnPlayerReward -= HandleOnPlayerReward;
+		GameController.OnPlayerReward -= HandleOnPlayerReward;
     }
 
     void Awake()
@@ -145,7 +146,7 @@ public class PlatformController : MonoBehaviour
 
 	void Update()
 	{
-		EnsureTimedDestroyZones ();
+		//EnsureTimedDestroyZones ();
 
 		if ( useTimedDestroy)
 		{
@@ -170,23 +171,24 @@ public class PlatformController : MonoBehaviour
 		}
 	}
 
-	void EnsureTimedDestroyZones()
+	public bool InTimedDestroyZone
 	{
-		// TODO: don't reference Music Controller here
-		if (!useTimedDestroy 
-		    && _currentPlatform > MusicController.Instance.forestMusicSlowLimit 
-		    && _currentPlatform < MusicController.Instance.forestMusicFastLimit
-		    && GameController.Instance.gameState != GameState.Over)
-		{
-			Debug.Log ("Timed destroy turned on post-game over");
-			useTimedDestroy = true;
-		}
-		else if (!useTimedDestroy 
-		         && _currentPlatform > MusicController.Instance.cloudMusicSlowLimit 
-		         && _currentPlatform < MusicController.Instance.cloudMusicFastLimit
-		         && GameController.Instance.gameState != GameState.Over)
-		{
-			useTimedDestroy = true;
+		get {
+			// TODO: don't reference Music Controller here
+			if (_currentPlatform > MusicController.Instance.forestMusicSlowLimit 
+			    && _currentPlatform < MusicController.Instance.forestMusicFastLimit)
+			{
+				return true;
+			}
+			else if (_currentPlatform > MusicController.Instance.cloudMusicSlowLimit 
+			         && _currentPlatform < MusicController.Instance.cloudMusicFastLimit)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 
@@ -409,12 +411,6 @@ public class PlatformController : MonoBehaviour
 			}
 			//useTimedDestroy = false;
 		}
-		// delete the platform above the checkpoint buffer
-		/*else if (bottom == (_currentPlatform + checkpointBuffer + 2)) // TODO editable
-		{
-			useTimedDestroy = false;
-		}*/
-		//yield return new WaitForSeconds(timedDestroySpeed);
 	}
 
 	void HandleOnGameOver()
@@ -424,5 +420,10 @@ public class PlatformController : MonoBehaviour
 
 	void HandleOnPlayerReward()
 	{
+		if (InTimedDestroyZone && !useTimedDestroy)
+		{
+			useTimedDestroy = true;
+			timedDestroySpeed = MusicController.Instance.forestMusicFastDestroySpeed;// TODO clean this shit up
+		}
 	}
 }
