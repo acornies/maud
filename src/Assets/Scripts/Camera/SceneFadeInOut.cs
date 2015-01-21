@@ -84,7 +84,7 @@ public class SceneFadeInOut : MonoBehaviour
 
         else if (_sceneEnding && !_shouldRestart)
         {
-            EndScene();
+            EndScene(false);
         }
     }
 
@@ -130,7 +130,7 @@ public class SceneFadeInOut : MonoBehaviour
         }
 	}
 
-    public void EndScene()
+	public void EndScene(bool shouldRestart = true)
     {
         // Make sure the texture is enabled.
         if (!_black.enabled) {
@@ -138,12 +138,13 @@ public class SceneFadeInOut : MonoBehaviour
 		}
 
         // Start fading towards black.
-        FadeToBlack(overlayColour.a);
+
+        FadeToBlack((shouldRestart) ? 1f : overlayColour.a);
     }
 
     public void EndScene(int sceneIndex, bool shouldRestart = true)
     {  
-        EndScene();
+        EndScene(shouldRestart);
         // If the screen is almost black...
         if (_black.color.a >= 0.99f && shouldRestart)
         {

@@ -580,7 +580,7 @@ public class GameController : MonoBehaviour
 	{
 		if (_isSettingsOpen) 
 		{
-			_musicButtonImage.enabled = false;
+			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
 			_musicButtonBehaviour.interactable = false;
 			//_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
 			//_controlModeBehaviour.interactable = false;
