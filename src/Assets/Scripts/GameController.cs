@@ -72,9 +72,10 @@ public class GameController : MonoBehaviour
 	public Color heightCounterColor;
 	
 	public int gameOverContinues;
+	public int advertisingContinues = 2;
 	public bool promptAdContinue
 	{
-		get {return (gameOverContinues == 0) ? true : false; }
+		get {return (advertisingContinues > 0) ? true : false; }
 	}
 
     public static GameController Instance { get; private set; }
@@ -124,7 +125,7 @@ public class GameController : MonoBehaviour
 		PlatformController.On_ReachedCheckpoint += HandleOnReachedCheckpoint;
 		MusicController.OnFastMusicStop += HandleOnFastMusicStop;
 		//UnityAds.OnVideoCompleted += HandleOnVideoCompleted;
-		OnPlayerReward += HandleOnPlayerReward;
+		//OnPlayerReward += HandleOnPlayerResurrectionOnGameOver;
     }
 
     void HandleOnReachedCheckpoint (int platform)
@@ -174,7 +175,7 @@ public class GameController : MonoBehaviour
 		PlatformController.On_ReachedCheckpoint += HandleOnReachedCheckpoint;
 		MusicController.OnFastMusicStop -= HandleOnFastMusicStop;
 		//UnityAds.OnVideoCompleted -= HandleOnVideoCompleted;
-		OnPlayerReward -= HandleOnPlayerReward;
+		//OnPlayerReward -= HandleOnPlayerResurrectionOnGameOver;
     }
 
     // Use this for initialization
@@ -547,11 +548,7 @@ public class GameController : MonoBehaviour
 					switch (result)
 					{
 						case ShowResult.Finished:
-							//HandleOnPlayerReward();
-						if (OnPlayerReward != null)
-						{
-							OnPlayerReward();
-						}
+							HandleOnPlayerResurrectionOnGameOver(false);
 						break;
 					}
 				}
@@ -666,13 +663,11 @@ public class GameController : MonoBehaviour
 		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
 		heightCounter.color = Color.white;
 
-		if (promptAdContinue)
-		{
-			// TODO display continue UI
-			_continueButtonImage.enabled = true;
-			_continueButtonText.enabled = true;
-			_continueButtonBehaviour.enabled = true;
-		}
+
+		// TODO display continue UI
+		_continueButtonImage.enabled = promptAdContinue;
+		_continueButtonText.enabled = promptAdContinue;
+		_continueButtonBehaviour.enabled = promptAdContinue;
 	}
 	
 	private void HandleOnPowerPickUp(float powerToAdd)
@@ -697,9 +692,8 @@ public class GameController : MonoBehaviour
         _menuButtonImage.GetComponent<Animator>().enabled = false;
     }
 
-	void HandleOnPlayerReward()
+	void HandleOnPlayerResurrectionOnGameOver(bool fromIAP)
 	{
-		gameOverContinues ++;
 		gameState = GameState.Running;
 		initiatingRestart = false;
 		_continueButtonImage.enabled = false;
@@ -707,7 +701,15 @@ public class GameController : MonoBehaviour
 		powerMeter += 50;
 
 		//Debug.Log ("Player reward spawn: " + newSpawnPosition);
-		gameOverContinues --;
+		if (fromIAP)
+		{
+			gameOverContinues --;
+		}
+		else
+		{
+			advertisingContinues --;
+		}
+
 		_restartButtonImage.enabled = false;
 		_restartButtonBehaviour.interactable = false;
 
@@ -716,5 +718,10 @@ public class GameController : MonoBehaviour
 
 		_highestPointText.text = string.Empty;
 		_totalHeightText.text = string.Empty;
+
+		if (OnPlayerReward != null)
+		{
+			OnPlayerReward();
+		}
 	}
 }

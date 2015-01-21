@@ -109,12 +109,15 @@ public class PlayerState : MonoBehaviour
         if (!File.Exists(string.Format(dataPath, Application.persistentDataPath)))
 		{
 			Data = new PlayerData(){
-				controlMode = (MobileHelper.isTablet) ? ControlMode.FingerSwipe : ControlMode.Accelerometer,
+				// TODO enable once supported
+				//controlMode = (MobileHelper.isTablet) ? ControlMode.FingerSwipe : ControlMode.Accelerometer,
+				controlMode = ControlMode.Accelerometer,
 				playMusic = true,
 				highestPlatform = 0,
 				totalPlatforms = 0,
 				monetizedState = MonetizedState.Free,
-				playerLevel = 1
+				playerLevel = 1,
+				gameOverContinues = 0
 			};
 		}
 		else

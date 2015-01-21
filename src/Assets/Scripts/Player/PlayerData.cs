@@ -13,5 +13,6 @@ namespace LegendPeak.Player
 		public ControlMode controlMode { get; set; }
 		public bool playMusic { get; set; }
 		public int playerLevel { get; set; }
+		public int gameOverContinues { get; set;}
     }
 }

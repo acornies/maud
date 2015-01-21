@@ -24,7 +24,14 @@ public class SceneFadeInOut : MonoBehaviour
         GameController.OnGameRestart += HandleOnGameRestart;
         GameController.OnGamePause += HandleOnGamePause;
         GameController.OnGameResume += HandleOnGameResume;
-        //GameController.OnGameOver += HandleOnGameOver;
+        GameController.OnGameOver += HandleOnGameOver;
+		GameController.OnPlayerReward += HandleOnPlayerReward;
+    }
+
+    void HandleOnPlayerReward ()
+    {
+		_sceneEnding = false;
+		_sceneRunning = true;
     }
 
     void OnDisable()
@@ -43,7 +50,8 @@ public class SceneFadeInOut : MonoBehaviour
         GameController.OnGameRestart -= HandleOnGameRestart;
         GameController.OnGamePause -= HandleOnGamePause;
         GameController.OnGameResume -= HandleOnGameResume;
-        //GameController.OnGameOver -= HandleOnGameOver;
+        GameController.OnGameOver -= HandleOnGameOver;
+		GameController.OnPlayerReward -= HandleOnPlayerReward;
     }
 
 
@@ -130,7 +138,7 @@ public class SceneFadeInOut : MonoBehaviour
 		}
 
         // Start fading towards black.
-        FadeToBlack(1f);
+        FadeToBlack(overlayColour.a);
     }
 
     public void EndScene(int sceneIndex, bool shouldRestart = true)
