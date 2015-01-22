@@ -26,6 +26,12 @@ public class PlayerState : MonoBehaviour
 		GameController.OnGameRestart += HandleOnGameRestart;
         GameController.OnGameStart += HandleOnGameStart;
 	    GameController.OnToggleMusic += HandleToggleMusic;
+		StoreController.instance.TransactionComplete += HandleTransactionComplete;
+	}
+
+	void HandleTransactionComplete (object sender, EventArgs e)
+	{
+
 	}
 
     private void HandleToggleMusic(bool playmusic)
@@ -53,6 +59,7 @@ public class PlayerState : MonoBehaviour
 		GameController.OnGameRestart -= HandleOnGameRestart;
         GameController.OnGameStart -= HandleOnGameStart;
         GameController.OnToggleMusic -= HandleToggleMusic;
+		StoreController.instance.TransactionComplete -= HandleTransactionComplete;
 	}
 
     void Awake()
