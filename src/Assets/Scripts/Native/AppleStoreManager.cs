@@ -32,7 +32,7 @@ namespace LegendPeak.Native
 			IOSInAppPurchaseManager.instance.buyProduct (productId);
 		}
 
-		public event EventHandler TransactionComplete;
+		public event EventHandler OnTransactionComplete;
 
 		void OnAuthFinished(ISN_Result res)
 		{
@@ -59,7 +59,7 @@ namespace LegendPeak.Native
 
 		private void OnAppleTransactionComplete (IOSStoreKitResponse response) {
 
-			var storeResponse = new AppleStoreResponse ();
+			var storeResponse = new AppleStoreResponse () { productId = response.productIdentifier };
 			Debug.Log("OnTransactionComplete: " + response.productIdentifier);
 			Debug.Log("OnTransactionComplete: state: " + response.state);
 			
@@ -71,7 +71,7 @@ namespace LegendPeak.Native
 				//depends on productIdentifier
 				//UnlockProducts(response.productIdentifier);
 				storeResponse.status = StoreResponseStatus.Success;
-				storeResponse.productId = response.productIdentifier;
+				//storeResponse.productId = response.productIdentifier;
 				break;
 			case InAppPurchaseState.Deferred:
 				//iOS 8 introduces Ask to Buy, which lets 
@@ -83,7 +83,7 @@ namespace LegendPeak.Native
 				//transaction times out. Avoid blocking your UI 
 				//or gameplay while waiting for the transaction to be updated.
 				storeResponse.status = StoreResponseStatus.Deferred;
-				storeResponse.message = "";
+				storeResponse.message = "Waiting approval from parent or guardian.";
 				break;
 			case InAppPurchaseState.Failed:
 				//Our purchase flow is failed.
@@ -96,9 +96,9 @@ namespace LegendPeak.Native
 			}
 			
 			IOSNativePopUpManager.showMessage("Store Kit Response", "product " + response.productIdentifier + " state: " + response.state.ToString());
-			if (TransactionComplete != null)
+			if (OnTransactionComplete != null)
 			{
-				TransactionComplete (this, storeResponse);
+				OnTransactionComplete (this, storeResponse);
 			}
 		}
 	}

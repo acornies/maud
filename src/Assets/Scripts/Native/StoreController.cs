@@ -4,7 +4,13 @@ using LegendPeak.Native;
 
 public class StoreController : MonoBehaviour {
 
-	public static IStoreManager instance { get; private set;}
+	public static StoreController Instance { get; private set; }
+
+	public IStoreManager Native { get; private set; }
+
+	public const string SKIN_PACK = "com.AndrewCornies.LegendPeak.SkinPack1";
+	public const string REVIVAL_PACK = "com.AndrewCornies.LegendPeak.RevivalPack1";
+	public const string MUSIC_PACK = "com.AndrewCornies.LegendPeak.MusicPack1";
 
 	void Awake()
 	{
@@ -12,7 +18,7 @@ public class StoreController : MonoBehaviour {
 		{
 			case RuntimePlatform.OSXEditor:
 			case RuntimePlatform.IPhonePlayer:
-				instance = new AppleStoreManager();
+				Native = new AppleStoreManager();
 				Debug.Log ("Loaded AppleStoreManager");
 				break;
 			case RuntimePlatform.WindowsEditor:
@@ -21,6 +27,16 @@ public class StoreController : MonoBehaviour {
 				//TODO: implement
 				Debug.Log ("Loaded GoogleStoreManager");
 				break;
+		}
+
+		if (Instance == null)
+		{
+			DontDestroyOnLoad(gameObject);
+			Instance = this;
+		}
+		else if (Instance != this)
+		{
+			Destroy(gameObject);
 		}
 	}
 

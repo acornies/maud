@@ -24,9 +24,6 @@ public class GameController : MonoBehaviour
 	//private Image _controlModeImage; // TODO finish later
 	//private Button _controlModeBehaviour;
 	private Button _musicButtonBehaviour;
-	private Image _continueButtonImage;
-	private Button _continueButtonBehaviour;
-	private Text _continueButtonText;
 	private Button _shareButtonBehaviour;
     //private Image _cartButtonImage;
 	//private Button _cartButtonBehaviour;
@@ -71,11 +68,16 @@ public class GameController : MonoBehaviour
     public Sprite controlFingerSwipeImage;
 	public Color heightCounterColor;
 	
-	public int gameOverContinues;
+	//public int gameOverContinues;
 	public int advertisingContinues = 2;
 	public bool promptAdContinue
 	{
 		get {return (advertisingContinues > 0) ? true : false; }
+	}
+
+	public bool promptPurchaseContinue
+	{
+		get {return (PlayerState.Instance.Data.gameOverContinues == 0) ? true : false; }
 	}
 
     public static GameController Instance { get; private set; }
@@ -239,11 +241,6 @@ public class GameController : MonoBehaviour
 		var controlMode = GameObject.Find ("ControlButton");
 		//_controlModeImage = controlMode.GetComponent<Image>();
 		//_controlModeBehaviour = controlMode.GetComponent<Button>();
-
-		var continueButton = GameObject.Find("Continue");
-		_continueButtonImage = continueButton.GetComponent<Image> ();
-		_continueButtonBehaviour = continueButton.GetComponent<Button> ();
-		_continueButtonText = continueButton.transform.FindChild ("Text").GetComponent<Text>();
 
 
         gameState = GameState.Started;
@@ -539,7 +536,7 @@ public class GameController : MonoBehaviour
 		_initiatingResume = true;
     }
 
-	public void ButtonContinue()
+	public void ButtonAdContinue()
 	{
 		if(Advertisement.isReady()) {
 			Advertisement.Show(null, new ShowOptions {
@@ -553,6 +550,18 @@ public class GameController : MonoBehaviour
 					}
 				}
 			});
+		}
+	}
+
+	public void ButtonPurchaseContinue()
+	{
+		if (promptPurchaseContinue)
+		{
+			StoreController.Instance.Native.buyProduct ("com.AndrewCornies.LegendPeak.RevivalPack1");
+		}
+		else
+		{
+			HandleOnPlayerResurrectionOnGameOver(true);
 		}
 	}
 	
@@ -665,9 +674,9 @@ public class GameController : MonoBehaviour
 
 
 		// TODO display continue UI
-		_continueButtonImage.enabled = promptAdContinue;
+		/*_continueButtonImage.enabled = promptAdContinue;
 		_continueButtonText.enabled = promptAdContinue;
-		_continueButtonBehaviour.enabled = promptAdContinue;
+		_continueButtonBehaviour.enabled = promptAdContinue;*/
 	}
 	
 	private void HandleOnPowerPickUp(float powerToAdd)
@@ -696,14 +705,14 @@ public class GameController : MonoBehaviour
 	{
 		gameState = GameState.Running;
 		initiatingRestart = false;
-		_continueButtonImage.enabled = false;
-		_continueButtonText.enabled = false;
+		/*_continueButtonImage.enabled = false;
+		_continueButtonText.enabled = false;*/
 		powerMeter += 50;
 
 		//Debug.Log ("Player reward spawn: " + newSpawnPosition);
 		if (fromIAP)
 		{
-			gameOverContinues --;
+			PlayerState.Instance.Data.gameOverContinues --;
 		}
 		else
 		{

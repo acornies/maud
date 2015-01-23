@@ -28,7 +28,6 @@ public class PlayerMovement : MonoBehaviour
     //private Collider _playerCollider;
     private ParticleSystem _spark;
 	private ParticleSystem _sparkElectricity;
-	private ParticleSystem _sparkElectricityBubble;
     private GameObject[] _playerModelObjects;
     private Transform _modelBody;
     private Transform _leftEye;
@@ -219,7 +218,6 @@ public class PlayerMovement : MonoBehaviour
         _animator = _playerModel.GetComponent<Animator>();
         _spark = transform.FindChild("Spark").GetComponent<ParticleSystem>();
 		_sparkElectricity = transform.FindChild ("ConstantSpark").GetComponent<ParticleSystem> ();
-		_sparkElectricityBubble = _sparkElectricity.transform.FindChild("Bubble").GetComponent<ParticleSystem> ();
         _playerModelObjects = GameObject.FindGameObjectsWithTag("PlayerModel");
     }
 

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System.Collections;
 using LegendPeak;
 using LegendPeak.Player;
+using LegendPeak.Native;
 
 public class PlayerState : MonoBehaviour
 {
@@ -26,12 +27,31 @@ public class PlayerState : MonoBehaviour
 		GameController.OnGameRestart += HandleOnGameRestart;
         GameController.OnGameStart += HandleOnGameStart;
 	    GameController.OnToggleMusic += HandleToggleMusic;
-		StoreController.instance.TransactionComplete += HandleTransactionComplete;
 	}
 
 	void HandleTransactionComplete (object sender, EventArgs e)
 	{
-
+		//Debug.Log ("purchase made it to PlayerState.HandleTransactionComplete");
+		//if (e.GetType () == typeof(IStoreResponse) )
+		var isStoreResponse = typeof(IStoreResponse).IsAssignableFrom (e.GetType ());
+		if (isStoreResponse)
+		{
+			var storeResponse = e as IStoreResponse;
+			if (storeResponse.productId == StoreController.REVIVAL_PACK)
+			{
+				switch (storeResponse.status)
+				{
+					case StoreResponseStatus.Success:
+						Debug.Log("Player successfully purchased continuations.");
+						// TODO: some UI for successfull game conitnue purchases
+						Data.gameOverContinues += 10; // TODO: move to editor
+						break;
+					default:
+						Debug.Log("Player tried to purchase continuations but it failed.");
+						break;
+				}
+			}
+		}
 	}
 
     private void HandleToggleMusic(bool playmusic)
@@ -59,7 +79,6 @@ public class PlayerState : MonoBehaviour
 		GameController.OnGameRestart -= HandleOnGameRestart;
         GameController.OnGameStart -= HandleOnGameStart;
         GameController.OnToggleMusic -= HandleToggleMusic;
-		StoreController.instance.TransactionComplete -= HandleTransactionComplete;
 	}
 
     void Awake()
@@ -82,6 +101,7 @@ public class PlayerState : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+		StoreController.Instance.Native.OnTransactionComplete += HandleTransactionComplete;
     }
 
     public void Save()
