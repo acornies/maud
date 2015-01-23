@@ -19,6 +19,9 @@ public class PlayerState : MonoBehaviour
     public static PlayerState Instance { get; private set; }
     public PlayerData Data { get; private set; }
 
+	public delegate void SuccessfullContinuationPurchase();
+	public static event SuccessfullContinuationPurchase OnSuccessfullContinuationPurchase;
+	
 	void OnEnable()
 	{
 		GameController.OnGamePause += HandleOnGamePause;
@@ -45,6 +48,11 @@ public class PlayerState : MonoBehaviour
 						Debug.Log("Player successfully purchased continuations.");
 						// TODO: some UI for successfull game conitnue purchases
 						Data.gameOverContinues += 10; // TODO: move to editor
+						Save();
+						if (OnSuccessfullContinuationPurchase != null)
+						{
+							OnSuccessfullContinuationPurchase();
+						}
 						break;
 					default:
 						Debug.Log("Player tried to purchase continuations but it failed.");
@@ -58,7 +66,7 @@ public class PlayerState : MonoBehaviour
     {
         Data.playMusic = playmusic;
         Debug.Log("Save music preference");
-        this.Save();
+        Save();
     }
 
     void OnDisable()
