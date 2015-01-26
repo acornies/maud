@@ -1,3 +1,10 @@
+5.7:
+New Features:
+Date Time Picker. Read more: http://goo.gl/NkM9Br
+IOSStoreKitResponse transactionIdentifier property added
+Game Center Authentication with 3-rd party server. Read more: http://goo.gl/lJcyaA
+
+
 5.6:
 iAd Crash in iPod fixed
 E-mail image attachment minor fix

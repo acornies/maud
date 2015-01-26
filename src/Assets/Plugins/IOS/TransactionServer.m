@@ -128,6 +128,13 @@ NSString* lastTransaction = @"";
     [data appendString:@"|"];
     [data appendString: [self getReceipt:transaction]];
     
+    
+    [data appendString:@"|"];
+    [data appendString: transaction.transactionIdentifier];
+    
+    
+    
+    
     NSString *str = [data copy] ;
     #if UNITY_VERSION < 500
     [str autorelease];

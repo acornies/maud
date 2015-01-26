@@ -17,7 +17,7 @@
     
 }
 
-
+- (void) getSignature;
 
 - (void) reportScore: (long long) score forCategory: (NSString*) category;
 
@@ -39,7 +39,6 @@
 - (void) resetAchievements; 
 - (void) submitAchievement: (double) percentComplete identifier: (NSString*) identifier notifayComplete: (BOOL) notifayComplete;
 
-- (void) findMatchWithMinPlayers:(int)minPlayers maxPlayers:(int)maxPlayers;
 - (void) retrieveFriends;
 
 - (BOOL)isGameCenterAvailable;

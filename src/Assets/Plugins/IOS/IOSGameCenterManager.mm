@@ -26,6 +26,78 @@ static NSMutableArray *loadedPlayersIds;
     [super dealloc];
 }
 
+-(void) getSignature {
+    GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
+    [localPlayer generateIdentityVerificationSignatureWithCompletionHandler:^(NSURL *publicKeyUrl, NSData *signature, NSData *salt, uint64_t timestamp, NSError *error) {
+        NSLog(@"generateIdentityVerificationSignatureWithCompletionHandler");
+        
+        if(error != nil) {
+            
+            NSLog(@"error: %@", error.description);
+
+            NSMutableString * ErrorData = [[NSMutableString alloc] init];
+            [ErrorData appendFormat:@"%i", error.code];
+            [ErrorData appendString:@"| "];
+            [ErrorData appendString:error.description];
+
+            
+            
+            
+             NSString *ErrorDataString = [[ErrorData copy] autorelease];
+             UnitySendMessage("GameCenterManager", "VerificationSignatureRetrieveFailed", [ISNDataConvertor NSStringToChar:ErrorDataString]);
+             return;
+        }
+        
+        NSMutableString *sig = [[NSMutableString alloc] init];
+        const char *db = (const char *) [signature bytes];
+        for (int i = 0; i < [signature length]; i++) {
+            if(i != 0) {
+                [sig appendFormat:@","];
+            }
+            
+            [sig appendFormat:@"%i", (unsigned char)db[i]];
+        }
+        
+        
+        NSMutableString *slt = [[NSMutableString alloc] init];
+        const char *db2 = (const char *) [salt bytes];
+        for (int i = 0; i < [signature length]; i++) {
+            if(i != 0) {
+                [slt appendFormat:@","];
+            }
+            
+            [slt appendFormat:@"%i", (unsigned char)db2[i]];
+        }
+
+        
+        
+       
+        
+        NSString *path = [[NSString alloc] initWithString:[publicKeyUrl path]];
+        NSLog(@"publicKeyUrl: %@", path);
+        
+        
+
+        
+        
+        NSMutableString * array = [[NSMutableString alloc] init];
+        [array appendString:path];
+        [array appendString:@"| "];
+        [array appendString:sig];
+        [array appendString:@"| "];
+        [array appendString:slt];
+        [array appendString:@"| "];
+        [array appendFormat:@"%llu", timestamp];
+        
+        
+         NSString *str = [[array copy] autorelease];
+        UnitySendMessage("GameCenterManager", "VerificationSignatureRetrieved", [ISNDataConvertor NSStringToChar:str]);
+        
+        
+        
+    }];
+}
+
 
 
 
@@ -676,11 +748,6 @@ static NSMutableArray *loadedPlayersIds;
 }
 
 
-
-- (void)findMatchWithMinPlayers:(int)minPlayers maxPlayers:(int)maxPlayers {
-    [[GCHelper sharedInstance] findMatchWithMinPlayers:minPlayers maxPlayers:maxPlayers];
-}
-
 -(void) retrieveFriends {
     GKLocalPlayer *lp = [GKLocalPlayer localPlayer];
     if (lp.authenticated) {
@@ -821,6 +888,11 @@ extern "C" {
     
     void _gcRetrieveFriends() {
         [GCManager retrieveFriends];
+    }
+    
+    
+    void _ISN_getSignature() {
+        [GCManager getSignature];
     }
     
 }

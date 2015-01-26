@@ -11,6 +11,10 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 
 
 		IOSSharedApplication.OnUrCheckResultAction += OnUrCheckResultAction;
+
+
+		IOSDateTimePicker.instance.OnDateChanged += OnDateChanged;
+		IOSDateTimePicker.instance.OnPickerClosed += OnPickerClosed;
 	}
 
 
@@ -36,6 +40,38 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Open App Store")) {
 			IOSSharedApplication.instance.OpenUrl("itms-apps://");
 		}
+
+
+		StartX = XStartPos;
+		StartY+= YButtonStep;
+		StartY+= YLableStep;
+		
+		
+		
+		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "Date Time Picker", style);
+
+		StartY+= YLableStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Time")) {
+			IOSDateTimePicker.instance.Show(IOSDateTimePickerMode.Time);
+		}
+
+
+		StartX += XButtonStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Date")) {
+			IOSDateTimePicker.instance.Show(IOSDateTimePickerMode.Date);
+		}
+
+		StartX += XButtonStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Date And Time")) {
+			IOSDateTimePicker.instance.Show(IOSDateTimePickerMode.DateAndTime);
+		}
+
+		StartX += XButtonStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Count Down Timer")) {
+			IOSDateTimePicker.instance.Show(IOSDateTimePickerMode.CountDownTimer);
+		}
+
+
 
 		StartX = XStartPos;
 		StartY+= YButtonStep;
@@ -107,7 +143,13 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 
 	}
 
+	void OnDateChanged (System.DateTime time) {
+		Debug.Log("OnDateChanged: " + time.ToString());
+	}
 
+	void OnPickerClosed (System.DateTime time) {
+		Debug.Log("OnPickerClosed: " + time.ToString());
+	}
 	
 
 	private void OnImage (IOSImagePickResult result) {

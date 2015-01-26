@@ -59,6 +59,7 @@ public class GameCenterManager : MonoBehaviour {
 	public static Action OnGameCenterViewDissmissed  = delegate{};
 	public static Action<ISN_Result> OnFriendsListLoaded = delegate{};
 	public static Action<ISN_UserInfoLoadResult> OnUserInfoLoaded  = delegate{};
+	public static Action<ISN_PlayerSignatureResult> OnPlayerSignatureRetrieveResult = delegate{};
 
 
 
@@ -113,6 +114,10 @@ public class GameCenterManager : MonoBehaviour {
 
 	[DllImport ("__Internal")]
 	private static extern void _gcRetrieveFriends();
+
+
+	[DllImport ("__Internal")]
+	private static extern void _ISN_getSignature();
 	
 	#endif
 
@@ -165,7 +170,13 @@ public class GameCenterManager : MonoBehaviour {
 			registerAchievement(aId);
 		}
 	}
-	
+
+
+	public static void RetrievePlayerSignature() {
+		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
+		_ISN_getSignature();
+		#endif
+	}
 
 
 
@@ -778,6 +789,32 @@ public class GameCenterManager : MonoBehaviour {
 		OnFriendsListLoaded (result);
 		dispatcher.dispatch (GAME_CENTER_FRIEND_LIST_LOADED, result);
 	}
+
+
+
+	
+	private void VerificationSignatureRetrieveFailed(string array) {
+
+		string[] data;
+		data = array.Split("|" [0]);
+
+		ISN_Error error =  new ISN_Error();
+		error.code = System.Convert.ToInt32(data[0]);
+		error.description = data[1];
+
+		ISN_PlayerSignatureResult res =  new ISN_PlayerSignatureResult(error);
+		OnPlayerSignatureRetrieveResult(res);
+
+	}
+
+	private void VerificationSignatureRetrieved(string array) {
+		string[] data;
+		data = array.Split("|" [0]);
+
+		ISN_PlayerSignatureResult res =  new ISN_PlayerSignatureResult(data[0], data[1], data[2], data[3]);
+		OnPlayerSignatureRetrieveResult(res);
+	}
+
 
 
 	

@@ -136,7 +136,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 
 		#else
 		if(IOSNativeSettings.Instance.SendFakeEventsInEditor) {
-			FireProductBoughtEvent(productId, "", false);
+			FireProductBoughtEvent(productId, "", "", false);
 		}
 		#endif
 	}
@@ -173,7 +173,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 		#else
 		if(IOSNativeSettings.Instance.SendFakeEventsInEditor) {
 			foreach(string productId in _productsIds) {
-				FireProductBoughtEvent(productId, "", true);
+				FireProductBoughtEvent(productId, "", "", true);
 			}
 			FireRestoreCompleteEvent();
 		}
@@ -304,7 +304,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 			IsRestored = true;
 		}
 
-		FireProductBoughtEvent(data [0], data [2], IsRestored);
+		FireProductBoughtEvent(data [0], data [2], data [3], IsRestored);
 
 
 	}
@@ -394,10 +394,11 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 		OnRestoreComplete (new ISN_Result (true));
 	}
 
-	private void FireProductBoughtEvent(string productIdentifier, string receipt, bool IsRestored) {
+	private void FireProductBoughtEvent(string productIdentifier, string receipt, string transactionIdentifier, bool IsRestored) {
 		IOSStoreKitResponse response = new IOSStoreKitResponse ();
 		response.productIdentifier = productIdentifier;
 		response.receipt = receipt;
+		response.transactionIdentifier = transactionIdentifier;
 		if(IsRestored) {
 			response.state = InAppPurchaseState.Restored;
 		} else {

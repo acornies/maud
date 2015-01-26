@@ -16,8 +16,8 @@ public class IOSStoreKitResponse  {
 	public string productIdentifier;
 	public InAppPurchaseState state;
 	public string receipt;
+	public string transactionIdentifier;
 
 	public IOSStoreKitError error;
-
 
 }

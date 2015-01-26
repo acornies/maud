@@ -35,7 +35,30 @@ public class TelekinesisHandler : MonoBehaviour
         TelekinesisController.On_NewTelekinesisRotation += HandleNewTelekinesisRotation;
         TelekinesisController.On_TelekinesisStabilize += HandleTelekinesisStabilize;
         TelekinesisController.On_NewTelekinesisMovePosition += HandleNewTelekinesisMovePosition;
+		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
+		CameraMovement.OnRestorePlayerState += HandleOnRestorePlayerState;
         //Disappear.OnPlatformReappear += HandlePlatformReappear;
+    }
+
+    void HandleOnRestorePlayerState ()
+    {
+		if (_platformScripts.Any(x => !x.enabled ))
+		{
+			_platformScripts.ToList().ForEach(x =>
+			                                  {
+				x.enabled = true;
+			});
+		}
+    }
+
+    void HandleOnFastMusicStart (float timedSpeed)
+    {
+		if (PlatformController.Instance.GetCurrentPlatformNumber() != int.Parse(name.Split('_')[1] ) ) return;
+		Debug.Log ("Freeze current platform for cutscene");
+		_platformScripts.ToList().ForEach(x =>
+		                                  {
+			x.enabled = false;
+		});
     }
 
     public virtual void OnDisable()
@@ -53,6 +76,8 @@ public class TelekinesisHandler : MonoBehaviour
         TelekinesisController.On_NewTelekinesisRotation -= HandleNewTelekinesisRotation;
         TelekinesisController.On_TelekinesisStabilize -= HandleTelekinesisStabilize;
         TelekinesisController.On_NewTelekinesisMovePosition -= HandleNewTelekinesisMovePosition;
+		MusicController.OnFastMusicStart -= HandleOnFastMusicStart;
+		CameraMovement.OnRestorePlayerState -= HandleOnRestorePlayerState;
         //Disappear.OnPlatformReappear -= HandlePlatformReappear;
     }
 

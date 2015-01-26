@@ -119,10 +119,9 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 		int majorVersion = int.Parse(chunks[0]);
 		if (majorVersion >= 8) {
 			_ISN_RegisterForRemoteNotifications((int) notificationTypes);
-		} else {
-			NotificationServices.RegisterForRemoteNotificationTypes(notificationTypes);
-		}
+		} 
 
+		NotificationServices.RegisterForRemoteNotificationTypes(notificationTypes);
 
 		DeviceTokenListner.Create ();
 

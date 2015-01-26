@@ -40,15 +40,25 @@ static ISNVideo *_sharedInstance;
     
 }
 
+
+
 -(void) openYoutubeVideo:(NSString *)url {
+    NSLog(@"openYoutubeVideo");
     
     NSMutableString *str = [[NSMutableString alloc] init];
     [str appendString:@"http://www.youtube.com/v/"];
     [str appendString:url];
     
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];
-    return;
+    
 }
+
+// Add this if you wish to add support Orientation support for picker
+
+
+
+
+
 
 
 
