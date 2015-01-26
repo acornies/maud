@@ -108,7 +108,7 @@ public class GameOverUI : MonoBehaviour
 		var adContinue = transform.FindChild("AdCont");
 		_adContinueButtonImage = adContinue.GetComponent<Image> ();
 		_adContinueButtonBehaviour = adContinue.GetComponent<Button> ();
-		_adContinueText = adContinue.FindChild ("EarnText").GetComponent<Text>();
+		_adContinueText = transform.FindChild ("EarnText").GetComponent<Text>();
 		_adContinueVideoImage = adContinue.FindChild ("VideoAd").GetComponent<Image>();
 
 		_continueText = transform.FindChild ("ContinueText").GetComponent<Text>();
@@ -116,7 +116,7 @@ public class GameOverUI : MonoBehaviour
 		var purchaseContinue = transform.FindChild("PurchaseCont");
 		_purchaseContinueButtonImage = purchaseContinue.GetComponent<Image> ();
 		_purchaseContinueButtonBehaviour = purchaseContinue.GetComponent<Button> ();
-		_purchaseContinueText = purchaseContinue.FindChild ("PurchaseText").GetComponent<Text>();
+		_purchaseContinueText = transform.FindChild ("PurchaseText").GetComponent<Text>();
 		_purchaseContinueCartImage = purchaseContinue.FindChild ("Cart").GetComponent<Image>();
 
 		_purchaseContinueAnimator = purchaseContinue.GetComponent<Animator> ();

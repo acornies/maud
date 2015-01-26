@@ -5,6 +5,7 @@ using System.Collections;
 public class PlatformBehaviour : MonoBehaviour
 {
     private GameObject _objectToDestroy;
+	private float _destroyTimer;
     private float _postDestroyTimeout = 3f;
 
     //protected bool shouldBurnOut;
@@ -23,6 +24,7 @@ public class PlatformBehaviour : MonoBehaviour
     public bool isStopped;
 	public float colorChangeSpeed = 10f;
     public float destroyTransitionSpeed = 10f;
+	public float destroyTime = 2f;
     //public float lightIntensity = 2.75f;
     //public float lightBurnoutSpeed = 1f;
 
@@ -50,6 +52,7 @@ public class PlatformBehaviour : MonoBehaviour
         */
         shouldDestroy = true;
         transform.tag = "Untagged";
+		_destroyTimer = destroyTime;
     }
 
     public virtual void OnDisable()
@@ -92,8 +95,11 @@ public class PlatformBehaviour : MonoBehaviour
 
         if (shouldDestroy && _objectToDestroy.GetInstanceID() == gameObject.GetInstanceID())
         {
-            renderer.material.color = Color.Lerp(renderer.material.color, Color.white, destroyTransitionSpeed * Time.deltaTime);
-            if (renderer.material.color != Color.white) return;
+			renderer.material.color = Color.Lerp(renderer.material.color, Color.white, destroyTransitionSpeed * Time.deltaTime);
+            //if (renderer.material.color != Color.white) return;
+
+			_destroyTimer -= Time.deltaTime;
+			if (_destroyTimer > 0) return;
 
 			if (child == null) return;
 
@@ -110,13 +116,15 @@ public class PlatformBehaviour : MonoBehaviour
 					GameObject flash = Instantiate(flashEffect, transform.position, Quaternion.identity) as GameObject;
 					flash.GetComponent<ParticleSystem>().Play();
 				}
+				child.gameObject.layer = 0;
+				child.tag = "Untagged";
 				transform.DetachChildren(); // don't delete player if it's a child of the platform
 				childRigidbody.constraints = RigidbodyConstraints.None;
                 childRigidbody.useGravity = true;
                 childRigidbody.isKinematic = false;
             }
 
-			transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(0.01f, 0.01f, 0.01f), destroyTransitionSpeed * Time.deltaTime);
+			transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(0.001f, 0.001f, 0.001f), destroyTransitionSpeed * Time.deltaTime);
 
             _postDestroyTimeout -= Time.deltaTime;
             if (!(_postDestroyTimeout <= 0)) return;

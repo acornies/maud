@@ -96,15 +96,6 @@ public class TelekinesisHandler : MonoBehaviour
         Teleport();
     }
 
-    protected void HandlePlatformReappear(Transform reappearingObj)
-    {
-        if (reappearingObj.GetInstanceID() != this.transform.GetInstanceID()) return;
-        //Debug.Log("reassign the power effect");
-        var effects = reappearingObj.GetComponentsInChildren<ParticleSystem>();
-        _rotationEffect = effects.FirstOrDefault(x => x.transform.name == "PowerEffect");
-        _stabilizeEffect = effects.FirstOrDefault(x => x.transform.name == "StabilizeEffect");
-    }
-
     protected void HandleNewTelekinesisRotation(Transform platform, Quaternion rotation)
     {
         if (platform.GetInstanceID() != this.transform.GetInstanceID()) return;

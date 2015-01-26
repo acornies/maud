@@ -28,7 +28,6 @@ namespace LegendPeak.Native
 
 		public void buyProduct(string productId)
 		{
-			// TODO implement buy product
 			IOSInAppPurchaseManager.instance.buyProduct (productId);
 		}
 
@@ -51,7 +50,7 @@ namespace LegendPeak.Native
 			IOSInAppPurchaseManager.instance.OnStoreKitInitComplete -= OnStoreKitInitComplete;
 			
 			if(result.IsSucceeded) {
-				Debug.Log("Inited successfully, Avaliable products cound: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
+				Debug.Log("Inited successfully, Avaliable products count: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
 			} else {
 				Debug.Log("StoreKit Init Failed.  Error code: " + result.error.code + "\n" + "Error description:" + result.error.description);
 			}

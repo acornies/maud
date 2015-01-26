@@ -34,6 +34,9 @@ public class PlatformController : MonoBehaviour
 	public float timedDestroySpeed = 1f;
 	public bool useTimedDestroy;
     public GameObject timedDestroyCameraTarget;
+	public Material zoneOneMaterial;
+	public Material zoneTwoMaterial;
+	public Material zoneThreeMaterial;
 
     public delegate void ReachedNextCheckpoint(int platform);
     public static event ReachedNextCheckpoint On_ReachedCheckpoint;
@@ -253,6 +256,7 @@ public class PlatformController : MonoBehaviour
 
                     newPlatform.name = string.Format("Platform_{0}", nextPlatform);
                     newPlatform.transform.localRotation = Quaternion.AngleAxis(GetRandomRotation(nextPlatform), Vector3.up);
+					UpdateMaterial(newPlatform, nextPlatform);
                     AdjustProperties(newPlatform, nextPlatform);
                     levelPlatforms.Add(nextPlatform, newPlatform);
 
@@ -266,6 +270,19 @@ public class PlatformController : MonoBehaviour
         yield return new WaitForSeconds(platformSpawnInterval);
     }
 
+	private void UpdateMaterial(GameObject newPlatform, int index)
+	{
+		if (index > TutorialHoldPlatform) //TODO: change to Editor
+		{
+			newPlatform.renderer.material = zoneTwoMaterial;
+		}
+
+		if (index > 180) //TODO: change to Editor
+		{
+			newPlatform.renderer.material = zoneThreeMaterial;
+		}
+	}
+
     private void AdjustProperties(GameObject newPlatform, int index)
     {
         UpAndDown upAndDownComponent = newPlatform.transform.GetComponent<UpAndDown>();
@@ -278,14 +295,6 @@ public class PlatformController : MonoBehaviour
         {
             var rnd = new System.Random();
             orbitAxis = _orbitAxis[rnd.Next(_orbitAxis.Length)];
-        }
-
-        if (index > 30)
-        {
-            if (dropComponent != null) //TODO: change to Editor value
-            {
-                dropComponent.enabled = true;
-            }
         }
 
         if (index > 80)
@@ -321,13 +330,13 @@ public class PlatformController : MonoBehaviour
             return 60f;
         }
 
-        if (index > 60)
+        if (index > 80)
         {
             maxRotationLeft = 90f;
             maxRotationRight = 270f;
         }
 
-        if (index > 100)
+		if (index > 180)
         {
             maxRotationLeft = 180f;
             maxRotationRight = 180f;
