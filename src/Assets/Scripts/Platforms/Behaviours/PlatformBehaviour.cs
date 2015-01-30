@@ -183,7 +183,7 @@ public class PlatformBehaviour : MonoBehaviour
             return newColor;
         }*/
 
-        foreach (GradientColorKey key in colorKeys)
+        /*foreach (GradientColorKey key in colorKeys)
         {
             if (powerPercentage >= key.time)
             {
@@ -192,6 +192,9 @@ public class PlatformBehaviour : MonoBehaviour
         }
 
         return newColor;
+        */
+		var randomKey = Random.Range (0, colorKeys.Length);
+		return colorKeys [randomKey].color;
     }
 
     public virtual void HandlePlayerAirborne(Transform player)

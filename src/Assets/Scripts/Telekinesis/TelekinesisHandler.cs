@@ -5,7 +5,8 @@ using System.Collections.Generic;
 
 public class TelekinesisHandler : MonoBehaviour
 {
-    private PlatformBehaviour[] _platformScripts;
+	private Transform child;
+	private PlatformBehaviour[] _platformScripts;
     //private HazzardMovement[] _hazzardScripts;
     private float _stabilizeTimer;
     private Transform _hazzardModel;
@@ -54,7 +55,13 @@ public class TelekinesisHandler : MonoBehaviour
     void HandleOnFastMusicStart (float timedSpeed)
     {
 		if (PlatformController.Instance.GetCurrentPlatformNumber() != int.Parse(name.Split('_')[1] ) ) return;
-		Debug.Log ("Freeze current platform for cutscene");
+		//Debug.Log ("Freeze current platform for cutscene");
+
+		// fix the case where drop platform falls while kinematics are turned off
+		if (!child.rigidbody.isKinematic)
+		{
+			child.rigidbody.isKinematic = true;
+		}
 		_platformScripts.ToList().ForEach(x =>
 		                                  {
 			x.enabled = false;
@@ -84,7 +91,8 @@ public class TelekinesisHandler : MonoBehaviour
     // Use this for initialization
     private void Awake()
     {
-        _platformScripts = GetComponentsInChildren<PlatformBehaviour>();
+		child = transform.FindChild ("Cube");
+		_platformScripts = GetComponentsInChildren<PlatformBehaviour>();
         //_hazzardScripts = GetComponentsInChildren<HazzardMovement>();
         _hazzardModel = transform.FindChild("ProtoModel");
 
