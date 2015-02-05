@@ -31,6 +31,26 @@ namespace LegendPeak.Native
 			IOSInAppPurchaseManager.instance.buyProduct (productId);
 		}
 
+		public void showLeaderboards ()
+		{
+			GameCenterManager.showLeaderBoards ();
+		}
+
+		public void showLeaderboard(string leaderboardId)
+		{
+			GameCenterManager.showLeaderBoard (leaderboardId);
+		}
+
+		public void submitScore(int score, string leaderboardId)
+		{
+			GameCenterManager.reportScore (score, leaderboardId);
+		}
+
+		public void loadPlayerScore(string leaderboardId)
+		{
+			GameCenterManager.loadCurrentPlayerScore (leaderboardId);
+		}
+
 		public event EventHandler OnTransactionComplete;
 
 		void OnAuthFinished(ISN_Result res)

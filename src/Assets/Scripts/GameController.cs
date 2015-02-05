@@ -67,6 +67,7 @@ public class GameController : MonoBehaviour
     public Sprite controlAccelerometerImage;
     public Sprite controlFingerSwipeImage;
 	public Color heightCounterColor;
+	public float continueAdPower = 50;
 	
 	//public int gameOverContinues;
 	public int advertisingContinues = 2;
@@ -577,6 +578,16 @@ public class GameController : MonoBehaviour
         _musicButtonImage.sprite = !PlayerState.Instance.Data.playMusic ? soundOffImage : soundOnImage;
     }
 
+	public void ButtonLeaderboardTop()
+	{
+		StoreController.Instance.Native.showLeaderboard ("maud_high_score"); // TODO not iOS specific
+	}
+
+	public void ButtonLeaderboardTotal()
+	{
+		StoreController.Instance.Native.showLeaderboard ("maud_total_score"); // TODO not iOS specific
+	}
+
     void HandleOnShowMenuButtons()
     {
         _playButtonImage.enabled = true;
@@ -635,7 +646,7 @@ public class GameController : MonoBehaviour
         //_cartButtonBehaviour.interactable = true; // TODO enable when ready
         //_cartButtonBehaviour.interactable = false; // TODO enable when ready
         //_isSettingsOpen = true;
-		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
+		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString ();
 		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
 		heightCounter.color = Color.white;
     }
@@ -668,10 +679,12 @@ public class GameController : MonoBehaviour
         _telekinesisControl.SetActive(false);
         _restartButtonImage.enabled = true;
         _restartButtonBehaviour.interactable = true;
-		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
+		_highestPointText.text = string.Format(PlayerState.Instance.Data.highestPlatform.ToString());
 		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
 		heightCounter.color = Color.white;
 
+		StoreController.Instance.Native.submitScore (highestPoint, "maud_high_score");
+		StoreController.Instance.Native.submitScore (PlayerState.Instance.Data.totalPlatforms, "maud_total_score");
 
 		// TODO display continue UI
 		/*_continueButtonImage.enabled = promptAdContinue;
@@ -707,7 +720,7 @@ public class GameController : MonoBehaviour
 		initiatingRestart = false;
 		/*_continueButtonImage.enabled = false;
 		_continueButtonText.enabled = false;*/
-		powerMeter += 50;
+		powerMeter += (fromIAP) ? PlayerState.Instance.playerLevel.maxEnergy : continueAdPower;
 
 		//Debug.Log ("Player reward spawn: " + newSpawnPosition);
 		if (fromIAP)

@@ -23,6 +23,26 @@ namespace LegendPeak.Native
 		//TODO: Implement
 		}
 
+		public void showLeaderboards ()
+		{
+
+		}
+		
+		public void showLeaderboard(string leaderboardId)
+		{
+
+		}
+		
+		public void submitScore(int score, string leaderboardId)
+		{
+
+		}
+		
+		public void loadPlayerScore(string leaderboardId)
+		{
+
+		}
+
 		public event EventHandler OnTransactionComplete;
 	}
 }

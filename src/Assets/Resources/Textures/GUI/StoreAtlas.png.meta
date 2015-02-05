@@ -10,6 +10,7 @@ TextureImporter:
     21300010: Close
     21300012: CloudRestore
     21300014: Lock
+    21300016: Leaderboards
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -128,6 +129,16 @@ TextureImporter:
         y: 379
         width: 403
         height: 523
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Leaderboards
+      rect:
+        serializedVersion: 2
+        x: 1079
+        y: 507
+        width: 524
+        height: 319
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
