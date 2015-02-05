@@ -33,36 +33,43 @@ namespace LegendPeak.Native
 
 		public void showLeaderboards ()
 		{
+			if (!authenticated) return;
 			GameCenterManager.showLeaderBoards ();
 		}
 
 		public void showLeaderboard(string leaderboardId)
 		{
+			if (!authenticated) return;
 			GameCenterManager.showLeaderBoard (leaderboardId);
 		}
 
 		public void submitScore(int score, string leaderboardId)
 		{
+			if (!authenticated) return;
+			GameCenterManager.OnScoreSubmited += OnScoreSubmited;
 			GameCenterManager.reportScore (score, leaderboardId);
 		}
 
 		public void loadPlayerScore(string leaderboardId)
 		{
+			if (!authenticated) return;
 			GameCenterManager.loadCurrentPlayerScore (leaderboardId);
 		}
 
 		public event EventHandler OnTransactionComplete;
+		public event EventHandler OnAuthenticationFinished;
 
 		void OnAuthFinished(ISN_Result res)
 		{
 			if (res.IsSucceeded) 
 			{
 				authenticated = true;
+
 				//IOSNativePopUpManager.showMessage("Player Authored ", "ID: " + GameCenterManager.player.playerId + "\n" + "Alias: " + GameCenterManager.player.alias);
 			} 
 			else 
 			{
-				IOSNativePopUpManager.showMessage("Game Center ", "Not logged in.");
+				IOSNativePopUpManager.showMessage("Game Center", "Not logged in.");
 			}
 		}
 
@@ -76,6 +83,15 @@ namespace LegendPeak.Native
 			}
 		}
 
+		private void OnScoreSubmited (ISN_Result result) {
+			GameCenterManager.OnScoreSubmited -= OnScoreSubmited;
+			if(result.IsSucceeded)  {
+				Debug.Log("Score Submited");
+			} else {
+				Debug.Log("Score Submit Failed");
+			}
+		}
+
 		private void OnAppleTransactionComplete (IOSStoreKitResponse response) {
 
 			var storeResponse = new AppleStoreResponse () { productId = response.productIdentifier };
@@ -83,35 +99,35 @@ namespace LegendPeak.Native
 			Debug.Log("OnTransactionComplete: state: " + response.state);
 			
 			switch(response.state) {
-			case InAppPurchaseState.Purchased:
-			case InAppPurchaseState.Restored:
-				//Our product been succsesly purchased or restored
-				//So we need to provide content to our user 
-				//depends on productIdentifier
-				//UnlockProducts(response.productIdentifier);
-				storeResponse.status = StoreResponseStatus.Success;
-				//storeResponse.productId = response.productIdentifier;
-				break;
-			case InAppPurchaseState.Deferred:
-				//iOS 8 introduces Ask to Buy, which lets 
-				//parents approve any purchases initiated by children
-				//You should update your UI to reflect this 
-				//deferred state, and expect another Transaction 
-				//Complete  to be called again with a new transaction state 
-				//reflecting the parent's decision or after the 
-				//transaction times out. Avoid blocking your UI 
-				//or gameplay while waiting for the transaction to be updated.
-				storeResponse.status = StoreResponseStatus.Deferred;
-				storeResponse.message = "Waiting approval from parent or guardian.";
-				break;
-			case InAppPurchaseState.Failed:
-				//Our purchase flow is failed.
-				//We can unlock interface and report user that the purchase is failed. 
-				Debug.Log("Transaction failed with error, code: " + response.error.code);
-				Debug.Log("Transaction failed with error, description: " + response.error.description);
-				storeResponse.status = StoreResponseStatus.Failed;
-				storeResponse.message = response.error.description;
-				break;
+				case InAppPurchaseState.Purchased:
+				case InAppPurchaseState.Restored:
+					//Our product been succsesly purchased or restored
+					//So we need to provide content to our user 
+					//depends on productIdentifier
+					//UnlockProducts(response.productIdentifier);
+					storeResponse.status = StoreResponseStatus.Success;
+					//storeResponse.productId = response.productIdentifier;
+					break;
+				case InAppPurchaseState.Deferred:
+					//iOS 8 introduces Ask to Buy, which lets 
+					//parents approve any purchases initiated by children
+					//You should update your UI to reflect this 
+					//deferred state, and expect another Transaction 
+					//Complete  to be called again with a new transaction state 
+					//reflecting the parent's decision or after the 
+					//transaction times out. Avoid blocking your UI 
+					//or gameplay while waiting for the transaction to be updated.
+					storeResponse.status = StoreResponseStatus.Deferred;
+					storeResponse.message = "Waiting approval from parent or guardian.";
+					break;
+				case InAppPurchaseState.Failed:
+					//Our purchase flow is failed.
+					//We can unlock interface and report user that the purchase is failed. 
+					Debug.Log("Transaction failed with error, code: " + response.error.code);
+					Debug.Log("Transaction failed with error, description: " + response.error.description);
+					storeResponse.status = StoreResponseStatus.Failed;
+					storeResponse.message = response.error.description;
+					break;
 			}
 			
 			IOSNativePopUpManager.showMessage("Store Kit Response", "product " + response.productIdentifier + " state: " + response.state.ToString());

@@ -38,7 +38,7 @@ public class SunlightBehaviour : MonoBehaviour {
 
 	}
 
-	private void HandleOnMaxHeightIncrease(float amount)
+	private void HandleOnMaxHeightIncrease(int delta, float amount)
 	{
 		rotationSpeed = Mathf.Clamp(amount, 1f, maxRotationSpeed);
 		//Debug.Log("Increased skybox rotation to: " + amount);

@@ -44,6 +44,7 @@ namespace LegendPeak.Native
 		}
 
 		public event EventHandler OnTransactionComplete;
+		public event EventHandler OnAuthenticationFinished;
 	}
 }
 

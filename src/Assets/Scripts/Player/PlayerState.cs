@@ -30,6 +30,17 @@ public class PlayerState : MonoBehaviour
 		GameController.OnGameRestart += HandleOnGameRestart;
         GameController.OnGameStart += HandleOnGameStart;
 	    GameController.OnToggleMusic += HandleToggleMusic;
+		GameController.OnMaxHeightIncrease += HandleOnMaxHeightIncrease;
+	}
+
+	void HandleOnMaxHeightIncrease (int delta, float rotationMultiplier)
+	{
+		if (GameController.Instance.highestPoint > Data.highestPlatform) 
+		{
+			Data.highestPlatform = GameController.Instance.highestPoint;
+			//Data.highestPoint = 0;
+		}
+		Data.totalPlatforms += delta;
 	}
 
 	void HandleTransactionComplete (object sender, EventArgs e)
@@ -87,6 +98,7 @@ public class PlayerState : MonoBehaviour
 		GameController.OnGameRestart -= HandleOnGameRestart;
         GameController.OnGameStart -= HandleOnGameStart;
         GameController.OnToggleMusic -= HandleToggleMusic;
+		GameController.OnMaxHeightIncrease -= HandleOnMaxHeightIncrease;
 	}
 
     void Awake()
@@ -116,19 +128,20 @@ public class PlayerState : MonoBehaviour
     {
         var binaryFormatter = new BinaryFormatter();
 
-		if (GameController.Instance.highestPoint > Data.highestPlatform) 
+		/*if (GameController.Instance.highestPoint > Data.highestPlatform) 
 		{
 			Data.highestPlatform = GameController.Instance.highestPoint;
 			//Data.highestPoint = 0;
-		}
+		}*/
 
 		//Debug.Log("Before: " + lastTime);
-		var toAdd = GameController.Instance.highestPoint - lastTime;
+		/*var toAdd = GameController.Instance.highestPoint - lastTime;
 		lastTime = GameController.Instance.highestPoint;
 		//Debug.Log ("After: " + lastTime);
 
 		//Debug.Log("Added: " + toAdd);
 		Data.totalPlatforms += toAdd;
+		*/
 		//Data.totalHeight = 0;
 
 		FileStream playerFile = !File.Exists(string.Format(dataPath, Application.persistentDataPath)) 

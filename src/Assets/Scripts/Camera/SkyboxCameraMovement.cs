@@ -128,7 +128,7 @@ public class SkyboxCameraMovement : MonoBehaviour
         RenderSettings.skybox.SetFloat("_Blend", 0);
     }
 
-    private void HandleOnMaxHeightIncrease(float amount)
+    private void HandleOnMaxHeightIncrease(int delta, float amount)
     {
         rotationSpeed = Mathf.Clamp(amount, 1f, maxRotationSpeed);
         //Debug.Log("Increased skybox rotation to: " + amount);

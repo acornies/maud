@@ -20,6 +20,8 @@ public class GameOverUI : MonoBehaviour
 	public Sprite purchasedContinueIcon;
 	public Sprite purchasedCartIcon;
 
+	public Vector2 holdingPosition;
+
 	void OnEnable()
 	{
 		GameController.OnGameOver += HandleOnGameOver;
@@ -36,19 +38,32 @@ public class GameOverUI : MonoBehaviour
 
 	void HandleOnPlayerReward ()
 	{
-		_continueText.enabled = false;
+		//_continueText.enabled = false;
+		_continueText.rectTransform.anchoredPosition = holdingPosition;
 
-		_adContinueButtonImage.enabled = false;
-		_adContinueVideoImage.enabled = false;
-		_adContinueText.enabled = false;
-		_adContinueButtonBehaviour.enabled = true;
+		//_adContinueButtonImage.enabled = false;
+		_adContinueButtonImage.rectTransform.anchoredPosition = holdingPosition;
+
+		//_adContinueVideoImage.enabled = false;
+		//_adContinueVideoImage.rectTransform.anchoredPosition = holdingPosition;
+
+		//_adContinueText.enabled = false;
+		_adContinueText.rectTransform.anchoredPosition = holdingPosition;
+
+
+		//_adContinueButtonBehaviour.enabled = true;
 		//_adContinueButtonBehaviour.interactable = GameController.Instance.promptAdContinue;
 		
-		_purchaseContinueButtonImage.enabled = false;
-		_purchaseContinueCartImage.enabled = false;
-		_purchaseContinueText.enabled = false;
+		//_purchaseContinueButtonImage.enabled = false;
+		_purchaseContinueButtonImage.rectTransform.anchoredPosition = holdingPosition;
+
+		//_purchaseContinueCartImage.enabled = false;
+		//_purchaseContinueCartImage.rectTransform.anchoredPosition = holdingPosition;
+
+		//_purchaseContinueText.enabled = false;
+		_purchaseContinueText.rectTransform.anchoredPosition = holdingPosition;
 		//ShowBuyOrContinue ();
-		_purchaseContinueButtonBehaviour.enabled = false;
+		//_purchaseContinueButtonBehaviour.enabled = false;
 
 	}
 
@@ -68,22 +83,26 @@ public class GameOverUI : MonoBehaviour
 
 	void HandleOnGameOver ()
 	{
-		_continueText.enabled = true;
+		//_continueText.enabled = true;
+		_continueText.rectTransform.anchoredPosition = new Vector2 (0, 0);
 
-		_adContinueButtonImage.enabled = true;
-		_adContinueVideoImage.enabled = true;
+		//_adContinueButtonImage.enabled = true;
+		_adContinueButtonImage.rectTransform.anchoredPosition = new Vector2 (-120f, -150f);
+		//_adContinueVideoImage.enabled = true;
 		_adContinueVideoImage.color = new Color (_adContinueText.color.r, _adContinueText.color.g, _adContinueText.color.b, 
 		                                        (GameController.Instance.promptAdContinue) ? 1f : .4f);
-		_adContinueText.enabled = true;
+		_adContinueText.rectTransform.anchoredPosition = new Vector2 (-120f, -227.5f);
 		_adContinueText.text = string.Format ("Earn ({0} left)", GameController.Instance.advertisingContinues);
-		_adContinueButtonBehaviour.enabled = true;
+		//_adContinueButtonBehaviour.enabled = true;
 		_adContinueButtonBehaviour.interactable = GameController.Instance.promptAdContinue;
 
-		_purchaseContinueButtonImage.enabled = true;
-		_purchaseContinueCartImage.enabled = true;
-		_purchaseContinueText.enabled = true;
+		//_purchaseContinueButtonImage.enabled = true;
+		_purchaseContinueButtonImage.rectTransform.anchoredPosition = new Vector2 (120f, -150f);
+		//_purchaseContinueCartImage.enabled = true;
+		//_purchaseContinueText.enabled = true;
+		_purchaseContinueText.rectTransform.anchoredPosition = new Vector2 (120f, -227.5f);
 		ShowBuyOrContinue ();
-		_purchaseContinueButtonBehaviour.enabled = true;
+		//_purchaseContinueButtonBehaviour.enabled = true;
 	}
 	
 	void OnDisable()

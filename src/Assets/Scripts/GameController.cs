@@ -25,6 +25,8 @@ public class GameController : MonoBehaviour
 	//private Button _controlModeBehaviour;
 	private Button _musicButtonBehaviour;
 	private Button _shareButtonBehaviour;
+	private Image _leaderboardImage;
+	private Button _leaderboardButton;
     //private Image _cartButtonImage;
 	//private Button _cartButtonBehaviour;
     private EnergyBar _powerBar;
@@ -101,7 +103,7 @@ public class GameController : MonoBehaviour
     public delegate void PlayerResurrection();
     public static event PlayerResurrection OnPlayerResurrection;
 
-    public delegate void MaxHeightIncrease(float amount);
+    public delegate void MaxHeightIncrease(int delta, float rotationMultiplier);
     public static event MaxHeightIncrease OnMaxHeightIncrease;
 
     public delegate void ToggleMusic(bool playMusic);
@@ -239,6 +241,10 @@ public class GameController : MonoBehaviour
 		_totalHeightText = GameObject.Find ("TotalText").GetComponent<Text>();
 		_highestPointText = GameObject.Find ("HighestText").GetComponent<Text>();
 
+		var leaderboard = GameObject.Find ("LeaderboardButton");
+		_leaderboardImage = leaderboard.GetComponent<Image> ();
+		_leaderboardButton = leaderboard.GetComponent<Button> ();
+
 		var controlMode = GameObject.Find ("ControlButton");
 		//_controlModeImage = controlMode.GetComponent<Image>();
 		//_controlModeBehaviour = controlMode.GetComponent<Button>();
@@ -271,8 +277,15 @@ public class GameController : MonoBehaviour
         
         if (heightCounter.enabled)
         {
-			heightCounter.text = highestPoint.ToString();;
+			heightCounter.text = highestPoint.ToString();
+			_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
+			_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
         }
+
+		if (StoreController.Instance.Native.authenticated && !_leaderboardButton.interactable)
+		{
+			_leaderboardButton.interactable = true;
+		}
 
         if (!inSafeZone && powerBarRenderer.texturesBackground[0].color.a == 0f)
         {
@@ -332,10 +345,11 @@ public class GameController : MonoBehaviour
 		if (currentPlatform > highestPoint && countHeight)
         {
 			//var roundedPosition = currentPlatform;
+			var previous = highestPoint;
 			highestPoint = currentPlatform;
             if (OnMaxHeightIncrease != null)
             {
-				OnMaxHeightIncrease(currentPlatform * SkyboxCameraMovement.speedMultiplier);
+				OnMaxHeightIncrease(highestPoint - previous, currentPlatform * SkyboxCameraMovement.speedMultiplier);
             }
         }
 
@@ -456,7 +470,6 @@ public class GameController : MonoBehaviour
 				Debug.Log ("Game resume through play button");
                 break;
         }
-
     }
 
 	public void ButtonShare()
@@ -580,12 +593,15 @@ public class GameController : MonoBehaviour
 
 	public void ButtonLeaderboardTop()
 	{
-		StoreController.Instance.Native.showLeaderboard ("maud_high_score"); // TODO not iOS specific
-	}
-
-	public void ButtonLeaderboardTotal()
-	{
-		StoreController.Instance.Native.showLeaderboard ("maud_total_score"); // TODO not iOS specific
+		if (gameState == GameState.Running)
+		{
+			if (OnGamePause != null)
+			{
+				OnGamePause();
+			}
+			
+		}
+		StoreController.Instance.Native.showLeaderboards ();
 	}
 
     void HandleOnShowMenuButtons()
@@ -627,8 +643,8 @@ public class GameController : MonoBehaviour
         _playButtonImage.rectTransform.anchorMin = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchorMax = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchoredPosition = new Vector3(0, 0, 0);
-		_highestPointText.text = string.Empty;
-		_totalHeightText.text = string.Empty;
+		//_highestPointText.text = string.Empty;
+		//_totalHeightText.text = string.Empty;
     }
 
     void HandleOnGamePause()
@@ -663,8 +679,8 @@ public class GameController : MonoBehaviour
 
 		CloseSettingsAndSharing ();
 
-		_highestPointText.text = string.Empty;
-		_totalHeightText.text = string.Empty;
+		//_highestPointText.text = string.Empty;
+		//_totalHeightText.text = string.Empty;
 		heightCounter.color = heightCounterColor;
         //_menuButtonImage.GetComponent<Animator>().enabled = false;
         //_musicButtonImage.enabled = false;
