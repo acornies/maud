@@ -300,7 +300,7 @@ public class GameController : MonoBehaviour
         {
             powerBarRenderer.texturesForeground[0].color.a = 1f;
         }
-		else if (powerMeter >= PlayerState.Instance.playerLevel.stabilizeCost)
+		else //if (powerMeter >= PlayerState.Instance.playerLevel.lifeCost)
         {
             powerBarRenderer.texturesForeground[0].color.a = 0f;
         }
@@ -366,7 +366,7 @@ public class GameController : MonoBehaviour
 		_powerBar.SetValueMax(Mathf.CeilToInt(PlayerState.Instance.playerLevel.maxEnergy));
 
         // time delay between player deaths
-		if (playerIsDead && powerMeter >= PlayerState.Instance.playerLevel.stabilizeCost && gameState != GameState.Over)
+		if (playerIsDead && powerMeter >= PlayerState.Instance.playerLevel.lifeCost && gameState != GameState.Over)
         {
             _telekinesisControl.SetActive(false);
 
@@ -386,12 +386,12 @@ public class GameController : MonoBehaviour
                 OnPlayerResurrection();
                 if (!inSafeZone)
                 {
-					powerMeter -= PlayerState.Instance.playerLevel.stabilizeCost;
+					powerMeter -= PlayerState.Instance.playerLevel.lifeCost;
                 }
             }
         }
 
-		else if (playerIsDead && powerMeter < PlayerState.Instance.playerLevel.stabilizeCost)
+		else if (playerIsDead && powerMeter < PlayerState.Instance.playerLevel.lifeCost)
         {
 			TriggerGameOver();
         }
@@ -643,6 +643,7 @@ public class GameController : MonoBehaviour
         _playButtonImage.rectTransform.anchorMin = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchorMax = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchoredPosition = new Vector3(0, 0, 0);
+		_playButtonImage.rectTransform.localScale = new Vector2 (1f, 1f);
 		//_highestPointText.text = string.Empty;
 		//_totalHeightText.text = string.Empty;
     }
@@ -699,8 +700,11 @@ public class GameController : MonoBehaviour
 		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
 		heightCounter.color = Color.white;
 
-		StoreController.Instance.Native.submitScore (highestPoint, "maud_high_score");
-		StoreController.Instance.Native.submitScore (PlayerState.Instance.Data.totalPlatforms, "maud_total_score");
+		if (StoreController.Instance.Native.authenticated)
+		{
+			StoreController.Instance.Native.submitScore (highestPoint, "maud_high_score"); //TOOD: consitent naming
+			StoreController.Instance.Native.submitScore (PlayerState.Instance.Data.totalPlatforms, "maud_total_score");
+		}
 
 		// TODO display continue UI
 		/*_continueButtonImage.enabled = promptAdContinue;
