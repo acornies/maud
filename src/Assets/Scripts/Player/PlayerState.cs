@@ -165,7 +165,8 @@ public class PlayerState : MonoBehaviour
 				totalPlatforms = 0,
 				monetizedState = MonetizedState.Free,
 				playerLevel = 1,
-				gameOverContinues = 0
+				gameOverContinues = 0,
+				viewedTutorialGeneral = false
 			};
 		}
 		else

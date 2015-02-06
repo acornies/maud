@@ -25,7 +25,7 @@ public class Drop : PlatformBehaviour
     {
         base.FixedUpdate();
 
-		if (shouldDestroy) return;
+		//if (shouldDestroy) return;
 
         if (child == null) return;
         _atOriginalPosition = child.position.y == _originalYPosition;

@@ -321,7 +321,7 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		Time.timeScale = (gameState == GameState.Paused && !_initiatingResume) ? 0 : 1;
+		//Time.timeScale = (gameState == GameState.Paused && !_initiatingResume) ? 0 : 1;
 
         if (gameState == GameState.Paused && _initiatingResume)
         {
@@ -466,6 +466,7 @@ public class GameController : MonoBehaviour
                 }
                 break;
             case GameState.Paused:
+				Time.timeScale = 1;
 				_initiatingResume = true;
 				Debug.Log ("Game resume through play button");
                 break;
@@ -548,6 +549,7 @@ public class GameController : MonoBehaviour
     {
         Restart();
 		_initiatingResume = true;
+		Time.timeScale = 1;
     }
 
 	public void ButtonAdContinue()
@@ -650,7 +652,8 @@ public class GameController : MonoBehaviour
 
     void HandleOnGamePause()
     {
-        gameState = GameState.Paused;
+		Time.timeScale = 0;
+		gameState = GameState.Paused;
         _player.GetComponent<PlayerMovement>().disabled = true;
         _telekinesisControl.SetActive(false);
         _restartButtonImage.enabled = true;
@@ -670,7 +673,7 @@ public class GameController : MonoBehaviour
 
     void HandleOnGameResume()
     {
-        gameState = GameState.Running;
+		gameState = GameState.Running;
         _player.GetComponent<PlayerMovement>().disabled = false;
         _telekinesisControl.SetActive(true);
         _restartButtonImage.enabled = false;
