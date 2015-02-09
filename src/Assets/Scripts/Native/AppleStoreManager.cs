@@ -56,6 +56,34 @@ namespace LegendPeak.Native
 			GameCenterManager.loadCurrentPlayerScore (leaderboardId);
 		}
 
+		public void screenCaptureAndShare()
+		{
+			IOSCamera.instance.OnImageSaved += OnImageSaved;
+			IOSCamera.instance.SaveScreenshotToCameraRoll();		
+		}
+
+		private void OnImageSaved (ISN_Result result) {
+			IOSCamera.instance.OnImageSaved -= OnImageSaved;
+			if(result.IsSucceeded) {
+				//IOSMessage.Create("Success", "Image successfully saved to Camera Roll");
+				IOSCamera.instance.OnImagePicked += OnImage;
+				IOSCamera.instance.GetImageFromAlbum();
+			} else {
+				IOSMessage.Create("Failed", "Image Save Failed");
+			}
+		}
+
+		private void OnImage (IOSImagePickResult result) {
+			if(result.IsSucceeded) 
+			{
+				//drawTexgture = result.image;
+				Debug.Log("Launch social share.");
+				IOSSocialManager.instance.ShareMedia(string.Format("I reached {0} platforms in MAUD! #maudgame maudgame.com", 
+				                                                   GameController.Instance.highestPoint), result.image);
+			}
+			IOSCamera.instance.OnImagePicked -= OnImage;
+		}
+
 		public event EventHandler OnTransactionComplete;
 		public event EventHandler OnAuthenticationFinished;
 

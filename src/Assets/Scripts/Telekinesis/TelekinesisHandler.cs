@@ -70,6 +70,7 @@ public class TelekinesisHandler : MonoBehaviour
 		shouldDestroy = true;
 		transform.tag = "Untagged";
 		_destroyTimer = destroyTime;
+		audio.Play ();
 	}
 
     void HandleOnRestorePlayerState ()

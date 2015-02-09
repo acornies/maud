@@ -238,7 +238,7 @@ public class GameController : MonoBehaviour
 		var shareButton = GameObject.Find ("ShareButton");
 		_shareButtonBehaviour = shareButton.GetComponent<Button> ();
 
-		_totalHeightText = GameObject.Find ("TotalText").GetComponent<Text>();
+		//_totalHeightText = GameObject.Find ("TotalText").GetComponent<Text>();
 		_highestPointText = GameObject.Find ("HighestText").GetComponent<Text>();
 
 		var leaderboard = GameObject.Find ("LeaderboardButton");
@@ -279,7 +279,7 @@ public class GameController : MonoBehaviour
         {
 			heightCounter.text = highestPoint.ToString();
 			_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
-			_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
+			//_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
         }
 
 		if (StoreController.Instance.Native.authenticated && !_leaderboardButton.interactable)
@@ -489,6 +489,11 @@ public class GameController : MonoBehaviour
 		_isSharingOpen = !_isSharingOpen;
 	}
 
+	public void ButtonPhoto()
+	{
+		StoreController.Instance.Native.screenCaptureAndShare ();
+	}
+
     public void ButtonMenu()
     {
 		if (!_isSettingsOpen)
@@ -611,7 +616,7 @@ public class GameController : MonoBehaviour
         _playButtonImage.enabled = true;
 		_playButtonBehaviour.enabled = true;
 		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
-		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
+		//_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
     }
 
 	private void CloseSettingsAndSharing()
@@ -667,7 +672,7 @@ public class GameController : MonoBehaviour
         //_cartButtonBehaviour.interactable = false; // TODO enable when ready
         //_isSettingsOpen = true;
 		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString ();
-		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
+		//_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
 		heightCounter.color = Color.white;
     }
 
@@ -700,7 +705,7 @@ public class GameController : MonoBehaviour
         _restartButtonImage.enabled = true;
         _restartButtonBehaviour.interactable = true;
 		_highestPointText.text = string.Format(PlayerState.Instance.Data.highestPlatform.ToString());
-		_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
+		//_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
 		heightCounter.color = Color.white;
 
 		if (StoreController.Instance.Native.authenticated)
@@ -762,7 +767,7 @@ public class GameController : MonoBehaviour
 		_restartButtonBehaviour.interactable = false;
 
 		_highestPointText.text = string.Empty;
-		_totalHeightText.text = string.Empty;
+		//_totalHeightText.text = string.Empty;
 
 		if (OnPlayerReward != null)
 		{

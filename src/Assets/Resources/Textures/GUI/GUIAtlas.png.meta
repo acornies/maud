@@ -17,7 +17,7 @@ TextureImporter:
     21300024: Share
     21300026: Caution
     21300028: Facebook
-    21300030: Twitter
+    21300030: Camera
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -209,13 +209,13 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: Twitter
+    - name: Camera
       rect:
         serializedVersion: 2
-        x: 1541
-        y: 27
-        width: 482
-        height: 399
+        x: 1531
+        y: 51
+        width: 517
+        height: 423
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

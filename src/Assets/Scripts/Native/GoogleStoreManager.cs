@@ -43,6 +43,11 @@ namespace LegendPeak.Native
 
 		}
 
+		public void screenCaptureAndShare()
+		{
+
+		}
+
 		public event EventHandler OnTransactionComplete;
 		public event EventHandler OnAuthenticationFinished;
 	}
