@@ -15,5 +15,7 @@ namespace LegendPeak.Player
 		public int playerLevel { get; set; }
 		public int gameOverContinues { get; set;}
 		public bool viewedTutorialGeneral {get; set;}
+		public bool purchasedAlternateMusic { get; set; }
+		public int soundTrackSelection { get; set; }
     }
 }

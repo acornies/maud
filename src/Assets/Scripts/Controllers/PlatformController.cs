@@ -178,13 +178,17 @@ public class PlatformController : MonoBehaviour
 	{
 		get {
 			// TODO: don't reference Music Controller here
-			if (_currentPlatform > MusicController.Instance.forestMusicSlowLimit 
+			/*if (_currentPlatform > MusicController.Instance.forestMusicSlowLimit 
 			    && _currentPlatform < MusicController.Instance.forestMusicFastLimit)
 			{
 				return true;
 			}
 			else if (_currentPlatform > MusicController.Instance.cloudMusicSlowLimit 
 			         && _currentPlatform < MusicController.Instance.cloudMusicFastLimit)
+			{
+				return true;
+			}*/
+			if (MusicController.Instance.currentClipInfo.destroySpeed != 0)
 			{
 				return true;
 			}
@@ -432,7 +436,7 @@ public class PlatformController : MonoBehaviour
 		if (InTimedDestroyZone && !useTimedDestroy)
 		{
 			useTimedDestroy = true;
-			timedDestroySpeed = MusicController.Instance.forestMusicFastDestroySpeed;// TODO clean this shit up
+			timedDestroySpeed = MusicController.Instance.currentClipInfo.destroySpeed;// TODO clean this shit up
 		}
 	}
 }
