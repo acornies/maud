@@ -151,6 +151,8 @@ public class MusicController : MonoBehaviour
 			}
 		}
 
+		if (currentClipInfo.transitionType == MusicTransitionType.None) return; // if we've reached the end, loop forever
+
 		var currentPlatform = PlatformController.Instance.GetCurrentPlatformNumber();
 
 		foreach (ClipInfo track in _currentTrackListing)
@@ -161,7 +163,7 @@ public class MusicController : MonoBehaviour
 				var nextClipInfo = _currentTrackListing.FirstOrDefault(x => x.order == track.order+1);
 				var currentBus = _soundBuses.FirstOrDefault(x => x.clip == currentClipInfo.clip);
 				var openBus = _soundBuses.FirstOrDefault(x => x.clip != currentClipInfo.clip);
-				Debug.Log ("start transition to: " + nextClipInfo.clip.name);
+				//Debug.Log ("start transition to: " + nextClipInfo.clip.name);
 				openBus.clip = nextClipInfo.clip;
 				currentBus.loop = false;
 				switch(track.transitionType)
@@ -176,24 +178,67 @@ public class MusicController : MonoBehaviour
 							currentClipInfo = GetClipInfoFromAudioSource (openBus);
 
 							// trigger timed destroy
-							if (nextClipInfo.destroySpeed > 0 && OnFastMusicStart != null)
-							{
-								OnFastMusicStart(nextClipInfo.destroySpeed);
-							}
+							StartOrStopTimedDestroy(nextClipInfo.destroySpeed);
 						}
 						break;
+
 					case MusicTransitionType.Fade:
+						
+						if (PlayerState.Instance.Data.playMusic)
+						{
+							
+							if (currentBus.isPlaying && !openBus.isPlaying)
+							{
+								openBus.Play();
+								openBus.loop = true;
+								openBus.volume = 0;
+								Debug.Log("Trigger Fade in: " + openBus.clip.name + " from: " + currentBus.clip.name);
+								// trigger timed destroy
+								StartOrStopTimedDestroy(nextClipInfo.destroySpeed);
+							}
+
+							if (openBus.isPlaying && openBus.volume < 0.5f && currentBus.isPlaying)
+							{
+								Debug.Log("Fading in: " + openBus.clip.name + " from: " + currentBus.clip.name);
+								openBus.volume = Mathf.Lerp(openBus.volume, maxMusicVolume, musicFadeSpeed * Time.deltaTime);
+								currentBus.volume = Mathf.Lerp(currentBus.volume, 0f, musicFadeSpeed * Time.deltaTime);
+								
+								if (currentBus.volume <= 0.01f)
+								{
+									currentBus.Stop();
+									currentClipInfo = GetClipInfoFromAudioSource(openBus);
+								}
+							}	
+						}
+						else
+						{
+							Debug.Log("Fade mute switch to " + nextClipInfo.clip.name);
+							openBus.loop = true;
+							openBus.volume = 0;
+							openBus.Play();
+							currentClipInfo = GetClipInfoFromAudioSource (openBus);
+							
+							// trigger timed destroy
+							StartOrStopTimedDestroy(nextClipInfo.destroySpeed);
+						}
 						break;
+
 				}
 			}
 		}
-
-        /*NextSong(currentPlatform, forestMusicSlowLimit, forestMusicSlow, forestMusicFast);
-        FadeTransition(currentPlatform, forestMusicFastLimit, forestMusicFast, cloudMusicSlow);
-        NextSong(currentPlatform, cloudMusicSlowLimit, cloudMusicSlow, cloudMusicFast);
-        FadeTransition(currentPlatform, cloudMusicFastLimit, cloudMusicFast, stratosphereMusic);
-        */
     }
+
+	private void StartOrStopTimedDestroy(float destroySpeed)
+	{
+		if (destroySpeed > 0 && OnFastMusicStart != null)
+		{
+			OnFastMusicStart(destroySpeed);
+		}
+		else if (destroySpeed == 0 && OnFastMusicStop != null)
+		{
+			OnFastMusicStop();
+		}
+	}
 
 	void FadeTransition(int currentPlatform, int limit, AudioSource current, AudioSource next)
 	{
@@ -262,26 +307,5 @@ public class MusicController : MonoBehaviour
     }
 }
 
-[Serializable]
-public class SoundPackInfo
-{
-	public ClipInfo[] clips;
-	public string identifier;
-}
 
-[Serializable]
-public class ClipInfo
-{
-	public AudioClip clip;
-	public float destroySpeed;
-	public int transitionPlatform;
-	public MusicTransitionType transitionType;
-	public int order;
-}
 
-[Serializable]
-public enum MusicTransitionType
-{
-	TrackEnd = 0,
-	Fade = 1
-}

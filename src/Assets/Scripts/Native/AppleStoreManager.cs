@@ -146,7 +146,8 @@ namespace LegendPeak.Native
 					//transaction times out. Avoid blocking your UI 
 					//or gameplay while waiting for the transaction to be updated.
 					storeResponse.status = StoreResponseStatus.Deferred;
-					storeResponse.message = "Waiting approval from parent or guardian.";
+					storeResponse.message = "Your purchase is waiting for approval from a parent or guardian.";
+					IOSNativePopUpManager.showMessage("Purchase Requested", storeResponse.message);
 					break;
 				case InAppPurchaseState.Failed:
 					//Our purchase flow is failed.
@@ -155,10 +156,10 @@ namespace LegendPeak.Native
 					Debug.Log("Transaction failed with error, description: " + response.error.description);
 					storeResponse.status = StoreResponseStatus.Failed;
 					storeResponse.message = response.error.description;
+					IOSNativePopUpManager.showMessage("Purchase Failed", storeResponse.message);
 					break;
 			}
-			
-			IOSNativePopUpManager.showMessage("Store Kit Response", "product " + response.productIdentifier + " state: " + response.state.ToString());
+
 			if (OnTransactionComplete != null)
 			{
 				OnTransactionComplete (this, storeResponse);
