@@ -97,7 +97,8 @@ namespace LegendPeak.Native
 			} 
 			else 
 			{
-				IOSNativePopUpManager.showMessage("Game Center", "Not logged in.");
+				//IOSNativePopUpManager.showMessage("Game Center", "Not logged in.");
+				authenticated = false;
 			}
 		}
 
@@ -156,7 +157,7 @@ namespace LegendPeak.Native
 					Debug.Log("Transaction failed with error, description: " + response.error.description);
 					storeResponse.status = StoreResponseStatus.Failed;
 					storeResponse.message = response.error.description;
-					IOSNativePopUpManager.showMessage("Purchase Failed", storeResponse.message);
+					//IOSNativePopUpManager.showMessage("Purchase Failed", storeResponse.message);
 					break;
 			}
 

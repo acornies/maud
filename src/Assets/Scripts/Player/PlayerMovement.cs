@@ -652,8 +652,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleAnimations()
     {
-        // don't play animations underneith the moveThreshold
-        if (_moveDirection < -moveThreshold || _moveDirection > moveThreshold)
+		// don't play animations underneith the moveThreshold
+        
+		if (!disabled && (_moveDirection < -moveThreshold || _moveDirection > moveThreshold))
         {
             _animator.SetFloat("speed", Mathf.Abs(_moveDirection));
         }

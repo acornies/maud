@@ -634,7 +634,7 @@ public class GameController : MonoBehaviour
 		
 		if (_isSharingOpen) 
 		{
-			_recordButtonImage.enabled = false;
+			_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
 			_recordButtonBehaviour.interactable = false;
 			_isSharingOpen = false;
 		}
