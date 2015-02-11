@@ -6,6 +6,8 @@ public class SkyboxCameraMovement : MonoBehaviour
 {
     private Light _sunlightComponent;
     private bool _changeToStartColor;
+	private Camera _cameraComponent;
+	private float _fieldOfView = 80f;
 
     public Transform sunlightDirectionalLight;
     public static float speedMultiplier = 0.1f;
@@ -15,6 +17,8 @@ public class SkyboxCameraMovement : MonoBehaviour
 
     public int dawnSkyboxTransitionPlatform = 61;
     public int cloudSkyboxTransitionPlatform = 150;
+	public int warpEffectStartPlatform = 230;
+	public float warpEffectSpeed = 1f;
     public float transitionSpeed = 3f;
 	
     public Color sunlightColorDawn;
@@ -65,6 +69,9 @@ public class SkyboxCameraMovement : MonoBehaviour
         {
             _sunlightComponent = sunlightDirectionalLight.GetComponent<Light>();
         }
+
+		_cameraComponent = GetComponent<Camera> ();
+		_fieldOfView = _cameraComponent.fieldOfView;
     }
 
     // Update is called once per frame
@@ -84,6 +91,11 @@ public class SkyboxCameraMovement : MonoBehaviour
             _sunlightComponent.color = Color.Lerp(_sunlightComponent.color, sunlightColorDawn, transitionSpeed * Time.deltaTime);
             //Debug.Log("Changing to dawn color...");
         }
+
+		if (_cameraComponent.fieldOfView != _fieldOfView)
+		{
+			_cameraComponent.fieldOfView = Mathf.Lerp(_cameraComponent.fieldOfView, _fieldOfView, warpEffectSpeed * Time.deltaTime);
+		}
 
     }
 
@@ -131,6 +143,13 @@ public class SkyboxCameraMovement : MonoBehaviour
     private void HandleOnMaxHeightIncrease(int delta, float amount)
     {
         rotationSpeed = Mathf.Clamp(amount, 1f, maxRotationSpeed);
+
+		if (PlatformController.Instance.GetCurrentPlatformNumber() > warpEffectStartPlatform)
+		{
+			_fieldOfView += delta;
+			Mathf.Clamp(_fieldOfView, 0, 180f);
+			Debug.Log("Increase skybox camera FOV to " + _fieldOfView);
+		}
         //Debug.Log("Increased skybox rotation to: " + amount);
     }
 }

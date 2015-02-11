@@ -73,11 +73,13 @@ public class GameOverUI : MonoBehaviour
 		{
 			_purchaseContinueText.text = string.Format ("Go ({0} left)", PlayerState.Instance.Data.gameOverContinues);
 			_purchaseContinueCartImage.sprite = purchasedContinueIcon;
+			_purchaseContinueCartImage.rectTransform.anchoredPosition = new Vector2(4f, 0);
 		}
 		else
 		{
-			_purchaseContinueText.text = string.Format ("Purchase x10");
+			_purchaseContinueText.text = string.Format ("Buy x10");
 			_purchaseContinueCartImage.sprite = purchasedCartIcon;
+			_purchaseContinueCartImage.rectTransform.anchoredPosition = new Vector2(0, 0);
 		}
 	}
 
@@ -87,20 +89,20 @@ public class GameOverUI : MonoBehaviour
 		_continueText.rectTransform.anchoredPosition = new Vector2 (0, 0);
 
 		//_adContinueButtonImage.enabled = true;
-		_adContinueButtonImage.rectTransform.anchoredPosition = new Vector2 (-120f, -150f);
+		_adContinueButtonImage.rectTransform.anchoredPosition = new Vector2 (-100f, -150f);
 		//_adContinueVideoImage.enabled = true;
 		_adContinueVideoImage.color = new Color (_adContinueText.color.r, _adContinueText.color.g, _adContinueText.color.b, 
 		                                        (GameController.Instance.promptAdContinue) ? 1f : .4f);
-		_adContinueText.rectTransform.anchoredPosition = new Vector2 (-120f, -227.5f);
+		_adContinueText.rectTransform.anchoredPosition = new Vector2 (-100f, -227.5f);
 		_adContinueText.text = string.Format ("Earn ({0} left)", GameController.Instance.advertisingContinues);
 		//_adContinueButtonBehaviour.enabled = true;
 		_adContinueButtonBehaviour.interactable = GameController.Instance.promptAdContinue;
 
 		//_purchaseContinueButtonImage.enabled = true;
-		_purchaseContinueButtonImage.rectTransform.anchoredPosition = new Vector2 (120f, -150f);
+		_purchaseContinueButtonImage.rectTransform.anchoredPosition = new Vector2 (100f, -150f);
 		//_purchaseContinueCartImage.enabled = true;
 		//_purchaseContinueText.enabled = true;
-		_purchaseContinueText.rectTransform.anchoredPosition = new Vector2 (120f, -227.5f);
+		_purchaseContinueText.rectTransform.anchoredPosition = new Vector2 (100f, -227.5f);
 		ShowBuyOrContinue ();
 		//_purchaseContinueButtonBehaviour.enabled = true;
 	}

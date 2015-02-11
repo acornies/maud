@@ -129,8 +129,14 @@ public class GameController : MonoBehaviour
 		PlatformController.OnTimedDestroyGameOver += HandleOnTimedDestroyGameOver;
 		PlatformController.On_ReachedCheckpoint += HandleOnReachedCheckpoint;
 		MusicController.OnFastMusicStop += HandleOnFastMusicStop;
+		CameraMovement.OnMovePlayerToGamePosition += HandleOnMovePlayerToGamePosition;
 		//UnityAds.OnVideoCompleted += HandleOnVideoCompleted;
 		//OnPlayerReward += HandleOnPlayerResurrectionOnGameOver;
+    }
+
+    void HandleOnMovePlayerToGamePosition (Vector3 playerPosition)
+    {
+		heightCounter.enabled = true;
     }
 
     void HandleOnReachedCheckpoint (int platform)
@@ -179,6 +185,7 @@ public class GameController : MonoBehaviour
 		PlatformController.OnTimedDestroyGameOver -= HandleOnTimedDestroyGameOver;
 		PlatformController.On_ReachedCheckpoint += HandleOnReachedCheckpoint;
 		MusicController.OnFastMusicStop -= HandleOnFastMusicStop;
+		CameraMovement.OnMovePlayerToGamePosition -= HandleOnMovePlayerToGamePosition;
 		//UnityAds.OnVideoCompleted -= HandleOnVideoCompleted;
 		//OnPlayerReward -= HandleOnPlayerResurrectionOnGameOver;
     }
@@ -275,10 +282,10 @@ public class GameController : MonoBehaviour
     {
         //ToggleControlModeGUI();
         
-        if (heightCounter.enabled)
+		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
+		if (heightCounter.enabled)
         {
 			heightCounter.text = highestPoint.ToString();
-			_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
 			//_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
         }
 
@@ -615,7 +622,7 @@ public class GameController : MonoBehaviour
     {
         _playButtonImage.enabled = true;
 		_playButtonBehaviour.enabled = true;
-		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
+		//_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
 		//_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
     }
 
