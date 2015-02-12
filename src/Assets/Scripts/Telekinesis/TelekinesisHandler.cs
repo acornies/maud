@@ -17,6 +17,7 @@ public class TelekinesisHandler : MonoBehaviour
     private ParticleSystem _stabilizeEffect;
 	private GameObject _flash;
 	private Color _towerColor;
+	private bool isOnPlatform;
 	
 	private GameObject _objectToDestroy;
 	private float _destroyTimer;
@@ -53,6 +54,20 @@ public class TelekinesisHandler : MonoBehaviour
 		CameraMovement.OnRestorePlayerState += HandleOnRestorePlayerState;
         //Disappear.OnPlatformReappear += HandlePlatformReappear;
 		PlatformController.OnTimedDestroy += HandleOnTimedDestroy;
+		PlayerMovement.On_PlatformReached += HandleOnPlatformReached;
+		PlayerMovement.On_PlayerAirborne += HandleOnPlayerAirborne;
+    }
+
+    void HandleOnPlayerAirborne (Transform player)
+    {
+		isOnPlatform = false;
+    }
+
+    void HandleOnPlatformReached (Transform platform, Transform player)
+    {
+		if (platform.GetInstanceID() != child.GetInstanceID()) return;
+
+		isOnPlatform = true;
     }
 
 	void HandleOnTimedDestroy(GameObject objectToDestroy)
@@ -67,6 +82,7 @@ public class TelekinesisHandler : MonoBehaviour
         Destroy(powerEffect.gameObject);
         Destroy(stabilizeEffect.gameObject);
         */
+
 		shouldDestroy = true;
 		transform.tag = "Untagged";
 		_destroyTimer = destroyTime;
@@ -119,6 +135,8 @@ public class TelekinesisHandler : MonoBehaviour
 		CameraMovement.OnRestorePlayerState -= HandleOnRestorePlayerState;
         //Disappear.OnPlatformReappear -= HandlePlatformReappear;
 		PlatformController.OnTimedDestroy -= HandleOnTimedDestroy;
+		PlayerMovement.On_PlatformReached -= HandleOnPlatformReached;
+		PlayerMovement.On_PlayerAirborne -= HandleOnPlayerAirborne;
     }
 
     // Use this for initialization
@@ -164,7 +182,7 @@ public class TelekinesisHandler : MonoBehaviour
 			renderer.material.color = Color.Lerp(renderer.material.color, _towerColor, colorChangeSpeed * Time.deltaTime);
 		}
 
-		if (shouldDestroy && _objectToDestroy.GetInstanceID() == gameObject.GetInstanceID())
+		if (shouldDestroy)
 		{
 			renderer.material.color = Color.Lerp(renderer.material.color, Color.white, destroyTransitionSpeed * Time.deltaTime);
 			//if (renderer.material.color != Color.white) return;
@@ -259,7 +277,7 @@ public class TelekinesisHandler : MonoBehaviour
         {
             transform.root.rotation = Quaternion.Lerp(transform.root.rotation, rotationTarget.Value, rotationSpeed * Time.deltaTime);
         }
-        if (transform.root.rotation == rotationTarget)
+		if (isOnPlatform || transform.root.rotation == rotationTarget)
         {
             rotationTarget = null;
             if (OnAffectEnd != null)
