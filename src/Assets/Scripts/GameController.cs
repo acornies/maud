@@ -776,6 +776,8 @@ public class GameController : MonoBehaviour
 		_highestPointText.text = string.Empty;
 		//_totalHeightText.text = string.Empty;
 
+		CloseSettingsAndSharing ();
+
 		if (OnPlayerReward != null)
 		{
 			OnPlayerReward();

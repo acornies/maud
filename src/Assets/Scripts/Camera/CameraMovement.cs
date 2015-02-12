@@ -74,6 +74,7 @@ public class CameraMovement : MonoBehaviour
     void HandleOnPlayerReward ()
     {
 		isTracking = true;
+		YSmooth = YSmooth / 2f;
     }
 
     void HandleOnPlayerBecameVisible (Transform player)
@@ -88,6 +89,8 @@ public class CameraMovement : MonoBehaviour
 
     void HandleOnFastMusicStart (float timedSpeed)
     {
+		if (GameController.Instance.gameState == LegendPeak.GameState.Over) return;
+
 		isTracking = true;
 		isTimedDestroyCutscene = true;
 		_shouldZoomOut = true;
@@ -323,6 +326,10 @@ public class CameraMovement : MonoBehaviour
     {
         isTracking = true;
 		_shouldZoomOut = false;
+		if (YSmooth != defaultCameraSpeed)
+		{
+			HandleReturnCameraSpeed();
+		}
         //Debug.Log("Turn on tracking");
     }
 }
