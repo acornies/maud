@@ -306,11 +306,11 @@ public class GameController : MonoBehaviour
 
 		if (powerMeter < PlayerState.Instance.playerLevel.lifeCost)
         {
-            //powerBarRenderer.texturesForeground[0].color.a = 1f;
+            powerBarRenderer.texturesForeground[0].color.a = 1f;
         }
 		else //if (powerMeter >= PlayerState.Instance.playerLevel.lifeCost)
         {
-            //powerBarRenderer.texturesForeground[0].color.a = 0f;
+            powerBarRenderer.texturesForeground[0].color.a = 0f;
         }
     }
 
