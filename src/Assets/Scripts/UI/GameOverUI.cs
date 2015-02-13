@@ -33,7 +33,6 @@ public class GameOverUI : MonoBehaviour
 	void HandleOnSuccessfullContinuationPurchase ()
 	{
 		_purchaseContinueAnimator.enabled = true;
-		ShowBuyOrContinue ();
 	}
 
 	void HandleOnPlayerReward ()
@@ -156,6 +155,7 @@ public class GameOverUI : MonoBehaviour
 	}
 	void OnGUI()
 	{
-
+		if (GameController.Instance.gameState != LegendPeak.GameState.Over) return;
+		ShowBuyOrContinue ();
 	}
 }

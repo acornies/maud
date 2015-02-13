@@ -63,7 +63,7 @@ public class GameController : MonoBehaviour
     public float resurrectionSpeed = 15f;
     public float deathIconWidth = 20f;
     public float deathIconOffset = 10f;
-    public EnergyBarRenderer powerBarRenderer;
+    public FilledRenderer3D powerBarRenderer;
     public Sprite soundOnImage;
     public Sprite soundOffImage;
     public Sprite controlAccelerometerImage;
@@ -217,8 +217,9 @@ public class GameController : MonoBehaviour
 
         _player = GameObject.Find("Player").transform;
         _telekinesisControl = GameObject.Find("TelekinesisControl");
-        _powerBar = GetComponentInChildren<EnergyBar>();
-        powerBarRenderer = GetComponentInChildren<EnergyBarRenderer>();
+		var powerBar = GameObject.Find ("PowerBar");
+		_powerBar = powerBar.GetComponent<EnergyBar>();
+		powerBarRenderer = powerBar.GetComponent<FilledRenderer3D>();
 		heightCounter = GameObject.Find("HeightCounter").GetComponent<Text>();
 		_cameraMovement = GameObject.Find ("Main Camera").GetComponent<CameraMovement>();
 
@@ -270,7 +271,7 @@ public class GameController : MonoBehaviour
             default:
                 break;
         }*/
-		powerBarRenderer.texturesBackground[0].color.a = 0f;
+		//powerBarRenderer.texturesBackground[0].color.a = 0f;
     }
 
     void Start()
@@ -294,22 +295,22 @@ public class GameController : MonoBehaviour
 			_leaderboardButton.interactable = true;
 		}
 
-        if (!inSafeZone && powerBarRenderer.texturesBackground[0].color.a == 0f)
+        if (!inSafeZone && !powerBarRenderer.enabled)
         {
-            powerBarRenderer.texturesBackground[0].color.a = 1f;
-            //powerBarRenderer.textureBarColor.a = 0f;
-            powerBarRenderer.screenPosition = new Vector2(30f, 30f);
+            //powerBarRenderer.texturesBackground[0].color.a = 1f;
+			powerBarRenderer.enabled = true;
+            //powerBarRenderer.screenPosition = new Vector2(30f, 30f);
         }
 
         //if (!powerBarRenderer.enabled) return;
 
 		if (powerMeter < PlayerState.Instance.playerLevel.lifeCost)
         {
-            powerBarRenderer.texturesForeground[0].color.a = 1f;
+            //powerBarRenderer.texturesForeground[0].color.a = 1f;
         }
 		else //if (powerMeter >= PlayerState.Instance.playerLevel.lifeCost)
         {
-            powerBarRenderer.texturesForeground[0].color.a = 0f;
+            //powerBarRenderer.texturesForeground[0].color.a = 0f;
         }
     }
 

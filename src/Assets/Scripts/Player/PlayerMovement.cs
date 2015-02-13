@@ -146,6 +146,7 @@ public class PlayerMovement : MonoBehaviour
 		if (!GameController.Instance.playerIsDead)
 		{
 			rigidbody.isKinematic = false;
+			rigidbody.WakeUp();
 			//rigidbody.velocity = _savedVelocity;
 			//rigidbody.angularVelocity = _savedAngularVelocity;
 		}
@@ -370,10 +371,11 @@ public class PlayerMovement : MonoBehaviour
     {
         transform.position = playerPosition;
         //disabled = false;
-        transform.rotation = new Quaternion(0, 0, 0, transform.rotation.w);
+		_playerModel.transform.localRotation = new Quaternion(0, 180f, 0, transform.rotation.w);
         _isFacingCamera = false;
         //disabled = false;
-    }
+	}
+    
 
     void HandleOnShowMenuButtons()
     {
@@ -429,12 +431,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleOnPlayerResurrection()
     {
-        if (disabled)
-		{
-			disabled = false;
-		}
+		disabled = false;
 		//Debug.Log("Resurrection event handler!");
 		rigidbody.isKinematic = false;
+		rigidbody.WakeUp();
 		//rigidbody.useGravity = true;
 		//_sparkElectricity.loop = false;
 		//_sparkElectricityBubble.loop = false;
@@ -448,12 +448,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!_isFacingCamera)
         {
-            transform.Rotate(Vector3.up, degrees, Space.World);
+			_playerModel.transform.Rotate(Vector3.up, degrees, Space.World);
             _isFacingCamera = true;
         }
         else if (_isFacingCamera)
         {
-            transform.Rotate(Vector3.up, degrees, Space.World);
+			_playerModel.transform.Rotate(Vector3.up, degrees, Space.World);
             _isFacingCamera = false;
         }
     }
@@ -708,8 +708,16 @@ public class PlayerMovement : MonoBehaviour
 
     void Flip()
     {
-        this._facingRight = !_facingRight;
-        transform.Rotate(Vector3.up, 180.0f, Space.World);
+        if (!_facingRight)
+		{
+			_playerModel.transform.localRotation = new Quaternion(0, 180f, 0, transform.localRotation.w);
+			_facingRight = true;
+		}
+		else
+		{
+			_playerModel.transform.localRotation = new Quaternion(0, 0, 0, transform.localRotation.w);
+			_facingRight = false;
+		}
     }
 
     public void Jump(Gesture gesture, float extraForce = 0)

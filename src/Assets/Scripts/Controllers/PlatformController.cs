@@ -176,20 +176,12 @@ public class PlatformController : MonoBehaviour
 
 	public bool InTimedDestroyZone
 	{
-		get {
-			// TODO: don't reference Music Controller here
-			/*if (_currentPlatform > MusicController.Instance.forestMusicSlowLimit 
-			    && _currentPlatform < MusicController.Instance.forestMusicFastLimit)
+		get 
+		{
+			if (MusicController.Instance.currentClipInfo.destroySpeed > 0)
 			{
-				return true;
-			}
-			else if (_currentPlatform > MusicController.Instance.cloudMusicSlowLimit 
-			         && _currentPlatform < MusicController.Instance.cloudMusicFastLimit)
-			{
-				return true;
-			}*/
-			if (MusicController.Instance.currentClipInfo.destroySpeed != 0)
-			{
+				Debug.Log("restart timed destroy after game over, clip info: " 
+				          + MusicController.Instance.currentClipInfo.transitionPlatform + " destroySpeed " + MusicController.Instance.currentClipInfo.destroySpeed);
 				return true;
 			}
 			else
@@ -436,7 +428,7 @@ public class PlatformController : MonoBehaviour
 		if (InTimedDestroyZone && !useTimedDestroy)
 		{
 			useTimedDestroy = true;
-			timedDestroySpeed = MusicController.Instance.currentClipInfo.destroySpeed;// TODO clean this shit up
+			timedDestroySpeed = MusicController.Instance.currentClipInfo.destroySpeed;
 		}
 	}
 }

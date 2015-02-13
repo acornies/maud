@@ -19,6 +19,8 @@ public class MusicController : MonoBehaviour
 	*/
 
 	private AudioSource[] _soundBuses;
+	private AudioSource _openBus;
+	private AudioSource _currentBus;
 	private ClipInfo[] _currentTrackListing;
 	public ClipInfo currentClipInfo;
 	private bool _inTransition;
@@ -205,8 +207,9 @@ public class MusicController : MonoBehaviour
 								
 								if (currentBus.volume <= 0.01f)
 								{
+									currentClipInfo = GetClipInfoFromAudioSource(openBus);	
 									currentBus.Stop();
-									currentClipInfo = GetClipInfoFromAudioSource(openBus);
+									
 								}
 							}	
 						}
