@@ -413,7 +413,6 @@ public class GameController : MonoBehaviour
 
 	void TriggerGameOver()
 	{
-		initiatingRestart = true;
 		//_menuButtonBehaviour.interactable = false;
 		_restartButtonBehaviour.interactable = true;
 		if (OnGameOver != null && gameState != GameState.Over)
@@ -561,7 +560,7 @@ public class GameController : MonoBehaviour
     public void ButtonRestart()
     {
         Restart();
-		_initiatingResume = true;
+		initiatingRestart = true;
 		Time.timeScale = 1;
     }
 
