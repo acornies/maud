@@ -244,7 +244,7 @@ public class GameController : MonoBehaviour
 		_recordButtonBehaviour = recordButton.GetComponent<Button>();
 
 		var shareButton = GameObject.Find ("ShareButton");
-		_shareButtonBehaviour = shareButton.GetComponent<Button> ();
+		//_shareButtonBehaviour = shareButton.GetComponent<Button> ();
 
 		//_totalHeightText = GameObject.Find ("TotalText").GetComponent<Text>();
 		_highestPointText = GameObject.Find ("HighestText").GetComponent<Text>();
@@ -498,7 +498,7 @@ public class GameController : MonoBehaviour
 
 	public void ButtonPhoto()
 	{
-		StoreController.Instance.Native.screenCaptureAndShare ();
+		StoreController.Instance.Native.screenCapture ();
 	}
 
     public void ButtonMenu()
@@ -641,8 +641,8 @@ public class GameController : MonoBehaviour
 		
 		if (_isSharingOpen) 
 		{
-			_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
-			_recordButtonBehaviour.interactable = false;
+			//_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
+			//_recordButtonBehaviour.interactable = false;
 			_isSharingOpen = false;
 		}
 	}
@@ -743,7 +743,7 @@ public class GameController : MonoBehaviour
         _playButtonImage.enabled = false;
         _playButtonBehaviour.interactable = false;
         _musicButtonImage.enabled = false;
-		_shareButtonBehaviour.interactable = false;
+		//_shareButtonBehaviour.interactable = false;
 
         //_cartButtonImage.enabled = false;
         _menuButtonImage.GetComponent<Animator>().enabled = false;

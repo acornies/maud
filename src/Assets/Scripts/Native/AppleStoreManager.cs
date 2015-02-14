@@ -56,18 +56,24 @@ namespace LegendPeak.Native
 			GameCenterManager.loadCurrentPlayerScore (leaderboardId);
 		}
 
-		public void screenCaptureAndShare()
+		public void screenCapture()
 		{
 			IOSCamera.instance.OnImageSaved += OnImageSaved;
 			IOSCamera.instance.SaveScreenshotToCameraRoll();		
+		}
+
+		public void socialShare()
+		{
+			
 		}
 
 		private void OnImageSaved (ISN_Result result) {
 			IOSCamera.instance.OnImageSaved -= OnImageSaved;
 			if(result.IsSucceeded) {
 				//IOSMessage.Create("Success", "Image successfully saved to Camera Roll");
-				IOSCamera.instance.OnImagePicked += OnImage;
-				IOSCamera.instance.GetImageFromAlbum();
+				//IOSCamera.instance.OnImagePicked += OnImage;
+				//IOSCamera.instance.GetImageFromAlbum();
+				//TODO: throw agnostic event, trigger some UI
 			} else {
 				IOSMessage.Create("Failed", "Image Save Failed");
 			}

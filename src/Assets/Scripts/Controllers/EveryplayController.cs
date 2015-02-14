@@ -13,6 +13,7 @@ public class EveryplayController : MonoBehaviour
     
 	public Sprite recordStop;
 	public Sprite recordCapture;
+	public Sprite cameraImage;
     public bool isReady 
 	{
 		get
@@ -59,6 +60,12 @@ public class EveryplayController : MonoBehaviour
         // Register for the Everyplay ReadyForRecording event
 		//IntroLedge.OnShowMenuButtons += ToggleRec
 		Everyplay.ReadyForRecording += HandleOnReadyForRecording;
+		GameController.OnGameRestart += HandleOnGameRestart;
+    }
+
+    void HandleOnGameRestart (int sceneIndex)
+    {
+		_recordButtonBehaviour.interactable = false;
     }
 
     void OnDisable()
@@ -74,13 +81,15 @@ public class EveryplayController : MonoBehaviour
     void UnsubscribeEvent()
     {
         Everyplay.ReadyForRecording -= HandleOnReadyForRecording;
+		GameController.OnGameRestart -= HandleOnGameRestart;
     }
     
     // Use this for initialization
     void Start()
     {
         //_isSupported = Everyplay.IsRecordingSupported();
-		_recordButtonBehaviour.interactable = isReady;
+		//_recordButtonBehaviour.interactable = isReady;
+		VideoOrStillCapture ();
     }
 
     // Update is called once per frame
@@ -105,6 +114,24 @@ public class EveryplayController : MonoBehaviour
 		_recordButtonBehaviour.interactable = serviceReady && Everyplay.IsRecordingSupported();
     }
 
+	private void VideoOrStillCapture()
+	{
+		switch (Application.platform)
+		{
+		
+			case RuntimePlatform.IPhonePlayer:
+				_recordButtonBehaviour.interactable = isReady;
+				_recordButtonBehaviour.onClick.AddListener(ButtonRecord);
+				break;
+			case RuntimePlatform.OSXEditor:
+			case RuntimePlatform.Android:
+				_recordButtonImage.sprite = cameraImage;
+				_recordButtonBehaviour.interactable = true;
+				_recordButtonBehaviour.onClick.AddListener(ButtonScreenshot);
+				break;
+		}
+	}
+
 	public void ButtonRecord()
 	{
 		if (isRecording) 
@@ -122,6 +149,11 @@ public class EveryplayController : MonoBehaviour
 		}
 
 		//GameObject.Find ("EveryplayDebug").GetComponent<Text> ().text = isRecording.ToString ();
+	}
+
+	public void ButtonScreenshot()
+	{
+		StoreController.Instance.Native.screenCapture ();
 	}
 
 	public void StopRecording()

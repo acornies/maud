@@ -10,14 +10,6 @@ public class MusicController : MonoBehaviour
 
     //private IDictionary<string, AudioSource> _allSongs;
 	private bool fadeIntroMusic;
-
-	/*private AudioSource forestMusicSlow;
-	private AudioSource forestMusicFast;
-	private AudioSource cloudMusicSlow;
-	private AudioSource cloudMusicFast;
-	private AudioSource stratosphereMusic;
-	*/
-
 	private AudioSource[] _audioSources;
 	private AudioSource _openBus;
 	private AudioSource _currentBus;
@@ -33,16 +25,6 @@ public class MusicController : MonoBehaviour
     public float maxMusicVolume = 0.5f;
     
 	public float musicFadeSpeed = 0.1f;
-    /*public int forestMusicSlowLimit = 50;
-    public int forestMusicFastLimit = 100;
-    public int cloudMusicSlowLimit = 200;
-    public int cloudMusicFastLimit = 300;
-    public int stratosphereLimit = 500;
-
-	public float forestMusicFastDestroySpeed = 1f;
-	public float cloudMusicFastDestroySpeed = 1f;
-	public float stratosphereMusicFastDestroySpeed = 1f;
-	*/
 
 	public delegate void FastMusicStart(float timedSpeed);
 	public static event FastMusicStart OnFastMusicStart;
@@ -105,19 +87,6 @@ public class MusicController : MonoBehaviour
 		{
 			Destroy(gameObject);
 		}
-
-		/*_allSongs = GetComponents<AudioSource>().ToDictionary(s => s.clip.name);
-        foreach (AudioSource source in _allSongs.Values)
-        {
-            source.playOnAwake = false;
-        }
-
-		forestMusicSlow = _allSongs["Jumpergame90bpm_280714"];
-		forestMusicFast = _allSongs["Jumpergame_280714"];
-        cloudMusicSlow = _allSongs["Cloudlevel121Bpm_280814"];
-        cloudMusicFast = _allSongs["Cloudlevel141Bpm_280814"];
-        stratosphereMusic = _allSongs["Stratosphere_w-tail_70bpm_281114"];
-        */
     }
 
     // Use this for initialization
@@ -140,9 +109,6 @@ public class MusicController : MonoBehaviour
 		_audioSources = GetComponents<AudioSource> ();
 		var lastIndex = _currentTrackListing.Length - 1;
 
-		//forestMusicFast = transform.FindChild("ForestFast").audio;
-        //forestMusicSlow.Play();
-       	//stratosphereMusic.Play();
 		_audioSources [lastIndex].Play ();
 		currentClipInfo = GetClipInfoFromAudioSource (_audioSources [lastIndex]);
         this.ToggleMusic(PlayerState.Instance.Data.playMusic);
@@ -156,7 +122,7 @@ public class MusicController : MonoBehaviour
 			var lastIndex = _currentTrackListing.Length - 1;
 			_audioSources [lastIndex].volume = Mathf.Lerp(_audioSources [lastIndex].volume, 0, musicFadeSpeed * Time.deltaTime);
 			if (_audioSources [lastIndex].volume <= 0.01f){
-				//stratosphereMusic.volume = 0;
+
 				_audioSources [lastIndex].Stop();
 				fadeIntroMusic = false;
 			}
@@ -175,8 +141,7 @@ public class MusicController : MonoBehaviour
 				var nextClipInfo = _currentTrackListing[track.order];
 				var currentBus = _audioSources[track.order - 1];
 				var nextBus = _audioSources[track.order];
-				//Debug.Log ("start transition to: " + nextClipInfo.clip.name);
-				//openBus.clip = nextClipInfo.clip;
+
 				currentBus.loop = false;
 				switch(track.transitionType)
 				{

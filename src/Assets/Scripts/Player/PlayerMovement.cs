@@ -33,8 +33,6 @@ public class PlayerMovement : MonoBehaviour
     private Transform _leftEye;
     private Transform _rightEye;
 	private int _currentMaterialIndex;
-	private Vector3 _savedVelocity;
-	private Vector3 _savedAngularVelocity;
 	private bool _rewardResurrection;
 	private float _rewardResurrectionTimer;
 	public float rewardResurrectionTime = .5f;
@@ -167,10 +165,6 @@ public class PlayerMovement : MonoBehaviour
     {
 		disabled = true;
 		rigidbody.isKinematic = true;
-
-		// save velocity
-		_savedVelocity = rigidbody.velocity;
-		_savedAngularVelocity = rigidbody.angularVelocity;
     }
 
     void HandleOnPlayerMaterialUpdate (int materialIndex)
