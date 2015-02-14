@@ -295,10 +295,10 @@ public class GameController : MonoBehaviour
 			_leaderboardButton.interactable = true;
 		}
 
-        if (!inSafeZone && !powerBarRenderer.enabled)
+        if (!inSafeZone && powerBarRenderer.textureBarColorType == EnergyBarBase.ColorType.Solid)
         {
-            //powerBarRenderer.texturesBackground[0].color.a = 1f;
-			powerBarRenderer.enabled = true;
+            powerBarRenderer.textureBarColor.a = 1f;
+			powerBarRenderer.textureBarColorType = EnergyBarBase.ColorType.Gradient;
             //powerBarRenderer.screenPosition = new Vector2(30f, 30f);
         }
 

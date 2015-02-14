@@ -34,6 +34,7 @@ public class Drop : PlatformBehaviour
         {
             child.rigidbody.isKinematic = false;
             child.rigidbody.useGravity = true;
+			child.rigidbody.WakeUp();
         }
         else
         {

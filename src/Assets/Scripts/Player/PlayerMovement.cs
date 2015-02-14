@@ -83,6 +83,8 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip highJumpSound;
     public AudioClip midAirJumpSound;
 
+	public float[] jumpPitchVariants;
+
     public delegate void ReachedPlatformAction(Transform platform, Transform player);
     public static event ReachedPlatformAction On_PlatformReached;
 
@@ -760,6 +762,9 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogWarning("Please assign a high jump sound to this script.");
         }
+
+		var randomPitch = Random.Range (0, 3);
+		audio.pitch =  jumpPitchVariants[randomPitch];
 
         if (jumpSound != null && jumpSound.isReadyToPlay && force <= jumpForce)
         {

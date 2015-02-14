@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(AudioSource))]
+//[RequireComponent(typeof(AudioSource))]
 public class MusicController : MonoBehaviour
 {
 
@@ -18,7 +18,7 @@ public class MusicController : MonoBehaviour
 	private AudioSource stratosphereMusic;
 	*/
 
-	private AudioSource[] _soundBuses;
+	private AudioSource[] _audioSources;
 	private AudioSource _openBus;
 	private AudioSource _currentBus;
 	private ClipInfo[] _currentTrackListing;
@@ -62,14 +62,14 @@ public class MusicController : MonoBehaviour
 
 	private ClipInfo GetClipInfoFromAudioSource(AudioSource source)
 	{
-		return _currentTrackListing.FirstOrDefault (x => source.clip == x.clip);
+		return _currentTrackListing.FirstOrDefault (x => source.clip.name == x.clip.name);
 	}
 
     void HandleOnMovePlayerToGamePosition (Vector3 playerPosition)
     {
-		_soundBuses [0].Play ();
-		currentClipInfo = GetClipInfoFromAudioSource (_soundBuses [0]);
-		_soundBuses [0].volume = PlayerState.Instance.Data.playMusic ? maxMusicVolume : 0;
+		_audioSources [0].Play ();
+		currentClipInfo = GetClipInfoFromAudioSource (_audioSources [0]);
+		_audioSources [0].volume = PlayerState.Instance.Data.playMusic ? maxMusicVolume : 0;
     }
 
     void HandleOnGameStart ()
@@ -106,8 +106,6 @@ public class MusicController : MonoBehaviour
 			Destroy(gameObject);
 		}
 
-		_soundBuses = GetComponents<AudioSource> ();
-
 		/*_allSongs = GetComponents<AudioSource>().ToDictionary(s => s.clip.name);
         foreach (AudioSource source in _allSongs.Values)
         {
@@ -128,15 +126,25 @@ public class MusicController : MonoBehaviour
         
 		// assign first and last audio tracks to both buses using player selection
 		var soundTrackSelection = PlayerState.Instance.Data.soundTrackSelection;
+
 		_currentTrackListing = soundTracks [soundTrackSelection].clips.OrderBy (x => x.order).ToArray();
-		_soundBuses [0].clip = _currentTrackListing[0].clip;
-		_soundBuses [1].clip = _currentTrackListing[_currentTrackListing.Length - 1].clip;
+		foreach (ClipInfo track in _currentTrackListing)
+		{
+			var newSource = gameObject.AddComponent<AudioSource>();
+			newSource.clip = track.clip;
+			newSource.playOnAwake = false;
+			newSource.loop = true;
+			newSource.volume = maxMusicVolume;
+		}
+
+		_audioSources = GetComponents<AudioSource> ();
+		var lastIndex = _currentTrackListing.Length - 1;
 
 		//forestMusicFast = transform.FindChild("ForestFast").audio;
         //forestMusicSlow.Play();
        	//stratosphereMusic.Play();
-		_soundBuses [1].Play ();
-		currentClipInfo = GetClipInfoFromAudioSource (_soundBuses [1]);
+		_audioSources [lastIndex].Play ();
+		currentClipInfo = GetClipInfoFromAudioSource (_audioSources [lastIndex]);
         this.ToggleMusic(PlayerState.Instance.Data.playMusic);
     }
 
@@ -145,10 +153,11 @@ public class MusicController : MonoBehaviour
     {
         if (fadeIntroMusic) 
 		{
-			_soundBuses [1].volume = Mathf.Lerp(_soundBuses [1].volume, 0, musicFadeSpeed * Time.deltaTime);
-			if (_soundBuses [1].volume <= 0.01f){
+			var lastIndex = _currentTrackListing.Length - 1;
+			_audioSources [lastIndex].volume = Mathf.Lerp(_audioSources [lastIndex].volume, 0, musicFadeSpeed * Time.deltaTime);
+			if (_audioSources [lastIndex].volume <= 0.01f){
 				//stratosphereMusic.volume = 0;
-				_soundBuses [1].Stop();
+				_audioSources [lastIndex].Stop();
 				fadeIntroMusic = false;
 			}
 		}
@@ -162,11 +171,12 @@ public class MusicController : MonoBehaviour
 			if (currentPlatform > track.transitionPlatform 
 			    && currentClipInfo.order == track.order)
 			{
-				var nextClipInfo = _currentTrackListing.FirstOrDefault(x => x.order == track.order+1);
-				var currentBus = _soundBuses.FirstOrDefault(x => x.clip == currentClipInfo.clip);
-				var openBus = _soundBuses.FirstOrDefault(x => x.clip != currentClipInfo.clip);
+				 
+				var nextClipInfo = _currentTrackListing[track.order];
+				var currentBus = _audioSources[track.order - 1];
+				var nextBus = _audioSources[track.order];
 				//Debug.Log ("start transition to: " + nextClipInfo.clip.name);
-				openBus.clip = nextClipInfo.clip;
+				//openBus.clip = nextClipInfo.clip;
 				currentBus.loop = false;
 				switch(track.transitionType)
 				{
@@ -174,13 +184,13 @@ public class MusicController : MonoBehaviour
 						if (!currentBus.isPlaying)
 						{
 							Debug.Log("Switch to " + nextClipInfo.clip.name);
-							openBus.loop = true;
-							openBus.volume = (PlayerState.Instance.Data.playMusic) ? maxMusicVolume : 0;
-							openBus.Play();
-							currentClipInfo = GetClipInfoFromAudioSource (openBus);
+							nextBus.loop = true;
+							nextBus.volume = (PlayerState.Instance.Data.playMusic) ? maxMusicVolume : 0;
+							nextBus.Play();							
 
 							// trigger timed destroy
 							StartOrStopTimedDestroy(nextClipInfo.destroySpeed);
+							currentClipInfo = GetClipInfoFromAudioSource (nextBus);
 						}
 						break;
 
@@ -189,40 +199,39 @@ public class MusicController : MonoBehaviour
 						if (PlayerState.Instance.Data.playMusic)
 						{
 							
-							if (currentBus.isPlaying && !openBus.isPlaying)
+							if (currentBus.isPlaying && !nextBus.isPlaying)
 							{
-								openBus.Play();
-								openBus.loop = true;
-								openBus.volume = 0;
-								Debug.Log("Trigger Fade in: " + openBus.clip.name + " from: " + currentBus.clip.name);
+								nextBus.Play();
+								nextBus.loop = true;
+								nextBus.volume = 0;
+								Debug.Log("Trigger Fade in: " + nextBus.clip.name + " from: " + currentBus.clip.name);
 								// trigger timed destroy
 								StartOrStopTimedDestroy(nextClipInfo.destroySpeed);
 							}
 
-							if (openBus.isPlaying && openBus.volume < 0.5f && currentBus.isPlaying)
+							if (nextBus.isPlaying && nextBus.volume < 0.5f && currentBus.isPlaying)
 							{
-								Debug.Log("Fading in: " + openBus.clip.name + " from: " + currentBus.clip.name);
-								openBus.volume = Mathf.Lerp(openBus.volume, maxMusicVolume, musicFadeSpeed * Time.deltaTime);
+								Debug.Log("Fading in: " + nextBus.clip.name + " from: " + currentBus.clip.name);
+								nextBus.volume = Mathf.Lerp(nextBus.volume, maxMusicVolume, musicFadeSpeed * Time.deltaTime);
 								currentBus.volume = Mathf.Lerp(currentBus.volume, 0f, musicFadeSpeed * Time.deltaTime);
 								
 								if (currentBus.volume <= 0.01f)
 								{
-									currentClipInfo = GetClipInfoFromAudioSource(openBus);	
 									currentBus.Stop();
-									
+									currentClipInfo = GetClipInfoFromAudioSource(nextBus);
 								}
 							}	
 						}
 						else
 						{
 							Debug.Log("Fade mute switch to " + nextClipInfo.clip.name);
-							openBus.loop = true;
-							openBus.volume = 0;
-							openBus.Play();
-							currentClipInfo = GetClipInfoFromAudioSource (openBus);
+							nextBus.loop = true;
+							nextBus.volume = 0;
+							nextBus.Play();
 							
 							// trigger timed destroy
 							StartOrStopTimedDestroy(nextClipInfo.destroySpeed);
+							currentClipInfo = GetClipInfoFromAudioSource (nextBus);
 						}
 						break;
 
@@ -302,7 +311,7 @@ public class MusicController : MonoBehaviour
 
     void ToggleMusic(bool playMusic)
     {
-        AudioSource currentSong = _soundBuses.FirstOrDefault(x => x.isPlaying);
+        AudioSource currentSong = _audioSources.FirstOrDefault(x => x.isPlaying);
         if (currentSong != null)
         {
             currentSong.volume = playMusic ? maxMusicVolume : 0;
