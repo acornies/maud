@@ -164,7 +164,7 @@ public class MusicController : MonoBehaviour
 
 		if (currentClipInfo.transitionType == MusicTransitionType.None) return; // if we've reached the end, loop forever
 
-		var currentPlatform = PlatformController.Instance.GetCurrentPlatformNumber();
+		var currentPlatform = GameController.Instance.highestPoint;
 
 		foreach (ClipInfo track in _currentTrackListing)
 		{
@@ -251,63 +251,6 @@ public class MusicController : MonoBehaviour
 			OnFastMusicStop();
 		}
 	}
-
-	void FadeTransition(int currentPlatform, int limit, AudioSource current, AudioSource next)
-	{
-		if (currentPlatform > limit && current.isPlaying && !next.isPlaying) {
-			next.volume = 0f;
-			next.Play();
-			next.loop = true;
-		    if (OnFastMusicStop != null)
-		    {
-		        OnFastMusicStop();
-		    }
-		}
-
-		if (next.isPlaying && next.volume < 0.5f && current.isPlaying)
-		{
-			//Debug.Log("Fade in: " + next.clip.name + " from: " + current.clip.name);
-            next.volume = Mathf.Lerp(next.volume, maxMusicVolume, musicFadeSpeed * Time.deltaTime);
-			current.volume = Mathf.Lerp(current.volume, 0f, musicFadeSpeed * Time.deltaTime);
-
-			if (current.volume <= 0.01f)
-			{
-				current.Stop();
-			}
-		}
-	}
-
-    private void NextSong(int currentPlatform, int limit, AudioSource current, AudioSource next)
-    {
-        if (currentPlatform > limit && current.isPlaying)
-        {
-            current.loop = false;
-        }
-        else if (!current.isPlaying && !current.loop)
-        {
-            current.loop = true;
-            MusicTransition(current, next);
-        }
-    }
-
-    void MusicTransition(AudioSource currentSong, AudioSource nextSong)
-    {
-        if (nextSong == null) return;
-        //Debug.Log("Start transition from " + currentSong.clip.name + " to " + nextSong.clip.name);
-        nextSong.Play();
-		/*if (OnFastMusicStart != null && nextSong == forestMusicFast && GameController.Instance.gameState != LegendPeak.GameState.Over)
-		{
-			OnFastMusicStart(forestMusicFastDestroySpeed);
-		}
-		else if (OnFastMusicStart != null && nextSong == cloudMusicFast && GameController.Instance.gameState != LegendPeak.GameState.Over)
-		{
-			OnFastMusicStart(cloudMusicFastDestroySpeed);
-		}*/
-
-        currentSong.volume = 0.0f;
-        currentSong.Stop();
-        nextSong.volume = (PlayerState.Instance.Data.playMusic) ? maxMusicVolume : 0;
-    }
 
     void ToggleMusic(bool playMusic)
     {
