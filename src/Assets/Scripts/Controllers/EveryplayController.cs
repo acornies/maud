@@ -7,7 +7,7 @@ public class EveryplayController : MonoBehaviour
 	private Image _recordButtonImage;
 	private Button _recordButtonBehaviour;
 	private bool _serviceReady;
-	private Image _recIndicator;
+	private Animator _recIndicator;
 	private Image _cameraImage;
 
 	public static EveryplayController Instance { get; private set; }
@@ -54,7 +54,7 @@ public class EveryplayController : MonoBehaviour
 		_recordButtonImage = recordButton.GetComponent<Image>();
 		_recordButtonBehaviour = recordButton.GetComponent<Button>();
 		_cameraImage = recordButton.transform.FindChild("Camera").GetComponent<Image> ();
-		_recIndicator = GameObject.Find ("RecIndicator").GetComponent<Image>();
+		_recIndicator = recordButton.GetComponent<Animator>();
     }
 
     void OnEnable()
@@ -100,12 +100,12 @@ public class EveryplayController : MonoBehaviour
 		if (this.isRecording && !_recIndicator.enabled)
 		{
 			_recIndicator.enabled = true;
-			_recordButtonImage.sprite = recordStop;
+			_cameraImage.sprite = recordStop;
 		}
 		else if (!this.isRecording && _recIndicator.enabled)
 		{
 			_recIndicator.enabled = false;
-			_recordButtonImage.sprite = recordCapture;
+			_cameraImage.sprite = recordCapture;
 		}
     }
 
@@ -119,15 +119,34 @@ public class EveryplayController : MonoBehaviour
 	private void VideoOrStillCapture()
 	{
 		switch (Application.platform)
-		{
-		
+		{	
 			case RuntimePlatform.IPhonePlayer:
-				_recordButtonBehaviour.interactable = isReady;
-				_recordButtonBehaviour.onClick.AddListener(ButtonRecord);
+				// Game is unacceptably slow on these devices
+				if (iPhone.generation == iPhoneGeneration.iPhone
+			    || iPhone.generation == iPhoneGeneration.iPhone4
+			    || iPhone.generation == iPhoneGeneration.iPad2Gen
+			    || iPhone.generation == iPhoneGeneration.iPad1Gen
+			    || iPhone.generation == iPhoneGeneration.iPhoneUnknown
+			    || iPhone.generation == iPhoneGeneration.iPadUnknown
+			    || iPhone.generation == iPhoneGeneration.iPhone3G
+			    || iPhone.generation == iPhoneGeneration.iPhone3GS)
+				{
+					_cameraImage.sprite = cameraImage;
+					_recordButtonBehaviour.interactable = true;
+					_recordButtonBehaviour.onClick.AddListener(ButtonScreenshot);
+				}
+				// turn on video capture for faster iphones
+				else
+				{
+					_recordButtonBehaviour.interactable = isReady;
+					_recordButtonBehaviour.onClick.AddListener(ButtonRecord);
+				}
+				
 				break;
 			case RuntimePlatform.OSXEditor:
 			case RuntimePlatform.Android:
-				_cameraImage.sprite = cameraImage;
+			// Unfortunately everyplay is unstable on Android (tested with Nexus 5)	
+			_cameraImage.sprite = cameraImage;
 				_recordButtonBehaviour.interactable = true;
 				_recordButtonBehaviour.onClick.AddListener(ButtonScreenshot);
 				break;

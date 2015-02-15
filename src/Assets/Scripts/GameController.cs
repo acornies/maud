@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour
 	private Button _restartButtonBehaviour;
     private Image _playButtonImage;
 	private Button _playButtonBehaviour;
+	private Image _triangleImage;
     private Image _recordButtonImage;
 	private Button _recordButtonBehaviour;
     private Image _musicButtonImage;
@@ -239,6 +240,7 @@ public class GameController : MonoBehaviour
 		var playButton = GameObject.Find ("PlayButton");
 		_playButtonImage = playButton.GetComponent<Image>();
 		_playButtonBehaviour = playButton.GetComponent<Button>();
+		_triangleImage = playButton.transform.FindChild ("Triangle").GetComponent<Image> ();
 
 		var musicButton = GameObject.Find ("MusicButton");
 		_musicButtonImage = musicButton.GetComponent<Image>();
@@ -629,6 +631,7 @@ public class GameController : MonoBehaviour
     {
         _playButtonImage.enabled = true;
 		_playButtonBehaviour.enabled = true;
+		_triangleImage.enabled = true;
 		//_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
 		//_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
     }
@@ -666,10 +669,12 @@ public class GameController : MonoBehaviour
 		CloseSettingsAndSharing ();
 		
         _playButtonImage.enabled = false;
+		_triangleImage.enabled = false;
         _playButtonImage.rectTransform.anchorMin = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchorMax = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchoredPosition = new Vector3(0, 0, 0);
-		_playButtonImage.rectTransform.localScale = new Vector2 (1f, 1f);
+		_playButtonImage.rectTransform.pivot = new Vector2 (.5f, .5f);
+		//_playButtonImage.rectTransform.localScale = new Vector2 (1f, 1f);
 		//_highestPointText.text = string.Empty;
 		//_totalHeightText.text = string.Empty;
     }
@@ -684,6 +689,7 @@ public class GameController : MonoBehaviour
 		_arrowImage.enabled = true;
         _restartButtonBehaviour.interactable = true;
         _playButtonImage.enabled = true;
+		_triangleImage.enabled = true;
         _playButtonBehaviour.interactable = true;
         //_musicButtonImage.enabled = true;
         //_cartButtonImage.enabled = true;
@@ -705,6 +711,7 @@ public class GameController : MonoBehaviour
 		_arrowImage.enabled = false;
         _restartButtonBehaviour.interactable = false;
         _playButtonImage.enabled = false;
+		_triangleImage.enabled = false;
         _playButtonBehaviour.interactable = false;
 
 		CloseSettingsAndSharing ();
@@ -757,6 +764,7 @@ public class GameController : MonoBehaviour
         //gameState = GameState.Running;
 		CloseSettingsAndSharing ();
 		_playButtonImage.enabled = false;
+		_triangleImage.enabled = false;
         _playButtonBehaviour.interactable = false;
         _musicButtonImage.enabled = false;
 		//_shareButtonBehaviour.interactable = false;
