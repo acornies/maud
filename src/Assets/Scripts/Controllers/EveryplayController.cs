@@ -106,6 +106,7 @@ public class EveryplayController : MonoBehaviour
 		{
 			_recIndicator.enabled = false;
 			_cameraImage.sprite = recordCapture;
+			_recordButtonImage.color = new Color(_recordButtonImage.color.r, _recordButtonImage.color.g, _recordButtonImage.color.b, 0f);
 		}
     }
 

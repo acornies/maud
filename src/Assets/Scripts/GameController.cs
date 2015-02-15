@@ -513,6 +513,7 @@ public class GameController : MonoBehaviour
 			_shareButtonBehaviour.interactable = true;
 			//_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
 			//_controlModeBehaviour.interactable = true;
+			_menuButtonImage.color = new Color(_menuButtonImage.color.r, _menuButtonImage.color.g, _menuButtonImage.color.b, 1f);
 		}
 		else if (_isSettingsOpen)
 		{
@@ -525,6 +526,7 @@ public class GameController : MonoBehaviour
 			_shareButtonBehaviour.interactable = false;
 			//_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
 			//_controlModeBehaviour.interactable = false;
+			_menuButtonImage.color = new Color(_menuButtonImage.color.r, _menuButtonImage.color.g, _menuButtonImage.color.b, 0);
 		}
 		
 		_isSettingsOpen = !_isSettingsOpen;
@@ -652,6 +654,7 @@ public class GameController : MonoBehaviour
 			_isSettingsOpen = false;
 			
 			_menuButtonImage.GetComponentInChildren<Animator>().enabled = false;
+			_menuButtonImage.color = new Color(_menuButtonImage.color.r, _menuButtonImage.color.g, _menuButtonImage.color.b, 0);
 		}
 		
 		if (_isSharingOpen) 
@@ -766,7 +769,6 @@ public class GameController : MonoBehaviour
 		_playButtonImage.enabled = false;
 		_triangleImage.enabled = false;
         _playButtonBehaviour.interactable = false;
-        _musicButtonImage.enabled = false;
 		//_shareButtonBehaviour.interactable = false;
 
         //_cartButtonImage.enabled = false;

@@ -102,7 +102,8 @@ public class TelekinesisHandler : MonoBehaviour
 
     void HandleOnFastMusicStart (float timedSpeed)
     {
-		if (PlatformController.Instance.GetCurrentPlatformNumber() != int.Parse(name.Split('_')[1] ) ) return;
+		var platformIndex = PlatformController.Instance.GetCurrentPlatformNumber ();
+		if (PlatformController.Instance.levelPlatforms[platformIndex].name != gameObject.name) return;
 		//Debug.Log ("Freeze current platform for cutscene");
 
 		// fix the case where drop platform falls while kinematics are turned off
