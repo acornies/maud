@@ -53,7 +53,7 @@ namespace LegendPeak.Native
 
 		public void socialShare()
 		{
-			AndroidSocialGate.StartShareIntent("Share Maud", string.Format("I reached {0} platforms in Maud. #maudgame maudgame.com"));
+			AndroidSocialGate.StartShareIntent("Share Maud", string.Format("I jumped {0} platforms in Maud. #maudgame maudgame.com", GameController.Instance.highestPoint));
 		}
 
 		void OnImageSaved (GallerySaveResult result) {

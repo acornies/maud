@@ -19,7 +19,7 @@ namespace LegendPeak.Native
 		void submitScore(int score, string leaderboardIdentifier);
 		void loadPlayerScore(string leaderboardIdentifier);
 		void screenCapture();
-		//void socialShare();
+		void socialShare();
 
 		//delegate void OnTransactionComplete(IStoreResponse response);
 		event EventHandler OnTransactionComplete;

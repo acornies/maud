@@ -149,6 +149,7 @@ public class MusicController : MonoBehaviour
 						if (!currentBus.isPlaying)
 						{
 							Debug.Log("Switch to " + nextClipInfo.clip.name);
+							currentBus.Stop();
 							nextBus.loop = true;
 							nextBus.volume = (PlayerState.Instance.Data.playMusic) ? maxMusicVolume : 0;
 							nextBus.Play();							
@@ -190,6 +191,7 @@ public class MusicController : MonoBehaviour
 						else
 						{
 							Debug.Log("Fade mute switch to " + nextClipInfo.clip.name);
+							currentBus.Stop();	
 							nextBus.loop = true;
 							nextBus.volume = 0;
 							nextBus.Play();

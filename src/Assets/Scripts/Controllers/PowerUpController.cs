@@ -58,7 +58,7 @@ public class PowerUpController : MonoBehaviour
 
 			var randomPowerUp = _powerUps[Random.Range(0, 3)].transform;
 
-			Debug.Log("New pick-up " + randomPowerUp + " position: " + newPosition);
+			//Debug.Log("New pick-up " + randomPowerUp + " position: " + newPosition);
 
             if (OnNewPowerUpLocation != null)
             {

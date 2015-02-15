@@ -8,6 +8,7 @@ public class EveryplayController : MonoBehaviour
 	private Button _recordButtonBehaviour;
 	private bool _serviceReady;
 	private Image _recIndicator;
+	private Image _cameraImage;
 
 	public static EveryplayController Instance { get; private set; }
     
@@ -52,6 +53,7 @@ public class EveryplayController : MonoBehaviour
 		var recordButton = GameObject.Find ("RecordButton");
 		_recordButtonImage = recordButton.GetComponent<Image>();
 		_recordButtonBehaviour = recordButton.GetComponent<Button>();
+		_cameraImage = recordButton.transform.FindChild("Camera").GetComponent<Image> ();
 		_recIndicator = GameObject.Find ("RecIndicator").GetComponent<Image>();
     }
 
@@ -125,7 +127,7 @@ public class EveryplayController : MonoBehaviour
 				break;
 			case RuntimePlatform.OSXEditor:
 			case RuntimePlatform.Android:
-				_recordButtonImage.sprite = cameraImage;
+				_cameraImage.sprite = cameraImage;
 				_recordButtonBehaviour.interactable = true;
 				_recordButtonBehaviour.onClick.AddListener(ButtonScreenshot);
 				break;

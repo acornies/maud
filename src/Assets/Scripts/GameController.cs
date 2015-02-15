@@ -15,15 +15,19 @@ public class GameController : MonoBehaviour
     private Image _menuButtonImage;
 	private Button _menuButtonBehaviour;
     private Image _restartButtonImage;
+	private Image _arrowImage;
 	private Button _restartButtonBehaviour;
     private Image _playButtonImage;
 	private Button _playButtonBehaviour;
     private Image _recordButtonImage;
 	private Button _recordButtonBehaviour;
     private Image _musicButtonImage;
+	private Image _speakerImage;
 	//private Image _controlModeImage; // TODO finish later
 	//private Button _controlModeBehaviour;
 	private Button _musicButtonBehaviour;
+	private Image _shareButtonImage;
+	private Image _graphImage;
 	private Button _shareButtonBehaviour;
 	private Image _leaderboardImage;
 	private Button _leaderboardButton;
@@ -230,6 +234,7 @@ public class GameController : MonoBehaviour
 		var restartButton = GameObject.Find ("RestartButton");
         _restartButtonImage = restartButton.GetComponent<Image>();
 		_restartButtonBehaviour = restartButton.GetComponent<Button>();
+		_arrowImage = restartButton.transform.FindChild ("Arrow").GetComponent<Image>();
 
 		var playButton = GameObject.Find ("PlayButton");
 		_playButtonImage = playButton.GetComponent<Image>();
@@ -238,13 +243,16 @@ public class GameController : MonoBehaviour
 		var musicButton = GameObject.Find ("MusicButton");
 		_musicButtonImage = musicButton.GetComponent<Image>();
 		_musicButtonBehaviour = musicButton.GetComponent<Button>();
+		_speakerImage = musicButton.transform.FindChild ("Speaker").GetComponent<Image> ();
 
 		var recordButton = GameObject.Find ("RecordButton");
 		_recordButtonImage = recordButton.GetComponent<Image>();
 		_recordButtonBehaviour = recordButton.GetComponent<Button>();
 
 		var shareButton = GameObject.Find ("ShareButton");
-		//_shareButtonBehaviour = shareButton.GetComponent<Button> ();
+		_shareButtonBehaviour = shareButton.GetComponent<Button> ();
+		_shareButtonImage = shareButton.GetComponent<Image> ();
+		_graphImage = shareButton.transform.FindChild ("Graph").GetComponent<Image>();
 
 		//_totalHeightText = GameObject.Find ("TotalText").GetComponent<Text>();
 		_highestPointText = GameObject.Find ("HighestText").GetComponent<Text>();
@@ -276,7 +284,7 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        _musicButtonImage.sprite = !PlayerState.Instance.Data.playMusic ? soundOffImage : soundOnImage;
+        _speakerImage.sprite = !PlayerState.Instance.Data.playMusic ? soundOffImage : soundOnImage;
     }
 
     void OnGUI()
@@ -482,18 +490,7 @@ public class GameController : MonoBehaviour
 
 	public void ButtonShare()
 	{
-		if (!_isSharingOpen)
-		{
-			_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
-			_recordButtonBehaviour.interactable = EveryplayController.Instance.isReady;
-		}
-		else if (_isSharingOpen)
-		{
-			_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
-			_recordButtonBehaviour.interactable = false;
-		}
-
-		_isSharingOpen = !_isSharingOpen;
+		StoreController.Instance.Native.socialShare ();
 	}
 
 	public void ButtonPhoto()
@@ -505,22 +502,32 @@ public class GameController : MonoBehaviour
     {
 		if (!_isSettingsOpen)
 		{
-			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
+			_musicButtonImage.color = new Color(_musicButtonImage.color.r, _musicButtonImage.color.g, _musicButtonImage.color.b, 1f);
+			_speakerImage.color = new Color(_speakerImage.color.r, _speakerImage.color.g, _speakerImage.color.b, 1f);
 			_musicButtonBehaviour.interactable = true;
+
+			_shareButtonImage.color = new Color(_shareButtonImage.color.r, _shareButtonImage.color.g, _shareButtonImage.color.b, 1f);
+			_graphImage.color = new Color(_graphImage.color.r, _graphImage.color.g, _graphImage.color.b, 1f);
+			_shareButtonBehaviour.interactable = true;
 			//_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 1f);
 			//_controlModeBehaviour.interactable = true;
 		}
 		else if (_isSettingsOpen)
 		{
-			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
+			_musicButtonImage.color = new Color(_musicButtonImage.color.r, _musicButtonImage.color.g, _musicButtonImage.color.b, 0);
+			_speakerImage.color = new Color(_speakerImage.color.r, _speakerImage.color.g, _speakerImage.color.b, 0);
 			_musicButtonBehaviour.interactable = false;
+
+			_shareButtonImage.color = new Color(_shareButtonImage.color.r, _shareButtonImage.color.g, _shareButtonImage.color.b, 0);
+			_graphImage.color = new Color(_graphImage.color.r, _graphImage.color.g, _graphImage.color.b, 0);
+			_shareButtonBehaviour.interactable = false;
 			//_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
 			//_controlModeBehaviour.interactable = false;
 		}
 		
 		_isSettingsOpen = !_isSettingsOpen;
 
-		var menuAnimator = _menuButtonImage.GetComponent<Animator>();
+		var menuAnimator = _menuButtonImage.GetComponentInChildren<Animator>();
 		if (_isSettingsOpen && !menuAnimator.enabled)
 		{
 			menuAnimator.enabled = true;
@@ -602,7 +609,7 @@ public class GameController : MonoBehaviour
             OnToggleMusic(PlayerState.Instance.Data.playMusic);
         }
 
-        _musicButtonImage.sprite = !PlayerState.Instance.Data.playMusic ? soundOffImage : soundOnImage;
+        _speakerImage.sprite = !PlayerState.Instance.Data.playMusic ? soundOffImage : soundOnImage;
     }
 
 	public void ButtonLeaderboardTop()
@@ -630,13 +637,18 @@ public class GameController : MonoBehaviour
 	{
 		if (_isSettingsOpen) 
 		{
-			_musicButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
+			_musicButtonImage.color = new Color(_musicButtonImage.color.r, _musicButtonImage.color.g, _musicButtonImage.color.b, 0);
+			_speakerImage.color = new Color(_speakerImage.color.r, _speakerImage.color.g, _speakerImage.color.b, 0);
 			_musicButtonBehaviour.interactable = false;
+
+			_shareButtonImage.color = new Color(_shareButtonImage.color.r, _shareButtonImage.color.g, _shareButtonImage.color.b, 0);
+			_graphImage.color = new Color(_graphImage.color.r, _graphImage.color.g, _graphImage.color.b, 0);
+			_shareButtonBehaviour.interactable = false;
 			//_controlModeImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0f);
 			//_controlModeBehaviour.interactable = false;
 			_isSettingsOpen = false;
 			
-			_menuButtonImage.GetComponent<Animator>().enabled = false;
+			_menuButtonImage.GetComponentInChildren<Animator>().enabled = false;
 		}
 		
 		if (_isSharingOpen) 
@@ -669,6 +681,7 @@ public class GameController : MonoBehaviour
         _player.GetComponent<PlayerMovement>().disabled = true;
         _telekinesisControl.SetActive(false);
         _restartButtonImage.enabled = true;
+		_arrowImage.enabled = true;
         _restartButtonBehaviour.interactable = true;
         _playButtonImage.enabled = true;
         _playButtonBehaviour.interactable = true;
@@ -689,6 +702,7 @@ public class GameController : MonoBehaviour
         _player.GetComponent<PlayerMovement>().disabled = false;
         _telekinesisControl.SetActive(true);
         _restartButtonImage.enabled = false;
+		_arrowImage.enabled = false;
         _restartButtonBehaviour.interactable = false;
         _playButtonImage.enabled = false;
         _playButtonBehaviour.interactable = false;
@@ -710,6 +724,7 @@ public class GameController : MonoBehaviour
         //_player.GetComponent<PlayerMovement>().disabled = true;
         _telekinesisControl.SetActive(false);
         _restartButtonImage.enabled = true;
+		_arrowImage.enabled = true;
         _restartButtonBehaviour.interactable = true;
 		_highestPointText.text = string.Format(PlayerState.Instance.Data.highestPlatform.ToString());
 		//_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
@@ -740,13 +755,14 @@ public class GameController : MonoBehaviour
     private void HandleOnGameRestart(int sceneindex)
     {
         //gameState = GameState.Running;
-        _playButtonImage.enabled = false;
+		CloseSettingsAndSharing ();
+		_playButtonImage.enabled = false;
         _playButtonBehaviour.interactable = false;
         _musicButtonImage.enabled = false;
 		//_shareButtonBehaviour.interactable = false;
 
         //_cartButtonImage.enabled = false;
-        _menuButtonImage.GetComponent<Animator>().enabled = false;
+		_menuButtonImage.GetComponentInChildren<Animator>().enabled = false;
     }
 
 	void HandleOnPlayerResurrectionOnGameOver(bool fromIAP)
@@ -769,8 +785,7 @@ public class GameController : MonoBehaviour
 
 		_restartButtonImage.enabled = false;
 		_restartButtonBehaviour.interactable = false;
-
-		_restartButtonImage.enabled = false;
+		_arrowImage.enabled = false;
 		_restartButtonBehaviour.interactable = false;
 
 		_highestPointText.text = string.Empty;
