@@ -20,4 +20,3 @@ namespace LegendPeak.Native
 		public string message { get; set; }
 	}
 }
-

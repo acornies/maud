@@ -25,6 +25,11 @@ namespace LegendPeak.Native
 			//TODO: Implement
 		}
 
+		public void restoreProducts()
+		{
+
+		}
+
 		public void showLeaderboards ()
 		{
 
@@ -67,6 +72,7 @@ namespace LegendPeak.Native
 
 		public event EventHandler OnTransactionComplete;
 		public event EventHandler OnAuthenticationFinished;
+		public event EventHandler OnRestoreComplete;
 	}
 }
 

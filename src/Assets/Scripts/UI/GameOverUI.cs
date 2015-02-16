@@ -32,7 +32,7 @@ public class GameOverUI : MonoBehaviour
 
 	void HandleOnSuccessfullContinuationPurchase ()
 	{
-		_purchaseContinueAnimator.enabled = true;
+		//_purchaseContinueAnimator.enabled = true;
 	}
 
 	void HandleOnPlayerReward ()

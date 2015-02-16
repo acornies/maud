@@ -14,6 +14,7 @@ namespace LegendPeak.Native
 	{
 		bool authenticated { get; }
 		void buyProduct(string productIdentifier);
+		void restoreProducts();
 		void showLeaderboards();
 		void showLeaderboard(string leaderboardIdentifier);
 		void submitScore(int score, string leaderboardIdentifier);
@@ -24,6 +25,7 @@ namespace LegendPeak.Native
 		//delegate void OnTransactionComplete(IStoreResponse response);
 		event EventHandler OnTransactionComplete;
 		event EventHandler OnAuthenticationFinished;
+		event EventHandler OnRestoreComplete;
 	}
 }
 

@@ -282,7 +282,6 @@ public class PlatformController : MonoBehaviour
     private void AdjustProperties(GameObject newPlatform, int index)
     {
         UpAndDown upAndDownComponent = newPlatform.transform.GetComponent<UpAndDown>();
-        Drop dropComponent = newPlatform.transform.GetComponent<Drop>();
         Orbit orbitComponent = newPlatform.transform.GetComponent<Orbit>();
 		Vector3 orbitAxis = Vector3.zero;
 

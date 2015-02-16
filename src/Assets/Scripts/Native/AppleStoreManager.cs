@@ -20,6 +20,7 @@ namespace LegendPeak.Native
 
 			IOSInAppPurchaseManager.instance.OnStoreKitInitComplete += OnStoreKitInitComplete;
 			IOSInAppPurchaseManager.instance.OnTransactionComplete += OnAppleTransactionComplete;
+			IOSInAppPurchaseManager.instance.OnRestoreComplete += OnAppleRestoreComplete;
 			
 			IOSInAppPurchaseManager.instance.loadStore();
 		}
@@ -29,6 +30,11 @@ namespace LegendPeak.Native
 		public void buyProduct(string productId)
 		{
 			IOSInAppPurchaseManager.instance.buyProduct (productId);
+		}
+
+		public void restoreProducts()
+		{
+			IOSInAppPurchaseManager.instance.restorePurchases ();
 		}
 
 		public void showLeaderboards ()
@@ -69,29 +75,19 @@ namespace LegendPeak.Native
 
 		private void OnImageSaved (ISN_Result result) {
 			IOSCamera.instance.OnImageSaved -= OnImageSaved;
-			if(result.IsSucceeded) {
-				//IOSMessage.Create("Success", "Image successfully saved to Camera Roll");
-				//IOSCamera.instance.OnImagePicked += OnImage;
-				//IOSCamera.instance.GetImageFromAlbum();
+			if(result.IsSucceeded) 
+			{
 				//TODO: throw agnostic event, trigger some UI
-			} else {
+			} 
+			else 
+			{
 				IOSMessage.Create("Failed", "Image Save Failed");
 			}
 		}
 
-		private void OnImage (IOSImagePickResult result) {
-			if(result.IsSucceeded) 
-			{
-				//drawTexgture = result.image;
-				Debug.Log("Launch social share.");
-				IOSSocialManager.instance.ShareMedia(string.Format("I reached {0} platforms in MAUD! #maudgame maudgame.com", 
-				                                                   GameController.Instance.highestPoint), result.image);
-			}
-			IOSCamera.instance.OnImagePicked -= OnImage;
-		}
-
 		public event EventHandler OnTransactionComplete;
 		public event EventHandler OnAuthenticationFinished;
+		public event EventHandler OnRestoreComplete;
 
 		void OnAuthFinished(ISN_Result res)
 		{
@@ -135,13 +131,15 @@ namespace LegendPeak.Native
 			
 			switch(response.state) {
 				case InAppPurchaseState.Purchased:
-				case InAppPurchaseState.Restored:
 					//Our product been succsesly purchased or restored
 					//So we need to provide content to our user 
 					//depends on productIdentifier
 					//UnlockProducts(response.productIdentifier);
 					storeResponse.status = StoreResponseStatus.Success;
 					//storeResponse.productId = response.productIdentifier;
+					break;
+				case InAppPurchaseState.Restored:
+					storeResponse.status = StoreResponseStatus.Restored;
 					break;
 				case InAppPurchaseState.Deferred:
 					//iOS 8 introduces Ask to Buy, which lets 
@@ -172,6 +170,24 @@ namespace LegendPeak.Native
 				OnTransactionComplete (this, storeResponse);
 			}
 		}
+
+		private void OnAppleRestoreComplete(ISN_Result response)
+		{
+			if (response.IsSucceeded)
+			{
+				IOSNativePopUpManager.showMessage("Restore Purchases Complete", "Your purchases have been successfully restored.");
+				Debug.Log("Restore purchases succeeded.");
+			}
+			else
+			{
+				IOSNativePopUpManager.showMessage("Unable To Restore Purchases", "There were no purchases to restore or unexpected an error occured.");
+				Debug.Log ("Restore purchases failed");
+			}
+
+			if (OnRestoreComplete != null)
+			{
+				OnRestoreComplete (this, new AppleGenericResult { succeeded =  response.IsSucceeded } );
+			}
+		}
 	}
 }
-

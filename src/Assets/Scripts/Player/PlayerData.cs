@@ -17,5 +17,6 @@ namespace LegendPeak.Player
 		public bool viewedTutorialGeneral {get; set;}
 		public bool purchasedAlternateMusic { get; set; }
 		public int soundTrackSelection { get; set; }
+		public NonConsumableProduct[] purchasedProducts { get; set; }
     }
 }

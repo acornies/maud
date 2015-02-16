@@ -32,12 +32,19 @@ public class GameController : MonoBehaviour
 	private Button _shareButtonBehaviour;
 	private Image _leaderboardImage;
 	private Button _leaderboardButton;
+	private Image _storeButtonImage;
+	private bool _isStoreOpen;
+	private Button _storeButtonBehaviour;
+	private Image _plusImage;
+	private Image _restoreButtonImage;
+	private Button _restoreButtonBehaviour;
+	private Image _cloudDownloadImage;
+	private Text _restoreButtonText;
     //private Image _cartButtonImage;
 	//private Button _cartButtonBehaviour;
     private EnergyBar _powerBar;
     //private CameraMovement _cameraMovement;
     private bool _isSettingsOpen;
-	private bool _isSharingOpen;
 	private Text _highestPointText;
 	private Text _totalHeightText;
 	private bool _timeDestroyed;
@@ -262,6 +269,16 @@ public class GameController : MonoBehaviour
 		var leaderboard = GameObject.Find ("LeaderboardButton");
 		_leaderboardImage = leaderboard.GetComponent<Image> ();
 		_leaderboardButton = leaderboard.GetComponent<Button> ();
+
+		var storeButton = GameObject.Find ("StoreButton");
+		_storeButtonImage = storeButton.GetComponent<Image> ();
+		_storeButtonBehaviour = storeButton.GetComponent<Button> ();
+		_plusImage = storeButton.transform.FindChild ("Plus").GetComponent<Image>();
+		var restoreButton = storeButton.transform.FindChild ("RestoreButton");
+		_restoreButtonImage = restoreButton.GetComponent<Image> ();
+		_restoreButtonBehaviour = restoreButton.GetComponent<Button> ();
+		_cloudDownloadImage = restoreButton.transform.FindChild ("Cloud").GetComponent<Image> ();
+		_restoreButtonText = restoreButton.transform.FindChild("Text").GetComponent<Text> ();
 
 		var controlMode = GameObject.Find ("ControlButton");
 		//_controlModeImage = controlMode.GetComponent<Image>();
@@ -629,6 +646,42 @@ public class GameController : MonoBehaviour
 		StoreController.Instance.Native.showLeaderboards ();
 	}
 
+	public void ButtonStore()
+	{
+		if (!_isStoreOpen)
+		{
+			_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, 1f);
+			_restoreButtonImage.color = new Color(_restoreButtonImage.color.r, _restoreButtonImage.color.g, _restoreButtonImage.color.b, 1f);
+			_restoreButtonBehaviour.interactable = true;
+			_restoreButtonText.color = new Color(_restoreButtonText.color.r, _restoreButtonText.color.g, _restoreButtonText.color.b, 1f); 
+			_cloudDownloadImage.color = new Color(_cloudDownloadImage.color.r, _cloudDownloadImage.color.g, _cloudDownloadImage.color.b, 1f);
+		}
+		else if (_isStoreOpen)
+		{
+			_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, .6f);
+			_restoreButtonImage.color = new Color(_restoreButtonImage.color.r, _restoreButtonImage.color.g, _restoreButtonImage.color.b, 0);
+			_restoreButtonBehaviour.interactable = false;
+			_restoreButtonText.color = new Color(_restoreButtonText.color.r, _restoreButtonText.color.g, _restoreButtonText.color.b, 0);
+			_cloudDownloadImage.color = new Color(_cloudDownloadImage.color.r, _cloudDownloadImage.color.g, _cloudDownloadImage.color.b, 0);
+		}
+		
+		_isStoreOpen = !_isStoreOpen;
+		
+		if (gameState == GameState.Running)
+		{
+			if (OnGamePause != null)
+			{
+				OnGamePause();
+			}
+			
+		}
+	}
+
+	public void ButtonRestorePurchases()
+	{
+		StoreController.Instance.Native.restoreProducts ();
+	}
+
     void HandleOnShowMenuButtons()
     {
         _playButtonImage.enabled = true;
@@ -638,7 +691,7 @@ public class GameController : MonoBehaviour
 		//_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
     }
 
-	private void CloseSettingsAndSharing()
+	private void CloseSettingsAndStore()
 	{
 		if (_isSettingsOpen) 
 		{
@@ -657,11 +710,15 @@ public class GameController : MonoBehaviour
 			_menuButtonImage.color = new Color(_menuButtonImage.color.r, _menuButtonImage.color.g, _menuButtonImage.color.b, 0);
 		}
 		
-		if (_isSharingOpen) 
+		if (_isStoreOpen) 
 		{
-			//_recordButtonImage.color = new Color(Color.white.r, Color.white.g, Color.white.b, 0);
-			//_recordButtonBehaviour.interactable = false;
-			_isSharingOpen = false;
+			_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, .6f);
+			_restoreButtonImage.color = new Color(_restoreButtonImage.color.r, _restoreButtonImage.color.g, _restoreButtonImage.color.b, 0);
+			_restoreButtonBehaviour.interactable = false;
+			_restoreButtonText.color = new Color(_restoreButtonText.color.r, _restoreButtonText.color.g, _restoreButtonText.color.b, 0);
+			_cloudDownloadImage.color = new Color(_cloudDownloadImage.color.r, _cloudDownloadImage.color.g, _cloudDownloadImage.color.b, 0);
+
+			_isStoreOpen = false;
 		}
 	}
 
@@ -669,7 +726,7 @@ public class GameController : MonoBehaviour
     {
         gameState = GameState.Running;
 
-		CloseSettingsAndSharing ();
+		CloseSettingsAndStore ();
 		
         _playButtonImage.enabled = false;
 		_triangleImage.enabled = false;
@@ -717,7 +774,7 @@ public class GameController : MonoBehaviour
 		_triangleImage.enabled = false;
         _playButtonBehaviour.interactable = false;
 
-		CloseSettingsAndSharing ();
+		CloseSettingsAndStore ();
 
 		//_highestPointText.text = string.Empty;
 		//_totalHeightText.text = string.Empty;
@@ -765,7 +822,7 @@ public class GameController : MonoBehaviour
     private void HandleOnGameRestart(int sceneindex)
     {
         //gameState = GameState.Running;
-		CloseSettingsAndSharing ();
+		CloseSettingsAndStore ();
 		_playButtonImage.enabled = false;
 		_triangleImage.enabled = false;
         _playButtonBehaviour.interactable = false;
@@ -801,7 +858,7 @@ public class GameController : MonoBehaviour
 		_highestPointText.text = string.Empty;
 		//_totalHeightText.text = string.Empty;
 
-		CloseSettingsAndSharing ();
+		CloseSettingsAndStore ();
 
 		if (OnPlayerReward != null)
 		{
