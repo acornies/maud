@@ -1,4 +1,7 @@
-﻿using EnergyBarToolkit;
+﻿using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+using EnergyBarToolkit;
 using UnityEngine;
 using UnityEngine.UI;
 using LegendPeak;
@@ -304,6 +307,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         _speakerImage.sprite = !PlayerState.Instance.Data.playMusic ? soundOffImage : soundOnImage;
+		powerMeter = PlayerState.Instance.playerLevel.lifeCost;
     }
 
     void OnGUI()
@@ -650,19 +654,59 @@ public class GameController : MonoBehaviour
 	{
 		if (!_isStoreOpen)
 		{
-			_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, 1f);
+			/*_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, 1f);
 			_restoreButtonImage.color = new Color(_restoreButtonImage.color.r, _restoreButtonImage.color.g, _restoreButtonImage.color.b, 1f);
 			_restoreButtonBehaviour.interactable = true;
 			_restoreButtonText.color = new Color(_restoreButtonText.color.r, _restoreButtonText.color.g, _restoreButtonText.color.b, 1f); 
 			_cloudDownloadImage.color = new Color(_cloudDownloadImage.color.r, _cloudDownloadImage.color.g, _cloudDownloadImage.color.b, 1f);
+			*/
+			var storeButtonImages = _storeButtonImage.gameObject.GetComponentsInChildren<Image>();
+			var storeButtonTexts = _storeButtonImage.gameObject.GetComponentsInChildren<Text>();
+			var storeButtonBehaviours = _storeButtonImage.gameObject.GetComponentsInChildren<Button>();
+			foreach (var image in storeButtonImages)
+			{
+				image.color = new Color(image.color.r, image.color.g, image.color.b, 1f);
+			}
+
+			foreach (var text in storeButtonTexts)
+			{
+				text.color = new Color(text.color.r, text.color.g, text.color.b, 1f);
+			}
+
+			foreach (var behaviour in storeButtonBehaviours)
+			{
+				behaviour.interactable = true;
+			}
+
 		}
 		else if (_isStoreOpen)
 		{
-			_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, .6f);
-			_restoreButtonImage.color = new Color(_restoreButtonImage.color.r, _restoreButtonImage.color.g, _restoreButtonImage.color.b, 0);
+			/*_restoreButtonImage.color = new Color(_restoreButtonImage.color.r, _restoreButtonImage.color.g, _restoreButtonImage.color.b, 0);
 			_restoreButtonBehaviour.interactable = false;
 			_restoreButtonText.color = new Color(_restoreButtonText.color.r, _restoreButtonText.color.g, _restoreButtonText.color.b, 0);
-			_cloudDownloadImage.color = new Color(_cloudDownloadImage.color.r, _cloudDownloadImage.color.g, _cloudDownloadImage.color.b, 0);
+			_cloudDownloadImage.color = new Color(_cloudDownloadImage.color.r, _cloudDownloadImage.color.g, _cloudDownloadImage.color.b, 0);*/
+			var storeButtonImages = _storeButtonImage.gameObject.GetComponentsInChildren<Image>();
+			var storeButtonTexts = _storeButtonImage.gameObject.GetComponentsInChildren<Text>();
+			var storeButtonBehaviours = _storeButtonImage.gameObject.GetComponentsInChildren<Button>();
+			foreach (var image in storeButtonImages)
+			{
+				image.color = new Color(image.color.r, image.color.g, image.color.b, 0);
+			}
+
+			foreach (var text in storeButtonTexts)
+			{
+				text.color = new Color(text.color.r, text.color.g, text.color.b, 0);
+			}
+
+			foreach (var behaviour in storeButtonBehaviours)
+			{
+				behaviour.interactable = false;
+			}
+			// override get components
+			_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, .6f);
+			_plusImage.color = new Color(_plusImage.color.r, _plusImage.color.g, _plusImage.color.b, 1f);
+			_storeButtonBehaviour.interactable = true;
+
 		}
 		
 		_isStoreOpen = !_isStoreOpen;
@@ -712,11 +756,27 @@ public class GameController : MonoBehaviour
 		
 		if (_isStoreOpen) 
 		{
+			var storeButtonImages = _storeButtonImage.gameObject.GetComponentsInChildren<Image>();
+			var storeButtonTexts = _storeButtonImage.gameObject.GetComponentsInChildren<Text>();
+			var storeButtonBehaviours = _storeButtonImage.gameObject.GetComponentsInChildren<Button>();
+			foreach (var image in storeButtonImages)
+			{
+				image.color = new Color(image.color.r, image.color.g, image.color.b, 0);
+			}
+			
+			foreach (var text in storeButtonTexts)
+			{
+				text.color = new Color(text.color.r, text.color.g, text.color.b, 0);
+			}
+			
+			foreach (var behaviour in storeButtonBehaviours)
+			{
+				behaviour.interactable = false;
+			}
+			// override get components
 			_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, .6f);
-			_restoreButtonImage.color = new Color(_restoreButtonImage.color.r, _restoreButtonImage.color.g, _restoreButtonImage.color.b, 0);
-			_restoreButtonBehaviour.interactable = false;
-			_restoreButtonText.color = new Color(_restoreButtonText.color.r, _restoreButtonText.color.g, _restoreButtonText.color.b, 0);
-			_cloudDownloadImage.color = new Color(_cloudDownloadImage.color.r, _cloudDownloadImage.color.g, _cloudDownloadImage.color.b, 0);
+			_plusImage.color = new Color(_plusImage.color.r, _plusImage.color.g, _plusImage.color.b, 1f);
+			_storeButtonBehaviour.interactable = true;
 
 			_isStoreOpen = false;
 		}

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.Advertisements;
 
 public class GameOverUI : MonoBehaviour 
 {
@@ -87,15 +88,9 @@ public class GameOverUI : MonoBehaviour
 		//_continueText.enabled = true;
 		_continueText.rectTransform.anchoredPosition = new Vector2 (0, 0);
 
-		//_adContinueButtonImage.enabled = true;
 		_adContinueButtonImage.rectTransform.anchoredPosition = new Vector2 (-100f, -100f);
-		//_adContinueVideoImage.enabled = true;
-		_adContinueVideoImage.color = new Color (_adContinueText.color.r, _adContinueText.color.g, _adContinueText.color.b, 
-		                                        (GameController.Instance.promptAdContinue) ? 1f : .4f);
 		_adContinueText.rectTransform.anchoredPosition = new Vector2 (-100f, -160f);
-		_adContinueText.text = string.Format ("Earn ({0} left)", GameController.Instance.advertisingContinues);
-		//_adContinueButtonBehaviour.enabled = true;
-		_adContinueButtonBehaviour.interactable = GameController.Instance.promptAdContinue;
+		HandleAdContinueBehaviour();
 
 		//_purchaseContinueButtonImage.enabled = true;
 		_purchaseContinueButtonImage.rectTransform.anchoredPosition = new Vector2 (100f, -100f);
@@ -104,6 +99,25 @@ public class GameOverUI : MonoBehaviour
 		_purchaseContinueText.rectTransform.anchoredPosition = new Vector2 (100f, -160f);
 		ShowBuyOrContinue ();
 		//_purchaseContinueButtonBehaviour.enabled = true;
+	}
+
+	void HandleAdContinueBehaviour()
+	{
+		if (Advertisement.isReady())
+		{
+			_adContinueVideoImage.color = new Color (_adContinueText.color.r, _adContinueText.color.g, _adContinueText.color.b, 
+			                                         (GameController.Instance.promptAdContinue) ? 1f : .4f);
+			_adContinueText.text = string.Format ("Earn ({0} left)", GameController.Instance.advertisingContinues);
+			//_adContinueButtonBehaviour.enabled = true;
+			_adContinueButtonBehaviour.interactable = GameController.Instance.promptAdContinue;
+		}
+		else
+		{
+			_adContinueVideoImage.color = new Color (_adContinueText.color.r, _adContinueText.color.g, _adContinueText.color.b, .4f);
+			_adContinueText.text = "Unavailable";
+			//_adContinueButtonBehaviour.enabled = true;
+			_adContinueButtonBehaviour.interactable = false;
+		}
 	}
 	
 	void OnDisable()

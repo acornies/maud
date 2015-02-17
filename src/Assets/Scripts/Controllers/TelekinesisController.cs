@@ -304,6 +304,7 @@ public class TelekinesisController : MonoBehaviour
         //TelekinesisMaterial(_platformClone);
         var cloneChild = _platformClone.FindChild("Cube");
 		cloneChild.gameObject.layer = 0;
+		cloneChild.collider.isTrigger = true;
         if (cloneChild != null)
         {
             // if player is parented to the platform, DESTROY lest we spawn her N times
@@ -317,7 +318,7 @@ public class TelekinesisController : MonoBehaviour
             TelekinesisMaterial(cloneChild);
         }
         _platformClone.localScale = new Vector3(_platform.localScale.x * cloneScaleMultiplier, _platform.localScale.y * cloneScaleMultiplier, _platform.localScale.z * cloneScaleMultiplier);
-        _platformClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
+        //_platformClone.GetComponentsInChildren<Collider>().ToList().ForEach(x => x.enabled = false);
         Stabilize(_platformClone);
     }
 

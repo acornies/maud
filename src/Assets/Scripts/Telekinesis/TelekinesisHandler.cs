@@ -68,6 +68,11 @@ public class TelekinesisHandler : MonoBehaviour
 		if (platform.GetInstanceID() != child.GetInstanceID()) return;
 
 		isOnPlatform = true;
+
+		if (rotationTarget != null)
+		{
+			rotationTarget = transform.root.rotation;
+		}
     }
 
 	void HandleOnTimedDestroy(GameObject objectToDestroy)
@@ -182,7 +187,19 @@ public class TelekinesisHandler : MonoBehaviour
 			//Debug.Log ("Change tower color");
 			renderer.material.color = Color.Lerp(renderer.material.color, _towerColor, colorChangeSpeed * Time.deltaTime);
 		}
+        //HandleStabilizeHazzards();
+    }
 
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        RotateToTarget();
+        Teleport();
+		TimedDestroy ();
+    }
+
+	private void TimedDestroy()
+	{
 		if (shouldDestroy)
 		{
 			renderer.material.color = Color.Lerp(renderer.material.color, Color.white, destroyTransitionSpeed * Time.deltaTime);
@@ -207,12 +224,12 @@ public class TelekinesisHandler : MonoBehaviour
 				{
 					Destroy(stabilizeEffect.gameObject);
 				}
-
+				
 				_platformScripts.ToList().ForEach(x =>
 				                                  {
 					x.enabled = false;
 				});
-
+				
 				if (flashEffect != null && _flash == null)
 				{
 					GameObject flash = Instantiate(flashEffect, transform.position, Quaternion.identity) as GameObject;
@@ -238,15 +255,7 @@ public class TelekinesisHandler : MonoBehaviour
 			//shouldDestroy = false;
 			Destroy (gameObject);
 		}
-        //HandleStabilizeHazzards();
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        RotateToTarget();
-        Teleport();
-    }
+	}
 
     protected void HandleNewTelekinesisRotation(Transform platform, Quaternion rotation)
     {
@@ -275,11 +284,11 @@ public class TelekinesisHandler : MonoBehaviour
 	protected virtual void RotateToTarget()
     {
         if (!rotationTarget.HasValue) return;
-        if (transform.root.localRotation != rotationTarget)
+        if (transform.root.rotation != rotationTarget)
         {
             transform.root.rotation = Quaternion.Lerp(transform.root.rotation, rotationTarget.Value, rotationSpeed * Time.deltaTime);
         }
-		if (isOnPlatform || transform.root.rotation == rotationTarget)
+		if (transform.root.rotation == rotationTarget)
         {
             rotationTarget = null;
             if (OnAffectEnd != null)
@@ -325,8 +334,6 @@ public class TelekinesisHandler : MonoBehaviour
         {
             _teleportTimer = teleportTime;
         }
-
-
     }
 
     void HandleTelekinesisStabilize(Transform stabilizedObject)

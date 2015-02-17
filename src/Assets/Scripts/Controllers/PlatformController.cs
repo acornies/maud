@@ -256,7 +256,7 @@ public class PlatformController : MonoBehaviour
                     AdjustProperties(newPlatform, nextPlatform);
                     levelPlatforms.Add(nextPlatform, newPlatform);
 
-                    On_NewPlatform(newPlatform.transform.position.y, levelPlatforms[nextPlatform - 2].transform.position.y);
+                    On_NewPlatform(newPlatform.transform.position.y, levelPlatforms[nextPlatform - 3].transform.position.y);
                     //_timer = platformSpawnInterval;
                 }
             }

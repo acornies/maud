@@ -37,6 +37,7 @@ public class CameraMovement : MonoBehaviour
     public static float defaultCameraSpeed = 4.5f;
 	public float timedDestroyZoomTime = 3f;
 	public bool isTimedDestroyCutscene;
+	public float ghostTrackingDivider = 3f;
 	
     public delegate void UpdatedCameraMinY(float yPosition);
     public static event UpdatedCameraMinY On_CameraUpdatedMinY;
@@ -74,7 +75,7 @@ public class CameraMovement : MonoBehaviour
     void HandleOnPlayerReward ()
     {
 		isTracking = true;
-		YSmooth = YSmooth / 2f;
+		YSmooth = defaultCameraSpeed / ghostTrackingDivider;
     }
 
     void HandleOnPlayerBecameVisible (Transform player)
@@ -254,14 +255,6 @@ public class CameraMovement : MonoBehaviour
 		{
 			HandleZoomInAndOut(isTimedDestroyCutscene ? timedDestroyZoomDepth : ghostZoomDepth);
 		}
-
-        /*else if (!isTracking && !GameController.Instance.playerIsDead)
-        {
-            _introTimer -= Time.deltaTime;
-            if (!(_introTimer <= 0)) return;
-            isTracking = true;
-            _introTimer = introTime;
-        }*/
     }
 
     void TrackPlayer()
@@ -316,7 +309,8 @@ public class CameraMovement : MonoBehaviour
 
     void HandlePlayerDeath()
     {
-        isTracking = false;
+        //isTracking = false;
+		YSmooth = ghostTrackingDivider / ghostTrackingDivider;
 		_shouldZoomOut = true;
         //Debug.Log("Turn off tracking");
     }
@@ -324,6 +318,7 @@ public class CameraMovement : MonoBehaviour
     void HandlePlayerResurrection()
     {
         isTracking = true;
+		YSmooth = defaultCameraSpeed;
 		_shouldZoomOut = false;
 		if (YSmooth != defaultCameraSpeed)
 		{
