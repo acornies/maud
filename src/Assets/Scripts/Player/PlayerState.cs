@@ -23,8 +23,8 @@ public class PlayerState : MonoBehaviour
 	public delegate void SuccessfullContinuationPurchase();
 	public static event SuccessfullContinuationPurchase OnSuccessfullContinuationPurchase;
 
-	public delegate void SuccessfullMusicPurchase();
-	public static event SuccessfullMusicPurchase OnSuccessfullMusicPurchase;
+	public delegate void SuccessfullNonConsumable(string productId);
+	public static event SuccessfullNonConsumable OnSuccessfullNonConsumable;
 	
 	void OnEnable()
 	{
@@ -118,12 +118,17 @@ public class PlayerState : MonoBehaviour
 			Data.purchasedProductIds = list.ToArray();
 			this.Save();
 		}
+
+		if (OnSuccessfullNonConsumable != null)
+		{
+			OnSuccessfullNonConsumable(productId);
+		}
 	}
 
-    private void HandleToggleMusic(bool playmusic)
+    private void HandleToggleMusic(int selection)
     {
-        Data.playMusic = playmusic;
-        Debug.Log("Save music preference");
+        Data.soundTrackSelection = selection;
+        Debug.Log("Save music preference: " + selection);
         Save();
     }
 
@@ -170,6 +175,21 @@ public class PlayerState : MonoBehaviour
     {
 		StoreController.Instance.Native.OnTransactionComplete += HandleTransactionComplete;
     }
+
+	public bool HasPurchasedAdditionalMusic
+	{
+		get
+		{
+			if (Data.purchasedProductIds == null || Data.purchasedProductIds.Length == 0) return false;
+			var list = new List<string>();
+			foreach(var product in Data.purchasedProductIds)
+			{
+				list.Add(product);
+			}
+
+			return list.Contains(StoreController.MUSIC_PACK);
+		}
+	}
 
     public void Save()
     {

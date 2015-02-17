@@ -10,6 +10,7 @@ public class StoreController : MonoBehaviour {
 	
 	private Image _storeButtonImage;
 	private Image _restoreButtonImage;
+	private Button _restoreButtonBehaviour;
 
 	public static StoreController Instance { get; private set; }
 	public IStoreManager Native { get; private set; }
@@ -48,43 +49,14 @@ public class StoreController : MonoBehaviour {
 		{
 			Destroy(gameObject);
 		}
-
-		var storeButton = GameObject.Find ("StoreButton");
-		_storeButtonImage = storeButton.GetComponent<Image> ();
-		var restoreButton = storeButton.transform.FindChild ("RestoreButton");
-		_restoreButtonImage = restoreButton.GetComponent<Image> ();
 	}
 
 	// Use this for initialization
 	void Start () 
 	{
-		var products = GetPurchasabletems ();
-		float yPositionOffset = 0;
-		foreach(var product in products)
-		{
-			GameObject newButton = Instantiate(_restoreButtonImage.gameObject) as GameObject;
-			newButton.transform.SetParent(_storeButtonImage.transform);
-			newButton.name = product.identifier;
-			var behaviour = newButton.GetComponent<Button>();
-			var mainImage = newButton.GetComponent<Image>();
-			var childSprite = newButton.transform.FindChild("Cloud").GetComponent<Image>();
-			childSprite.name = product.description;
-			var buttonText = newButton.transform.FindChild("Text").GetComponent<Text>();
-			buttonText.text = product.description;
-			childSprite.sprite = product.image;
-			behaviour.onClick.RemoveAllListeners();
-			behaviour.onClick.AddListener(() => { ButtonBuyProduct(product.identifier); });
-			yPositionOffset += mainImage.rectTransform.sizeDelta.y;
-			mainImage.rectTransform.anchoredPosition = new Vector2(0, -yPositionOffset);
-			mainImage.rectTransform.localScale = new Vector2(1f, 1f);
-		}
+
 	}
 
-	public void ButtonBuyProduct(string productIdentifier)
-	{
-		Native.buyProduct(productIdentifier);
-	}
-	
 	// Update is called once per frame
 	void Update () 
 	{
@@ -96,7 +68,7 @@ public class StoreController : MonoBehaviour {
 
 	}
 
-	private NonConsumableProduct[] GetPurchasabletems()
+	public NonConsumableProduct[] GetPurchasabletems()
 	{
 		var playerPurchased = PlayerState.Instance.Data.purchasedProductIds;
 		if (playerPurchased != null && playerPurchased.Length > 0)

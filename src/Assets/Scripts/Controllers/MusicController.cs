@@ -11,8 +11,6 @@ public class MusicController : MonoBehaviour
     //private IDictionary<string, AudioSource> _allSongs;
 	private bool fadeIntroMusic;
 	private AudioSource[] _audioSources;
-	private AudioSource _openBus;
-	private AudioSource _currentBus;
 	private ClipInfo[] _currentTrackListing;
 	public ClipInfo currentClipInfo;
 	private bool _inTransition;
@@ -94,7 +92,7 @@ public class MusicController : MonoBehaviour
     {
         
 		// assign first and last audio tracks to both buses using player selection
-		var soundTrackSelection = PlayerState.Instance.Data.soundTrackSelection;
+		int soundTrackSelection = GetSoundTrackSelectionFromPreference ();
 
 		_currentTrackListing = soundTracks [soundTrackSelection].clips.OrderBy (x => x.order).ToArray();
 		foreach (ClipInfo track in _currentTrackListing)
@@ -111,8 +109,19 @@ public class MusicController : MonoBehaviour
 
 		_audioSources [lastIndex].Play ();
 		currentClipInfo = GetClipInfoFromAudioSource (_audioSources [lastIndex]);
-        this.ToggleMusic(PlayerState.Instance.Data.playMusic);
+        this.ToggleMusic(PlayerState.Instance.Data.soundTrackSelection);
     }
+
+	private int GetSoundTrackSelectionFromPreference()
+	{
+		var preference = PlayerState.Instance.Data.soundTrackSelection;
+		if (preference == 0) 
+		{
+			return 0;
+		}
+
+		return preference - 1; // since sound tracks are 0-based arrays
+	}
 
     // Update is called once per frame
     void Update()
@@ -219,15 +228,49 @@ public class MusicController : MonoBehaviour
 		}
 	}
 
-    void ToggleMusic(bool playMusic)
+    void ToggleMusic(int preference)
     {
-        AudioSource currentSong = _audioSources.FirstOrDefault(x => x.isPlaying);
-        if (currentSong != null)
-        {
-            currentSong.volume = playMusic ? maxMusicVolume : 0;
-        }
+		if (preference == 0)
+		{
+			AudioSource currentSong = _audioSources.FirstOrDefault(x => x.isPlaying);
+			if (currentSong != null)
+	        {
+	            currentSong.volume = 0;
+	        }
+		}
+		else
+		{
+			var selection = GetSoundTrackSelectionFromPreference();
+
+			// if selection matches current track listing only increase volume
+			/*if (_currentTrackListing[0].clip.name == soundTracks[selection].clips[0].clip.name)
+			{
+				if (currentSong != null)
+				{
+					Debug.Log ("Increase volume on current track listing");
+					currentSong.volume = maxMusicVolume;
+				}
+			}
+			else
+			{*/
+				
+				_currentTrackListing = soundTracks [selection].clips.OrderBy (x => x.order).ToArray();
+				foreach (ClipInfo track in _currentTrackListing)
+				{
+					var source = _audioSources[track.order - 1];
+					source.clip = track.clip;
+					source.playOnAwake = false;
+					source.loop = true;
+					source.volume = maxMusicVolume;
+				}
+				
+				var currentPlatform = GameController.Instance.highestPoint;
+				if (currentPlatform == 0)
+				{
+					_audioSources[_currentTrackListing.Length - 1].Play();
+				}
+			//}
+		}
+		Debug.Log ("Music controller handle preference:" + preference);
     }
 }
-
-
-

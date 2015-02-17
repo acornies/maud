@@ -5,6 +5,7 @@ using EnergyBarToolkit;
 using UnityEngine;
 using UnityEngine.UI;
 using LegendPeak;
+using LegendPeak.Native;
 using UnityEngine.Advertisements;
 
 public class GameController : MonoBehaviour
@@ -79,8 +80,9 @@ public class GameController : MonoBehaviour
     public float deathIconWidth = 20f;
     public float deathIconOffset = 10f;
     public FilledRenderer3D powerBarRenderer;
-    public Sprite soundOnImage;
-    public Sprite soundOffImage;
+    //public Sprite soundOnImage;
+    //public Sprite soundOffImage;
+	public Sprite[] soundStateImages;
     public Sprite controlAccelerometerImage;
     public Sprite controlFingerSwipeImage;
 	public Color heightCounterColor;
@@ -121,7 +123,7 @@ public class GameController : MonoBehaviour
     public delegate void MaxHeightIncrease(int delta, float rotationMultiplier);
     public static event MaxHeightIncrease OnMaxHeightIncrease;
 
-    public delegate void ToggleMusic(bool playMusic);
+    public delegate void ToggleMusic(int musicSelection);
     public static event ToggleMusic OnToggleMusic;
 
 	public delegate void PlayerReward();
@@ -147,6 +149,8 @@ public class GameController : MonoBehaviour
 		CameraMovement.OnMovePlayerToGamePosition += HandleOnMovePlayerToGamePosition;
 		//UnityAds.OnVideoCompleted += HandleOnVideoCompleted;
 		//OnPlayerReward += HandleOnPlayerResurrectionOnGameOver;
+		//StoreController.Instance.Native.OnTransactionComplete += HandleOnTransactionComplete;
+		PlayerState.OnSuccessfullNonConsumable += HandleOnSuccessfullNonConsumable;
     }
 
     void HandleOnMovePlayerToGamePosition (Vector3 playerPosition)
@@ -203,6 +207,15 @@ public class GameController : MonoBehaviour
 		CameraMovement.OnMovePlayerToGamePosition -= HandleOnMovePlayerToGamePosition;
 		//UnityAds.OnVideoCompleted -= HandleOnVideoCompleted;
 		//OnPlayerReward -= HandleOnPlayerResurrectionOnGameOver;
+		//StoreController.Instance.Native.OnTransactionComplete -= HandleOnTransactionComplete
+		PlayerState.OnSuccessfullNonConsumable -= HandleOnSuccessfullNonConsumable;
+    }
+
+    void HandleOnSuccessfullNonConsumable (string productId)
+    {
+		var productButton = _storeButtonImage.transform.FindChild (productId);
+		productButton.gameObject.SetActive (false);
+		Debug.Log ("Removed store product button id: " + productId);
     }
 
     // Use this for initialization
@@ -306,8 +319,31 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        _speakerImage.sprite = !PlayerState.Instance.Data.playMusic ? soundOffImage : soundOnImage;
+		_speakerImage.sprite = soundStateImages[PlayerState.Instance.Data.soundTrackSelection];
 		powerMeter = PlayerState.Instance.playerLevel.lifeCost;
+
+		var products = StoreController.Instance.GetPurchasabletems ();
+		float yPositionOffset = 0;
+		foreach(var product in products)
+		{
+			GameObject newButton = Instantiate(_restoreButtonImage.gameObject) as GameObject;
+			newButton.transform.SetParent(_storeButtonImage.transform);
+			newButton.name = product.identifier;
+			//var behaviour = newButton.GetComponent<Button>();
+			var mainImage = newButton.GetComponent<Image>();
+			var childSprite = newButton.transform.FindChild("Cloud").GetComponent<Image>();
+			childSprite.name = product.description;
+			var buttonText = newButton.transform.FindChild("Text").GetComponent<Text>();
+			buttonText.text = product.description;
+			childSprite.sprite = product.image;
+			//behaviour.onClick.RemoveAllListeners();
+			yPositionOffset += mainImage.rectTransform.sizeDelta.y;
+			mainImage.rectTransform.anchoredPosition = new Vector2(0, -yPositionOffset);
+			mainImage.rectTransform.localScale = new Vector2(1f, 1f);
+			newButton.GetComponent<Button>().onClick.AddListener(() => { ButtonBuyProduct(product.identifier); });
+		}
+		
+		_restoreButtonBehaviour.onClick.AddListener (ButtonRestorePurchases);
     }
 
     void OnGUI()
@@ -617,7 +653,7 @@ public class GameController : MonoBehaviour
 	{
 		if (promptPurchaseContinue)
 		{
-			StoreController.Instance.Native.buyProduct ("com.AndrewCornies.LegendPeak.RevivalPack1");
+			StoreController.Instance.Native.buyProduct (StoreController.REVIVAL_PACK);
 		}
 		else
 		{
@@ -627,14 +663,24 @@ public class GameController : MonoBehaviour
 	
 	public void ButtonMusic()
     {
-        PlayerState.Instance.Data.playMusic = !PlayerState.Instance.Data.playMusic;
+        //PlayerState.Instance.Data.playMusic = !PlayerState.Instance.Data.playMusic;
+		var indexLimit = (PlayerState.Instance.HasPurchasedAdditionalMusic && gameState == GameState.Started) ? soundStateImages.Length - 1 : 1;
+		if (PlayerState.Instance.Data.soundTrackSelection == indexLimit)
+		{
+			PlayerState.Instance.Data.soundTrackSelection = 0;
+		}
+		else
+		{
+			PlayerState.Instance.Data.soundTrackSelection = PlayerState.Instance.Data.soundTrackSelection+1;
+		}
+		Debug.Log ("selection: " + PlayerState.Instance.Data.soundTrackSelection + " limit: " + indexLimit);
 
         if (OnToggleMusic != null)
         {
-            OnToggleMusic(PlayerState.Instance.Data.playMusic);
+			OnToggleMusic(PlayerState.Instance.Data.soundTrackSelection);
         }
 
-        _speakerImage.sprite = !PlayerState.Instance.Data.playMusic ? soundOffImage : soundOnImage;
+		_speakerImage.sprite = soundStateImages [PlayerState.Instance.Data.soundTrackSelection];
     }
 
 	public void ButtonLeaderboardTop()
@@ -726,6 +772,11 @@ public class GameController : MonoBehaviour
 		StoreController.Instance.Native.restoreProducts ();
 	}
 
+	public void ButtonBuyProduct(string productIdentifier)
+	{
+		StoreController.Instance.Native.buyProduct(productIdentifier);
+	}
+
     void HandleOnShowMenuButtons()
     {
         _playButtonImage.enabled = true;
@@ -811,12 +862,6 @@ public class GameController : MonoBehaviour
         _playButtonImage.enabled = true;
 		_triangleImage.enabled = true;
         _playButtonBehaviour.interactable = true;
-        //_musicButtonImage.enabled = true;
-        //_cartButtonImage.enabled = true;
-        // TODO: FUCKING DISABLE HAND BUTTON FOR NOW
-        //_cartButtonBehaviour.interactable = true; // TODO enable when ready
-        //_cartButtonBehaviour.interactable = false; // TODO enable when ready
-        //_isSettingsOpen = true;
 		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString ();
 		//_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
 		heightCounter.color = Color.white;
