@@ -4,6 +4,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using LegendPeak;
 using LegendPeak.Player;
 using LegendPeak.Native;
@@ -21,6 +22,9 @@ public class PlayerState : MonoBehaviour
 
 	public delegate void SuccessfullContinuationPurchase();
 	public static event SuccessfullContinuationPurchase OnSuccessfullContinuationPurchase;
+
+	public delegate void SuccessfullMusicPurchase();
+	public static event SuccessfullMusicPurchase OnSuccessfullMusicPurchase;
 	
 	void OnEnable()
 	{
@@ -51,25 +55,68 @@ public class PlayerState : MonoBehaviour
 		if (isStoreResponse)
 		{
 			var storeResponse = e as IStoreResponse;
-			if (storeResponse.productId == StoreController.REVIVAL_PACK)
+			switch (storeResponse.productId)
 			{
-				switch (storeResponse.status)
-				{
-					case StoreResponseStatus.Success:
-						Debug.Log("Player successfully purchased continuations.");
-						// TODO: some UI for successfull game conitnue purchases
-						Data.gameOverContinues += 10; // TODO: move to editor
-						Save();
-						if (OnSuccessfullContinuationPurchase != null)
-						{
-							OnSuccessfullContinuationPurchase();
-						}
+				case StoreController.REVIVAL_PACK:
+					
+					switch (storeResponse.status)
+					{
+						case StoreResponseStatus.Success:
+							Debug.Log("Player successfully purchased continuations.");
+							// TODO: some UI for successfull game conitnue purchases
+							Data.gameOverContinues += 10; // TODO: move to editor
+							Save();
+							if (OnSuccessfullContinuationPurchase != null)
+							{
+								OnSuccessfullContinuationPurchase();
+							}
+							break;
+						default:
+							Debug.Log("Player tried to purchase continuations but it failed.");
+							break;
+					}
+				break;
+
+				case StoreController.MUSIC_PACK:
+					
+					switch (storeResponse.status)
+					{
+						case StoreResponseStatus.Success:
+						case StoreResponseStatus.Restored:
+							Debug.Log("Player successfully purchased music pack.");
+							HandleNonConsumableRestoreOrPurchase(storeResponse.productId);
 						break;
-					default:
-						Debug.Log("Player tried to purchase continuations but it failed.");
+						default:
+							Debug.Log("Player tried to purchase music but it failed.");
 						break;
-				}
+					}
+
+				break;
 			}
+		}
+	}
+
+	private void HandleNonConsumableRestoreOrPurchase(string productId)
+	{
+		if (Data.purchasedProductIds == null || Data.purchasedProductIds.Length == 0)
+		{
+			Data.purchasedProductIds = new string[]{ productId };
+			this.Save();
+		}
+		else
+		{
+			var list = new List<string>();
+			foreach(var product in Data.purchasedProductIds)
+			{
+				list.Add(product);
+			}
+
+			if (list.Contains(productId)) return; // don't add duplicate products
+
+			// now add new item
+			list.Add(productId);
+			Data.purchasedProductIds = list.ToArray();
+			this.Save();
 		}
 	}
 

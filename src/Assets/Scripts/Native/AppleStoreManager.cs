@@ -180,7 +180,7 @@ namespace LegendPeak.Native
 			}
 			else
 			{
-				IOSNativePopUpManager.showMessage("Unable To Restore Purchases", "There were no purchases to restore or unexpected an error occured.");
+				IOSNativePopUpManager.showMessage("Unable To Restore Purchases", "There were no purchases to restore or an unexpected error occured.");
 				Debug.Log ("Restore purchases failed");
 			}
 
