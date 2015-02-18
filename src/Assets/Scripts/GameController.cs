@@ -339,7 +339,6 @@ public class GameController : MonoBehaviour
             default:
                 break;
         }*/
-		//powerBarRenderer.texturesBackground[0].color.a = 0f;
     }
 
     void Start()
