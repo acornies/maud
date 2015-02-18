@@ -27,6 +27,7 @@ public class GameController : MonoBehaviour
     private Image _recordButtonImage;
 	private Button _recordButtonBehaviour;
     private Image _musicButtonImage;
+	private int _selectedSoundTrack;
 	private Image _speakerImage;
 	//private Image _controlModeImage; // TODO finish later
 	//private Button _controlModeBehaviour;
@@ -216,6 +217,30 @@ public class GameController : MonoBehaviour
 		var productButton = _storeButtonImage.transform.FindChild (productId);
 		productButton.gameObject.SetActive (false);
 		Debug.Log ("Removed store product button id: " + productId);
+
+		switch (productId)
+		{
+			case StoreController.MUSIC_PACK:
+				if (gameState == GameState.Started)
+				{
+					if (!_isSettingsOpen)
+					{	
+						ButtonMenu();
+					}
+
+					if (PlayerState.Instance.Data.soundTrackSelection == 0)
+					{
+						ButtonMusic();
+						ButtonMusic();
+					}
+					else
+					{
+						ButtonMusic();
+					}
+				}
+			break;
+		}
+
     }
 
     // Use this for initialization
@@ -344,6 +369,8 @@ public class GameController : MonoBehaviour
 		}
 		
 		_restoreButtonBehaviour.onClick.AddListener (ButtonRestorePurchases);
+
+		_selectedSoundTrack = PlayerState.Instance.Data.soundTrackSelection;
     }
 
     void OnGUI()
@@ -664,23 +691,35 @@ public class GameController : MonoBehaviour
 	public void ButtonMusic()
     {
         //PlayerState.Instance.Data.playMusic = !PlayerState.Instance.Data.playMusic;
-		var indexLimit = (PlayerState.Instance.HasPurchasedAdditionalMusic && gameState == GameState.Started) ? soundStateImages.Length - 1 : 1;
-		if (PlayerState.Instance.Data.soundTrackSelection == indexLimit)
+		if (gameState == GameState.Started)
 		{
-			PlayerState.Instance.Data.soundTrackSelection = 0;
+			var indexLimit = (PlayerState.Instance.HasPurchasedAdditionalMusic) ? soundStateImages.Length - 1 : 1;
+			if (PlayerState.Instance.Data.soundTrackSelection == indexLimit)
+			{
+				PlayerState.Instance.Data.soundTrackSelection = 0;
+			}
+			else
+			{
+				PlayerState.Instance.Data.soundTrackSelection = PlayerState.Instance.Data.soundTrackSelection+1;
+			}
+			Debug.Log ("selection: " + PlayerState.Instance.Data.soundTrackSelection + " limit: " + indexLimit);
+			
+			if (OnToggleMusic != null)
+			{
+
+				OnToggleMusic(PlayerState.Instance.Data.soundTrackSelection);
+			}
+			_selectedSoundTrack = PlayerState.Instance.Data.soundTrackSelection;
+			_speakerImage.sprite = soundStateImages [PlayerState.Instance.Data.soundTrackSelection];
 		}
 		else
 		{
-			PlayerState.Instance.Data.soundTrackSelection = PlayerState.Instance.Data.soundTrackSelection+1;
+			if (OnToggleMusic != null)
+			{				
+				OnToggleMusic((PlayerState.Instance.Data.soundTrackSelection > 0) ? 0 : _selectedSoundTrack);
+			}
+			_speakerImage.sprite = (PlayerState.Instance.Data.soundTrackSelection > 0) ? soundStateImages[_selectedSoundTrack] : soundStateImages[0];
 		}
-		Debug.Log ("selection: " + PlayerState.Instance.Data.soundTrackSelection + " limit: " + indexLimit);
-
-        if (OnToggleMusic != null)
-        {
-			OnToggleMusic(PlayerState.Instance.Data.soundTrackSelection);
-        }
-
-		_speakerImage.sprite = soundStateImages [PlayerState.Instance.Data.soundTrackSelection];
     }
 
 	public void ButtonLeaderboardTop()
@@ -769,7 +808,21 @@ public class GameController : MonoBehaviour
 
 	public void ButtonRestorePurchases()
 	{
-		StoreController.Instance.Native.restoreProducts ();
+		var dialog = IOSDialog.Create("Restore Purchases", "Would you like to restore previously purchased items to this device?", "Yes", "Cancel");
+		dialog.OnComplete += onRestoreDialogClose;
+	}
+
+	private void onRestoreDialogClose(IOSDialogResult result) {
+
+		switch(result) {
+			case IOSDialogResult.YES:
+				Debug.Log ("Yes button pressed");
+				StoreController.Instance.Native.restoreProducts ();
+			break;
+			case IOSDialogResult.NO:
+				Debug.Log ("No button pressed");
+			break;			
+		}
 	}
 
 	public void ButtonBuyProduct(string productIdentifier)
@@ -845,7 +898,7 @@ public class GameController : MonoBehaviour
         _playButtonImage.rectTransform.anchorMax = new Vector2(.5f, .5f);
         _playButtonImage.rectTransform.anchoredPosition = new Vector3(0, 0, 0);
 		_playButtonImage.rectTransform.pivot = new Vector2 (.5f, .5f);
-		//_playButtonImage.rectTransform.localScale = new Vector2 (1f, 1f);
+		_playButtonImage.rectTransform.localScale = new Vector2 (1.3f, 1.3f);
 		//_highestPointText.text = string.Empty;
 		//_totalHeightText.text = string.Empty;
     }

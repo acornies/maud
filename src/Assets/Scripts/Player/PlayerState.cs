@@ -227,13 +227,13 @@ public class PlayerState : MonoBehaviour
 				// TODO enable once supported
 				//controlMode = (MobileHelper.isTablet) ? ControlMode.FingerSwipe : ControlMode.Accelerometer,
 				controlMode = ControlMode.Accelerometer,
-				playMusic = true,
 				highestPlatform = 0,
 				totalPlatforms = 0,
 				monetizedState = MonetizedState.Free,
 				playerLevel = 1,
 				gameOverContinues = 0,
-				viewedTutorialGeneral = false
+				viewedTutorialGeneral = false,
+				soundTrackSelection = 1
 			};
 		}
 		else

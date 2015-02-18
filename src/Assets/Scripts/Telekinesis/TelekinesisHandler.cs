@@ -242,7 +242,7 @@ public class TelekinesisHandler : MonoBehaviour
 				childRigidbody.constraints = RigidbodyConstraints.None;
 				childRigidbody.useGravity = true;
 				childRigidbody.isKinematic = false;
-				childRigidbody.WakeUp();
+				//childRigidbody.WakeUp();
 			}
 			
 			transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(0.001f, 0.001f, 0.001f), destroyTransitionSpeed * Time.deltaTime);

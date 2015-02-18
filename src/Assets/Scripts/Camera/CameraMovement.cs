@@ -93,6 +93,7 @@ public class CameraMovement : MonoBehaviour
 		if (GameController.Instance.gameState == LegendPeak.GameState.Over) return;
 
 		isTracking = true;
+		YSmooth = defaultCameraSpeed;
 		isTimedDestroyCutscene = true;
 		_shouldZoomOut = true;
 		_timedDestroyZoomTimer = timedDestroyZoomTime;

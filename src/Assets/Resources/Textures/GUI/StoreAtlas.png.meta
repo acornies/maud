@@ -5,7 +5,7 @@ TextureImporter:
     21300000: VideoAd
     21300002: CircleButton
     21300004: Cart
-    21300006: Music
+    21300006: MusicOne
     21300008: Plus
     21300010: Close
     21300012: CloudRestore
@@ -82,13 +82,13 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: Music
+    - name: MusicOne
       rect:
         serializedVersion: 2
-        x: 67
-        y: 891
-        width: 467
-        height: 515
+        x: 147
+        y: 907
+        width: 351
+        height: 513
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

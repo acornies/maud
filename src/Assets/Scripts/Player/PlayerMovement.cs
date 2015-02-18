@@ -119,10 +119,11 @@ public class PlayerMovement : MonoBehaviour
 
 		var levelPlatforms = PlatformController.Instance.levelPlatforms;
 		Vector3 spawnPosition;
+		var bottom = levelPlatforms.Keys.Min();
 
-		if (PlatformController.Instance.useTimedDestroy)
+		if (GameController.Instance.highestPoint < bottom)
 		{
-			var bottom = levelPlatforms.Keys.Min();
+			//var bottom = levelPlatforms.Keys.Min();
 			spawnPosition = new Vector3(0, levelPlatforms[bottom + 2].transform.position.y, GameController.Instance.playerZPosition);
 			Debug.Log ("Timed destroy player reward spawn Y position: " + spawnPosition.y);
 		}
@@ -282,7 +283,7 @@ public class PlayerMovement : MonoBehaviour
     public void SetSpawnPosition(Vector3 newPosition)
     {
         _ghostTouchTargetPosition = newPosition;
-        //_isGhostMoving = true;
+        _isGhostMoving = true;
     }
 
     // Use this for physics updates
@@ -416,7 +417,7 @@ public class PlayerMovement : MonoBehaviour
     private void HandleOnPlayerDeath()
     {
 		rigidbody.isKinematic = true;
-		_isGhostMoving = true;
+		//_isGhostMoving = true;
 		//_sparkElectricity.loop = true;
 		//_sparkElectricityBubble.loop = true;
 		//_sparkElectricity.Play ();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Advertisements;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -49,7 +50,7 @@ public class MusicController : MonoBehaviour
     {
 		_audioSources [0].Play ();
 		currentClipInfo = GetClipInfoFromAudioSource (_audioSources [0]);
-		_audioSources [0].volume = PlayerState.Instance.Data.playMusic ? maxMusicVolume : 0;
+		_audioSources [0].volume = PlayerState.Instance.Data.soundTrackSelection > 0 ? maxMusicVolume : 0;
     }
 
     void HandleOnGameStart ()
@@ -155,12 +156,12 @@ public class MusicController : MonoBehaviour
 				switch(track.transitionType)
 				{
 					case MusicTransitionType.TrackEnd:
-						if (!currentBus.isPlaying)
+						if (!currentBus.isPlaying && !Advertisement.isShowing)
 						{
 							Debug.Log("Switch to " + nextClipInfo.clip.name);
 							currentBus.Stop();
 							nextBus.loop = true;
-							nextBus.volume = (PlayerState.Instance.Data.playMusic) ? maxMusicVolume : 0;
+							nextBus.volume = (PlayerState.Instance.Data.soundTrackSelection > 0) ? maxMusicVolume : 0;
 							nextBus.Play();							
 
 							// trigger timed destroy
@@ -171,10 +172,10 @@ public class MusicController : MonoBehaviour
 
 					case MusicTransitionType.Fade:
 						
-						if (PlayerState.Instance.Data.playMusic)
+						if (PlayerState.Instance.Data.soundTrackSelection > 0)
 						{
 							
-							if (currentBus.isPlaying && !nextBus.isPlaying)
+							if (currentBus.isPlaying && !nextBus.isPlaying && !Advertisement.isShowing)
 							{
 								nextBus.Play();
 								nextBus.loop = true;
@@ -230,9 +231,9 @@ public class MusicController : MonoBehaviour
 
     void ToggleMusic(int preference)
     {
+		AudioSource currentSong = _audioSources.FirstOrDefault(x => x.isPlaying);
 		if (preference == 0)
 		{
-			AudioSource currentSong = _audioSources.FirstOrDefault(x => x.isPlaying);
 			if (currentSong != null)
 	        {
 	            currentSong.volume = 0;
@@ -243,7 +244,7 @@ public class MusicController : MonoBehaviour
 			var selection = GetSoundTrackSelectionFromPreference();
 
 			// if selection matches current track listing only increase volume
-			/*if (_currentTrackListing[0].clip.name == soundTracks[selection].clips[0].clip.name)
+			if (_currentTrackListing[0].clip.name == soundTracks[selection].clips[0].clip.name)
 			{
 				if (currentSong != null)
 				{
@@ -252,8 +253,7 @@ public class MusicController : MonoBehaviour
 				}
 			}
 			else
-			{*/
-				
+			{			
 				_currentTrackListing = soundTracks [selection].clips.OrderBy (x => x.order).ToArray();
 				foreach (ClipInfo track in _currentTrackListing)
 				{
@@ -269,7 +269,7 @@ public class MusicController : MonoBehaviour
 				{
 					_audioSources[_currentTrackListing.Length - 1].Play();
 				}
-			//}
+			}
 		}
 		Debug.Log ("Music controller handle preference:" + preference);
     }

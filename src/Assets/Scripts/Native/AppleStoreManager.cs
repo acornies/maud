@@ -175,12 +175,12 @@ namespace LegendPeak.Native
 		{
 			if (response.IsSucceeded)
 			{
-				IOSNativePopUpManager.showMessage("Restore Purchases Complete", "Your purchases have been successfully restored.");
+				IOSNativePopUpManager.showMessage("Restore Purchase Complete", "Your purchase has been successfully restored.");
 				Debug.Log("Restore purchases succeeded.");
 			}
 			else
 			{
-				IOSNativePopUpManager.showMessage("Unable To Restore Purchases", "There were no purchases to restore or an unexpected error occured.");
+				IOSNativePopUpManager.showMessage("Unable To Restore Purchase", "There were no purchases to restore or an unexpected error occured.");
 				Debug.Log ("Restore purchases failed");
 			}
 

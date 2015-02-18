@@ -92,6 +92,7 @@ public class StoreController : MonoBehaviour {
 public class MaudProduct
 {
 	public string identifier;
+	public string title;
 	public string description;
 	public Sprite image;
 }

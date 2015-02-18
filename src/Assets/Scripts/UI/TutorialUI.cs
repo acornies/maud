@@ -4,12 +4,21 @@ using System.Collections;
 
 public class TutorialUI : MonoBehaviour 
 {
-
+	private bool _tutorialOpen;
 	public GameObject[] tutorialPanels;
 
 	void OnEnable()
 	{
 		CameraMovement.OnMovePlayerToGamePosition += HandleOnMovePlayerToGamePosition;
+		EasyTouch.On_SimpleTap += HandleOn_SimpleTap;
+	}
+
+	void HandleOn_SimpleTap (Gesture gesture)
+	{
+		if (_tutorialOpen)
+		{
+			ButtonTutorialClose();
+		}
 	}
 
 	void HandleOnMovePlayerToGamePosition (Vector3 playerPosition)
@@ -28,6 +37,7 @@ public class TutorialUI : MonoBehaviour
 			panel.rectTransform.offsetMax = new Vector2(175f, 100f);
 			introPanel.transform.localScale = new Vector2(1f, 1f);
 
+			_tutorialOpen = true;
 			Time.timeScale = 0;
 		}
 	}
@@ -45,6 +55,7 @@ public class TutorialUI : MonoBehaviour
 	void UnsubscribeEvent()
 	{
 		CameraMovement.OnMovePlayerToGamePosition -= HandleOnMovePlayerToGamePosition;
+		EasyTouch.On_SimpleTap -= HandleOn_SimpleTap;
 	}
 
 	// Use this for initialization
@@ -67,7 +78,8 @@ public class TutorialUI : MonoBehaviour
 		Destroy (transform.FindChild("TutorialGeneral").gameObject);
 		PlayerState.Instance.Data.viewedTutorialGeneral = true;
 		PlayerState.Instance.Save ();
-		// TODO: set tutorial property in player data
+
+		_tutorialOpen = false;
 		Time.timeScale = 1;
 	}
 }
