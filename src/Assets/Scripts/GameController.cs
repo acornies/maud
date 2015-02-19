@@ -53,6 +53,7 @@ public class GameController : MonoBehaviour
 	private Text _highestPointText;
 	private Text _totalHeightText;
 	private bool _timeDestroyed;
+	private Text _levelsInfoText;
 
 	public int targetFrameRate = 60;
 	public string advertisingAppIdIOS;
@@ -88,6 +89,7 @@ public class GameController : MonoBehaviour
     public Sprite controlFingerSwipeImage;
 	public Color heightCounterColor;
 	public float continueAdPower = 50;
+	public Color leaderboardActiveColor;
 	
 	//public int gameOverContinues;
 	public int advertisingContinues = 2;
@@ -324,7 +326,7 @@ public class GameController : MonoBehaviour
 		var controlMode = GameObject.Find ("ControlButton");
 		//_controlModeImage = controlMode.GetComponent<Image>();
 		//_controlModeBehaviour = controlMode.GetComponent<Button>();
-
+		_levelsInfoText = GameObject.Find ("LevelInfo").GetComponent<Text>();
 
         gameState = GameState.Started;
         /*gameMode = GameMode.Story; // TODO: change from menu
@@ -370,6 +372,7 @@ public class GameController : MonoBehaviour
 		_restoreButtonBehaviour.onClick.AddListener (ButtonRestorePurchases);
 
 		_selectedSoundTrack = PlayerState.Instance.Data.soundTrackSelection;
+
     }
 
     void OnGUI()
@@ -405,6 +408,11 @@ public class GameController : MonoBehaviour
         {
             powerBarRenderer.texturesForeground[0].color.a = 0f;
         }
+
+		if (StoreController.Instance.Native.authenticated && _leaderboardImage.color != leaderboardActiveColor)
+		{
+			_leaderboardImage.color = Color.Lerp(_leaderboardImage.color, leaderboardActiveColor, 5f * Time.unscaledDeltaTime);
+		}
     }
 
     /*private void ToggleControlModeGUI()
@@ -834,6 +842,7 @@ public class GameController : MonoBehaviour
         _playButtonImage.enabled = true;
 		_playButtonBehaviour.enabled = true;
 		_triangleImage.enabled = true;
+		_levelsInfoText.text = string.Format ("{0} platforms to level up", PlayerState.Instance.GetPlatformDeltaToNextLevel());
 		//_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
 		//_totalHeightText.text = PlayerState.Instance.Data.totalPlatforms.ToString();
     }
@@ -900,6 +909,7 @@ public class GameController : MonoBehaviour
 		_playButtonImage.rectTransform.localScale = new Vector2 (1.3f, 1.3f);
 		//_highestPointText.text = string.Empty;
 		//_totalHeightText.text = string.Empty;
+		_levelsInfoText.enabled = false;
     }
 
     void HandleOnGamePause()

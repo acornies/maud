@@ -9,6 +9,7 @@ using LegendPeak;
 using LegendPeak.Player;
 using LegendPeak.Native;
 
+[RequireComponent(typeof(AudioSource))]
 public class PlayerState : MonoBehaviour
 {
 	private int lastTime;
@@ -16,6 +17,7 @@ public class PlayerState : MonoBehaviour
 
 	public string dataPath;
 	public PlayerLevel[] playerLevels;
+	public AudioClip levelUpSound;
 
     public static PlayerState Instance { get; private set; }
     public PlayerData Data { get; private set; }
@@ -25,6 +27,9 @@ public class PlayerState : MonoBehaviour
 
 	public delegate void SuccessfullNonConsumable(string productId);
 	public static event SuccessfullNonConsumable OnSuccessfullNonConsumable;
+
+	public delegate void LevelUp(int level);
+	public static event LevelUp OnLevelUp;
 	
 	void OnEnable()
 	{
@@ -195,22 +200,6 @@ public class PlayerState : MonoBehaviour
     {
         var binaryFormatter = new BinaryFormatter();
 
-		/*if (GameController.Instance.highestPoint > Data.highestPlatform) 
-		{
-			Data.highestPlatform = GameController.Instance.highestPoint;
-			//Data.highestPoint = 0;
-		}*/
-
-		//Debug.Log("Before: " + lastTime);
-		/*var toAdd = GameController.Instance.highestPoint - lastTime;
-		lastTime = GameController.Instance.highestPoint;
-		//Debug.Log ("After: " + lastTime);
-
-		//Debug.Log("Added: " + toAdd);
-		Data.totalPlatforms += toAdd;
-		*/
-		//Data.totalHeight = 0;
-
 		FileStream playerFile = !File.Exists(string.Format(dataPath, Application.persistentDataPath)) 
 		    ? File.Create(string.Format(dataPath, Application.persistentDataPath)) 
 		    : File.OpenWrite(string.Format(dataPath, Application.persistentDataPath));		      
@@ -255,8 +244,27 @@ public class PlayerState : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+		//var nextLevelIndex = Data.playerLevel;
+		if (Data.totalPlatforms >= playerLevels[Data.playerLevel].totalPlatforms)
+		{
+			Debug.Log("Level up to " + (Data.playerLevel + 1));
+			Data.playerLevel++;
+			Save ();
+			if (OnLevelUp != null)
+			{
+				OnLevelUp(Data.playerLevel);
+			}
+			if (levelUpSound != null && levelUpSound.isReadyToPlay)
+			{
+				audio.PlayOneShot(levelUpSound);
+			}
+		}
     }
+
+	public int GetPlatformDeltaToNextLevel()
+	{
+		return (playerLevels [Data.playerLevel].totalPlatforms - Data.totalPlatforms);
+	}
 
 	void HandleOnGamePause()
 	{

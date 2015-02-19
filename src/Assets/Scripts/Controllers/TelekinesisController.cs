@@ -479,7 +479,7 @@ public class TelekinesisController : MonoBehaviour
 
         _teleAttack.Play();
 
-
+		_teleLoop.loop = true;
         if (!_teleLoop.isPlaying)
         {
             _teleLoop.PlayDelayed(_teleAttack.clip.length);
@@ -491,7 +491,8 @@ public class TelekinesisController : MonoBehaviour
         if (_teleTail.clip == null || !_teleLoop.isPlaying) return;
 
         _teleTail.PlayOneShot(_teleTail.clip);
-        _teleLoop.Stop();
+        //_teleLoop.Stop();
+		_teleLoop.loop = false;
     }
 
     void HandleOnTelekinesisStabilize(Transform transformtoStabilize)

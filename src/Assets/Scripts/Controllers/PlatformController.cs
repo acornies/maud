@@ -316,6 +316,22 @@ public class PlatformController : MonoBehaviour
                 orbitComponent.stopTime = 0.5f;
             }
         }
+
+		if (index > 230)
+		{
+			if (upAndDownComponent != null) //TODO: change to Editor value
+			{
+				upAndDownComponent.speed = Random.Range(4f, 6f);
+				upAndDownComponent.cameraSpeed = upAndDownComponent.speed/2;
+				upAndDownComponent.waitTime = 0.2f;
+			}
+			
+			if (orbitComponent != null) //TODO: change to Editor value
+			{
+				orbitComponent.rotationSpeed = Random.Range(40f, 50f) * orbitAxis.y;
+				orbitComponent.stopTime = 0.5f;
+			}
+		}
     }
 
     private float GetRandomRotation(int index)

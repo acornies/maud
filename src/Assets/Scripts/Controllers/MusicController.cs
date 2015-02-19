@@ -175,7 +175,7 @@ public class MusicController : MonoBehaviour
 						if (PlayerState.Instance.Data.soundTrackSelection > 0)
 						{
 							
-							if (currentBus.isPlaying && !nextBus.isPlaying && !Advertisement.isShowing)
+							if (currentBus.isPlaying && !nextBus.isPlaying)
 							{
 								nextBus.Play();
 								nextBus.loop = true;

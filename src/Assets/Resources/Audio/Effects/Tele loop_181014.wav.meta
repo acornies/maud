@@ -8,5 +8,5 @@ AudioImporter:
   3D: 0
   forceToMono: 0
   useHardware: 0
-  loopable: 0
+  loopable: 1
   userData: 
