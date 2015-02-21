@@ -81,7 +81,7 @@ public class PowerUpBehaviour : MonoBehaviour
 
     private void OnTriggerEnter(Collider otherCollider)
     {
-        if (otherCollider.name != "Player") return;
+        if (otherCollider.gameObject.layer != 9) return;
 
         _animator.enabled = false;
         particleSystem.Stop();
@@ -95,7 +95,7 @@ public class PowerUpBehaviour : MonoBehaviour
             OnPowerPickUp(pickUpPower);
         }
         _shouldOrbitAroundPlayer = true;
-        orbitCenter = otherCollider.transform.FindChild("CenterTarget").transform;
+        orbitCenter = otherCollider.transform.root.FindChild("CenterTarget").transform;
     }
 
     public void Reactivate()

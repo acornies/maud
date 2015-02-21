@@ -11,7 +11,7 @@ namespace LegendPeak.Player
         public int totalPlatforms { get; set; }
         public MonetizedState monetizedState { get; set; }
 		public ControlMode controlMode { get; set; }
-		//public bool playMusic { get; set; }
+		public bool playMusic { get; set; }
 		public int playerLevel { get; set; }
 		public int gameOverContinues { get; set;}
 		public bool viewedTutorialGeneral {get; set;}

@@ -245,6 +245,12 @@ public class PlayerState : MonoBehaviour
     void Update()
     {
 		//var nextLevelIndex = Data.playerLevel;
+		//Debug.Log ("Player level " + Data.playerLevel + " our of " + playerLevels.Length);
+		if (Data.playerLevel == playerLevels.Length)
+		{
+			return; // If you've reached the last level
+		}
+
 		if (Data.totalPlatforms >= playerLevels[Data.playerLevel].totalPlatforms)
 		{
 			Debug.Log("Level up to " + (Data.playerLevel + 1));
@@ -258,6 +264,7 @@ public class PlayerState : MonoBehaviour
 			{
 				audio.PlayOneShot(levelUpSound);
 			}
+			GameController.Instance.powerMeter = playerLevel.maxEnergy;
 		}
     }
 

@@ -23,8 +23,13 @@ namespace LegendPeak.Native
 			IOSInAppPurchaseManager.instance.OnRestoreComplete += OnAppleRestoreComplete;
 			
 			IOSInAppPurchaseManager.instance.loadStore();
+
+			leaderboardHighestName = "maud_high_score";
+			leaderboardTotalName = "maud_total_score";
 		}
 
+		public string leaderboardHighestName { get; private set; }
+		public string leaderboardTotalName { get; private set; }
 		public bool authenticated { get; private set;}
 
 		public void buyProduct(string productId)
@@ -104,17 +109,22 @@ namespace LegendPeak.Native
 			}
 		}
 
-		private static void OnStoreKitInitComplete (ISN_Result result) {
+		private static void OnStoreKitInitComplete (ISN_Result result) 
+		{
 			IOSInAppPurchaseManager.instance.OnStoreKitInitComplete -= OnStoreKitInitComplete;
 			
-			if(result.IsSucceeded) {
+			if(result.IsSucceeded) 
+			{
 				Debug.Log("Inited successfully, Avaliable products count: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
-			} else {
+			} 
+			else 
+			{
 				Debug.Log("StoreKit Init Failed.  Error code: " + result.error.code + "\n" + "Error description:" + result.error.description);
 			}
 		}
 
-		private void OnScoreSubmited (ISN_Result result) {
+		private void OnScoreSubmited (ISN_Result result) 
+		{
 			GameCenterManager.OnScoreSubmited -= OnScoreSubmited;
 			if(result.IsSucceeded)  {
 				Debug.Log("Score Submited");
@@ -123,7 +133,8 @@ namespace LegendPeak.Native
 			}
 		}
 
-		private void OnAppleTransactionComplete (IOSStoreKitResponse response) {
+		private void OnAppleTransactionComplete (IOSStoreKitResponse response) 
+		{
 
 			var storeResponse = new AppleStoreResponse () { productId = response.productIdentifier };
 			Debug.Log("OnTransactionComplete: " + response.productIdentifier);

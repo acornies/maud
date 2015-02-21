@@ -4,8 +4,15 @@ Google Play game services IDs.
 Save this file as res/values/games-ids.xml in your project.
 -->
 <resources>
-  <string name="app_id">216817929098</string>
-  <string name="achievement_simple_achievement_example">CgkIipfs2qcGEAIQCA</string>
+    <string name="app_id">89352469318</string>
+    <string name="leaderboard_maud_high_score">CgkIxvbJ7swCEAIQAQ</string>
+    <string name="leaderboard_maud_total_score">CgkIxvbJ7swCEAIQAg</string>
+    <string name="achievement_out_of_the_nest">CgkIxvbJ7swCEAIQBA</string>
+    <string name="achievement_stratospheric_heights">CgkIxvbJ7swCEAIQBg</string>
+    <string name="achievement_sonic_jumper">CgkIxvbJ7swCEAIQBw</string>
+    <string name="leaderboard_highest_jumpers">CgkIxvbJ7swCEAIQAQ</string>
+    <string name="leaderboard_endurance_jumpers">CgkIxvbJ7swCEAIQAg</string>
+  <!--<string name="achievement_simple_achievement_example">CgkIipfs2qcGEAIQCA</string>
   <string name="achievement_hidden_achievement_example">CgkIipfs2qcGEAIQCQ</string>
   <string name="achievement_incremental_achievement_example">CgkIipfs2qcGEAIQCg</string>
   <string name="achievement_first_play_service_auth">CgkIipfs2qcGEAIQCw</string>
@@ -18,4 +25,5 @@ Save this file as res/values/games-ids.xml in your project.
   <string name="quest_rt">CgkIipfs2qcGEAIQEg</string>
   <string name="quest_rt2">CgkIipfs2qcGEAIQEw</string>
   <string name="quest_rt3">CgkIipfs2qcGEAIQFA</string>
+   -->
 </resources>

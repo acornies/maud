@@ -54,7 +54,7 @@ public class IntroLedge : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.name != "Player" || _introLocation == Vector3.zero) return;
+        if (collision.gameObject.layer != 9 || _introLocation == Vector3.zero) return;
 
 		if (GameController.Instance.gameState == LegendPeak.GameState.Running) return;
 

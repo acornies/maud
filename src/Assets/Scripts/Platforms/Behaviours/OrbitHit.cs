@@ -38,7 +38,7 @@ public class OrbitHit : MonoBehaviour
     void HandlePlayerCollisions(Collision collision)
     {
         var playerMovement = collision.transform.GetComponent<PlayerMovement>();
-        if (collision.gameObject.name != "Player" 
+        if (collision.gameObject.layer != 9 
             || _parentOrbitBehaviour.isOnPlatform 
             || _parenTelekinesisHandler.isStable 
             || _parentOrbitBehaviour.isStopped)

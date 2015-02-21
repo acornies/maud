@@ -422,7 +422,7 @@ public class PlatformController : MonoBehaviour
 		}
 
 		//Debug.Log ("Timed destroy speed: " + timedDestroySpeed + "s");
-		if (bottom == _currentPlatform + checkpointBuffer + 1) // TODO editable
+		if (bottom == _currentPlatform + checkpointBuffer + 2) // TODO editable
 		{
 			Debug.Log ("Next death should be game over.");
 			if (OnTimedDestroyGameOver != null)

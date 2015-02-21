@@ -16,7 +16,17 @@ namespace LegendPeak.Native
 		public GoogleStoreManager ()
 		{
 			ImmersiveMode.instance.EnableImmersiveMode();
+
+			GooglePlayConnection.ActionConnectionResultReceived += ActionConnectionResultReceived;
+			GooglePlayConnection.ActionPlayerConnected += ActionPlayerConnected;
+			GooglePlayConnection.instance.connect ();
+
+			leaderboardHighestName = "leaderboard_highest_jumpers";
+			leaderboardTotalName = "leaderboard_endurance_jumpers";
 		}
+
+		public string leaderboardHighestName { get; private set; }
+		public string leaderboardTotalName { get; private set; }
 
 		public bool authenticated { get; private set;}
 
@@ -32,7 +42,7 @@ namespace LegendPeak.Native
 
 		public void showLeaderboards ()
 		{
-
+			GooglePlayManager.instance.showLeaderBoardsUI ();
 		}
 		
 		public void showLeaderboard(string leaderboardId)
@@ -42,7 +52,7 @@ namespace LegendPeak.Native
 		
 		public void submitScore(int score, string leaderboardId)
 		{
-
+			GooglePlayManager.instance.SubmitScoreById(leaderboardId, score);
 		}
 		
 		public void loadPlayerScore(string leaderboardId)
@@ -73,6 +83,25 @@ namespace LegendPeak.Native
 		public event EventHandler OnTransactionComplete;
 		public event EventHandler OnAuthenticationFinished;
 		public event EventHandler OnRestoreComplete;
+
+		private void ActionConnectionResultReceived(GooglePlayConnectionResult result) 
+		{
+			if(result.IsSuccess) 
+			{
+				Debug.Log("Connected!");
+				//authenticated = true;
+			} 
+			else 
+			{
+				Debug.Log("Cnnection failed with code: " + result.code.ToString());
+				//authenticated = false;
+			}
+		}
+
+		private void ActionPlayerConnected()
+		{
+			authenticated = true;
+		}
 	}
 }
 

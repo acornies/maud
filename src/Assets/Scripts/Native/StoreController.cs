@@ -26,12 +26,12 @@ public class StoreController : MonoBehaviour {
 		switch(Application.platform)
 		{
 			//case RuntimePlatform.OSXEditor:
-			case RuntimePlatform.OSXEditor:
 			case RuntimePlatform.IPhonePlayer:
 				Native = new AppleStoreManager();
 				//Debug.Log ("Loaded AppleStoreManager");
 				break;
 			case RuntimePlatform.WindowsEditor:
+			case RuntimePlatform.OSXEditor:
 			case RuntimePlatform.Android:
 				//instance = 
 				//TODO: implement

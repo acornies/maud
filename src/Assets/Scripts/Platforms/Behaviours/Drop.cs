@@ -56,7 +56,7 @@ public class Drop : PlatformBehaviour
 
         _isDropping = true;
         
-		if (isOnPlatform && isBeingAffected)
+		/*if (isOnPlatform && isBeingAffected)
 		{
 			player.parent = null;
 		}
@@ -64,7 +64,7 @@ public class Drop : PlatformBehaviour
 		if (isOnPlatform && !isBeingAffected)
 		{
 			player.parent = child;
-		}
+		}*/
     }
 
     public override void HandlePlayerAirborne(Transform player)

@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
 	private float _shakeTimer;
 	private float _moveDirection;
 	private bool _shouldTimeoutShake;
+	private Collider _modelCollider;
     private Transform _groundCheck;
     private Transform _heightCheck;
     private int _additionalJumpCount;
@@ -213,6 +214,7 @@ public class PlayerMovement : MonoBehaviour
         _groundCheck = GameObject.Find("GroundCheck").transform;
         _heightCheck = GameObject.Find("HeightCheck").transform;
         _playerModel = transform.FindChild("PlayerModel").gameObject;
+		_modelCollider = _playerModel.GetComponent<Collider> ();
         _animator = _playerModel.GetComponent<Animator>();
         _spark = transform.FindChild("Spark").GetComponent<ParticleSystem>();
 		_sparkElectricity = transform.FindChild ("ConstantSpark").GetComponent<ParticleSystem> ();
@@ -236,7 +238,8 @@ public class PlayerMovement : MonoBehaviour
         }
 		else if (!GameController.Instance.playerIsDead && _modelBody.renderer.material != bodyMaterials[_currentMaterialIndex])
 		{
-			collider.enabled = true;
+			//collider.enabled = true;
+			_modelCollider.isTrigger = false;
 			_modelBody.renderer.material = bodyMaterials[_currentMaterialIndex];
 			_leftEye.renderer.material = normalEyeMaterial;
             _rightEye.renderer.material = normalEyeMaterial;
@@ -244,7 +247,8 @@ public class PlayerMovement : MonoBehaviour
 
 		if (GameController.Instance.playerIsDead && GameController.Instance.gameState == GameState.Running)
         {
-            collider.enabled = false;
+            //collider.enabled = false;
+			_modelCollider.isTrigger = true;
 
 			if (_isGhostMoving && transform.position != _ghostTouchTargetPosition)
             {

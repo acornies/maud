@@ -966,8 +966,8 @@ public class GameController : MonoBehaviour
 
 		if (StoreController.Instance.Native.authenticated)
 		{
-			StoreController.Instance.Native.submitScore (highestPoint, "maud_high_score"); //TOOD: consitent naming
-			StoreController.Instance.Native.submitScore (PlayerState.Instance.Data.totalPlatforms, "maud_total_score");
+			StoreController.Instance.Native.submitScore (highestPoint, StoreController.Instance.Native.leaderboardHighestName); //TOOD: consitent naming
+			StoreController.Instance.Native.submitScore (PlayerState.Instance.Data.totalPlatforms, StoreController.Instance.Native.leaderboardTotalName);
 		}
 
 		// TODO display continue UI

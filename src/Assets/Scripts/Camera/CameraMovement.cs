@@ -228,7 +228,7 @@ public class CameraMovement : MonoBehaviour
 			_playerVisibleTimer -= Time.deltaTime;
 			if (_playerVisibleTimer <= 0)
 			{
-				isTracking = (GameController.Instance.playerIsDead) ? false : true;
+				//isTracking = (GameController.Instance.playerIsDead) ? false : true;
 				if (OnRestorePlayerState != null)
 				{
 					var bottom = PlatformController.Instance.levelPlatforms.Keys.Min();

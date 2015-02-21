@@ -12,6 +12,8 @@ namespace LegendPeak.Native
 {
 	public interface IStoreManager
 	{
+		string leaderboardHighestName { get; }
+		string leaderboardTotalName { get; }
 		bool authenticated { get; }
 		void buyProduct(string productIdentifier);
 		void restoreProducts();

@@ -57,7 +57,7 @@ public class KillBox : MonoBehaviour
 
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.name == "Player" && !GameController.Instance.playerIsDead)
+        if (collider.gameObject.layer == 9 && !GameController.Instance.playerIsDead)
         {
             On_PlayerDeath();
         }

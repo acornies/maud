@@ -123,6 +123,7 @@ public class EveryplayController : MonoBehaviour
 		{	
 			case RuntimePlatform.IPhonePlayer:
 				// Game is unacceptably slow on these devices
+#if UNITY_IPHONE 
 				if (iPhone.generation == iPhoneGeneration.iPhone
 			    || iPhone.generation == iPhoneGeneration.iPhone4
 			    || iPhone.generation == iPhoneGeneration.iPad2Gen
@@ -131,6 +132,7 @@ public class EveryplayController : MonoBehaviour
 			    || iPhone.generation == iPhoneGeneration.iPadUnknown
 			    || iPhone.generation == iPhoneGeneration.iPhone3G
 			    || iPhone.generation == iPhoneGeneration.iPhone3GS)
+
 				{
 					_cameraImage.sprite = cameraImage;
 					_recordButtonBehaviour.interactable = true;
@@ -142,7 +144,7 @@ public class EveryplayController : MonoBehaviour
 					_recordButtonBehaviour.interactable = isReady;
 					_recordButtonBehaviour.onClick.AddListener(ButtonRecord);
 				}
-				
+#endif
 				break;
 			case RuntimePlatform.OSXEditor:
 			case RuntimePlatform.Android:

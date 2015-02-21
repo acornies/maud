@@ -19,7 +19,7 @@ public class TelekinesisTrigger : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         //Debug.Log(other.name + " tele: " + _telekinesisTrigger.enabled);
-        if (other.name != "Player" || !GameController.Instance.inSafeZone) return;
+        if (other.gameObject.layer != 9 || !GameController.Instance.inSafeZone) return;
         Debug.Log("Turn on tele bar.");
         GameController.Instance.UpdateSafeZone(false);
         //GameController.Instance.heightCounter.rectTransform.anchoredPosition = new Vector2(-20f, -20f);

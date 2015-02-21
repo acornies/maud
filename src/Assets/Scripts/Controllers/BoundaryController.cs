@@ -26,7 +26,7 @@ public class BoundaryController : MonoBehaviour
     void OnTriggerEnter(Collider collider)
     {
         // left and right boundary behaviour
-        if (collider.name != "Player" && GameController.Instance.playerIsDead) return;
+        if (collider.gameObject.layer != 9 && GameController.Instance.playerIsDead) return;
         //BoundaryBounceBack();
         //Debug.Log("Player hit boundary " + transform.name);
         On_PlayerDeath();
