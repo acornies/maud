@@ -156,7 +156,7 @@ public class MusicController : MonoBehaviour
 				switch(track.transitionType)
 				{
 					case MusicTransitionType.TrackEnd:
-						if (!currentBus.isPlaying && !Advertisement.isShowing)
+						if (!currentBus.isPlaying)
 						{
 							Debug.Log("Switch to " + nextClipInfo.clip.name);
 							currentBus.Stop();
