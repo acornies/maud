@@ -252,6 +252,7 @@ public class GameController : MonoBehaviour
 		{
 			_isStoreOpen = false;
 			_storeButtonBehaviour.interactable = false;
+			_plusImage.color = new Color(_plusImage.color.r, _plusImage.color.g, _plusImage.color.b, .4f);
 		}
 	}
 
@@ -374,7 +375,7 @@ public class GameController : MonoBehaviour
 			buttonText.text = product.description;
 			childSprite.sprite = product.image;
 			//behaviour.onClick.RemoveAllListeners();
-			yPositionOffset += mainImage.rectTransform.sizeDelta.y;
+			yPositionOffset += (isiOS) ? mainImage.rectTransform.sizeDelta.y : 0;
 			mainImage.rectTransform.anchoredPosition = new Vector2(0, -yPositionOffset);
 			mainImage.rectTransform.localScale = new Vector2(1f, 1f);
 			newButton.GetComponent<Button>().onClick.AddListener(() => { ButtonBuyProduct(product.identifier); });
