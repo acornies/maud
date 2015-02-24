@@ -229,6 +229,7 @@ public class CameraMovement : MonoBehaviour
 			if (_playerVisibleTimer <= 0)
 			{
 				//isTracking = (GameController.Instance.playerIsDead) ? false : true;
+				YSmooth = (GameController.Instance.playerIsDead) ? (defaultCameraSpeed / ghostTrackingDivider) : defaultCameraSpeed;
 				if (OnRestorePlayerState != null)
 				{
 					var bottom = PlatformController.Instance.levelPlatforms.Keys.Min();
@@ -311,7 +312,7 @@ public class CameraMovement : MonoBehaviour
     void HandlePlayerDeath()
     {
         //isTracking = false;
-		YSmooth = ghostTrackingDivider / ghostTrackingDivider;
+		YSmooth = defaultCameraSpeed / ghostTrackingDivider;
 		_shouldZoomOut = true;
         //Debug.Log("Turn off tracking");
     }
@@ -319,7 +320,7 @@ public class CameraMovement : MonoBehaviour
     void HandlePlayerResurrection()
     {
         isTracking = true;
-		YSmooth = defaultCameraSpeed;
+		//YSmooth = defaultCameraSpeed;
 		_shouldZoomOut = false;
 		if (YSmooth != defaultCameraSpeed)
 		{

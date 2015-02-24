@@ -31,10 +31,14 @@ namespace LegendPeak.Native
 
 			leaderboardHighestName = "leaderboard_highest_jumpers";
 			leaderboardTotalName = "leaderboard_endurance_jumpers";
+			purchaseContinuationsIdentifier = "com.andrewcornies.legendpeak.revivalpack1";
+			purchaseMusicIdentifier = "com.andrewcornies.legendpeak.altmusicpack1";
 		}
 
 		public string leaderboardHighestName { get; private set; }
 		public string leaderboardTotalName { get; private set; }
+		public string purchaseContinuationsIdentifier { get; private set; }
+		public string purchaseMusicIdentifier { get; private set; }
 
 		public bool authenticated { get; private set;}
 
@@ -128,7 +132,7 @@ namespace LegendPeak.Native
 				AndroidInAppPurchaseManager.ActionRetrieveProducsFinished += OnRetrieveProductsFinished;
 			} 
 			
-			AndroidMessage.Create("Connection Response", result.response.ToString() + " " + result.message);
+			//AndroidMessage.Create("Connection Response", result.response.ToString() + " " + result.message);
 			Debug.Log ("Connection Response: " + result.response.ToString() + " " + result.message);
 		}
 
@@ -139,12 +143,26 @@ namespace LegendPeak.Native
 			if(result.isSuccess) 
 			{
 				//_isInited = true;
-				AndroidMessage.Create("Success", "Billing init complete inventory contains: " + AndroidInAppPurchaseManager.instance.inventory.purchases.Count + " products");
+				//AndroidMessage.Create("Success", "Inventory contains: " + AndroidInAppPurchaseManager.instance.inventory.purchases.Count + " products");
 				// TODO: do the equivilent of restore purchases
+				if (AndroidInAppPurchaseManager.instance.inventory.purchases.Count > 0)
+				{
+					foreach (var purchase in AndroidInAppPurchaseManager.instance.inventory.purchases)
+					{
+
+						var storeResponse = new GoogleStoreResponse () { productId = purchase.SKU, status = StoreResponseStatus.Restored };
+						if (OnTransactionComplete != null)
+						{
+							//AndroidMessage.Create("Purchase Info", "SKU: " + storeResponse.productId);
+							Debug.Log("Purchase Info SKU: " + storeResponse.productId);
+							OnTransactionComplete (this, storeResponse);
+						}
+					}
+				}
 			} 
 			else 
 			{
-				AndroidMessage.Create("Connection Response", result.response.ToString() + " " + result.message);
+				//AndroidMessage.Create("Connection Response", result.response.ToString() + " " + result.message);
 			}
 			Debug.Log ("Connection Response: " + result.response.ToString() + " " + result.message);			
 		}
@@ -157,15 +175,19 @@ namespace LegendPeak.Native
 				//OnProcessingPurchasedProduct (result.purchase);
 				//TODO implement
 				storeResponse.status = StoreResponseStatus.Success;
+				if (result.purchase.SKU == purchaseContinuationsIdentifier)
+				{
+					AndroidInAppPurchaseManager.instance.consume(purchaseContinuationsIdentifier);
+				}
 			} 
 			else 
 			{
 				storeResponse.status = StoreResponseStatus.Failed;
 				storeResponse.message = result.message;
-				AndroidMessage.Create("Product Purchase Failed", result.response.ToString() + " " + result.message);
+				//AndroidMessage.Create("Product Purchase Failed", result.response.ToString() + " " + result.message);
 			}
 
-			Debug.Log ("Purchased Responce: " + result.response.ToString() + " " + result.message);
+			Debug.Log ("Purchased Response: " + result.response.ToString() + " " + result.message);
 			if (OnTransactionComplete != null)
 			{
 				OnTransactionComplete (this, storeResponse);

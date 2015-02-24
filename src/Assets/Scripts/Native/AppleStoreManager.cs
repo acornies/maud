@@ -26,10 +26,15 @@ namespace LegendPeak.Native
 
 			leaderboardHighestName = "maud_high_score";
 			leaderboardTotalName = "maud_total_score";
+			purchaseContinuationsIdentifier = "com.AndrewCornies.LegendPeak.RevivalPack1";
+			purchaseMusicIdentifier = "ccom.AndrewCornies.LegendPeak.AltMusicPack1";
 		}
 
 		public string leaderboardHighestName { get; private set; }
 		public string leaderboardTotalName { get; private set; }
+		public string purchaseContinuationsIdentifier { get; private set; }
+		public string purchaseMusicIdentifier { get; private set; }
+
 		public bool authenticated { get; private set;}
 
 		public void buyProduct(string productId)
