@@ -16,8 +16,8 @@ public class StoreController : MonoBehaviour {
 	public IStoreManager Native { get; private set; }
 
 	public const string SKIN_PACK = "com.AndrewCornies.LegendPeak.SkinPack1";
-	public const string REVIVAL_PACK = "com.AndrewCornies.LegendPeak.RevivalPack1";
-	public const string MUSIC_PACK = "com.AndrewCornies.LegendPeak.AltMusicPack1";
+	//public const string REVIVAL_PACK = "com.AndrewCornies.LegendPeak.RevivalPack1";
+	//public const string MUSIC_PACK = "com.AndrewCornies.LegendPeak.AltMusicPack1";
 
 	public NonConsumableProduct[] availableProducts;
 
@@ -75,7 +75,7 @@ public class StoreController : MonoBehaviour {
 		{
 			foreach(var item in playerPurchased)
 			{
-				availableProducts.FirstOrDefault( x => x.identifier == item).purchased = true;
+				availableProducts.FirstOrDefault( x => x.identifier.Equals(item, StringComparison.InvariantCultureIgnoreCase)).purchased = true;
 			}
 			
 			return availableProducts.Where (x => !x.purchased).ToArray();

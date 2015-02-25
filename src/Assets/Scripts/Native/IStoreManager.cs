@@ -14,6 +14,8 @@ namespace LegendPeak.Native
 	{
 		string leaderboardHighestName { get; }
 		string leaderboardTotalName { get; }
+		string purchaseContinuationsIdentifier { get; }
+		string purchaseMusicIdentifier { get; }
 		bool authenticated { get; }
 		void buyProduct(string productIdentifier);
 		void restoreProducts();

@@ -220,30 +220,41 @@ public class GameController : MonoBehaviour
 		productButton.gameObject.SetActive (false);
 		Debug.Log ("Removed store product button id: " + productId);
 
-		switch (productId)
+		if (productId == StoreController.Instance.Native.purchaseMusicIdentifier)
 		{
-			case StoreController.MUSIC_PACK:
-				if (gameState == GameState.Started)
-				{
-					if (!_isSettingsOpen)
-					{	
-						ButtonMenu();
-					}
-
-					if (PlayerState.Instance.Data.soundTrackSelection == 0)
-					{
-						ButtonMusic();
-						ButtonMusic();
-					}
-					else
-					{
-						ButtonMusic();
-					}
+			if (gameState == GameState.Started)
+			{
+				if (!_isSettingsOpen)
+				{	
+					ButtonMenu();
 				}
-			break;
+
+				if (PlayerState.Instance.Data.soundTrackSelection == 0)
+				{
+					ButtonMusic();
+					ButtonMusic();
+				}
+				else
+				{
+					ButtonMusic();
+				}
+			}
 		}
 
+		CheckDisableStoreButton ();
     }
+
+	void CheckDisableStoreButton()
+	{
+		if (Application.platform == RuntimePlatform.IPhonePlayer) return;
+
+		if (StoreController.Instance.GetPurchasabletems().Count() == 0)
+		{
+			_isStoreOpen = false;
+			_storeButtonBehaviour.interactable = false;
+			_plusImage.color = new Color(_plusImage.color.r, _plusImage.color.g, _plusImage.color.b, .4f);
+		}
+	}
 
     // Use this for initialization
     void Awake()
@@ -345,6 +356,7 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
+		var isiOS = (Application.platform == RuntimePlatform.IPhonePlayer) ? true : false;
 		_speakerImage.sprite = soundStateImages[PlayerState.Instance.Data.soundTrackSelection];
 		powerMeter = PlayerState.Instance.playerLevel.lifeCost;
 
@@ -354,7 +366,7 @@ public class GameController : MonoBehaviour
 		{
 			GameObject newButton = Instantiate(_restoreButtonImage.gameObject) as GameObject;
 			newButton.transform.SetParent(_storeButtonImage.transform);
-			newButton.name = product.identifier;
+			newButton.name =  (!isiOS) ? product.identifier.ToLower() : product.identifier; //FUCKING HACKY HACK
 			//var behaviour = newButton.GetComponent<Button>();
 			var mainImage = newButton.GetComponent<Image>();
 			var childSprite = newButton.transform.FindChild("Cloud").GetComponent<Image>();
@@ -363,7 +375,7 @@ public class GameController : MonoBehaviour
 			buttonText.text = product.description;
 			childSprite.sprite = product.image;
 			//behaviour.onClick.RemoveAllListeners();
-			yPositionOffset += mainImage.rectTransform.sizeDelta.y;
+			yPositionOffset += (isiOS) ? mainImage.rectTransform.sizeDelta.y : 0;
 			mainImage.rectTransform.anchoredPosition = new Vector2(0, -yPositionOffset);
 			mainImage.rectTransform.localScale = new Vector2(1f, 1f);
 			newButton.GetComponent<Button>().onClick.AddListener(() => { ButtonBuyProduct(product.identifier); });
@@ -373,6 +385,12 @@ public class GameController : MonoBehaviour
 
 		_selectedSoundTrack = PlayerState.Instance.Data.soundTrackSelection;
 
+		// remove restore purchaes for android
+		_restoreButtonImage.enabled = isiOS;
+		_restoreButtonBehaviour.interactable = isiOS;
+		_cloudDownloadImage.enabled = isiOS;
+
+		CheckDisableStoreButton ();
     }
 
     void OnGUI()
@@ -687,7 +705,7 @@ public class GameController : MonoBehaviour
 	{
 		if (promptPurchaseContinue)
 		{
-			StoreController.Instance.Native.buyProduct (StoreController.REVIVAL_PACK);
+			StoreController.Instance.Native.buyProduct (StoreController.Instance.Native.purchaseContinuationsIdentifier);
 		}
 		else
 		{

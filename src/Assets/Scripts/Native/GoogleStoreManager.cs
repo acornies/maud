@@ -21,27 +21,40 @@ namespace LegendPeak.Native
 			GooglePlayConnection.ActionPlayerConnected += ActionPlayerConnected;
 			GooglePlayConnection.instance.connect ();
 
+			//listening for purchase and consume events
+			AndroidInAppPurchaseManager.ActionProductPurchased += OnProductPurchased;  
+			//AndroidInAppPurchaseManager.ActionProductConsumed  += OnProductConsumed;			
+			
+			//listening for store initilaizing finish
+			AndroidInAppPurchaseManager.ActionBillingSetupFinished += OnBillingConnected;
+			AndroidInAppPurchaseManager.instance.loadStore();
+
 			leaderboardHighestName = "leaderboard_highest_jumpers";
 			leaderboardTotalName = "leaderboard_endurance_jumpers";
+			purchaseContinuationsIdentifier = "com.andrewcornies.legendpeak.revivalpack1";
+			purchaseMusicIdentifier = "com.andrewcornies.legendpeak.altmusicpack1";
 		}
 
 		public string leaderboardHighestName { get; private set; }
 		public string leaderboardTotalName { get; private set; }
+		public string purchaseContinuationsIdentifier { get; private set; }
+		public string purchaseMusicIdentifier { get; private set; }
 
 		public bool authenticated { get; private set;}
 
 		public void buyProduct(string productId)
 		{
-			//TODO: Implement
+			AndroidInAppPurchaseManager.instance.purchase (productId);
 		}
 
 		public void restoreProducts()
 		{
-
+			// Instead of restore, upon successful billing connection we're able to get the user's products and go with it
 		}
 
 		public void showLeaderboards ()
 		{
+			if (!authenticated) return;
 			GooglePlayManager.instance.showLeaderBoardsUI ();
 		}
 		
@@ -52,7 +65,8 @@ namespace LegendPeak.Native
 		
 		public void submitScore(int score, string leaderboardId)
 		{
-			GooglePlayManager.instance.SubmitScoreById(leaderboardId, score);
+			if (!authenticated) return;
+			GooglePlayManager.instance.submitScore(leaderboardId, score);
 		}
 		
 		public void loadPlayerScore(string leaderboardId)
@@ -71,11 +85,15 @@ namespace LegendPeak.Native
 			AndroidSocialGate.StartShareIntent("Share Maud", string.Format("I jumped {0} platforms in Maud. #maudgame maudgame.com", GameController.Instance.highestPoint));
 		}
 
-		void OnImageSaved (GallerySaveResult result) {
+		void OnImageSaved (GallerySaveResult result) 
+		{
 			AndroidCamera.instance.OnImageSaved -= OnImageSaved;
-			if(result.IsSucceeded) {
+			if(result.IsSucceeded) 
+			{
 				Debug.Log("Image saved to gallery \n" + "Path: " + result.imagePath);
-			} else {
+			} 
+			else 
+			{
 				Debug.Log("Image save to gallery failed");
 			}
 		}
@@ -93,7 +111,7 @@ namespace LegendPeak.Native
 			} 
 			else 
 			{
-				Debug.Log("Cnnection failed with code: " + result.code.ToString());
+				Debug.Log("Connection failed with code: " + result.code.ToString());
 				//authenticated = false;
 			}
 		}
@@ -102,6 +120,80 @@ namespace LegendPeak.Native
 		{
 			authenticated = true;
 		}
+
+		private void OnBillingConnected(BillingResult result) 
+		{
+			AndroidInAppPurchaseManager.ActionBillingSetupFinished -= OnBillingConnected;
+			
+			if(result.isSuccess) 
+			{
+				//Store connection is Successful. Next we loading product and customer purchasing details
+				AndroidInAppPurchaseManager.instance.retrieveProducDetails();
+				AndroidInAppPurchaseManager.ActionRetrieveProducsFinished += OnRetrieveProductsFinished;
+			} 
+			
+			//AndroidMessage.Create("Connection Response", result.response.ToString() + " " + result.message);
+			Debug.Log ("Connection Response: " + result.response.ToString() + " " + result.message);
+		}
+
+		private void OnRetrieveProductsFinished(BillingResult result) 
+		{
+			AndroidInAppPurchaseManager.ActionRetrieveProducsFinished -= OnRetrieveProductsFinished;
+			
+			if(result.isSuccess) 
+			{
+				//_isInited = true;
+				//AndroidMessage.Create("Success", "Inventory contains: " + AndroidInAppPurchaseManager.instance.inventory.purchases.Count + " products");
+				// TODO: do the equivilent of restore purchases
+				if (AndroidInAppPurchaseManager.instance.inventory.purchases.Count > 0)
+				{
+					foreach (var purchase in AndroidInAppPurchaseManager.instance.inventory.purchases)
+					{
+
+						var storeResponse = new GoogleStoreResponse () { productId = purchase.SKU, status = StoreResponseStatus.Restored };
+						if (OnTransactionComplete != null)
+						{
+							//AndroidMessage.Create("Purchase Info", "SKU: " + storeResponse.productId);
+							Debug.Log("Purchase Info SKU: " + storeResponse.productId);
+							OnTransactionComplete (this, storeResponse);
+						}
+					}
+				}
+			} 
+			else 
+			{
+				//AndroidMessage.Create("Connection Response", result.response.ToString() + " " + result.message);
+			}
+			Debug.Log ("Connection Response: " + result.response.ToString() + " " + result.message);			
+		}
+
+		private void OnProductPurchased(BillingResult result) 
+		{
+			var storeResponse = new GoogleStoreResponse () { productId = result.purchase.SKU };
+			if(result.isSuccess) 
+			{
+				//OnProcessingPurchasedProduct (result.purchase);
+				//TODO implement
+				storeResponse.status = StoreResponseStatus.Success;
+				if (result.purchase.SKU == purchaseContinuationsIdentifier)
+				{
+					AndroidInAppPurchaseManager.instance.consume(purchaseContinuationsIdentifier);
+				}
+			} 
+			else 
+			{
+				storeResponse.status = StoreResponseStatus.Failed;
+				storeResponse.message = result.message;
+				//AndroidMessage.Create("Product Purchase Failed", result.response.ToString() + " " + result.message);
+			}
+
+			Debug.Log ("Purchased Response: " + result.response.ToString() + " " + result.message);
+			if (OnTransactionComplete != null)
+			{
+				OnTransactionComplete (this, storeResponse);
+			}
+		}
 	}
+
 }
 

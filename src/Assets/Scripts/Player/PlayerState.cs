@@ -60,10 +60,10 @@ public class PlayerState : MonoBehaviour
 		if (isStoreResponse)
 		{
 			var storeResponse = e as IStoreResponse;
-			switch (storeResponse.productId)
-			{
-				case StoreController.REVIVAL_PACK:
-					
+			//switch (storeResponse.productId)
+			//{
+			if (storeResponse.productId == StoreController.Instance.Native.purchaseContinuationsIdentifier)
+			{		
 					switch (storeResponse.status)
 					{
 						case StoreResponseStatus.Success:
@@ -80,9 +80,12 @@ public class PlayerState : MonoBehaviour
 							Debug.Log("Player tried to purchase continuations but it failed.");
 							break;
 					}
-				break;
+				//break;
+			}
+			else if (storeResponse.productId == StoreController.Instance.Native.purchaseMusicIdentifier)
+			{
 
-				case StoreController.MUSIC_PACK:
+				//case StoreController.MUSIC_PACK:
 					
 					switch (storeResponse.status)
 					{
@@ -96,7 +99,8 @@ public class PlayerState : MonoBehaviour
 						break;
 					}
 
-				break;
+				//break;
+			//}
 			}
 		}
 	}
@@ -192,7 +196,7 @@ public class PlayerState : MonoBehaviour
 				list.Add(product);
 			}
 
-			return list.Contains(StoreController.MUSIC_PACK);
+			return list.Contains(StoreController.Instance.Native.purchaseMusicIdentifier);
 		}
 	}
 
