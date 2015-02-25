@@ -27,7 +27,7 @@ namespace LegendPeak.Native
 			leaderboardHighestName = "maud_high_score";
 			leaderboardTotalName = "maud_total_score";
 			purchaseContinuationsIdentifier = "com.AndrewCornies.LegendPeak.RevivalPack1";
-			purchaseMusicIdentifier = "ccom.AndrewCornies.LegendPeak.AltMusicPack1";
+			purchaseMusicIdentifier = "com.AndrewCornies.LegendPeak.AltMusicPack1";
 		}
 
 		public string leaderboardHighestName { get; private set; }

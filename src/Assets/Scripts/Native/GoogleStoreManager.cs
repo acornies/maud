@@ -44,7 +44,7 @@ namespace LegendPeak.Native
 
 		public void buyProduct(string productId)
 		{
-			AndroidInAppPurchaseManager.instance.purchase (productId.ToLower());
+			AndroidInAppPurchaseManager.instance.purchase (productId);
 		}
 
 		public void restoreProducts()
