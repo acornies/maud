@@ -375,7 +375,7 @@ public class TelekinesisController : MonoBehaviour
         _pointerOffset = (new Vector3(gesture.position.x, gesture.position.y, 0) - _pointerReference);
 
         // apply rotation
-        _rotation.y = -(_pointerOffset.x + _pointerOffset.y) * rotationSensitivity;
+        _rotation.y = -(_pointerOffset.x) * rotationSensitivity;
 
         _isRotating = true;
 

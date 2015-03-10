@@ -292,7 +292,7 @@ public class PlatformController : MonoBehaviour
             orbitAxis = _orbitAxis[rnd.Next(_orbitAxis.Length)];
         }
 
-        if (index > 80)
+        if (index > 60)
         {
             if (orbitComponent != null) //TODO: change to Editor value
             {
@@ -301,7 +301,7 @@ public class PlatformController : MonoBehaviour
             }
         }
 
-        if (index > 130)
+        if (index > 120)
         {
             if (upAndDownComponent != null) //TODO: change to Editor value
             {
@@ -341,7 +341,7 @@ public class PlatformController : MonoBehaviour
             return 60f;
         }
 
-        if (index > 80)
+        if (index > 60)
         {
             maxRotationLeft = 90f;
             maxRotationRight = 270f;

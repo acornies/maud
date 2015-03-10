@@ -568,12 +568,45 @@ public class GameController : MonoBehaviour
 		}
 		else
 		{
-			var screenCenterToWorld =
-				Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
-			
-			_player.GetComponent<PlayerMovement>().SetSpawnPosition(new Vector3(0, screenCenterToWorld.y, playerZPosition));
+			GameObject highest;
+			PlatformController.Instance.levelPlatforms.TryGetValue(highestPoint, out highest);
+			//var highest = PlatformController.Instance.levelPlatforms[highestPoint];
+			_player.GetComponent<PlayerMovement>().SetSpawnPosition(GetSpawnPosition(highest));
 		}       
     }
+
+	public Vector3 GetSpawnPosition(GameObject platform)
+	{
+		var centerWorldSpace = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
+
+		if (platform == null)
+		{
+			//var centerWorldSpace = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
+			return new Vector3(centerWorldSpace.x, centerWorldSpace.y, playerZPosition);
+		}
+
+		var desiredPosition = platform.transform.FindChild ("Cube").FindChild ("Spawn");
+
+		if (desiredPosition != null)
+		{
+			//return new Vector3(desiredPosition.position.x, desiredPosition.position.y, playerZPosition);
+
+			//Debug.Log("local: " + platform.transform.localRotation.y + " rotation: " + platform.transform.rotation.y);
+			if (platform.transform.localRotation.y <= 0.28 && platform.transform.localRotation.y >= -0.28)
+			{
+				return new Vector3(desiredPosition.position.x, desiredPosition.position.y, playerZPosition);
+			}
+			else
+			{
+				// since orbit platforms have constatnt x motion, only use y coordinates
+				return new Vector3(centerWorldSpace.x, desiredPosition.position.y, playerZPosition);
+			}
+		}
+		else 
+		{
+			return new Vector3(centerWorldSpace.x, centerWorldSpace.y, playerZPosition);
+		}
+	}
 
     void HandleOnPlayerPowerDeplete(float amount)
     {

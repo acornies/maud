@@ -125,16 +125,20 @@ public class PlayerMovement : MonoBehaviour
 		if (GameController.Instance.highestPoint < bottom)
 		{
 			//var bottom = levelPlatforms.Keys.Min();
-			spawnPosition = new Vector3(0, levelPlatforms[bottom + 2].transform.position.y, GameController.Instance.playerZPosition);
-			Debug.Log ("Timed destroy player reward spawn Y position: " + spawnPosition.y);
+			//spawnPosition = new Vector3(0, levelPlatforms[bottom + 2].transform.position.y, GameController.Instance.playerZPosition);
+			GameObject desiredPlatform;
+			levelPlatforms.TryGetValue(bottom + 2, out desiredPlatform);
+			spawnPosition = GameController.Instance.GetSpawnPosition(desiredPlatform);
+			//Debug.Log ("Timed destroy player reward spawn Y position: " + spawnPosition.y);
 		}
 		else
 		{
-			var screenCenterToWorld =
-				Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
+			/*var screenCenterToWorld =
+				Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));*/
 			
-			spawnPosition = new Vector3(0, screenCenterToWorld.y, GameController.Instance.playerZPosition);
-			Debug.Log ("Regular reward spawn Y position: " + spawnPosition.y);
+			var highest = PlatformController.Instance.levelPlatforms[GameController.Instance.highestPoint];
+			spawnPosition = GameController.Instance.GetSpawnPosition(highest);
+			//Debug.Log ("Regular reward spawn Y position: " + spawnPosition.y);
 		}
 
 		SetSpawnPosition(spawnPosition);

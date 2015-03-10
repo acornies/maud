@@ -34,7 +34,7 @@ public class CameraMovement : MonoBehaviour
     public Vector2 MaxXandY;
     public Vector2 MinXandY;
     public Transform CameraTarget;
-    public static float defaultCameraSpeed = 4.5f;
+    public static float defaultCameraSpeed = 5f;
 	public float timedDestroyZoomTime = 3f;
 	public bool isTimedDestroyCutscene;
 	public float ghostTrackingDivider = 3f;
@@ -185,7 +185,7 @@ public class CameraMovement : MonoBehaviour
 					//Debug.Log("Move player once");
 					OnMovePlayerToGamePosition(new Vector3(-1, 23.5f, GameController.Instance.playerZPosition));
 				}
-                transform.position = new Vector3(transform.position.x, transform.position.y, gameCameraPosition.z);
+                //transform.position = new Vector3(transform.position.x, transform.position.y, gameCameraPosition.z);
                 _zoomToGame = false;
                 /*if (!GameController.Instance.playerIsDead)
                 {
