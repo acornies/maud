@@ -575,6 +575,7 @@ public class GameController : MonoBehaviour
 		}       
     }
 
+	// TODO move to PlayerMovement
 	public Vector3 GetSpawnPosition(GameObject platform)
 	{
 		var centerWorldSpace = Camera.main.ViewportToWorldPoint(new Vector3(.5f, .5f));
@@ -586,13 +587,14 @@ public class GameController : MonoBehaviour
 		}
 
 		var desiredPosition = platform.transform.FindChild ("Cube").FindChild ("Spawn");
+		var orbit = platform.GetComponent<Orbit> ();
 
 		if (desiredPosition != null)
 		{
 			//return new Vector3(desiredPosition.position.x, desiredPosition.position.y, playerZPosition);
 
 			//Debug.Log("local: " + platform.transform.localRotation.y + " rotation: " + platform.transform.rotation.y);
-			if (platform.transform.localRotation.y <= 0.28 && platform.transform.localRotation.y >= -0.28)
+			if (platform.transform.localRotation.y <= 0.28 && platform.transform.localRotation.y >= -0.28 && orbit == null)
 			{
 				return new Vector3(desiredPosition.position.x, desiredPosition.position.y, playerZPosition);
 			}
