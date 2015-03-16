@@ -378,7 +378,7 @@ public class GameController : MonoBehaviour
 			yPositionOffset += (isiOS) ? mainImage.rectTransform.sizeDelta.y : 0;
 			mainImage.rectTransform.anchoredPosition = new Vector2(0, -yPositionOffset);
 			mainImage.rectTransform.localScale = new Vector2(1f, 1f);
-			newButton.GetComponent<Button>().onClick.AddListener(() => { ButtonBuyProduct(product.identifier); });
+			newButton.GetComponent<Button>().onClick.AddListener(() => { ButtonBuyProduct( (isiOS) ? product.identifier : product.identifier.ToLower()); });
 		}
 		
 		_restoreButtonBehaviour.onClick.AddListener (ButtonRestorePurchases);
