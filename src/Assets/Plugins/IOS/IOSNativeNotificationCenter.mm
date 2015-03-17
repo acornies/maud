@@ -32,7 +32,7 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
 }
 
 
--(void) scheduleNotification:(int)time message:(NSString *)messgae sound:(bool *)sound alarmID:(NSString *)alarmID badges:(int)badges {
+-(void) scheduleNotification:(int)time message:(NSString *)message sound:(bool *)sound alarmID:(NSString *)alarmID badges:(int)badges {
     
     
     
@@ -41,10 +41,10 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
     if ([[vComp objectAtIndex:0] intValue] >= 8) {
         UIUserNotificationSettings* NotificationSettings = [[UIApplication sharedApplication] currentUserNotificationSettings];
         
-        NSLog(@"IOS 8 detected");
+        NSLog(@"iOS 8 detected");
  
         if((NotificationSettings.types & UIUserNotificationTypeAlert) == 0) {
-            NSLog(@"ISN: user disabled local notification for this app, sending fail event");
+            NSLog(@"ISN: user disabled local notification for this app, sending fail event.");
             
             NSMutableString * data = [[NSMutableString alloc] init];
             [data appendString: @"0" ];
@@ -60,7 +60,7 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
         if((NotificationSettings.types & UIUserNotificationTypeBadge) == 0) {
            
             if(badges > 0) {
-                 NSLog(@"ISN: no bages allowed for this user. notification bage disabled ");
+                 NSLog(@"ISN: no badges allowed for this user. Notification badge disabled.");
                  badges = 0;
             }
            
@@ -70,7 +70,7 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
         
         if((NotificationSettings.types & UIUserNotificationTypeSound) == 0) {
             if(sound) {
-                NSLog(@"ISN: no sound allowed for this user. notification sound disabled ");
+                NSLog(@"ISN: no sound allowed for this user. Notification sound disabled.");
                  #if UNITY_VERSION < 500
                 sound = false;
                 #endif
@@ -82,7 +82,7 @@ static IOSNativeNotificationCenter *sharedHelper = nil;
     
     UILocalNotification* localNotification = [[UILocalNotification alloc] init];
     localNotification.fireDate = [NSDate dateWithTimeIntervalSinceNow:time];
-    localNotification.alertBody = messgae;
+    localNotification.alertBody = message;
     localNotification.timeZone = [NSTimeZone defaultTimeZone];
    
     if (badges > 0)
@@ -170,18 +170,18 @@ extern "C" {
         [[IOSNativeNotificationCenter sharedInstance] cleanUpLocalNotificationWithAlarmID:alarmID];
     }
     
-    void  _ISN_RequestNotificationPermitions ()  {
+    void  _ISN_RequestNotificationPermissions ()  {
         [[IOSNativeNotificationCenter sharedInstance] RegisterForNotifications];
     }
     
     
-    void  _ISN_ScheduleNotification (int time, char* messgae, bool* sound, char* nId, int badges)  {
+    void  _ISN_ScheduleNotification (int time, char* message, bool* sound, char* nId, int badges)  {
         NSString* alarmID = [ISNDataConvertor charToNSString:nId];
-        [[IOSNativeNotificationCenter sharedInstance] scheduleNotification:time message:[ISNDataConvertor charToNSString:messgae] sound:sound alarmID:alarmID badges:badges];
+        [[IOSNativeNotificationCenter sharedInstance] scheduleNotification:time message:[ISNDataConvertor charToNSString:message] sound:sound alarmID:alarmID badges:badges];
     }
     
-    void _ISN_ShowNotificationBanner (char* title, char* messgae)  {
-        [[IOSNativeNotificationCenter sharedInstance] showNotificationBanner:[ISNDataConvertor charToNSString:title] message:[ISNDataConvertor charToNSString:messgae]];
+    void _ISN_ShowNotificationBanner (char* title, char* message)  {
+        [[IOSNativeNotificationCenter sharedInstance] showNotificationBanner:[ISNDataConvertor charToNSString:title] message:[ISNDataConvertor charToNSString:message]];
     }
     void _ISN_ApplicationIconBadgeNumber (int badges) {
         [[IOSNativeNotificationCenter sharedInstance] applicationIconBadgeNumber:badges];

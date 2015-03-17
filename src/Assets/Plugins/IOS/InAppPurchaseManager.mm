@@ -39,9 +39,13 @@ static NSMutableDictionary* _views;
 }
 
 -(void) dealloc {
+
+    
+#if UNITY_VERSION < 500
     [_productIdentifiers release];
     [_storeServer release];
     [super dealloc];
+#endif
 }
 
 
@@ -205,7 +209,10 @@ static NSMutableDictionary* _views;
             [data appendString:@"4"];
 
 
-           NSString *str = [[data copy] autorelease];
+           NSString *str = [data copy];
+#if UNITY_VERSION < 500
+            [str autorelease];
+#endif
            UnitySendMessage("IOSInAppPurchaseManager", "onTransactionFailed", [ISNDataConvertor NSStringToChar:str]);
         }
 }

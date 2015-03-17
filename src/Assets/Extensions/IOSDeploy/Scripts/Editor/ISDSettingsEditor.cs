@@ -8,8 +8,8 @@ public class ISDSettingsEditor : Editor
 {
 
 	
-	GUIContent SdkVersion   = new GUIContent("Plugin Version [?]", "This is Plugin version.  If you have problems or compliments please include this so we know exactly what version to look out for.");
-	GUIContent SupportEmail = new GUIContent("Support [?]", "If you have any technical quastion, feel free to drop an e-mail");
+	GUIContent SdkVersion   = new GUIContent("Plugin Version [?]", "This is the Plugin version.  If you have problems or compliments please include this so that we know exactly which version to look out for.");
+	GUIContent SupportEmail = new GUIContent("Support [?]", "If you have any technical questions, feel free to drop us an e-mail.");
 	
 
 
@@ -20,7 +20,7 @@ public class ISDSettingsEditor : Editor
 		GUI.changed = false;
 
 
-		EditorGUILayout.LabelField("IOS Deploy Settings", EditorStyles.boldLabel);
+		EditorGUILayout.LabelField("iOS Deploy Settings", EditorStyles.boldLabel);
 		EditorGUILayout.Space();
 
 		Frameworks();
@@ -38,13 +38,13 @@ public class ISDSettingsEditor : Editor
 	}
 
 
-	private string newFreamwork = string.Empty;
+	private string _newFramework = string.Empty;
 	private void Frameworks() {
-		
 
-		ISDSettings.Instance.IsfwSettingOpen = EditorGUILayout.Foldout(ISDSettings.Instance.IsfwSettingOpen, "Frameworks");
 
-		if(ISDSettings.Instance.IsfwSettingOpen) {
+        ISDSettings.Instance.IsFrameworksSettingOpen = EditorGUILayout.Foldout(ISDSettings.Instance.IsFrameworksSettingOpen, "Frameworks");
+
+		if(ISDSettings.Instance.IsFrameworksSettingOpen) {
 			if (ISDSettings.Instance.frameworks.Count == 0) {
 
 				EditorGUILayout.HelpBox("No Frameworks added", MessageType.None);
@@ -78,7 +78,7 @@ public class ISDSettingsEditor : Editor
 			EditorGUILayout.BeginHorizontal();
 
 			EditorGUILayout.LabelField("Add New Framework");
-			newFreamwork = EditorGUILayout.TextField(newFreamwork, GUILayout.Width(200));
+            _newFramework = EditorGUILayout.TextField(_newFramework, GUILayout.Width(200));
 			EditorGUILayout.EndHorizontal();
 
 
@@ -90,9 +90,9 @@ public class ISDSettingsEditor : Editor
 			EditorGUILayout.Space();
 			
 			if(GUILayout.Button("Add",  GUILayout.Width(100))) {
-				if(!ISDSettings.Instance.frameworks.Contains(newFreamwork) && newFreamwork.Length > 0) {
-					ISDSettings.Instance.frameworks.Add(newFreamwork);
-					newFreamwork = string.Empty;
+                if (!ISDSettings.Instance.frameworks.Contains(_newFramework) && _newFramework.Length > 0) {
+                    ISDSettings.Instance.frameworks.Add(_newFramework);
+                    _newFramework = string.Empty;
 				}
 				
 			}
@@ -104,9 +104,9 @@ public class ISDSettingsEditor : Editor
 	private void LinkerFlags() {
 		
 		
-		ISDSettings.Instance.IslinkerSettingOpne = EditorGUILayout.Foldout(ISDSettings.Instance.IslinkerSettingOpne, "Linker Flags");
+		ISDSettings.Instance.IsLinkerSettingOpen = EditorGUILayout.Foldout(ISDSettings.Instance.IsLinkerSettingOpen, "Linker Flags");
 		
-		if(ISDSettings.Instance.IslinkerSettingOpne) {
+		if(ISDSettings.Instance.IsLinkerSettingOpen) {
 			if (ISDSettings.Instance.frameworks.Count == 0) {
 				
 				EditorGUILayout.HelpBox("No Linker Flags added", MessageType.None);
@@ -165,9 +165,9 @@ public class ISDSettingsEditor : Editor
 	private void CompilerFlags() {
 		
 		
-		ISDSettings.Instance.IscompilerSettingsOpen = EditorGUILayout.Foldout(ISDSettings.Instance.IscompilerSettingsOpen, "Compiler Flags");
+		ISDSettings.Instance.IsCompilerSettingsOpen = EditorGUILayout.Foldout(ISDSettings.Instance.IsCompilerSettingsOpen, "Compiler Flags");
 		
-		if(ISDSettings.Instance.IscompilerSettingsOpen) {
+		if(ISDSettings.Instance.IsCompilerSettingsOpen) {
 			if (ISDSettings.Instance.frameworks.Count == 0) {
 				EditorGUILayout.HelpBox("No Linker Flags added", MessageType.None);
 			}

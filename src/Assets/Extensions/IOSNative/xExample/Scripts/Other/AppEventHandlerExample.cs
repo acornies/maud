@@ -31,15 +31,15 @@ public class AppEventHandlerExample : MonoBehaviour {
 	
 
 	private void OnApplicationDidBecomeActive() {
-		// Called when application become active again. Optionally refresh the user interface, check for some data than probably was chenged wile application was paused
+		// Called when application becomes active again. Optionally refresh the user interface, check for data that was possibly changed while the application was paused
 
-		Debug.Log ("Catched  OnApplicationDidBecomeActive event");
+        Debug.Log("Caught OnApplicationDidBecomeActive event");
 	}
 
 	private void OnApplicationDidReceiveMemoryWarning() {
-		//Called application receives a memory warning from the system.
+		//Called when the application receives a memory warning from the system.
 
-		Debug.Log ("Catched  OnApplicationDidReceiveMemoryWarning event");
+		Debug.Log ("Caught OnApplicationDidReceiveMemoryWarning event");
 	}
 
 

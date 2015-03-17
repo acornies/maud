@@ -16,7 +16,7 @@ namespace UnionAssets.FLE {
 		private object _data;
 
 		private IDispatcher _dispatcher;
-		private bool _isStoped = false;
+		private bool _isStopped = false;
 		private bool _isLocked = false;
 
 
@@ -41,20 +41,20 @@ namespace UnionAssets.FLE {
 		
 
 		public void stopPropagation() {
-			_isStoped = true;
+			_isStopped = true;
 		}
 
 		public void stopImmediatePropagation() {
-			_isStoped = true;
+			_isStopped = true;
 			_isLocked = true;
 		}
 
-		public bool canBeDisptached(object val) {
+		public bool canBeDispatched(object val) {
 			if(_isLocked) {
 				return false;
 			}
 
-			if(_isStoped) {
+			if(_isStopped) {
 				if(_currentTarget == val) {
 					return true;
 				} else {
@@ -112,9 +112,9 @@ namespace UnionAssets.FLE {
 		
 
 
-		public bool isStoped {
+		public bool isStopped {
 			get {
-				return _isStoped;
+				return _isStopped;
 			}
 		}
 

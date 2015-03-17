@@ -75,7 +75,7 @@ public class GameCenterMultiplayer : EventDispatcher {
 	}
 
 	//--------------------------------------
-	//  Pear - To - Pear
+	//  Peer - To - Peer
 	//--------------------------------------
 
 

@@ -10,7 +10,7 @@
 
 @interface IOSGameCenterManager : NSObject <GKGameCenterControllerDelegate, GKAchievementViewControllerDelegate> {
     BOOL isAchievementsWasLoaded;
-    NSString* requestedLeaderBordId;
+    NSString* requestedLeaderboardId;
     int lbscope;
     GameCenterManager *gameCenterManager;
     
@@ -22,14 +22,14 @@
 - (void) reportScore: (long long) score forCategory: (NSString*) category;
 
 - (void) authenticateLocalPlayer;
-- (void) showLeaderBoard: (NSString*)leaderBoradrId scope: (int) scope;
+- (void) showLeaderboard: (NSString*)leaderboardId scope: (int) scope;
 - (void) retrieveScoreForLocalPlayerWithCategory:(NSString*)category scope: (int) scope collection: (int) collection;
 - (void) retriveScores:(NSString*)category scope: (int) scope collection: (int) collection from: (int) from to: (int) to;
 - (void) loadUserData:(NSString *)uid;
 
 
-- (void) sendLeaderboardChallenge:(NSString*) leaderBoradrId message:(NSString*) message playerIds: (NSArray*) playerIds;
-- (void) sendLeaderboardChallengeWithFriendsPicker:(NSString *)leaderBoradrId message:(NSString *)message;
+- (void) sendLeaderboardChallenge:(NSString*) leaderboardId message:(NSString*) message playerIds: (NSArray*) playerIds;
+- (void) sendLeaderboardChallengeWithFriendsPicker:(NSString *)leaderboardId message:(NSString *)message;
     
 - (void) sendAchievementChallenge:(NSString*) achievementId  message:(NSString*) message playerIds: (NSArray*) playerIds;
 - (void) sendAchievementChallengeWithFriendsPicker:(NSString *)achievementId message:(NSString *)message;
@@ -37,7 +37,7 @@
 
 - (void) showAchievements;
 - (void) resetAchievements; 
-- (void) submitAchievement: (double) percentComplete identifier: (NSString*) identifier notifayComplete: (BOOL) notifayComplete;
+- (void) submitAchievement: (double) percentComplete identifier: (NSString*) identifier notifyComplete: (BOOL) notifyComplete;
 
 - (void) retrieveFriends;
 

@@ -56,7 +56,7 @@
 @optional
 - (void) processGameCenterAuth: (NSError*) error;
 - (void) scoreReported: (NSError*) error;
-- (void) reloadScoresComplete: (GKLeaderboard*) leaderBoard error: (NSError*) error;
+- (void) reloadScoresComplete: (GKLeaderboard*) leaderboard error: (NSError*) error;
 - (void) achievementSubmitted: (GKAchievement*) ach error:(NSError*) error;
 - (void) achievementResetResult: (NSError*) error;
 - (void) mappedPlayerIDToPlayer: (GKPlayer*) player error: (NSError*) error;
@@ -65,8 +65,14 @@
 @interface GameCenterManager : NSObject
 {
 	NSMutableDictionary* earnedAchievementCache;
+    
+#if UNITY_VERSION < 500
+   id <GameCenterManagerDelegate, NSObject> delegate;
+#else
+    id <GameCenterManagerDelegate, NSObject> __unsafe_unretained delegate;
+#endif
 	
-	id <GameCenterManagerDelegate, NSObject> delegate;
+	
 }
 
 //This property must be attomic to ensure that the cache is always in a viable state...
@@ -74,7 +80,7 @@
 
 @property (nonatomic, assign)  id <GameCenterManagerDelegate> delegate;
 
-- (void) submitAchievement: (NSString*) identifier percentComplete: (double) percentComplete notifayComplete: (bool) notifayComplete;
+- (void) submitAchievement: (NSString*) identifier percentComplete: (double) percentComplete notifyComplete: (bool) notifyComplete;
 - (void) resetAchievements;
 
 @end

@@ -13,7 +13,7 @@
 
 
 + (IOSNativeNotificationCenter *)sharedInstance;
-- (void) scheduleNotification: (int) time message: (NSString*) messgae sound: (bool *)sound alarmID:(NSString *)alarmID badges: (int)badges;
+- (void) scheduleNotification: (int) time message: (NSString*) message sound: (bool *)sound alarmID:(NSString *)alarmID badges: (int)badges;
 - (void) cleanUpLocalNotificationWithAlarmID: (NSString *)alarmID;
 - (void) showNotificationBanner: (NSString*) title message: (NSString*) message ;
 - (void) cancelNotifications;

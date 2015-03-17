@@ -52,7 +52,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 	
 	
 	private static IOSInAppPurchaseManager _instance;
-	private static string lastPurchasedProdcut;
+	private static string lastPurchasedProduct;
 	
 	//--------------------------------------
 	// INITIALIZE
@@ -79,7 +79,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 	public void loadStore() {
 
 		if(_IsStoreLoaded) {
-			Invoke("FireSuccsesInitEvent", 1f);
+			Invoke("FireSuccessInitEvent", 1f);
 			return;
 		}
 
@@ -108,7 +108,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 		IOSNativeMarketBridge.loadStore(ids);
 		#else
 		if(IOSNativeSettings.Instance.SendFakeEventsInEditor) {
-			Invoke("FireSuccsesInitEvent", 1f);
+			Invoke("FireSuccessInitEvent", 1f);
 		}
 		#endif
 		
@@ -126,8 +126,8 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 		if(!_IsStoreLoaded) {
 
 			if(!IOSNativeSettings.Instance.DisablePluginLogs) 
-				Debug.LogWarning("buyProduct shouldn't be called before store kit initialized"); 
-			SendTransactionFailEvent(productId, "Store kit not yet initialized", IOSTransactionErrorCode.SKErrorPaymentNotAllowed);
+				Debug.LogWarning("buyProduct shouldn't be called before StoreKit is initialized"); 
+			SendTransactionFailEvent(productId, "StoreKit not yet initialized", IOSTransactionErrorCode.SKErrorPaymentNotAllowed);
 
 			return;
 		} 
@@ -262,7 +262,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 
 
 		if(!IOSNativeSettings.Instance.DisablePluginLogs) 
-			Debug.Log("STORE_KIT_INITI_FAILED Erro: " + e.description);
+			Debug.Log("STORE_KIT_INIT_FAILED Error: " + e.description);
 	}
 	
 	private void onStoreDataReceived(string data) {
@@ -290,8 +290,8 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 			_products.Add(tpl);
 		}
 		
-		Debug.Log("InAppPurchaseManager, tottal products loaded: " + _products.Count.ToString());
-		FireSuccsesInitEvent();
+		Debug.Log("InAppPurchaseManager, total products loaded: " + _products.Count.ToString());
+		FireSuccessInitEvent();
 	}
 	
 	private void onProductBought(string array) {
@@ -337,7 +337,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 		response.status = System.Convert.ToInt32(data[0]);
 		response.originalJSON = data [1];
 		response.receipt = data [2];
-		response.productIdentifier = lastPurchasedProdcut;
+		response.productIdentifier = lastPurchasedProduct;
 
 		dispatch (VERIFICATION_RESPONSE, response);
 		OnVerificationComplete (response);
@@ -380,7 +380,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 	//  PRIVATE METHODS
 	//--------------------------------------
 
-	private void FireSuccsesInitEvent() {
+	private void FireSuccessInitEvent() {
 		_IsStoreLoaded = true;
 		_IsWaitingLoadResult = false;
 		ISN_Result r = new ISN_Result(true);
@@ -405,7 +405,7 @@ public class IOSInAppPurchaseManager : EventDispatcher {
 			response.state = InAppPurchaseState.Purchased;
 		}
 		
-		lastPurchasedProdcut = response.productIdentifier;
+		lastPurchasedProduct = response.productIdentifier;
 		dispatch(TRANSACTION_COMPLETE, response);
 		OnTransactionComplete (response);
 	}

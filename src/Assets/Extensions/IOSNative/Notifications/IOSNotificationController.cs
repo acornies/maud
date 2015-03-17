@@ -24,8 +24,7 @@ using UnityEngine.iOS;
 #endif
 
 
-public class IOSNotificationController : ISN_Singleton<IOSNotificationController>
-{
+public class IOSNotificationController : ISN_Singleton<IOSNotificationController> {
 
 
 	private static IOSNotificationController _instance;
@@ -56,14 +55,14 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 	private static extern void _ISN_ScheduleNotification (int time, string message, bool sound, string nId, int badges);
 	
 	[DllImport ("__Internal")]
-	private static extern  void _ISN_ShowNotificationBanner (string title, string messgae);
+	private static extern  void _ISN_ShowNotificationBanner (string title, string message);
 	
 	[DllImport ("__Internal")]
 	private static extern void _ISN_CancelNotifications();
 
 
 	[DllImport ("__Internal")]
-	private static extern void _ISN_RequestNotificationPermitions();
+	private static extern void _ISN_RequestNotificationPermissions();
 
 	[DllImport ("__Internal")]
 	private static extern void _ISN_CancelNotificationById(string nId);
@@ -109,7 +108,14 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 
 
 	#if UNITY_IPHONE
+
+	#if UNITY_3_5 || UNITY_4_0 || UNITY_4_0_1 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
 	public void RegisterForRemoteNotifications(RemoteNotificationType notificationTypes) {
+	#else
+	public void RegisterForRemoteNotifications(NotificationType notificationTypes) {;
+	#endif
+
+
 
 		#if (UNITY_IPHONE && !UNITY_EDITOR && PUSH_ENABLED) || SA_DEBUG_MODE
 
@@ -123,7 +129,7 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 
 		NotificationServices.RegisterForRemoteNotificationTypes(notificationTypes);
 
-		DeviceTokenListner.Create ();
+		DeviceTokenListener.Create ();
 
 		#endif
 	}
@@ -133,16 +139,16 @@ public class IOSNotificationController : ISN_Singleton<IOSNotificationController
 	//  PUBLIC METHODS
 	//--------------------------------------
 
-	public void RequestNotificationPermitions() {
+	public void RequestNotificationPermissions() {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-			_ISN_RequestNotificationPermitions ();
+			_ISN_RequestNotificationPermissions ();
 		#endif
 
 	}
 	
-	public void ShowNotificationBanner (string title, string messgae) {
+	public void ShowNotificationBanner (string title, string message) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-			_ISN_ShowNotificationBanner (title, messgae);
+			_ISN_ShowNotificationBanner (title, message);
 		#endif
 	}
 

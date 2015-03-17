@@ -15,8 +15,8 @@ namespace UnionAssets.FLE {
 
 	public class EventDispatcherBase : IDispatcher {
 
-		private Dictionary<int, List<EventHandlerFunction>> listners = new Dictionary<int, List<EventHandlerFunction>>();
-		private Dictionary<int, List<DataEventHandlerFunction>> dataListners = new Dictionary<int, List<DataEventHandlerFunction>>();
+		private Dictionary<int, List<EventHandlerFunction>> listeners = new Dictionary<int, List<EventHandlerFunction>>();
+		private Dictionary<int, List<DataEventHandlerFunction>> dataListeners = new Dictionary<int, List<DataEventHandlerFunction>>();
 
 		
 		//--------------------------------------
@@ -34,12 +34,12 @@ namespace UnionAssets.FLE {
 
 		private void addEventListener(int eventID, EventHandlerFunction handler, string eventGraphName) {
 
-			if(listners.ContainsKey(eventID)) {
-				listners[eventID].Add(handler);
+			if(listeners.ContainsKey(eventID)) {
+				listeners[eventID].Add(handler);
 			} else {
 				List<EventHandlerFunction> handlers =  new  List<EventHandlerFunction>();
 				handlers.Add(handler);
-				listners.Add(eventID, handlers);
+				listeners.Add(eventID, handlers);
 			}
 		}
 
@@ -56,12 +56,12 @@ namespace UnionAssets.FLE {
 		private void addEventListener(int eventID, DataEventHandlerFunction handler,  string eventGraphName) {
 
 
-			if(dataListners.ContainsKey(eventID)) {
-				dataListners[eventID].Add(handler);
+			if(dataListeners.ContainsKey(eventID)) {
+				dataListeners[eventID].Add(handler);
 			} else {
 				List<DataEventHandlerFunction> handlers =  new  List<DataEventHandlerFunction>();
 				handlers.Add(handler);
-				dataListners.Add(eventID, handlers);
+				dataListeners.Add(eventID, handlers);
 			}
 		}
 
@@ -82,12 +82,12 @@ namespace UnionAssets.FLE {
 
 
 
-			if(listners.ContainsKey(eventID)) {
-				List<EventHandlerFunction> handlers =  listners[eventID];
+			if(listeners.ContainsKey(eventID)) {
+				List<EventHandlerFunction> handlers =  listeners[eventID];
 				handlers.Remove(handler);
 
 				if(handlers.Count == 0) {
-					listners.Remove(eventID);
+					listeners.Remove(eventID);
 				}
 			}
 		}
@@ -103,12 +103,12 @@ namespace UnionAssets.FLE {
 		public void removeEventListener(int eventID, DataEventHandlerFunction handler, string eventGraphName) {
 
 
-			if(dataListners.ContainsKey(eventID)) {
-				List<DataEventHandlerFunction> handlers =  dataListners[eventID];
+			if(dataListeners.ContainsKey(eventID)) {
+				List<DataEventHandlerFunction> handlers =  dataListeners[eventID];
 				handlers.Remove(handler);
 
 				if(handlers.Count == 0) {
-					dataListners.Remove(eventID);
+					dataListeners.Remove(eventID);
 				}
 			}
 		}
@@ -168,11 +168,11 @@ namespace UnionAssets.FLE {
 			CEvent e = new CEvent(eventID, eventName, data, this);
 
 
-			if(dataListners.ContainsKey(eventID)) {
-				List<DataEventHandlerFunction>  handlers = cloenArray(dataListners[eventID]);
+			if(dataListeners.ContainsKey(eventID)) {
+				List<DataEventHandlerFunction>  handlers = cloenArray(dataListeners[eventID]);
 				int len = handlers.Count;
 				for(int i = 0; i < len; i++) {
-					if(e.canBeDisptached(handlers[i].Target)) {
+					if(e.canBeDispatched(handlers[i].Target)) {
 						handlers[i](e);
 
 
@@ -181,11 +181,11 @@ namespace UnionAssets.FLE {
 			}
 
 
-			if(listners.ContainsKey(eventID)) {
-				List<EventHandlerFunction>  handlers = cloenArray(listners[eventID]);
+			if(listeners.ContainsKey(eventID)) {
+				List<EventHandlerFunction>  handlers = cloenArray(listeners[eventID]);
 				int len = handlers.Count;
 				for(int i = 0; i < len; i++) {
-					if(e.canBeDisptached(handlers[i].Target)) {
+					if(e.canBeDispatched(handlers[i].Target)) {
 						handlers[i]();
 					}
 
@@ -200,8 +200,8 @@ namespace UnionAssets.FLE {
 		
 
 		public void clearEvents() {
-			listners.Clear();
-			dataListners.Clear();
+			listeners.Clear();
+			dataListeners.Clear();
 		}
 
 		//--------------------------------------

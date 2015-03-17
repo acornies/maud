@@ -70,13 +70,16 @@
 - (void) dealloc
 {
 	self.earnedAchievementCache= NULL;
-	[super dealloc];
+#if UNITY_VERSION < 500
+    [super dealloc];
+#endif
+	
 }
 
 
 
 
-- (void) submitAchievement:(NSString *)identifier percentComplete:(double)percentComplete notifayComplete:(bool)notifayComplete {
+- (void) submitAchievement:(NSString *)identifier percentComplete:(double)percentComplete notifyComplete:(bool)notifyComplete {
     
 	//GameCenter check for duplicate achievements when the achievement is submitted, but if you only want to report 
 	// new achievements to the user, then you need to check if it's been earned 
@@ -87,7 +90,7 @@
     NSLog(@"submitAchievement %@", identifier);
     
 	if(self.earnedAchievementCache == NULL) {
-        NSLog(@"loading Achievements cash....");
+        NSLog(@"loading Achievements cache....");
 		[GKAchievement loadAchievementsWithCompletionHandler: ^(NSArray *scores, NSError *error) {
 			if(error == NULL)  {
 				NSMutableDictionary* tempCache= [NSMutableDictionary dictionaryWithCapacity: [scores count]];
@@ -99,11 +102,11 @@
 
                 
 				self.earnedAchievementCache= tempCache;
-                 NSLog(@"Achievements cash loaded, re submiting acguevment");
-				[self submitAchievement:identifier percentComplete:percentComplete notifayComplete:notifayComplete];
+                 NSLog(@"Achievements cache loaded, resubmitting achievement");
+				[self submitAchievement:identifier percentComplete:percentComplete notifyComplete:notifyComplete];
 			}
 			else{
-                  NSLog(@"Achievements cash load errod: %@", error.description);
+                  NSLog(@"Achievements cache load error: %@", error.description);
 			}
 
 		}];
@@ -118,8 +121,12 @@
             
 			achievement.percentComplete= percentComplete;
 		} else {
-			achievement= [[[GKAchievement alloc] initWithIdentifier: identifier] autorelease];
-            achievement.showsCompletionBanner = notifayComplete;
+
+			achievement= [[GKAchievement alloc] initWithIdentifier: identifier];
+#if UNITY_VERSION < 500
+            [achievement autorelease];
+#endif
+            achievement.showsCompletionBanner = notifyComplete;
             
             if(percentComplete > 100.0) {
                 percentComplete = 100.0;
@@ -132,7 +139,7 @@
 		}
         
 		if(achievement!= NULL) {
-             NSLog(@"Submit the Achievement");
+             NSLog(@"Submit Achievement");
 			//Submit the Achievement...
 			[achievement reportAchievementWithCompletionHandler: ^(NSError *error) {
                 if(error == NULL) {
@@ -142,7 +149,10 @@
                     [data appendString:[NSString stringWithFormat:@"%f", achievement.percentComplete]];
                     
                     
-                    NSString *str = [[data copy] autorelease];
+                    NSString *str = [data copy];
+#if UNITY_VERSION < 500
+                    [str autorelease];
+#endif
                     
                     NSLog(@"Submitted");
                     NSLog(@"identifier: %@", achievement.identifier);

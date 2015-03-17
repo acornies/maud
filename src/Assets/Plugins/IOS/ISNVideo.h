@@ -20,7 +20,7 @@
 
 + (id) sharedInstance;
 
-- (void) steamVideo:(NSString*)url;
-- (void) openYoutubeVideo:(NSString*)url;
+- (void) streamVideo:(NSString*)url;
+- (void) openYouTubeVideo:(NSString*)url;
 
 @end

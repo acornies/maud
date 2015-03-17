@@ -31,13 +31,13 @@ public class GameCenterManager : MonoBehaviour {
 
 
 
-	public const string SCORE_SUMBITED       									= "score_sumbited";
-	public const string GAME_CENTER_LEADER_BOARD_SCORE_LOADED  					= "game_center_leader_board_score_loaded";
-	public const string GAME_CENTER_LEADER_BOARD_SCORE_LIST_LOADED  			= "game_center_leader_board_score_list_loaded";
+	public const string SCORE_SUMBITTED       									= "score_sumbitted";
+	public const string GAME_CENTER_LEADERBOARD_SCORE_LOADED  					= "game_center_leaderboard_score_loaded";
+	public const string GAME_CENTER_LEADERBOARD_SCORE_LIST_LOADED  			    = "game_center_leaderboard_score_list_loaded";
 	
 	
 	public const string GAME_CENTER_USER_INFO_LOADED  							= "game_center_user_info_loaded";
-	public const string GAME_CENTER_VIEW_DISSMISSED  							= "game_center_view_dissmissed";
+	public const string GAME_CENTER_VIEW_DISMISSED  							= "game_center_view_dismissed";
 	public const string GAME_CENTER_FRIEND_LIST_LOADED  						= "game_center_friend_list_loaded";
 
 
@@ -47,16 +47,16 @@ public class GameCenterManager : MonoBehaviour {
 	//Actions
 	public static Action<ISN_Result> OnAuthFinished  = delegate{};
 
-	public static Action<ISN_Result> OnScoreSubmited = delegate{};
+	public static Action<ISN_Result> OnScoreSubmitted = delegate{};
 	public static Action<ISN_PlayerScoreLoadedResult> OnPlayerScoreLoaded = delegate{};
 	public static Action<ISN_Result> OnScoresListLoaded = delegate{};
 
 	public static Action<ISN_Result> OnAchievementsReset = delegate{};
 	public static Action<ISN_Result> OnAchievementsLoaded  = delegate{};
-	public static Action<ISN_AcheivmentProgressResult> OnAchievementsProgress  = delegate{};
+	public static Action<ISN_AchievementProgressResult> OnAchievementsProgress  = delegate{};
 
 
-	public static Action OnGameCenterViewDissmissed  = delegate{};
+	public static Action OnGameCenterViewDismissedAction = delegate{};
 	public static Action<ISN_Result> OnFriendsListLoaded = delegate{};
 	public static Action<ISN_UserInfoLoadResult> OnUserInfoLoaded  = delegate{};
 	public static Action<ISN_PlayerSignatureResult> OnPlayerSignatureRetrieveResult = delegate{};
@@ -67,25 +67,25 @@ public class GameCenterManager : MonoBehaviour {
 	#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 
 	[DllImport ("__Internal")]
-	private static extern void _initGamaCenter();
+	private static extern void _initGameCenter();
 	
 	[DllImport ("__Internal")]
-	private static extern void _showLeaderBoard(string leaderBoradrId, int timeSpan);
+	private static extern void _showLeaderboard(string leaderboardId, int timeSpan);
 
 	[DllImport ("__Internal")]
-	private static extern void _reportScore (string score, string leaderBoradrId);
+	private static extern void _reportScore (string score, string leaderboardId);
 
-
-
-	[DllImport ("__Internal")]
-	private static extern void _showLeaderBoards ();
 
 
 	[DllImport ("__Internal")]
-	private static extern void _getLeadrBoardScore (string leaderBoradrId, int timeSpan, int collection);
+	private static extern void _showLeaderboards ();
+
 
 	[DllImport ("__Internal")]
-	private static extern void _loadLeadrBoardScore (string leaderBoradrId, int timeSpan, int collection, int from, int to);
+	private static extern void _getLeaderboardScore (string leaderboardId, int timeSpan, int collection);
+
+	[DllImport ("__Internal")]
+	private static extern void _loadLeaderboardScore (string leaderboardId, int timeSpan, int collection, int from, int to);
 	
 	[DllImport ("__Internal")]
 	private static extern void _showAchievements();
@@ -101,16 +101,16 @@ public class GameCenterManager : MonoBehaviour {
 	private static extern void _loadGCUserData(string uid);
 
 	[DllImport ("__Internal")]
-	private static extern void _ISN_issueLeaderboardChallenge(string leaderBoradrId, string message, string playerIds);
+	private static extern void _ISN_issueLeaderboardChallenge(string leaderboardId, string message, string playerIds);
 
 	[DllImport ("__Internal")]
-	private static extern void _ISN_issueLeaderboardChallengeWithFriendsPicker(string leaderBoradrId, string message);
+	private static extern void _ISN_issueLeaderboardChallengeWithFriendsPicker(string leaderboardId, string message);
 
 	[DllImport ("__Internal")]
-	private static extern void _ISN_issueAchievementChallenge(string leaderBoradrId, string message, string playerIds);
+	private static extern void _ISN_issueAchievementChallenge(string leaderboardId, string message, string playerIds);
 
 	[DllImport ("__Internal")]
-	private static extern void _ISN_issueAchievementChallengeWithFriendsPicker(string leaderBoradrId, string message);
+	private static extern void _ISN_issueAchievementChallengeWithFriendsPicker(string leaderboardId, string message);
 
 	[DllImport ("__Internal")]
 	private static extern void _gcRetrieveFriends();
@@ -122,8 +122,8 @@ public class GameCenterManager : MonoBehaviour {
 	#endif
 
 
-	private  static bool _IsInited = false;
-	private  static bool _IsPlayerAuthed = false;
+	private  static bool _IsInitialized = false;
+	private  static bool _IsPlayerAuthenticated = false;
 	private  static bool _IsAchievementsInfoLoaded = false;
 
 
@@ -131,7 +131,7 @@ public class GameCenterManager : MonoBehaviour {
 	private static List<AchievementTemplate> _achievements = new List<AchievementTemplate> ();
 	private static EventDispatcherBase _dispatcher  = new EventDispatcherBase ();
 
-	private static Dictionary<string, GCLeaderBoard> _leaderboards =  new Dictionary<string, GCLeaderBoard>();
+	private static Dictionary<string, GCLeaderboard> _leaderboards =  new Dictionary<string, GCLeaderboard>();
 	private static Dictionary<string, GameCenterPlayerTemplate> _players =  new Dictionary<string, GameCenterPlayerTemplate>();
 	private static List<string> _friendsList = new List<string>();
 
@@ -147,11 +147,11 @@ public class GameCenterManager : MonoBehaviour {
 	
 	public static void init() {
 
-		if(_IsInited) {
+		if(_IsInitialized) {
 			return;
 		}
 
-		_IsInited = true;
+		_IsInitialized = true;
 
 
 		GameObject go =  new GameObject("GameCenterManager");
@@ -160,14 +160,14 @@ public class GameCenterManager : MonoBehaviour {
 
 
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-			_initGamaCenter();
+			_initGameCenter();
 		#endif
 			
 	}
 
 	void Awake() {
-		foreach(string aId in IOSNativeSettings.Instance.RegistredAchievementsIds) {
-			registerAchievement(aId);
+		foreach(string aId in IOSNativeSettings.Instance.RegisteredAchievementsIds) {
+			RegisterAchievement(aId);
 		}
 	}
 
@@ -180,13 +180,13 @@ public class GameCenterManager : MonoBehaviour {
 
 
 
-	public static void registerAchievement(string achievemenId) {
+	public static void RegisterAchievement(string achievementId) {
 
 
 		bool isContains = false;
 
 		foreach(AchievementTemplate t in _achievements) {
-			if (t.id.Equals (achievemenId)) {
+			if (t.id.Equals (achievementId)) {
 				isContains = true;
 			}
 		}
@@ -194,7 +194,7 @@ public class GameCenterManager : MonoBehaviour {
 
 		if(!isContains) {
 			AchievementTemplate tpl = new AchievementTemplate ();
-			tpl.id = achievemenId;
+			tpl.id = achievementId;
 			tpl.progress = 0;
 			_achievements.Add (tpl);
 		}
@@ -206,40 +206,40 @@ public class GameCenterManager : MonoBehaviour {
 
 	
 
-	public static void showLeaderBoard(string leaderBoradrId) {
-		showLeaderBoard(leaderBoradrId, GCBoardTimeSpan.ALL_TIME);
+	public static void ShowLeaderboard(string leaderboardId) {
+		ShowLeaderboard(leaderboardId, GCBoardTimeSpan.ALL_TIME);
 	}
 
 
-	public static void showLeaderBoard(string leaderBoradrId, GCBoardTimeSpan timeSpan) {
+	public static void ShowLeaderboard(string leaderboardId, GCBoardTimeSpan timeSpan) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-			_showLeaderBoard(leaderBoradrId, (int) timeSpan);
+			_showLeaderboard(leaderboardId, (int) timeSpan);
 		#endif
 	}
 
-	public static void showLeaderBoards() {
+	public static void ShowLeaderboards() {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-			_showLeaderBoards ();
+			_showLeaderboards ();
 		#endif
 	}
 	
 
-	public static void reportScore(long score, string leaderBoradrId) {
+	public static void ReportScore(long score, string leaderboardId) {
 		if(!IOSNativeSettings.Instance.DisablePluginLogs) 
-			Debug.Log("unity reportScore: " + leaderBoradrId);
+			Debug.Log("unity reportScore: " + leaderboardId);
 
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_reportScore(score.ToString(), leaderBoradrId);
+		_reportScore(score.ToString(), leaderboardId);
 		#endif
 	}
 
 
-	public static void reportScore(double score, string leaderBoradrId) {
+	public static void ReportScore(double score, string leaderboardId) {
 		if(!IOSNativeSettings.Instance.DisablePluginLogs) 
-			Debug.Log("unity reportScore double: " + leaderBoradrId);
+			Debug.Log("unity reportScore double: " + leaderboardId);
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 		long s = System.Convert.ToInt64(score * 100);
-		_reportScore(s.ToString(), leaderBoradrId);
+		_reportScore(s.ToString(), leaderboardId);
 		#endif
 	}
 
@@ -252,41 +252,37 @@ public class GameCenterManager : MonoBehaviour {
 	}
 	
 
-	public static void loadCurrentPlayerScore(string leaderBoradrId, GCBoardTimeSpan timeSpan = GCBoardTimeSpan.ALL_TIME, GCCollectionType collection = GCCollectionType.GLOBAL)  {
+	public static void LoadCurrentPlayerScore(string leaderboardId, GCBoardTimeSpan timeSpan = GCBoardTimeSpan.ALL_TIME, GCCollectionType collection = GCCollectionType.GLOBAL)  {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_getLeadrBoardScore(leaderBoradrId, (int) timeSpan, (int) collection);
+		_getLeaderboardScore(leaderboardId, (int) timeSpan, (int) collection);
 		#endif
 	}
 	
 
-	private IEnumerator loadCurrentPlayerScoreLocal(string leaderBoradrId, GCBoardTimeSpan timeSpan = GCBoardTimeSpan.ALL_TIME, GCCollectionType collection = GCCollectionType.GLOBAL ) {
-		yield return new WaitForSeconds(2f);
-		loadCurrentPlayerScore(leaderBoradrId, timeSpan, collection);
+	private IEnumerator LoadCurrentPlayerScoreLocal(string leaderboardId, GCBoardTimeSpan timeSpan = GCBoardTimeSpan.ALL_TIME, GCCollectionType collection = GCCollectionType.GLOBAL ) {
+		yield return new WaitForSeconds(4f);
+		LoadCurrentPlayerScoreLocal(leaderboardId, timeSpan, collection);
 	}
 
 
-	[System.Obsolete("getScore is deprecated, use loadCurrentPlayerScore instead")]
-	public static void getScore(string leaderBoradrId, GCBoardTimeSpan timeSpan = GCBoardTimeSpan.ALL_TIME, GCCollectionType collection = GCCollectionType.GLOBAL) {
-		loadCurrentPlayerScore(leaderBoradrId, timeSpan, collection);
-	}
 
 	
-	public static void loadScore(string leaderBoradrId, int from, int to, GCBoardTimeSpan timeSpan = GCBoardTimeSpan.ALL_TIME, GCCollectionType collection = GCCollectionType.GLOBAL) {
+	public static void LoadScore(string leaderboardId, int from, int to, GCBoardTimeSpan timeSpan = GCBoardTimeSpan.ALL_TIME, GCCollectionType collection = GCCollectionType.GLOBAL) {
 
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-			_loadLeadrBoardScore(leaderBoradrId, (int) timeSpan, (int) collection, from, to);
+			_loadLeaderboardScore(leaderboardId, (int) timeSpan, (int) collection, from, to);
 		#endif
 
 	}
 
 
-	public static void issueLeaderboardChallenge(string leaderBoradrId, string message, string playerId) {
+	public static void IssueLeaderboardChallenge(string leaderboardId, string message, string playerId) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_ISN_issueLeaderboardChallenge(leaderBoradrId, message, playerId);
+		_ISN_issueLeaderboardChallenge(leaderboardId, message, playerId);
 		#endif
 	}
 
-	public static void issueLeaderboardChallenge(string leaderBoradrId, string message, string[] playerIds) {
+	public static void IssueLeaderboardChallenge(string leaderboardId, string message, string[] playerIds) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 			string ids = "";
 			int len = playerIds.Length;
@@ -298,27 +294,27 @@ public class GameCenterManager : MonoBehaviour {
 				ids += playerIds[i];
 			}
 
-		_ISN_issueLeaderboardChallenge(leaderBoradrId, message, ids);
+		_ISN_issueLeaderboardChallenge(leaderboardId, message, ids);
 		#endif
 	}
 
 
-	public static void issueLeaderboardChallenge(string leaderBoradrId, string message) {
+	public static void IssueLeaderboardChallenge(string leaderboardId, string message) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_ISN_issueLeaderboardChallengeWithFriendsPicker(leaderBoradrId, message);
+		_ISN_issueLeaderboardChallengeWithFriendsPicker(leaderboardId, message);
 		#endif
 	}
 
 
 
 
-	public static void issueAchievementChallenge(string achievementId, string message, string playerId) {
+	public static void IssueAchievementChallenge(string achievementId, string message, string playerId) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 		_ISN_issueAchievementChallenge(achievementId, message, playerId);
 		#endif
 	}
 
-	public static void issueAchievementChallenge(string achievementId, string message, string[] playerIds) {
+	public static void IssueAchievementChallenge(string achievementId, string message, string[] playerIds) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 			string ids = "";
 			int len = playerIds.Length;
@@ -336,20 +332,20 @@ public class GameCenterManager : MonoBehaviour {
 
 
 
-	public static void issueAchievementChallenge(string achievementId, string message) {
+	public static void IssueAchievementChallenge(string achievementId, string message) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 		_ISN_issueAchievementChallengeWithFriendsPicker(achievementId, message);
 		#endif
 	}
 
 
-	public static void showAchievements() {
+	public static void ShowAchievements() {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 			_showAchievements();
 		#endif
 	}
 
-	public static void resetAchievements() {
+	public static void ResetAchievements() {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 			_resetAchievements();
 
@@ -364,17 +360,17 @@ public class GameCenterManager : MonoBehaviour {
 	}
 
 
-	public static void submitAchievement(float percent, string achievementId) {
-		submitAchievement (percent, achievementId, true);
+	public static void SubmitAchievement(float percent, string achievementId) {
+		SubmitAchievement (percent, achievementId, true);
 	}
 
-	public static void submitAchievementNoChache(float percent, string achievementId) {
+	public static void SubmitAchievementNoCache(float percent, string achievementId) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 		_submitAchievement(percent, achievementId, false);
 		#endif
 	}
 
-	public static void submitAchievement(float percent, string achievementId, bool isCompleteNotification) {
+	public static void SubmitAchievement(float percent, string achievementId, bool isCompleteNotification) {
 
 		if(Application.internetReachability == NetworkReachability.NotReachable) {
 			ISN_CacheManager.SaveAchievementRequest(achievementId, percent);
@@ -391,14 +387,14 @@ public class GameCenterManager : MonoBehaviour {
 		#endif
 	}
 
-	public static void loadUsersData(string[] UIDs) {
+	public static void LoadUsersData(string[] UIDs) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 			//_loadGCUserData(UID);
 		#endif
 	}
 
 
-	public static float getAchievementProgress(string id) {
+	public static float GetAchievementProgress(string id) {
 		float progress = 0f;
 
 		if(IOSNativeSettings.Instance.UsePPForAchievements) {
@@ -414,7 +410,7 @@ public class GameCenterManager : MonoBehaviour {
 		return progress;
 	}
 
-	public static GCLeaderBoard GetLeaderBoard(string id) {
+	public static GCLeaderboard GetLeaderboard(string id) {
 		if(_leaderboards.ContainsKey(id)) {
 			return _leaderboards[id];
 		} else {
@@ -436,42 +432,42 @@ public class GameCenterManager : MonoBehaviour {
 	//  GET/SET
 	//--------------------------------------
 
-	public static List<AchievementTemplate> achievements {
+	public static List<AchievementTemplate> Achievements {
 		get {
 			return _achievements;
 		}
 	}
 
 
-	public static Dictionary<string, GameCenterPlayerTemplate> players {
+	public static Dictionary<string, GameCenterPlayerTemplate> Players {
 		get {
 			return _players;
 		}
 	}
 
-	public static EventDispatcherBase dispatcher {
+	public static EventDispatcherBase Dispatcher {
 		get {
 			return _dispatcher;
 		}
 	}
 
-	public static GameCenterPlayerTemplate player {
+	public static GameCenterPlayerTemplate Player {
 		get {
 			return _player;
 		}
 	}
 
 
-	public static bool IsInited {
+	public static bool IsInitialized {
 		get {
-			return _IsInited;
+			return _IsInitialized;
 		}
 	}
 
 
-	public static bool IsPlayerAuthed {
+	public static bool IsPlayerAuthenticated {
 		get {
-			return _IsPlayerAuthed;
+			return _IsPlayerAuthenticated;
 		}
 	}
 
@@ -481,7 +477,7 @@ public class GameCenterManager : MonoBehaviour {
 		}
 	}
 
-	public static List<string> friendsList {
+	public static List<string> FriendsList {
 		get {
 			return _friendsList;
 		}
@@ -494,14 +490,14 @@ public class GameCenterManager : MonoBehaviour {
 	//  EVENTS
 	//--------------------------------------
 
-	private void onLeaderBoardScoreFailed(string array) {
+	private void onLeaderboardScoreFailed(string array) {
 		ISN_PlayerScoreLoadedResult result = new ISN_PlayerScoreLoadedResult ();
 		OnPlayerScoreLoaded (result);
-		dispatcher.dispatch (GAME_CENTER_LEADER_BOARD_SCORE_LOADED, result);
+		Dispatcher.dispatch (GAME_CENTER_LEADERBOARD_SCORE_LOADED, result);
 	}
 
 
-	private void onLeaderBoardScore(string array) {
+	private void onLeaderboardScore(string array) {
 
 		string[] data;
 		data = array.Split("," [0]);
@@ -514,16 +510,16 @@ public class GameCenterManager : MonoBehaviour {
 		GCBoardTimeSpan timeSpan = (GCBoardTimeSpan) System.Convert.ToInt32(data[3]);
 		GCCollectionType collection = (GCCollectionType) System.Convert.ToInt32(data[4]);
 
-		GCLeaderBoard board;
+		GCLeaderboard board;
 		if(_leaderboards.ContainsKey(lbId)) {
 			board = _leaderboards[lbId];
 		} else {
-			board =  new GCLeaderBoard(lbId);
+			board =  new GCLeaderboard(lbId);
 			_leaderboards.Add(lbId, board);
 		}
 
 
-		GCScore score =  new GCScore(scoreVal, rank, timeSpan, collection, lbId, player.playerId);
+		GCScore score =  new GCScore(scoreVal, rank, timeSpan, collection, lbId, Player.PlayerId);
 
 		board.UpdateScore(score);
 		board.UpdateCurrentPlayerRank(rank, timeSpan, collection);
@@ -531,11 +527,11 @@ public class GameCenterManager : MonoBehaviour {
 
 		ISN_PlayerScoreLoadedResult result = new ISN_PlayerScoreLoadedResult (score);
 		OnPlayerScoreLoaded (result);
-		dispatcher.dispatch (GAME_CENTER_LEADER_BOARD_SCORE_LOADED, result);
+		Dispatcher.dispatch (GAME_CENTER_LEADERBOARD_SCORE_LOADED, result);
 	}
 
 	
-	public void onScoreSubmitedEvent(string array) {
+	public void onScoreSubmittedEvent(string array) {
 		
 		string[] data;
 		data = array.Split("," [0]);
@@ -544,28 +540,28 @@ public class GameCenterManager : MonoBehaviour {
 		//string score =  data[1];
 
 
-		StartCoroutine(loadCurrentPlayerScoreLocal(lbId));
+		StartCoroutine(LoadCurrentPlayerScoreLocal(lbId));
 
 		
 		ISN_Result result = new ISN_Result (true);
-		OnScoreSubmited (result);
-		dispatcher.dispatch (SCORE_SUMBITED, result);
+		OnScoreSubmitted (result);
+		Dispatcher.dispatch (SCORE_SUMBITTED, result);
 	}
 
 
 
 
 	
-	public void onScoreSubmitedFailed(string data) {
+	public void onScoreSubmittedFailed(string data) {
 		ISN_Result result = new ISN_Result (false);
-		OnScoreSubmited (result);
-		dispatcher.dispatch (SCORE_SUMBITED, result);
+		OnScoreSubmitted (result);
+		Dispatcher.dispatch (SCORE_SUMBITTED, result);
 		
 		
 	}
 
 
-	private void onLeaderBoardScoreListLoaded(string array) {
+	private void onLeaderboardScoreListLoaded(string array) {
 
 
 		
@@ -576,11 +572,11 @@ public class GameCenterManager : MonoBehaviour {
 		GCBoardTimeSpan timeSpan = (GCBoardTimeSpan) System.Convert.ToInt32(data[1]);
 		GCCollectionType collection = (GCCollectionType) System.Convert.ToInt32(data[2]);
 
-		GCLeaderBoard board;
+		GCLeaderboard board;
 		if(_leaderboards.ContainsKey(lbId)) {
 			board = _leaderboards[lbId];
 		} else {
-			board =  new GCLeaderBoard(lbId);
+			board =  new GCLeaderboard(lbId);
 			_leaderboards.Add(lbId, board);
 		}
 
@@ -595,8 +591,8 @@ public class GameCenterManager : MonoBehaviour {
 
 			GCScore score =  new GCScore(scoreVal, rank, timeSpan, collection, lbId, playerId);
 			board.UpdateScore(score);
-			if(player != null) {
-				if(player.playerId.Equals(playerId)) {
+			if(Player != null) {
+				if(Player.PlayerId.Equals(playerId)) {
 					board.UpdateCurrentPlayerRank(rank, timeSpan, collection);
 				}
 			}
@@ -606,16 +602,16 @@ public class GameCenterManager : MonoBehaviour {
 
 		ISN_Result result = new ISN_Result (true);
 		OnScoresListLoaded (result);
-		dispatcher.dispatch (GAME_CENTER_LEADER_BOARD_SCORE_LIST_LOADED, result);
+		Dispatcher.dispatch (GAME_CENTER_LEADERBOARD_SCORE_LIST_LOADED, result);
 
 
 	}
 
-	private void onLeaderBoardScoreListLoadFailed(string array) {
+	private void onLeaderboardScoreListLoadFailed(string array) {
 
 		ISN_Result result = new ISN_Result (false);
 		OnScoresListLoaded (result);
-		dispatcher.dispatch (GAME_CENTER_LEADER_BOARD_SCORE_LIST_LOADED, result);
+		Dispatcher.dispatch (GAME_CENTER_LEADERBOARD_SCORE_LIST_LOADED, result);
 	}
 
 
@@ -624,14 +620,14 @@ public class GameCenterManager : MonoBehaviour {
 
 		ISN_Result result = new ISN_Result (true);
 		OnAchievementsReset (result);
-		dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_RESET, result);
+		Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_RESET, result);
 
 	}
 
 	private void onAchievementsResetFailed(string array) {
 		ISN_Result result = new ISN_Result (false);
 		OnAchievementsReset (result);
-		dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_RESET, result);
+		Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_RESET, result);
 	}
 
 
@@ -644,12 +640,12 @@ public class GameCenterManager : MonoBehaviour {
 		AchievementTemplate tpl =  new AchievementTemplate();
 		tpl.id = data [0];
 		tpl.progress = System.Convert.ToSingle(data [1]) ;
-		ISN_AcheivmentProgressResult result = new ISN_AcheivmentProgressResult(tpl);
+		ISN_AchievementProgressResult result = new ISN_AchievementProgressResult(tpl);
 
 		submitAchievement (tpl);
 
 		OnAchievementsProgress(result);
-		dispatcher.dispatch (GAME_CENTER_ACHIEVEMENT_PROGRESS, result);
+		Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENT_PROGRESS, result);
 
 	}
 
@@ -659,7 +655,7 @@ public class GameCenterManager : MonoBehaviour {
 		ISN_Result result = new ISN_Result (true);
 		if(array.Equals(string.Empty)) {
 			OnAchievementsLoaded (result);
-			dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_LOADED, result);
+			Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_LOADED, result);
 			return;
 		}
 
@@ -676,14 +672,14 @@ public class GameCenterManager : MonoBehaviour {
 
 		_IsAchievementsInfoLoaded = true;
 		OnAchievementsLoaded (result);
-		dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_LOADED, result);
+		Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_LOADED, result);
 	}
 
 
 	private void onAchievementsLoadedFailed() {
 		ISN_Result result = new ISN_Result (false);
 		OnAchievementsLoaded (result);
-		dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_LOADED, result);
+		Dispatcher.dispatch (GAME_CENTER_ACHIEVEMENTS_LOADED, result);
 	}
 
 
@@ -694,14 +690,14 @@ public class GameCenterManager : MonoBehaviour {
 		_player = new GameCenterPlayerTemplate (data[0], data [1], data [2]);
 
 
-		ISN_CacheManager.SendAchievementChashedRequests ();
+		ISN_CacheManager.SendAchievementCachedRequest();
 
-		_IsPlayerAuthed = true;
+		_IsPlayerAuthenticated = true;
 
 
-		ISN_Result result = new ISN_Result (_IsPlayerAuthed);
+		ISN_Result result = new ISN_Result (_IsPlayerAuthenticated);
 		OnAuthFinished (result);
-		dispatcher.dispatch (GAME_CENTER_PLAYER_AUTHENTICATED, result);
+		Dispatcher.dispatch (GAME_CENTER_PLAYER_AUTHENTICATED, result);
 
 
 
@@ -709,12 +705,12 @@ public class GameCenterManager : MonoBehaviour {
 	
 	
 	private void onAuthenticationFailed(string  array) {
-		_IsPlayerAuthed = false;
+		_IsPlayerAuthenticated = false;
 
 
-		ISN_Result result = new ISN_Result (_IsPlayerAuthed);
+		ISN_Result result = new ISN_Result (_IsPlayerAuthenticated);
 		OnAuthFinished (result);
-		dispatcher.dispatch (GAME_CENTER_PLAYER_AUTHENTICATED, result);
+		Dispatcher.dispatch (GAME_CENTER_PLAYER_AUTHENTICATED, result);
 	}
 
 
@@ -738,7 +734,7 @@ public class GameCenterManager : MonoBehaviour {
 			_players.Add(playerId, p);
 		}
 
-		if(p.playerId == _player.playerId) {
+		if(p.PlayerId == _player.PlayerId) {
 			_player = p;
 		}
 
@@ -747,7 +743,7 @@ public class GameCenterManager : MonoBehaviour {
 
 		ISN_UserInfoLoadResult result = new ISN_UserInfoLoadResult (p);
 		OnUserInfoLoaded (result);
-		dispatcher.dispatch (GAME_CENTER_USER_INFO_LOADED, result);
+		Dispatcher.dispatch (GAME_CENTER_USER_INFO_LOADED, result);
 		
 
 	}    
@@ -756,12 +752,12 @@ public class GameCenterManager : MonoBehaviour {
 		
 		ISN_UserInfoLoadResult result = new ISN_UserInfoLoadResult (playerId);
 		OnUserInfoLoaded (result);
-		dispatcher.dispatch (GAME_CENTER_USER_INFO_LOADED, result);
+		Dispatcher.dispatch (GAME_CENTER_USER_INFO_LOADED, result);
 	}
 
 	private void OnGameCenterViewDismissed(string data) {
-		dispatcher.dispatch(GAME_CENTER_VIEW_DISSMISSED);
-		OnGameCenterViewDissmissed();
+		Dispatcher.dispatch(GAME_CENTER_VIEW_DISMISSED);
+		OnGameCenterViewDismissedAction();
 	}
 
 	private void onFriendListLoaded(string data) {
@@ -780,14 +776,14 @@ public class GameCenterManager : MonoBehaviour {
 
 		ISN_Result result = new ISN_Result (true);
 		OnFriendsListLoaded (result);
-		dispatcher.dispatch (GAME_CENTER_FRIEND_LIST_LOADED, result);
+		Dispatcher.dispatch (GAME_CENTER_FRIEND_LIST_LOADED, result);
 
 	}
 
 	private void onFriendListFailedToLoad(string data) {
 		ISN_Result result = new ISN_Result (false);
 		OnFriendsListLoaded (result);
-		dispatcher.dispatch (GAME_CENTER_FRIEND_LIST_LOADED, result);
+		Dispatcher.dispatch (GAME_CENTER_FRIEND_LIST_LOADED, result);
 	}
 
 

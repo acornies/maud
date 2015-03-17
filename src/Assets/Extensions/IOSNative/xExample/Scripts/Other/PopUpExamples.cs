@@ -19,7 +19,7 @@ public class PopUpExamples : BaseIOSFeaturePreview {
 	//--------------------------------------
 
 	void Awake() {
-		IOSNativePopUpManager.showMessage ("Wlcome", "Hey there, welcome to pop-ups testing scene!");
+		IOSNativePopUpManager.showMessage ("Welcome", "Hey there, welcome to the Pop-ups testing scene!");
 	}
 
 	//--------------------------------------
@@ -31,10 +31,10 @@ public class PopUpExamples : BaseIOSFeaturePreview {
 
 		UpdateToStartPos();
 		
-		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "Native Pop Ups", style);
+		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "Native Pop-ups", style);
 
 		StartY+= YLableStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Rate PopUp with events")) {
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Rate Pop-up with events")) {
 			IOSRateUsPopUp rate = IOSRateUsPopUp.Create("Like this game?", "Please rate to support future updates!");
 			rate.OnComplete += onRatePopUpClose;
 		
@@ -42,16 +42,16 @@ public class PopUpExamples : BaseIOSFeaturePreview {
 		
 
 		StartX += XButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Dialog PopUp")) {
-			IOSDialog dialog = IOSDialog.Create("Dialog Titile", "Dialog message");
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Dialog Pop-up")) {
+			IOSDialog dialog = IOSDialog.Create("Dialog Title", "Dialog message");
 			dialog.OnComplete += onDialogClose;
 
 		}
 
 
 		StartX += XButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Message PopUp")) {
-			IOSMessage msg = IOSMessage.Create("Message Titile", "Message message");
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Message Pop-up")) {
+			IOSMessage msg = IOSMessage.Create("Message Title", "Message body");
 			msg.OnComplete += onMessageClose;
 
 		}
@@ -59,8 +59,8 @@ public class PopUpExamples : BaseIOSFeaturePreview {
 
 		StartX = XStartPos;
 		StartY+= YButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Dismissed PopUp")) {
-			Invoke ("dismissAler", 2f);
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Dismissed Pop-up")) {
+			Invoke ("dismissAlert", 2f);
 			IOSMessage.Create("Hello", "I will die in 2 sec");
 		}
 
@@ -99,7 +99,7 @@ public class PopUpExamples : BaseIOSFeaturePreview {
 		IOSNativeUtility.HidePreloader();
 	}
 
-	private void dismissAler() {
+	private void dismissAlert() {
 		IOSNativePopUpManager.dismissCurrentAlert ();
 	}
 	

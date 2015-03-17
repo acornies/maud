@@ -13,6 +13,6 @@
 
 @interface IOSNativePopUpsManager : NSObject
 
-+ (void) unregisterAllertView;
++ (void) unregisterAlertView;
 
 @end

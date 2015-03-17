@@ -93,7 +93,7 @@ NSString* lastTransaction = @"";
 - (NSString *)encodeBase64:(const uint8_t *)input length:(NSInteger)length
 {
     NSData * data = [NSData dataWithBytes:input length:length];
-    return [data base64EncodedString];
+    return [data ISN_base64EncodedString];
 }
 
 

@@ -394,7 +394,7 @@ public class TelekinesisController : MonoBehaviour
     private void TeleportMove(Gesture gesture)
     {
         _isTeleporting = true;
-        _hazzardClone.position = gesture.GetTouchToWordlPoint(GameController.Instance.playerZPosition, true);
+		_hazzardClone.position = gesture.GetTouchToWorldPoint(new Vector3(gesture.position.x, gesture.position.y, GameController.Instance.playerZPosition));
 
         if (!GameController.Instance.inSafeZone)
         {

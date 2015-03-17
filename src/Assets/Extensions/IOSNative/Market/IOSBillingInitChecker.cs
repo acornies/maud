@@ -3,16 +3,16 @@ using System.Collections;
 
 public class IOSBillingInitChecker 
 {
-	public delegate void BilliginitListner();
+	public delegate void BillingInitListener();
 
-	BilliginitListner _listner;
+	BillingInitListener _listener;
 
 
-	public IOSBillingInitChecker(BilliginitListner listner) {
-		_listner = listner;
+	public IOSBillingInitChecker(BillingInitListener listener) {
+		_listener = listener;
 
 		if(IOSInAppPurchaseManager.instance.IsStoreLoaded) {
-			_listner();
+			_listener();
 		} else {
 
 			IOSInAppPurchaseManager.instance.addEventListener(IOSInAppPurchaseManager.STORE_KIT_INITIALIZED, OnStoreKitInit);
@@ -24,7 +24,7 @@ public class IOSBillingInitChecker
 
 	private void OnStoreKitInit() {
 		IOSInAppPurchaseManager.instance.removeEventListener(IOSInAppPurchaseManager.STORE_KIT_INITIALIZED, OnStoreKitInit);
-		_listner();
+		_listener();
 	}
 
 }

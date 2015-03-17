@@ -34,9 +34,9 @@ public class PlayerMovement : MonoBehaviour
     private Transform _leftEye;
     private Transform _rightEye;
 	private int _currentMaterialIndex;
-	private bool _rewardResurrection;
-	private float _rewardResurrectionTimer;
-	public float rewardResurrectionTime = .5f;
+	//private bool _rewardResurrection;
+	//private float _rewardResurrectionTimer;
+	//public float rewardResurrectionTime = .5f;
 
     public bool disabled;
     public bool isGrounded;
@@ -104,6 +104,7 @@ public class PlayerMovement : MonoBehaviour
         GameController.OnPlayerResurrection += HandleOnPlayerResurrection;
 		GameController.OnGameOver += HandleOnGameOver;
 		GameController.OnPlayerReward += HandleOnPlayerReward;
+		GameController.OnGameRestart += HandleOnGameRestart;
 		CameraMovement.OnMovePlayerToGamePosition += HandleOnMovePlayerToGamePosition;
 		CameraMovement.OnRestorePlayerState += HandleOnRestorePlayerState;
         CloudBehaviour.On_CloudDestroy += HandleOnCloudDestroy;
@@ -113,10 +114,15 @@ public class PlayerMovement : MonoBehaviour
 		MusicController.OnFastMusicStart += HandleOnFastMusicStart;
     }
 
+    void HandleOnGameRestart (int sceneIndex)
+    {
+		disabled = true;
+    }
+
     void HandleOnPlayerReward ()
     {
-		_rewardResurrection = true;
-		_rewardResurrectionTimer = rewardResurrectionTime;
+		//_rewardResurrection = true;
+		//_rewardResurrectionTimer = rewardResurrectionTime;
 
 		var levelPlatforms = PlatformController.Instance.levelPlatforms;
 		Vector3 spawnPosition;
@@ -141,10 +147,10 @@ public class PlayerMovement : MonoBehaviour
 			//Debug.Log ("Regular reward spawn Y position: " + spawnPosition.y);
 		}
 
+		disabled = false;
+		rigidbody.isKinematic = true;
 		SetSpawnPosition(spawnPosition);
 		//rigidbody.velocity = new Vector3 (rigidbody.velocity.x, 0, rigidbody.velocity.z);
-		rigidbody.isKinematic = true;
-		//disabled = false;
     }
 
     void HandleOnRestorePlayerState ()
@@ -204,6 +210,7 @@ public class PlayerMovement : MonoBehaviour
         GameController.OnPlayerResurrection -= HandleOnPlayerResurrection;
 		GameController.OnGameOver -= HandleOnGameOver;
 		GameController.OnPlayerReward -= HandleOnPlayerReward;
+		GameController.OnGameRestart -= HandleOnGameRestart;
 		CameraMovement.OnMovePlayerToGamePosition -= HandleOnMovePlayerToGamePosition;
 		CameraMovement.OnRestorePlayerState -= HandleOnRestorePlayerState;
         CloudBehaviour.On_CloudDestroy -= HandleOnCloudDestroy;
@@ -254,20 +261,11 @@ public class PlayerMovement : MonoBehaviour
             //collider.enabled = false;
 			_modelCollider.isTrigger = true;
 
-			if (_isGhostMoving && transform.position != _ghostTouchTargetPosition)
-            {
                 //Debug.Log("Move ghost!");
-                transform.position = Vector3.Lerp(transform.position, _ghostTouchTargetPosition,
-                    ghostSpeed * Time.deltaTime);
-            }
-            else if (_isGhostMoving && transform.position == _ghostTouchTargetPosition)
-            {
-                //Debug.Log("Stop ghost!");
-                _isGhostMoving = false;
-                //_ghostTouchTargetPosition = Vector3.zero;
-            }
+            transform.position = Vector3.Lerp(transform.position, _ghostTouchTargetPosition,
+                ghostSpeed * Time.deltaTime);
 
-			if (_rewardResurrection && disabled)
+			/*if (_rewardResurrection && disabled)
 			{
 				_rewardResurrectionTimer -= Time.deltaTime;
 				if (_rewardResurrectionTimer <= 0)
@@ -275,7 +273,7 @@ public class PlayerMovement : MonoBehaviour
 					disabled = false;
 					_rewardResurrection = false;
 				}
-			}
+			}*/
         }
 
 		if (_shouldTimeoutShake){
@@ -302,7 +300,7 @@ public class PlayerMovement : MonoBehaviour
 
         HandleAnimations();
 
-        if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart) return;
+        if (GameController.Instance.playerIsDead) return;
 
         HandleStickyPhysics();
         HandleForcePushed();
@@ -436,7 +434,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleOnPlayerResurrection()
     {
-		disabled = false;
+		//disabled = false;
 		//Debug.Log("Resurrection event handler!");
 		rigidbody.isKinematic = false;
 		rigidbody.WakeUp();
@@ -479,7 +477,8 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleSimpleTap(Gesture gesture)
     {
-        if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
+		//Debug.Log ("PlayerMovement Tap");
+		if (GameController.Instance.playerIsDead)
         {
 			GhostMovement(gesture);
             //GameController.Instance.movedFromSpawnPosition = true;
@@ -514,14 +513,23 @@ public class PlayerMovement : MonoBehaviour
 
 	private void GhostMovement(Gesture gesture)
 	{
+		//Debug.Log ("Ghost move");
 		if (disabled) return;
-		_ghostTouchTargetPosition = gesture.GetTouchToWordlPoint(transform.position.z, true);
+		//Vector2 touchPos = Input.touches[0].position;		
+		//Vector3 touchPosinWorldSpace = Camera.main.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, GameController.Instance.playerZPosition));
+		//Camera.main.ScreenToWorldPoint( new Vector3( position.x, position.y,z-Camera.main.transform.position.z))
+		//Vector3 touchPosinWorldSpace = gesture.GetTouchToWorldPoint (GameController.Instance.playerZPosition);
+		_ghostTouchTargetPosition = gesture.GetTouchToWorldPoint (new Vector3(gesture.position.x, gesture.position.y, transform.position.z));
+		//_ghostTouchTargetPosition = new Vector3(touchPosinWorldSpace.x, touchPosinWorldSpace.y, GameController.Instance.playerZPosition);
+		//Debug.Log(_ghostTouchTargetPosition);
+		//Debug.Log (new Vector3(gesture.position.x, gesture.position.y, GameController.Instance.playerZPosition));
 		_isGhostMoving = true;
 	}
 
     void HandleSwipe(Gesture gesture)
     {
-        if (GameController.Instance.playerIsDead && !GameController.Instance.initiatingRestart)
+		//Debug.Log ("PlayerMovement Swipe");
+		if (GameController.Instance.playerIsDead)
         {
 			GhostMovement(gesture);
             //GameController.Instance.movedFromSpawnPosition = true;
@@ -531,7 +539,7 @@ public class PlayerMovement : MonoBehaviour
 		else if (!GameController.Instance.playerIsDead && PlayerState.Instance.Data.controlMode == ControlMode.FingerSwipe)
         {
 			if( disabled) return;
-			if (gesture.swipe == EasyTouch.SwipeType.Left || gesture.swipe == EasyTouch.SwipeType.Right)
+			if (gesture.swipe == EasyTouch.SwipeDirection.Left || gesture.swipe == EasyTouch.SwipeDirection.Right)
             {
                 var touchDir = (gesture.position.x - gesture.startPosition.x);
                 float touchDirMultiplied = touchDir * 0.01f;

@@ -11,7 +11,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class NetwrokManager  {
+public class NetworkManager  {
 
 	//--------------------------------------
 	// INITIALIZE

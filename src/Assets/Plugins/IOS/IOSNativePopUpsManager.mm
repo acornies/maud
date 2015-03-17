@@ -12,37 +12,42 @@
 
 
 
-static UIAlertView* _currentAllert =  nil;
+static UIAlertView* _currentAlert =  nil;
+static PopUPDelegate* _popup_delegate =  nil;
+static RatePopUPDelegate* _r_popup_delegate =  nil;
 
 
 
-+ (void) unregisterAllertView {
-    if(_currentAllert != nil) {
++ (void) unregisterAlertView {
+    if(_currentAlert != nil) {
 #if UNITY_VERSION < 500
-         [_currentAllert release];
+         [_currentAlert release];
 #endif
         
        
-        _currentAllert = nil;
+        _currentAlert = nil;
     }
 }
 
 +(void) dismissCurrentAlert {
-    if(_currentAllert != nil) {
-        [_currentAllert dismissWithClickedButtonIndex:0 animated:YES];
+    if(_currentAlert != nil) {
+        [_currentAlert dismissWithClickedButtonIndex:0 animated:YES];
 #if UNITY_VERSION < 500
-        [_currentAllert release];
+        [_currentAlert release];
 #endif
-        _currentAllert = nil;
+        _currentAlert = nil;
     }
 }
 
 +(void) showRateUsPopUp: (NSString *) title message: (NSString*) msg b1: (NSString*) b1 b2: (NSString*) b2 b3: (NSString*) b3 {
     
     UIAlertView *alert = [[UIAlertView alloc] init];
+    
+    _r_popup_delegate = [[RatePopUPDelegate alloc] init];
+    
     [alert setTitle:title];
     [alert setMessage:msg];
-    [alert setDelegate: [[RatePopUPDelegate alloc] init]];
+    [alert setDelegate: _r_popup_delegate];
     
     [alert addButtonWithTitle:b1];
     [alert addButtonWithTitle:b2];
@@ -50,7 +55,7 @@ static UIAlertView* _currentAllert =  nil;
     
     [alert show];
     
-    _currentAllert = alert;
+    _currentAlert = alert;
     
 }
 
@@ -58,30 +63,37 @@ static UIAlertView* _currentAllert =  nil;
 
 
 + (void) showDialog: (NSString *) title message: (NSString*) msg yesTitle:(NSString*) b1 noTitle: (NSString*) b2{
+   
+    
+    _popup_delegate = [[PopUPDelegate alloc] init];
     
     UIAlertView *alert = [[UIAlertView alloc] init];
     [alert setTitle:title];
     [alert setMessage:msg];
-    [alert setDelegate: [[PopUPDelegate alloc] init]];
+    [alert setDelegate: _popup_delegate];
     [alert addButtonWithTitle:b2];
     [alert addButtonWithTitle:b1];
     [alert show];
     
-    _currentAllert = alert;
+    _currentAlert = alert;
     
 }
 
 
 +(void) showMessage: (NSString *) title message: (NSString*) msg okTitle:(NSString*) b1 {
     
+    
+     _popup_delegate = [[PopUPDelegate alloc] init];
+    
+    
     UIAlertView *alert = [[UIAlertView alloc] init];
     [alert setTitle:title];
     [alert setMessage:msg];
-    [alert setDelegate: [[PopUPDelegate alloc] init]];
+    [alert setDelegate: _popup_delegate];
     [alert addButtonWithTitle:b1];
     [alert show];
     
-    _currentAllert = alert;
+    _currentAlert = alert;
 }
 
 extern "C" {
@@ -90,8 +102,8 @@ extern "C" {
     
     
     //--------------------------------------
-	//  IOS Native Plugin Section
-	//--------------------------------------
+    //  IOS Native Plugin Section
+    //--------------------------------------
     
     void _ISN_ShowRateUsPopUp(char* title, char* message, char* b1, char* b2, char* b3) {
         [IOSNativePopUpsManager showRateUsPopUp:[ISNDataConvertor charToNSString:title] message:[ISNDataConvertor charToNSString:message] b1:[ISNDataConvertor charToNSString:b1] b2:[ISNDataConvertor charToNSString:b2] b3:[ISNDataConvertor charToNSString:b3]];
@@ -112,8 +124,8 @@ extern "C" {
     
     
     //--------------------------------------
-	//  Native PopUps Plugin Section
-	//--------------------------------------
+    //  Native PopUps Plugin Section
+    //--------------------------------------
     
     void _MNP_ShowRateUsPopUp(char* title, char* message, char* b1, char* b2, char* b3) {
         _ISN_ShowRateUsPopUp(title, message, b1, b2, b3);

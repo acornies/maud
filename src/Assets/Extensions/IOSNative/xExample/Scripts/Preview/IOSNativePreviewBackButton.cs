@@ -4,7 +4,7 @@ using System.Collections;
 public class IOSNativePreviewBackButton : BaseIOSFeaturePreview {
 
 
-	private string initalSceneName = "scene";
+	private string initialSceneName = "scene";
 
 	public static IOSNativePreviewBackButton Create() {
 		return new GameObject("BackButton").AddComponent<IOSNativePreviewBackButton>();
@@ -13,7 +13,7 @@ public class IOSNativePreviewBackButton : BaseIOSFeaturePreview {
 
 	void Awake() {
 		DontDestroyOnLoad(gameObject);
-		initalSceneName = Application.loadedLevelName;
+		initialSceneName = Application.loadedLevelName;
 	}
 
 
@@ -23,12 +23,12 @@ public class IOSNativePreviewBackButton : BaseIOSFeaturePreview {
 		float y = bw * 0.2f;
 
 
-		if(!Application.loadedLevelName.Equals(initalSceneName)) {
+		if(!Application.loadedLevelName.Equals(initialSceneName)) {
 			Color customColor = GUI.color;
 			GUI.color = Color.green;
 
 			if(GUI.Button(new Rect(x, y, bw, bw * 0.4f), "Back")) {
-				Application.LoadLevel(initalSceneName);
+				Application.LoadLevel(initialSceneName);
 			}
 
 			GUI.color = customColor;

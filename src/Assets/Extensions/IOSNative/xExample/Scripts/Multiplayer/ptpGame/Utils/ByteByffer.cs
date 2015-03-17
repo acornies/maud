@@ -12,7 +12,7 @@ using UnityEngine;
 using System.Collections;
 
 
-public class ByteByffer  {
+public class ByteBuffer  {
 
 	private byte[] buffer;
 
@@ -21,7 +21,7 @@ public class ByteByffer  {
 	// INITIALIZE
 	//--------------------------------------
 
-	public ByteByffer(byte[] buf) {
+	public ByteBuffer(byte[] buf) {
 		buffer = buf;
 	}
 

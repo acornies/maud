@@ -46,26 +46,26 @@ public class GameCenterPlayerTemplate {
 	// GET / SET
 	//--------------------------------------
 
-	public string playerId {
+	public string PlayerId {
 		get {
 			return _playerId;
 		}
 	}
 
-	public string alias {
+	public string Alias {
 		get {
 			return _alias;
 		}
 	}
 
 
-	public string displayName {
+	public string DisplayName {
 		get {
 			return _displayName;
 		}
 	}
 
-	public Texture2D avatar {
+	public Texture2D Avatar {
 		get {
 			return _avatar;
 		}

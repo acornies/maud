@@ -22,25 +22,25 @@ public class IOSVideoManager : ISN_Singleton<IOSVideoManager>  {
 	#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 	
 	[DllImport ("__Internal")]
-	private static extern void _ISN_SteamVideo(string videoUrl);
+	private static extern void _ISN_StreamVideo(string videoUrl);
 	
 
 	[DllImport ("__Internal")]
-	private static extern void _ISN_OpenYoutubeVideo(string videoUrl);
+	private static extern void _ISN_OpenYouTubeVideo(string videoUrl);
 	
 	#endif
 
 
 
-	public void PlaySteamingVideo(string videoUrl) {
+	public void PlayStreamingVideo(string videoUrl) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_ISN_SteamVideo(videoUrl);
+		_ISN_StreamVideo(videoUrl);
 		#endif
 	}
 	
-	public void OpenYoutubeVideo(string videoUrl) {
+	public void OpenYouTubeVideo(string videoUrl) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
-		_ISN_OpenYoutubeVideo(videoUrl);
+		_ISN_OpenYouTubeVideo(videoUrl);
 		#endif
 	}
 }

@@ -12,6 +12,7 @@
 @implementation ISNCamera
 
 static ISNCamera *_sharedInstance;
+static UIImagePickerController *_imagePicker = NULL;
 
 
 + (id)sharedInstance {
@@ -84,7 +85,10 @@ static ISNCamera *_sharedInstance;
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     picker.mediaTypes = [[NSArray alloc] initWithObjects:(NSString *)kUTTypeMovie,      nil];
     [vc presentViewController:picker animated:YES completion:nil];
+#if UNITY_VERSION < 500
     [picker release];
+#endif
+   
 }
 
 
@@ -93,18 +97,17 @@ static ISNCamera *_sharedInstance;
 -(void) GetImage: (UIImagePickerControllerSourceType )source {
     UIViewController *vc =  UnityGetGLViewController();
     
-    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
+    if(_imagePicker == NULL) {
+        _imagePicker = [[UIImagePickerController alloc] init];
+        _imagePicker.delegate = self;
+
+    }
     
-    picker.sourceType = source;
-    
-    
-    
-    [vc presentViewController:picker animated:YES completion:nil];
-    //	[vc presentModalViewController:picker animated:YES ];
+    _imagePicker.sourceType = source;
     
     
-    
+    [vc presentViewController:_imagePicker animated:YES completion:nil];
+ 
     
 }
 
@@ -211,7 +214,7 @@ extern "C" {
         [[ISNCamera sharedInstance] GetImageFromAlbum];
     }
     
-    void _ISN_InitCamerAPI(float compressionRate, int maxSize, int encodingType) {
+    void _ISN_InitCameraAPI(float compressionRate, int maxSize, int encodingType) {
         [[ISNCamera sharedInstance] setImageCompressionRate:compressionRate];
         [[ISNCamera sharedInstance] setMaxImageSize:maxSize / 2];
         [[ISNCamera sharedInstance] setEncodingType:encodingType];

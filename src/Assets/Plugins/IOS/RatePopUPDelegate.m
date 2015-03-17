@@ -17,7 +17,7 @@
     
     
     
-    [IOSNativePopUpsManager unregisterAllertView];
+    [IOSNativePopUpsManager unregisterAlertView];
     UnitySendMessage("IOSRateUsPopUp", "onPopUpCallBack",  [ISNDataConvertor NSIntToChar:buttonIndex]);
 }
 

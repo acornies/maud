@@ -12,7 +12,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class GCLeaderBoard  {
+public class GCLeaderboard  {
 
 
 	public ScoreCollection SocsialCollection =  new ScoreCollection();
@@ -24,8 +24,8 @@ public class GCLeaderBoard  {
 
 	private string _id;
 
-	public GCLeaderBoard(string leaderBoardId) {
-		_id = leaderBoardId;
+	public GCLeaderboard(string leaderboardId) {
+		_id = leaderboardId;
 	}
 
 

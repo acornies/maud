@@ -21,10 +21,74 @@ public class PluginsInstalationUtil : MonoBehaviour {
 	}
 
 	public static void IOS_InstallPlugin(bool IsFirstInstall = true) {
+		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_1	|| UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
 		FileStaticAPI.CopyFolder(IOS_SOURCE_PATH, IOS_DESTANATION_PATH);
+		#else
+		Unity5_IOS_CleanUp();
+		#endif
+
+		IOSCleanUP();
 	}
 
 
+	public static void IOSCleanUP() {
+		FileStaticAPI.DeleteFile(PluginsInstalationUtil.IOS_DESTANATION_PATH + "GADAdMobExtras.h");
+		FileStaticAPI.DeleteFile(PluginsInstalationUtil.IOS_DESTANATION_PATH + "GADAdNetworkExtras.h");
+		FileStaticAPI.DeleteFile(PluginsInstalationUtil.IOS_DESTANATION_PATH + "GADAdSize.h");
+		FileStaticAPI.DeleteFile(PluginsInstalationUtil.IOS_DESTANATION_PATH + "GADBannerViewDelegate.h");
+		FileStaticAPI.DeleteFile(PluginsInstalationUtil.IOS_DESTANATION_PATH + "GADInAppPurchase.h");
+		FileStaticAPI.DeleteFile(PluginsInstalationUtil.IOS_DESTANATION_PATH + "GADInAppPurchaseDelegate.h");
+		FileStaticAPI.DeleteFile(PluginsInstalationUtil.IOS_DESTANATION_PATH + "GADInterstitialDelegate.h");
+		FileStaticAPI.DeleteFile(PluginsInstalationUtil.IOS_DESTANATION_PATH + "GADModules.h");
+		FileStaticAPI.DeleteFile(PluginsInstalationUtil.IOS_DESTANATION_PATH + "GADRequest.h");
+		FileStaticAPI.DeleteFile(PluginsInstalationUtil.IOS_DESTANATION_PATH + "GADRequestError.h");
+		FileStaticAPI.DeleteFile(PluginsInstalationUtil.IOS_DESTANATION_PATH + "libGoogleAdMobAds.a");
+
+	}
+
+	public static void Unity5_IOS_CleanUp() {
+		RemoveIOSFile("AppEventListener");
+		RemoveIOSFile("CloudManager");
+		RemoveIOSFile("CustomBannerView");
+		RemoveIOSFile("GameCenterManager");
+		RemoveIOSFile("GCHelper");
+		RemoveIOSFile("iAdBannerController");
+		RemoveIOSFile("iAdBannerObject");
+		RemoveIOSFile("InAppPurchaseManager");
+		RemoveIOSFile("IOSGameCenterManager");
+		RemoveIOSFile("IOSNativeNotificationCenter");
+		RemoveIOSFile("IOSNativePopUpsManager");
+		RemoveIOSFile("IOSNativeUtility");
+		RemoveIOSFile("ISN_NSData+Base64");
+		RemoveIOSFile("ISN_Reachability");
+		RemoveIOSFile("ISNCamera");
+		RemoveIOSFile("ISNDataConvertor");
+		RemoveIOSFile("ISNSharedApplication");
+		RemoveIOSFile("ISNVideo");
+		RemoveIOSFile("PopUPDelegate");
+		RemoveIOSFile("RatePopUPDelegate");
+		RemoveIOSFile("SKProduct+LocalizedPrice");
+		RemoveIOSFile("SocialGate");
+		RemoveIOSFile("StoreProductView");
+		RemoveIOSFile("TransactionServer");
+		RemoveIOSFile("GoogleMobileAdBanner");
+		RemoveIOSFile("GoogleMobileAdController");
+		RemoveIOSFile("IOSInstaPlugin");
+		RemoveIOSFile("IOSTwitterPlugin");
+		RemoveIOSFile("MGInstagram");
+
+
+
+
+
+	}
+
+
+	private static void RemoveIOSFile(string filename) {
+		FileStaticAPI.DeleteFile(IOS_DESTANATION_PATH + filename + ".h");
+		FileStaticAPI.DeleteFile(IOS_DESTANATION_PATH + filename + ".m");
+		FileStaticAPI.DeleteFile(IOS_DESTANATION_PATH + filename + ".mm");
+	}
 
 
 	public static void Android_UpdatePlugin() {
@@ -129,6 +193,11 @@ public class PluginsInstalationUtil : MonoBehaviour {
 
 		FileStaticAPI.CopyFolder(ANDROID_SOURCE_PATH + "facebook", 			ANDROID_DESTANATION_PATH + "facebook");
 
+		#if UNITY_3_5 || UNITY_4_0 || UNITY_4_1	|| UNITY_4_2 || UNITY_4_3 || UNITY_4_5 || UNITY_4_6
+		
+		#else
+		FileStaticAPI.DeleteFolder(ANDROID_SOURCE_PATH + "facebook");
+		#endif
 
 		if(IsFirstInstall) {
 			EnableBillingAPI();

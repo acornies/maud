@@ -18,10 +18,10 @@
 
  + (id) sharedInstance;
 
- - (void) redirectToRatigPage: (NSString *) appId;
+ - (void) redirectToRatingPage: (NSString *) appId;
 
- - (void) ShowSpiner;
- - (void) HideSpiner;
+ - (void) ShowSpinner;
+ - (void) HideSpinner;
 
 
 @end

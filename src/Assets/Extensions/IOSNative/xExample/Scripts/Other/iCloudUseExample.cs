@@ -77,7 +77,7 @@ public class iCloudUseExample : MonoBehaviour {
 		}
 
 		if(GUI.Button(new Rect(170, 500, 150, 50), "TestConnection")) {
-			Application.LoadLevel("Pear-To-Pear example game");
+            Application.LoadLevel("Peer-To-PeerGameExample");
 		}
 
 	}
@@ -94,7 +94,7 @@ public class iCloudUseExample : MonoBehaviour {
 
 	private void OnCloundInitAction (ISN_Result result) {
 		if(result.IsSucceeded) {
-			IOSNativePopUpManager.showMessage("iCloud", "Initialization Sucsess!");
+			IOSNativePopUpManager.showMessage("iCloud", "Initialization Success!");
 		} else {
 			IOSNativePopUpManager.showMessage("iCloud", "Initialization Failed!");
 		}

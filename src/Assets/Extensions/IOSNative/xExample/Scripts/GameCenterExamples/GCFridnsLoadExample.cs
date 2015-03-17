@@ -2,10 +2,10 @@ using UnityEngine;
 using UnionAssets.FLE;
 using System.Collections;
 
-public class GCFridnsLoadExample : MonoBehaviour {
+public class GameCenterFriendLoadExample : MonoBehaviour {
 
-	private string ChalangeLeadeboard =  "your.leaderbord2.id.here";
-	private string ChalangeAchievement =   "your.achievement.id.here ";
+	private string ChallengeLeaderboard =  "your.leaderboard2.id.here";
+	private string ChallengeAchievement =   "your.achievement.id.here ";
 	
 	
 	public GUIStyle headerStyle;
@@ -17,10 +17,10 @@ public class GCFridnsLoadExample : MonoBehaviour {
 	
 	void Awake() {
 
-		GameCenterManager.dispatcher.addEventListener (GameCenterManager.GAME_CENTER_PLAYER_AUTHENTICATED, OnAuth);
+		GameCenterManager.Dispatcher.addEventListener (GameCenterManager.GAME_CENTER_PLAYER_AUTHENTICATED, OnAuth);
 
 		
-		//Initializing Game Cneter class. This action will triger authentication flow
+		//Initializing Game Center class. This action will trigger authentication flow
 		GameCenterManager.init();
 	}
 
@@ -41,13 +41,13 @@ public class GCFridnsLoadExample : MonoBehaviour {
 			return;
 		}
 
-		if(GUI.Button(new Rect(500, 10, 180, 50), "Leaberboard Chalange All")) {
-			GameCenterManager.issueLeaderboardChallenge(ChalangeLeadeboard, "Your message here", GameCenterManager.friendsList.ToArray());
+		if(GUI.Button(new Rect(500, 10, 180, 50), "Leaberboard Challenge All")) {
+			GameCenterManager.IssueLeaderboardChallenge(ChallengeLeaderboard, "Your message here", GameCenterManager.FriendsList.ToArray());
 		}
 		
-		
-		if(GUI.Button(new Rect(730, 10, 180, 50), "Achievement Chalange All")) {
-			GameCenterManager.issueAchievementChallenge(ChalangeAchievement, "Your message here", GameCenterManager.friendsList.ToArray());
+
+		if(GUI.Button(new Rect(730, 10, 180, 50), "Achievement Challenge All")) {
+			GameCenterManager.IssueAchievementChallenge(ChallengeAchievement, "Your message here", GameCenterManager.FriendsList.ToArray());
 		}
 		
 
@@ -56,24 +56,24 @@ public class GCFridnsLoadExample : MonoBehaviour {
 		GUI.Label(new Rect(300, 90, 100, 40), "avatar ", boardStyle);
 
 		int i = 1;
-		foreach(string FriendId in GameCenterManager.friendsList) {
+		foreach(string FriendId in GameCenterManager.FriendsList) {
 
 			GameCenterPlayerTemplate player = GameCenterManager.GetPlayerById(FriendId);
 			if(player != null) {
-				GUI.Label(new Rect(10,  90 + 70 * i, 100, 40), player.playerId, boardStyle);
-				GUI.Label(new Rect(150, 90 + 70 * i , 100, 40), player.alias, boardStyle);
-				if(player.avatar != null) {
-					GUI.DrawTexture(new Rect(300, 75 + 70 * i, 50, 50), player.avatar);
+				GUI.Label(new Rect(10,  90 + 70 * i, 100, 40), player.PlayerId, boardStyle);
+				GUI.Label(new Rect(150, 90 + 70 * i , 100, 40), player.Alias, boardStyle);
+				if(player.Avatar != null) {
+					GUI.DrawTexture(new Rect(300, 75 + 70 * i, 50, 50), player.Avatar);
 				} else  {
 					GUI.Label(new Rect(300, 90 + 70 * i, 100, 40), "no photo ", boardStyle);
 				}
 
-				if(GUI.Button(new Rect(450, 90 + 70 * i, 150, 30), "Chalange Leaberboard")) {
-					GameCenterManager.issueLeaderboardChallenge(ChalangeLeadeboard, "Your message here", FriendId);
+				if(GUI.Button(new Rect(450, 90 + 70 * i, 150, 30), "Challenge Leaderboard")) {
+					GameCenterManager.IssueLeaderboardChallenge(ChallengeLeaderboard, "Your message here", FriendId);
 				}
 
-				if(GUI.Button(new Rect(650, 90 + 70 * i, 150, 30), "Chalange Achievement")) {
-					GameCenterManager.issueAchievementChallenge(ChalangeAchievement, "Your message here", FriendId);
+				if(GUI.Button(new Rect(650, 90 + 70 * i, 150, 30), "Challenge Achievement")) {
+					GameCenterManager.IssueAchievementChallenge(ChallengeAchievement, "Your message here", FriendId);
 				}
 
 
@@ -93,7 +93,7 @@ public class GCFridnsLoadExample : MonoBehaviour {
 		if (result.IsSucceeded) {
 			Debug.Log("Player Authed");
 		} else {
-			IOSNativePopUpManager.showMessage("Game Cneter ", "Player auntification failed");
+			IOSNativePopUpManager.showMessage("Game Center ", "Player authentication failed");
 		}
 
 

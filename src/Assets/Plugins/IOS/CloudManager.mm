@@ -51,6 +51,24 @@ static CloudManager *_sharedInstance;
         UnitySendMessage("iCloudManager", "OnCloudInitFail", [ISNDataConvertor NSStringToChar:@""]);
    }
     
+    /*
+    
+    NSURL *documentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    NSURL *storeURL = [documentsDirectory URLByAppendingPathComponent:@"CoreData.sqlite"];
+    NSError *error = nil;
+    NSPersistentStoreCoordinator *coordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:<# your managed object model #>];
+    NSDictionary *storeOptions =
+    @{NSPersistentStoreUbiquitousContentNameKey: @"MyAppCloudStore"};
+    NSPersistentStore *store = [coordinator addPersistentStoreWithType:NSSQLiteStoreType
+                                                         configuration:nil
+                                                                   URL:storeURL
+                                                               options:storeOptions
+                                                                 error:&error];
+     
+    NSURL *finaliCloudURL = [store URL];
+    */
+    
+    
     NSLog(@"initialize");
     
 }
@@ -130,7 +148,10 @@ static CloudManager *_sharedInstance;
     NSLog(@"data: %@", stringData);
     
     
-    NSString *package = [[array copy] autorelease];
+    NSString *package = [array copy];
+#if UNITY_VERSION < 500
+    [package autorelease];
+#endif
     
     if(data == nil) {
         UnitySendMessage("iCloudManager", "OnCloudDataEmpty", [ISNDataConvertor NSStringToChar:package]);

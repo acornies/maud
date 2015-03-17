@@ -6,11 +6,11 @@ public class ISN_CacheManager : MonoBehaviour {
 	private const string DATA_SPLITTER = "|";
 	private const string ACHIEVEMENT_SPLITTER = "&";
 
-	private const string GA_DATA_CACHE_KEY = "ISN_Chache";
+	private const string GA_DATA_CACHE_KEY = "ISN_Cache";
 	
 	public static void SaveAchievementRequest(string achievementId, float percent) {
 
-		if (!IOSNativeSettings.Instance.UseGCRequestsCahing) {
+		if (!IOSNativeSettings.Instance.UseGCRequestCaching) {
 			return;
 		}
 
@@ -27,14 +27,14 @@ public class ISN_CacheManager : MonoBehaviour {
 		SavedData = data;
 	}
 	
-	public static void SendAchievementChashedRequests() {
+	public static void SendAchievementCachedRequest() {
 		
 		string data = SavedData;
 		if(data != string.Empty) {
 			string[] requests = data.Split(DATA_SPLITTER [0]);
 			foreach(string request in requests) {
 				string[] achievementData = request.Split(ACHIEVEMENT_SPLITTER[0]);
-				GameCenterManager.submitAchievementNoChache(System.Convert.ToSingle(achievementData[1]), achievementData[0]);
+				GameCenterManager.SubmitAchievementNoCache(System.Convert.ToSingle(achievementData[1]), achievementData[0]);
 			}
 			
 		} 

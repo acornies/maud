@@ -31,8 +31,8 @@ public class iAdUseExample : MonoBehaviour {
 
 		Quad.SetActive (false);
 		//using events example
-		iAdBannerController.instance.addEventListener(iAdEvent.INTERSTITIAL_AD_DID_LOAD, OnInterstisialsLoaded);
-		iAdBannerController.instance.addEventListener(iAdEvent.INTERSTITIAL_AD_ACTION_DID_FINISH, OnInterstisialsFinish);
+		iAdBannerController.instance.addEventListener(iAdEvent.INTERSTITIAL_AD_DID_LOAD, OnInterstitialLoaded);
+		iAdBannerController.instance.addEventListener(iAdEvent.INTERSTITIAL_AD_ACTION_DID_FINISH, OnInterstitialFinish);
 
 
 		//using actions example
@@ -84,16 +84,17 @@ public class iAdUseExample : MonoBehaviour {
 		
 		float StartY = 20;
 		float StartX = 10;
-		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "Interstisal Example", style);
+		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "Interstitial Example", style);
 
 		StartY+= 40;
 		if(GUI.Button(new Rect(StartX, StartY, 150, 50), "Start Interstitial Ad")) {
+			IsInterstisialsAdReady = false;
 			iAdBannerController.instance.StartInterstitialAd ();
 		}
 
 		StartX += 170;
 		if(GUI.Button(new Rect(StartX, StartY, 150, 50), "Load Interstitial Ad")) {
-			Quad.SetActive(true);
+			IsInterstisialsAdReady = false;
 			iAdBannerController.instance.LoadInterstitialAd ();
 		}
 
@@ -102,6 +103,7 @@ public class iAdUseExample : MonoBehaviour {
 		GUI.enabled = IsInterstisialsAdReady;
 		if(GUI.Button(new Rect(StartX, StartY, 150, 50), "Show Interstitial Ad")) {
 			iAdBannerController.instance.ShowInterstitialAd ();
+			IsInterstisialsAdReady = false;
 		}
 		GUI.enabled  = true;
 
@@ -207,16 +209,16 @@ public class iAdUseExample : MonoBehaviour {
 	//  EVENTS
 	//--------------------------------------
 
-	private void OnInterstisialsLoaded() {
+	private void OnInterstitialLoaded() {
 		IsInterstisialsAdReady = true;
 	}
 
 
 
-	private void OnInterstisialsFinish() {
-		Debug.Log("OnInterstisialsFinish events fired");
+	private void OnInterstitialFinish() {
+		Debug.Log("OnInterstitialFinish event fired");
 		IsInterstisialsAdReady = false;
-		Quad.SetActive (false);
+		//Quad.SetActive (false);
 	}
 
 
@@ -225,7 +227,7 @@ public class iAdUseExample : MonoBehaviour {
 	//--------------------------------------
 
 	private void InterstitialAdDidFinishAction () {
-		Debug.Log("OnInterstisialsFinish action fired");
+		Debug.Log("OnInterstitialFinish action fired");
 	}
 	
 	//--------------------------------------

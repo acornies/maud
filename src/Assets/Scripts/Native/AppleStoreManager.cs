@@ -50,26 +50,26 @@ namespace LegendPeak.Native
 		public void showLeaderboards ()
 		{
 			if (!authenticated) return;
-			GameCenterManager.showLeaderBoards ();
+			GameCenterManager.ShowLeaderboards ();
 		}
 
 		public void showLeaderboard(string leaderboardId)
 		{
 			if (!authenticated) return;
-			GameCenterManager.showLeaderBoard (leaderboardId);
+			GameCenterManager.ShowLeaderboard (leaderboardId);
 		}
 
 		public void submitScore(int score, string leaderboardId)
 		{
 			if (!authenticated) return;
-			GameCenterManager.OnScoreSubmited += OnScoreSubmited;
-			GameCenterManager.reportScore (score, leaderboardId);
+			GameCenterManager.OnScoreSubmitted += OnScoreSubmitted;
+			GameCenterManager.ReportScore (score, leaderboardId);
 		}
 
 		public void loadPlayerScore(string leaderboardId)
 		{
 			if (!authenticated) return;
-			GameCenterManager.loadCurrentPlayerScore (leaderboardId);
+			GameCenterManager.LoadCurrentPlayerScore (leaderboardId);
 		}
 
 		public void screenCapture()
@@ -128,9 +128,9 @@ namespace LegendPeak.Native
 			}
 		}
 
-		private void OnScoreSubmited (ISN_Result result) 
+		private void OnScoreSubmitted (ISN_Result result) 
 		{
-			GameCenterManager.OnScoreSubmited -= OnScoreSubmited;
+			GameCenterManager.OnScoreSubmitted -= OnScoreSubmitted;
 			if(result.IsSucceeded)  {
 				Debug.Log("Score Submited");
 			} else {

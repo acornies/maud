@@ -14,9 +14,9 @@ public class ISDSettings : ScriptableObject
 
 	public const string VERSION_NUMBER = "1.0";
 
-	public bool IsfwSettingOpen;
-	public bool IslinkerSettingOpne;
-	public bool IscompilerSettingsOpen = true;
+	public bool IsFrameworksSettingOpen;
+	public bool IsLinkerSettingOpen;
+	public bool IsCompilerSettingsOpen = true;
 
 	public List<string> frameworks =  new List<string>();
 	public List<string> compileFlags =  new List<string>();

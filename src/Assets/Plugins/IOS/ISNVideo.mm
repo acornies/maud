@@ -25,7 +25,7 @@ static ISNVideo *_sharedInstance;
 
 
 
--(void) steamVideo:(NSString *)url {
+-(void) streamVideo:(NSString *)url {
     
     UIViewController *vc =  UnityGetGLViewController();
     
@@ -42,8 +42,8 @@ static ISNVideo *_sharedInstance;
 
 
 
--(void) openYoutubeVideo:(NSString *)url {
-    NSLog(@"openYoutubeVideo");
+-(void) openYouTubeVideo:(NSString *)url {
+    NSLog(@"openYouTubeVideo");
     
     NSMutableString *str = [[NSMutableString alloc] init];
     [str appendString:@"http://www.youtube.com/v/"];
@@ -70,14 +70,14 @@ extern "C" {
 	//--------------------------------------
     
     
-    void _ISN_SteamVideo(char* videoUrl) {
+    void _ISN_StreamVideo(char* videoUrl) {
         NSString *url = [ISNDataConvertor charToNSString:videoUrl];
-        [[ISNVideo sharedInstance] steamVideo:url];
+        [[ISNVideo sharedInstance] streamVideo:url];
     }
     
-    void _ISN_OpenYoutubeVideo(char* videoUrl) {
+    void _ISN_OpenYouTubeVideo(char* videoUrl) {
         NSString *url = [ISNDataConvertor charToNSString:videoUrl];
-        [[ISNVideo sharedInstance] openYoutubeVideo:url];
+        [[ISNVideo sharedInstance] openYouTubeVideo:url];
     }
     
     

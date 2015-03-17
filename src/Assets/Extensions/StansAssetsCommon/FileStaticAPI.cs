@@ -19,7 +19,8 @@ public static class FileStaticAPI
 	public static void CreateFile(string fileName) {
 		if(!IsFileExists(fileName)) {
 			CreateFolder (fileName.Substring (0, fileName.LastIndexOf ('/')));
-			File.Create (GetFullPath (fileName));
+			FileStream stream = File.Create (GetFullPath (fileName));
+			stream.Close();
 		}
 
 	}

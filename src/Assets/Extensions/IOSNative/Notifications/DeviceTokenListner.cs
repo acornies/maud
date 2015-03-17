@@ -17,7 +17,7 @@ using UnityEngine.iOS;
 
 using System.Collections;
 
-public class DeviceTokenListner : UnityEngine.MonoBehaviour {
+public class DeviceTokenListener : UnityEngine.MonoBehaviour {
 	
 	
 
@@ -26,7 +26,7 @@ public class DeviceTokenListner : UnityEngine.MonoBehaviour {
 	//--------------------------------------
 
 	public static void Create() {
-		new UnityEngine.GameObject ("DeviceTokenListner").AddComponent<DeviceTokenListner> ();
+		new UnityEngine.GameObject ("DeviceTokenListener").AddComponent<DeviceTokenListener> ();
 	}
 
 

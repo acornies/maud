@@ -56,7 +56,7 @@ static SocialGate *_sharedInstance;
     
     NSArray *vComp = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     if ([[vComp objectAtIndex:0] intValue] >= 8) {
-          NSLog(@"ISN: IOS8 detected");
+          NSLog(@"ISN: iOS8 detected");
         UIPopoverPresentationController *presentationController = [controller popoverPresentationController];
         presentationController.sourceView = vc.view;
     }
@@ -72,6 +72,8 @@ static SocialGate *_sharedInstance;
     NSData *imageData = [[NSData alloc] initWithBase64Encoding:media];
     UIImage *image = [[UIImage alloc] initWithData:imageData];
 
+    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationPortrait]forKey:@"orientation"];
+    [SLComposeServiceViewController attemptRotationToDeviceOrientation];
     
     SLComposeViewController *tweetSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
     [tweetSheet setInitialText:status];
@@ -122,6 +124,9 @@ static SocialGate *_sharedInstance;
     NSLog(@"ISN: twitterPost");
     
    
+    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationPortrait]forKey:@"orientation"];
+    [SLComposeServiceViewController attemptRotationToDeviceOrientation];
+    
     SLComposeViewController *twSheet = [SLComposeViewController  composeViewControllerForServiceType:SLServiceTypeTwitter];
     [twSheet setInitialText:status];
     
@@ -165,6 +170,9 @@ static SocialGate *_sharedInstance;
 - (void) fbPost:(NSString *)status {
     
     NSLog(@"ISN: fbPost");
+    
+    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationPortrait]forKey:@"orientation"];
+    [SLComposeServiceViewController attemptRotationToDeviceOrientation];
     
     SLComposeViewController *fbSheet = [SLComposeViewController  composeViewControllerForServiceType:SLServiceTypeFacebook];
     
@@ -244,6 +252,8 @@ static SocialGate *_sharedInstance;
     NSData *imageData = [[NSData alloc] initWithBase64Encoding:media];
     UIImage *image = [[UIImage alloc] initWithData:imageData];
     
+    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationPortrait]forKey:@"orientation"];
+    [SLComposeServiceViewController attemptRotationToDeviceOrientation];
     
     SLComposeViewController *fbSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
     if(fbSheet == NULL) {

@@ -31,7 +31,7 @@ public class IOSNativeMenu : EditorWindow {
 	//  Setup
 	//--------------------------------------
 
-	[MenuItem("Window/IOS Native/Documentation/Setup/Plugin set up")]
+	[MenuItem("Window/IOS Native/Documentation/Setup/Plugin setup")]
 	public static void SetupPluginSetUp() {
 		string url = "https://unionassets.com/iosnative/plugin-set-up-2";
 		Application.OpenURL(url);
@@ -43,7 +43,7 @@ public class IOSNativeMenu : EditorWindow {
 		Application.OpenURL(url);
 	}
 
-	[MenuItem("Window/IOS Native/Documentation/Setup/Creating iTunes app")]
+	[MenuItem("Window/IOS Native/Documentation/Setup/Creating iTunes App")]
 	public static void SetupCreatingITunesApp() {
 		string url = "https://unionassets.com/iosnative/creating-itunes-app-6";
 		Application.OpenURL(url);
@@ -171,7 +171,7 @@ public class IOSNativeMenu : EditorWindow {
 		Application.OpenURL(url);
 	}
 	
-	[MenuItem("Window/IOS Native/Documentation/More Features/Shared App Url")]
+	[MenuItem("Window/IOS Native/Documentation/More Features/Shared App URL")]
 	public static void FeaturesSharedAppUrl() {
 		string url = "https://unionassets.com/iosnative/shared-app-url-11";
 		Application.OpenURL(url);
@@ -189,7 +189,7 @@ public class IOSNativeMenu : EditorWindow {
 		Application.OpenURL(url);
 	}
 
-	[MenuItem("Window/IOS Native/Documentation/More Features/Poups and Pre-loaders")]
+	[MenuItem("Window/IOS Native/Documentation/More Features/Popups and Pre-loaders")]
 	public static void FeaturesPoupsPreloaders() {
 		string url = "https://unionassets.com/iosnative/poups-and-pre-loaders-24";
 		Application.OpenURL(url);

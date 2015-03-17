@@ -11,7 +11,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class ConectionButton : MonoBehaviour {
+public class ConnectionButton : MonoBehaviour {
 
 	//--------------------------------------
 	// INITIALIZE

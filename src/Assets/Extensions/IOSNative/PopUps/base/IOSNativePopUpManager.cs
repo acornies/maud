@@ -35,7 +35,7 @@ public class IOSNativePopUpManager {
 	}
 	
 	
-	public static void showRateUsPopUP(string title, string message, string rate, string remind, string declined) {
+	public static void showRateUsPopUp(string title, string message, string rate, string remind, string declined) {
 		#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
 			_ISN_ShowRateUsPopUp(title, message, rate, remind, declined);
 		#endif

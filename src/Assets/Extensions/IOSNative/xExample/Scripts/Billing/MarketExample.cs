@@ -20,8 +20,8 @@ public class MarketExample : BaseIOSFeaturePreview {
 	
 	void Awake() {
 
-		//Best pertise is to init billing on app launch
-		//But for this example we will use button for initialization
+		//Best practise is to init billing on app launch
+		//But for this example we will use a button for initialization
 		//PaymentManagerExample.init();
 	}
 
@@ -91,6 +91,27 @@ public class MarketExample : BaseIOSFeaturePreview {
 			IOSInAppPurchaseManager.instance.OnPurchasesStateSettingsLoaded += OnPurchasesStateSettingsLoaded;
 			IOSInAppPurchaseManager.instance.RequestInAppSettingState();
 		}
+
+
+		StartX = XStartPos;
+		StartY+= YButtonStep;
+		StartY+= YLableStep;
+
+		GUI.enabled = true;
+		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "Local Receipt Validation", style);
+		
+		StartY+= YLableStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth + 10, buttonHeight), "Load Receipt")) {
+			ISN_Security.OnReceiptLoaded += OnReceiptLoaded;
+			ISN_Security.instance.RetrieveLocalReceipt();
+		}
+
+		StartX += XButtonStep;
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Retrive Device GUID")) {
+			ISN_Security.OnGUIDLoaded += OnGUIDLoaded;
+			ISN_Security.instance.RetrieveDeviceGUID();
+		}
+
 	}
 	
 	
@@ -102,10 +123,59 @@ public class MarketExample : BaseIOSFeaturePreview {
 	//  EVENTS
 	//--------------------------------------
 
+
+	void OnGUIDLoaded (ISN_DeviceGUID result) {
+		ISN_Security.OnGUIDLoaded -= OnGUIDLoaded;
+		IOSNativePopUpManager.showMessage("GUID Loaded", result.GetBase64String());
+	}
+
 	void OnPurchasesStateSettingsLoaded (bool IsInAppPurchasesEnabled) {
 		IOSInAppPurchaseManager.instance.OnPurchasesStateSettingsLoaded -= OnPurchasesStateSettingsLoaded;
 		IOSNativePopUpManager.showMessage("Payments Settings State", "Is Payments Enabled: " + IOSInAppPurchaseManager.instance.IsInAppPurchasesEnabled);
 	}
+
+	void OnReceiptLoaded (ISN_LocalReceiptResult result) {
+		Debug.Log("OnReceiptLoaded");
+		ISN_Security.OnReceiptLoaded -= OnReceiptLoaded;
+		if(result.Receipt != null) {
+
+			IOSNativePopUpManager.showMessage("Success", "Receipt loaded, byte array length: " + result.Receipt.Length);
+		} else {
+			IOSDialog dialog =  IOSDialog.Create("Failed", "No Receipt found on the device. Would you like to refresh local Receipt?");
+			dialog.OnComplete += OnComplete;
+
+		}
+	}
+
+	void OnComplete (IOSDialogResult res) {
+		if(res == IOSDialogResult.YES) {
+			ISN_Security.OnReceiptRefreshComplete += OnReceiptRefreshComplete;
+			ISN_Security.instance.StartReceiptRefreshRequest();
+		}
+	}
+
+	void OnReceiptRefreshComplete (ISN_Result res) {
+		if(res.IsSucceeded) {
+
+			IOSDialog dialog =  IOSDialog.Create("Success", "Receipt Refreshed, would you like to check it again?");
+			dialog.OnComplete += Dialog_RetrieveLocalReceipt;
+			
+
+
+		} else {
+			IOSNativePopUpManager.showMessage("Fail", "Receipt Refresh Failed");
+		}
+
+
+	}
+
+	void Dialog_RetrieveLocalReceipt (IOSDialogResult res) {
+		if(res == IOSDialogResult.YES) {
+			ISN_Security.OnReceiptLoaded += OnReceiptLoaded;
+			ISN_Security.instance.RetrieveLocalReceipt();
+		}
+	}
+
 	
 	//--------------------------------------
 	//  PRIVATE METHODS
@@ -114,7 +184,5 @@ public class MarketExample : BaseIOSFeaturePreview {
 	//--------------------------------------
 	//  DESTROY
 	//--------------------------------------
-
-
 
 }

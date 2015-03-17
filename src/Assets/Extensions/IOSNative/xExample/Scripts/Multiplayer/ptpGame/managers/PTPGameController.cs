@@ -18,7 +18,7 @@ public class PTPGameController : MonoBehaviour {
 	public GameObject pref;
 
 	private DisconnectButton d;
-	private ConectionButton b;
+	private ConnectionButton b;
 	private ClickManager m;
 
 	public static PTPGameController instance;
@@ -40,7 +40,7 @@ public class PTPGameController : MonoBehaviour {
 
 
 
-		b = gameObject.AddComponent<ConectionButton> ();
+		b = gameObject.AddComponent<ConnectionButton> ();
 		b.enabled = false;
 
 		d = gameObject.AddComponent<DisconnectButton> ();
@@ -51,7 +51,8 @@ public class PTPGameController : MonoBehaviour {
 
 
 		GameCenterMultiplayer.instance.addEventListener (GameCenterMultiplayer.PLAYER_DISCONNECTED, OnGCPlayerDisconnected);
-		GameCenterMultiplayer.instance.addEventListener (GameCenterMultiplayer.MATCH_STARTED, OnGCMatchStart);
+
+		GameCenterMultiplayer.OnMatchStarted += OnGCMatchStart;
 
 	}
 
@@ -92,7 +93,7 @@ public class PTPGameController : MonoBehaviour {
 
 	void OnAuthFinished (ISN_Result res) {
 		if (res.IsSucceeded) {
-			IOSNativePopUpManager.showMessage("Player Authed ", "ID: " + GameCenterManager.player.playerId + "\n" + "Name: " + GameCenterManager.player.displayName);
+			IOSNativePopUpManager.showMessage("Player Authed ", "ID: " + GameCenterManager.Player.PlayerId + "\n" + "Name: " + GameCenterManager.Player.DisplayName);
 			cleanUpScene ();
 		}
 
@@ -105,17 +106,20 @@ public class PTPGameController : MonoBehaviour {
 		cleanUpScene ();
 	}
 
-	private void OnGCMatchStart(CEvent e) {
-		GameCenterMatchData match = e.data as GameCenterMatchData;
+	private void OnGCMatchStart(GameCenterMatchData match) {
 
-		IOSNativePopUpManager.showMessage ("OnMatchStart", "let's playe now \n  Other player count: " + match.playerIDs.Count);
-
+		IOSNativePopUpManager.showMessage ("OnMatchStart", "let's play now\n  Other player count: " + match.playerIDs.Count);
 
 
 
 		m.enabled = true;
 		b.enabled = false;
 		d.enabled = true;
+
+		
+		Debug.Log("Sending HelloPackage ");
+		HelloPackage p =  new HelloPackage();
+		p.send();
 
 	}
 	

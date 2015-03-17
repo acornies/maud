@@ -154,7 +154,11 @@ static GCHelper *sharedHelper = nil;
     
     [vc dismissViewControllerAnimated:YES completion:nil];
     [vc.view.superview removeFromSuperview];
-    [vc release];
+    
+#if UNITY_VERSION < 500
+     [vc release];
+#endif
+   
 }
 
 
@@ -165,7 +169,10 @@ static GCHelper *sharedHelper = nil;
     
     [vc dismissViewControllerAnimated:YES completion:nil];
     [vc.view.superview removeFromSuperview];
+    
+#if UNITY_VERSION < 500
     [vc release];
+#endif
 }
 
 
@@ -224,7 +231,11 @@ static GCHelper *sharedHelper = nil;
         
         [array appendString:@"endofline"];
         
-        NSString *data = [[array copy] autorelease];
+        NSString *data = [array copy];
+        
+#if UNITY_VERSION < 500
+        [data autorelease];
+#endif
         UnitySendMessage("GameCenterMultiplayer", "OnGameCenterMatchStarted", [ISNDataConvertor NSStringToChar:data]);
     }
 }
@@ -292,6 +303,7 @@ static GCHelper *sharedHelper = nil;
     if (match != theMatch) return;
     
     
+    
     NSMutableString *str = [[NSMutableString alloc] init];
     const char *db = (const char *) [data bytes];
     for (int i = 0; i < [data length]; i++) {
@@ -310,8 +322,11 @@ static GCHelper *sharedHelper = nil;
     [array appendString:str];
     
     
-    NSString *package = [[array copy] autorelease];
+    NSString *package = [array copy] ;
     
+#if UNITY_VERSION < 500
+    [package autorelease];
+#endif
     
     UnitySendMessage("GameCenterMultiplayer", "OnMatchDataReceived", [ISNDataConvertor NSStringToChar:package]);
     
@@ -342,6 +357,8 @@ static GCHelper *sharedHelper = nil;
             UnitySendMessage("GameCenterMultiplayer", "OnGameCenterPlayerDisconnected", [ISNDataConvertor NSStringToChar:playerID]);
             
             
+            break;
+        case GKPlayerStateUnknown:
             break;
     }
     

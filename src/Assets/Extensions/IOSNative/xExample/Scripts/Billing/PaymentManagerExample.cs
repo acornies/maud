@@ -25,11 +25,11 @@ public class PaymentManagerExample {
 	
 
 
-	private static bool IsInited = false;
+	private static bool IsInitialized = false;
 	public static void init() {
 
 
-		if(!IsInited) {
+		if(!IsInitialized) {
 
 			//You do not have to add products by code if you already did it in seetings guid
 			//Windows -> IOS Native -> Edit Settings
@@ -41,7 +41,7 @@ public class PaymentManagerExample {
 
 			//Event Use Examples
 			IOSInAppPurchaseManager.instance.addEventListener(IOSInAppPurchaseManager.RESTORE_TRANSACTION_FAILED, onRestoreTransactionFailed);
-			IOSInAppPurchaseManager.instance.addEventListener(IOSInAppPurchaseManager.VERIFICATION_RESPONSE, onVerificationResponce);
+			IOSInAppPurchaseManager.instance.addEventListener(IOSInAppPurchaseManager.VERIFICATION_RESPONSE, onVerificationResponse);
 
 			IOSInAppPurchaseManager.instance.OnStoreKitInitComplete += OnStoreKitInitComplete;
 
@@ -50,7 +50,7 @@ public class PaymentManagerExample {
 			IOSInAppPurchaseManager.instance.OnTransactionComplete += OnTransactionComplete;
 
 
-			IsInited = true;
+			IsInitialized = true;
 
 		} 
 
@@ -89,17 +89,17 @@ public class PaymentManagerExample {
 		}
 	}
 
-	private static void OnTransactionComplete (IOSStoreKitResponse responce) {
+	private static void OnTransactionComplete (IOSStoreKitResponse response) {
 
-		Debug.Log("OnTransactionComplete: " + responce.productIdentifier);
-		Debug.Log("OnTransactionComplete: state: " + responce.state);
+		Debug.Log("OnTransactionComplete: " + response.productIdentifier);
+		Debug.Log("OnTransactionComplete: state: " + response.state);
 
-		switch(responce.state) {
+		switch(response.state) {
 		case InAppPurchaseState.Purchased:
 		case InAppPurchaseState.Restored:
 			//Our product been succsesly purchased or restored
 			//So we need to provide content to our user depends on productIdentifier
-			UnlockProducts(responce.productIdentifier);
+			UnlockProducts(response.productIdentifier);
 			break;
 		case InAppPurchaseState.Deferred:
 			//iOS 8 introduces Ask to Buy, which lets parents approve any purchases initiated by children
@@ -109,17 +109,17 @@ public class PaymentManagerExample {
 		case InAppPurchaseState.Failed:
 			//Our purchase flow is failed.
 			//We can unlock intrefase and repor user that the purchase is failed. 
-			Debug.Log("Transaction failed with error, code: " + responce.error.code);
-			Debug.Log("Transaction failed with error, description: " + responce.error.description);
+			Debug.Log("Transaction failed with error, code: " + response.error.code);
+			Debug.Log("Transaction failed with error, description: " + response.error.description);
 
 
 			break;
 		}
 
-		if(responce.state == InAppPurchaseState.Failed) {
-			IOSNativePopUpManager.showMessage("Transaction Failed", "Error code: " + responce.error.code + "\n" + "Error description:" + responce.error.description);
+		if(response.state == InAppPurchaseState.Failed) {
+			IOSNativePopUpManager.showMessage("Transaction Failed", "Error code: " + response.error.code + "\n" + "Error description:" + response.error.description);
 		} else {
-			IOSNativePopUpManager.showMessage("Store Kit Response", "product " + responce.productIdentifier + " state: " + responce.state.ToString());
+			IOSNativePopUpManager.showMessage("Store Kit Response", "product " + response.productIdentifier + " state: " + response.state.ToString());
 		}
 
 	}
@@ -129,17 +129,17 @@ public class PaymentManagerExample {
 	}
 	
 
-	private static void onVerificationResponce(CEvent e) {
-		IOSStoreKitVerificationResponse responce =  e.data as IOSStoreKitVerificationResponse;
+	private static void onVerificationResponse(CEvent e) {
+		IOSStoreKitVerificationResponse response =  e.data as IOSStoreKitVerificationResponse;
 
-		IOSNativePopUpManager.showMessage("Verification", "Transaction verification status: " + responce.status.ToString());
+		IOSNativePopUpManager.showMessage("Verification", "Transaction verification status: " + response.status.ToString());
 
-		Debug.Log("ORIGINAL JSON ON: " + responce.originalJSON);
+		Debug.Log("ORIGINAL JSON: " + response.originalJSON);
 	}
 
 	private static void OnStoreKitInitComplete(ISN_Result result) {
 		if(result.IsSucceeded) {
-			IOSNativePopUpManager.showMessage("StoreKit Init Succeeded", "Available products cound: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
+			IOSNativePopUpManager.showMessage("StoreKit Init Succeeded", "Available products count: " + IOSInAppPurchaseManager.instance.products.Count.ToString());
 		} else {
 			IOSNativePopUpManager.showMessage("StoreKit Init Failed",  "Error code: " + result.error.code + "\n" + "Error description:" + result.error.description);
 		}

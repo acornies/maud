@@ -195,6 +195,7 @@ public class MusicController : MonoBehaviour
 								{
 									currentBus.Stop();
 									currentClipInfo = GetClipInfoFromAudioSource(nextBus);
+									Debug.Log("Finished music fade transition: Current: " + currentClipInfo.clip.name);
 								}
 							}	
 						}

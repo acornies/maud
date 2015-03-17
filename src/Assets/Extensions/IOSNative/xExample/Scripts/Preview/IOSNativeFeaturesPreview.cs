@@ -19,7 +19,7 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 	void OnGUI() {
 		
 		UpdateToStartPos();
-		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "GameCneter Examples", style);
+		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "Game Center Examples", style);
 		
 		StartY+= YLableStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Basic Features")) {
@@ -33,8 +33,8 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 
 
 		StartX += XButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Custom LeaderBoard GUI")) {
-			Application.LoadLevel("CustomLeaderBoardGUIExample");
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Custom Leaderboard GUI")) {
+			Application.LoadLevel("CustomLeaderboardGUIExample");
 		}
 
 
@@ -91,8 +91,8 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 		}
 		
 		StartX += XButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "PtP Game Example")) {
-			Application.LoadLevel("Pear-To-PearGameExample");
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "P2P Game Example")) {
+			Application.LoadLevel("Peer-To-PeerGameExample");
 		}
 
 
@@ -104,7 +104,7 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 		StartX = XStartPos;
 		StartY += YLableStep;
 		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Native Popups and Events")) {
-			Application.LoadLevel("PopUpsAndAppEventsHandelt");
+			Application.LoadLevel("PopUpsAndAppEventsHandler");
 		}
 
 		StartX += XButtonStep;
@@ -112,33 +112,5 @@ public class IOSNativeFeaturesPreview : BaseIOSFeaturePreview {
 			Application.LoadLevel("NativeIOSActionsExample");
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

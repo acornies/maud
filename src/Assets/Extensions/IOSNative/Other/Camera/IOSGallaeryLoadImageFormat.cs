@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum IOSGallaeryLoadImageFormat  {
+public enum IOSGalleryLoadImageFormat  {
 
 	PNG = 0,
 	JPEG = 1

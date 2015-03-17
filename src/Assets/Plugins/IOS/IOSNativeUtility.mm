@@ -23,9 +23,9 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
     return _sharedInstance;
 }
 
--(void) redirectToRatigPage:(NSString *)appId {
+-(void) redirectToRatingPage:(NSString *)appId {
 #if TARGET_IPHONE_SIMULATOR
-    NSLog(@"APPIRATER NOTE: iTunes App Store is not supported on the iOS simulator. Unable to open App Store page.");
+    NSLog(@"NOTE: iTunes App Store is not supported on the iOS simulator. Unable to open App Store page.");
 #else
     
     
@@ -39,7 +39,7 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
         reviewURL = [templateReviewURL stringByReplacingOccurrencesOfString:@"APP_ID" withString:[NSString stringWithFormat:@"%@", appId]];
     }
     
-    NSLog(@"redirecting to iTunes page, IOS version: %i", [[vComp objectAtIndex:0] intValue]);
+    NSLog(@"redirecting to iTunes page, iOS version: %i", [[vComp objectAtIndex:0] intValue]);
     NSLog(@"redirect URL: %@", reviewURL);
     
     
@@ -51,7 +51,7 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
 
 
 
-- (void) ShowSpiner {
+- (void) ShowSpinner {
     
     [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
     
@@ -69,11 +69,11 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
 
     NSArray *vComp = [[UIDevice currentDevice].systemVersion componentsSeparatedByString:@"."];
     if ([[vComp objectAtIndex:0] intValue] >= 8) {
-        NSLog(@"IOS 8 detected");
+        NSLog(@"iOS 8 detected");
         [[self spinner] setFrame:CGRectMake(0,0, vc.view.frame.size.width, vc.view.frame.size.height)];
     } else {
         if([[UIDevice currentDevice] orientation] == UIDeviceOrientationPortrait || [[UIDevice currentDevice] orientation] == UIDeviceOrientationPortraitUpsideDown) {
-            NSLog(@"portarait detected");
+            NSLog(@"portrait detected");
             [[self spinner] setFrame:CGRectMake(0,0, vc.view.frame.size.width, vc.view.frame.size.height)];
             
         } else {
@@ -107,7 +107,7 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
 
 
 
-- (void) HideSpiner {
+- (void) HideSpinner {
     
     if([self spinner] != nil) {
         [[UIApplication sharedApplication] endIgnoringInteractionEvents];
@@ -162,7 +162,11 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
 
 - (void)DP_changeDate:(UIDatePicker *)sender {
 
-    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+#if UNITY_VERSION < 500
+    [dateFormatter autorelease];
+#endif
+    
     [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
     NSString *dateString = [dateFormatter stringFromDate:sender.date];
     
@@ -172,7 +176,10 @@ NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZSto
 }
 
 -(void) DP_PickerClosed:(UIDatePicker *)sender {
-    NSDateFormatter *dateFormatter = [[[NSDateFormatter alloc] init] autorelease];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+#if UNITY_VERSION < 500
+    [dateFormatter autorelease];
+#endif
     [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
     NSString *dateString = [dateFormatter stringFromDate:sender.date];
     
@@ -198,18 +205,25 @@ UIDatePicker *datePicker;
     CGRect datePickerTargetFrame = CGRectMake(0, vc.view.bounds.size.height-216, [self GetW], 216);
     CGRect darkViewTargetFrame = CGRectMake(0, vc.view.bounds.size.height-216-44, [self GetW], 260);
     
-    UIView *darkView = [[[UIView alloc] initWithFrame:CGRectMake(0, vc.view.bounds.size.height, [self GetW], 260)] autorelease];
+    UIView *darkView = [[UIView alloc] initWithFrame:CGRectMake(0, vc.view.bounds.size.height, [self GetW], 260)];
     darkView.alpha = 1;
     darkView.backgroundColor = [UIColor whiteColor];
     darkView.tag = 9;
     
-    UITapGestureRecognizer *tapGesture = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DP_dismissDatePicker:)] autorelease];
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DP_dismissDatePicker:)];
     [darkView addGestureRecognizer:tapGesture];
     [vc.view addSubview:darkView];
     
     
-    datePicker = [[[UIDatePicker alloc] initWithFrame:CGRectMake(0, vc.view.bounds.size.height+44, [self GetW], 216)] autorelease];
+    datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, vc.view.bounds.size.height+44, [self GetW], 216)];
     datePicker.tag = 10;
+    
+    
+#if UNITY_VERSION < 500
+    [darkView autorelease];
+    [tapGesture autorelease];
+    [datePicker autorelease];
+#endif
     
     
     [datePicker addTarget:self action:@selector(DP_changeDate:) forControlEvents:UIControlEventValueChanged];
@@ -239,11 +253,19 @@ UIDatePicker *datePicker;
     
     [vc.view addSubview:datePicker];
     
-    UIToolbar *toolBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, vc.view.bounds.size.height, [self GetW], 44)] autorelease];
+    UIToolbar *toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, vc.view.bounds.size.height, [self GetW], 44)];
+
     toolBar.tag = 11;
     toolBar.barStyle = UIBarStyleDefault;
-    UIBarButtonItem *spacer = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
-    UIBarButtonItem *doneButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(DP_dismissDatePicker:)] autorelease];
+    UIBarButtonItem *spacer = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(DP_dismissDatePicker:)];
+    
+#if UNITY_VERSION < 500
+    [toolBar autorelease];
+    [spacer autorelease];
+    [doneButton autorelease];
+#endif
+    
     [toolBar setItems:[NSArray arrayWithObjects:spacer, doneButton, nil]];
     [vc.view addSubview:toolBar];
     
@@ -303,17 +325,17 @@ extern "C" {
 	//--------------------------------------
     
     void _ISN_RedirectToAppStoreRatingPage(char* appId) {
-        [[IOSNativeUtility sharedInstance] redirectToRatigPage: [ISNDataConvertor charToNSString:appId ]];
+        [[IOSNativeUtility sharedInstance] redirectToRatingPage: [ISNDataConvertor charToNSString:appId ]];
     }
     
     
     void _ISN_ShowPreloader() {
-        [[IOSNativeUtility sharedInstance] ShowSpiner];
+        [[IOSNativeUtility sharedInstance] ShowSpinner];
     }
     
     
     void _ISN_HidePreloader() {
-        [[IOSNativeUtility sharedInstance] HideSpiner];
+        [[IOSNativeUtility sharedInstance] HideSpinner];
     }
     
     

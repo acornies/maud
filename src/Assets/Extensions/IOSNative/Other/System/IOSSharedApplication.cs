@@ -25,7 +25,7 @@ public class IOSSharedApplication : ISN_Singleton<IOSSharedApplication> {
 	public const string URL_SCHEME_EXISTS = "url_scheme_exists";
 	public const string URL_SCHEME_NOT_FOUND  = "url_scheme_not_found";
 
-	public static Action<ISN_CheckUrlResult> OnUrCheckResultAction = delegate {};
+	public static Action<ISN_CheckUrlResult> OnUrlCheckResultAction = delegate {};
 
 
 	#if (UNITY_IPHONE && !UNITY_EDITOR) || SA_DEBUG_MODE
@@ -67,13 +67,13 @@ public class IOSSharedApplication : ISN_Singleton<IOSSharedApplication> {
 
 	private void UrlCheckSuccess(string url) {
 		dispatch(URL_SCHEME_EXISTS, url);
-		OnUrCheckResultAction(new ISN_CheckUrlResult(url, true));
+		OnUrlCheckResultAction(new ISN_CheckUrlResult(url, true));
 	}
 
 
 	private void UrlCheckFailed(string url) {
 		dispatch(URL_SCHEME_NOT_FOUND, url);
-		OnUrCheckResultAction(new ISN_CheckUrlResult(url, false));
+		OnUrlCheckResultAction(new ISN_CheckUrlResult(url, false));
 	}
 
 

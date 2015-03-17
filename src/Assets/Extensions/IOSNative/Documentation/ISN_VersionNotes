@@ -1,3 +1,33 @@
+5.9:
+Game Center minor fixes
+
+
+5.8:
+
+New Features:
+Unity 5 ready. Read more: http://goo.gl/isMDFQ
+Local Receipts Validation. Read more:  http://goo.gl/KacbY6
+
+Fixes:
+Social sharing dialogs orientation fixed
+iAd Interstisial Ad fixes
+Camera Image picking on IOS7 fixed
+ISN_ShowInterstisialAd action fixed
+ISN_HideBanner action fixed
+
+Refactor:
+ISN_AcheivmentProgressResult -> ISN_AchievementProgressResult
+Please remove old ISN_AcheivmentProgressResult.cs file manually.
+
+NSData+Base64.h - > ISN_NSData+Base64.h
+Please remove old NSData+Base64.h  file manually.
+
+NSData+Base64.mm - > ISN_NSData+Base64.mm
+Please remove old NSData+Base64.mm file manually.
+
+
+
+
 5.7:
 New Features:
 Date Time Picker. Read more: http://goo.gl/NkM9Br

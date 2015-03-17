@@ -18,7 +18,7 @@ public class iAdIOSBanner : MonoBehaviour {
 	public TextAnchor anchor = TextAnchor.LowerCenter;
 
 
-	private static Dictionary<string, iAdBanner> _registerdBanners = null;
+	private static Dictionary<string, iAdBanner> _registeredBanners = null;
 
 
 	// --------------------------------------
@@ -42,11 +42,11 @@ public class iAdIOSBanner : MonoBehaviour {
 	public void ShowBanner() {
 		iAdBanner banner;
 
-		if(registerdBanners.ContainsKey(sceneBannerId)) {
-			banner = registerdBanners[sceneBannerId];
+		if(registeredBanners.ContainsKey(sceneBannerId)) {
+			banner = registeredBanners[sceneBannerId];
 		}  else {
 			banner = iAdBannerController.instance.CreateAdBanner(anchor);
-			registerdBanners.Add(sceneBannerId, banner);
+			registeredBanners.Add(sceneBannerId, banner);
 		}
 
 		if(banner.IsLoaded && !banner.IsOnScreen) {
@@ -55,8 +55,8 @@ public class iAdIOSBanner : MonoBehaviour {
 	}
 
 	public void HideBanner() {
-		if(registerdBanners.ContainsKey(sceneBannerId)) {
-			iAdBanner banner = registerdBanners[sceneBannerId];
+		if(registeredBanners.ContainsKey(sceneBannerId)) {
+			iAdBanner banner = registeredBanners[sceneBannerId];
 			if(banner.IsLoaded) {
 				if(banner.IsOnScreen) {
 					banner.Hide();
@@ -72,13 +72,13 @@ public class iAdIOSBanner : MonoBehaviour {
 	// --------------------------------------
 
 
-	public static Dictionary<string, iAdBanner> registerdBanners {
+	public static Dictionary<string, iAdBanner> registeredBanners {
 		get {
-			if(_registerdBanners == null) {
-				_registerdBanners = new Dictionary<string, iAdBanner>();
+			if(_registeredBanners == null) {
+				_registeredBanners = new Dictionary<string, iAdBanner>();
 			}
 
-			return _registerdBanners;
+			return _registeredBanners;
 		}
 	}
 

@@ -23,6 +23,7 @@ public abstract class BasePackage  {
 
 	public void initWriter() {
 		writer = new BinaryWriter (buffer);
+		writeInt(getId());
 	}
 
 
@@ -37,7 +38,7 @@ public abstract class BasePackage  {
 
 	public void send() {
 
-		NetwrokManager.send (this);
+		NetworkManager.send (this);
 	}
 
 	//--------------------------------------

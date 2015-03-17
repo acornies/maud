@@ -12,7 +12,7 @@
 @implementation PopUPDelegate
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    [IOSNativePopUpsManager unregisterAllertView];
+    [IOSNativePopUpsManager unregisterAlertView];
     UnitySendMessage("IOSPopUp", "onPopUpCallBack",  [ISNDataConvertor NSIntToChar:buttonIndex]);
 }
 

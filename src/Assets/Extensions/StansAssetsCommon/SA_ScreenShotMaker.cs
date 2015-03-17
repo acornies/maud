@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 
-public class SA_ScreenShotMaker : SA_Singleton<SA_ScreenShotMaker> {
+public class SA_ScreenShotMaker : SAC_Singleton<SA_ScreenShotMaker> {
 
 	//Actions
 	public Action<Texture2D> OnScreenshotReady;

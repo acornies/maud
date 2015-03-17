@@ -29,7 +29,7 @@ public class IOSRateUsPopUp : BaseIOSPopup {
 	//--------------------------------------
 
 	public static IOSRateUsPopUp Create() {
-		return Create("Like the Game?", "Rate US");
+		return Create("Like the Game?", "Rate Us");
 	}
 	
 	public static IOSRateUsPopUp Create(string title, string message) {
@@ -57,7 +57,7 @@ public class IOSRateUsPopUp : BaseIOSPopup {
 	
 	
 	public void init() {
-		IOSNativePopUpManager.showRateUsPopUP(title, message, rate, remind, declined);
+		IOSNativePopUpManager.showRateUsPopUp(title, message, rate, remind, declined);
 	}
 	
 	

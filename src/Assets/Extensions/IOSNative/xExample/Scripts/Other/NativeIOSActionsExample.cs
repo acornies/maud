@@ -4,13 +4,13 @@ using System.Collections;
 public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 
 	public Texture2D hello_texture;
-	public Texture2D darawTexgture = null;
+	public Texture2D drawTexture = null;
 
 
 	void Awake() {
 
 
-		IOSSharedApplication.OnUrCheckResultAction += OnUrCheckResultAction;
+		IOSSharedApplication.OnUrlCheckResultAction += OnUrlCheckResultAction;
 
 
 		IOSDateTimePicker.instance.OnDateChanged += OnDateChanged;
@@ -23,7 +23,7 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 		UpdateToStartPos();
 
 
-		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "Using Url Scheme", style);
+		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "Using URL Scheme", style);
 		
 		
 		StartY+= YLableStep;
@@ -32,7 +32,7 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 		}
 		
 		StartX += XButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Open Fb Profile")) {
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Open FB Profile")) {
 			IOSSharedApplication.instance.OpenUrl("fb://profile");
 		}
 		
@@ -67,8 +67,8 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 		}
 
 		StartX += XButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Count Down Timer")) {
-			IOSDateTimePicker.instance.Show(IOSDateTimePickerMode.CountDownTimer);
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Countdown Timer")) {
+			IOSDateTimePicker.instance.Show(IOSDateTimePickerMode.CountdownTimer);
 		}
 
 
@@ -83,13 +83,13 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 		
 		
 		StartY+= YLableStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Player Steamed video")) {
-			IOSVideoManager.instance.PlaySteamingVideo("https://dl.dropboxusercontent.com/u/83133800/Important/Doosan/GT2100-Video.mov");
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Player Streamed video")) {
+			IOSVideoManager.instance.PlayStreamingVideo("https://dl.dropboxusercontent.com/u/83133800/Important/Doosan/GT2100-Video.mov");
 		}
 		
 		StartX += XButtonStep;
-		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Open Youtube Video")) {
-			IOSVideoManager.instance.OpenYoutubeVideo("xzCEdSKMkdU");
+		if(GUI.Button(new Rect(StartX, StartY, buttonWidth, buttonHeight), "Open YouTube Video")) {
+			IOSVideoManager.instance.OpenYouTubeVideo("xzCEdSKMkdU");
 		}
 
 		
@@ -136,8 +136,8 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 		GUI.Label(new Rect(StartX, StartY, Screen.width, 40), "PickedImage", style);
 		StartY+= YLableStep;
 
-		if(darawTexgture != null) {
-			GUI.DrawTexture(new Rect(StartX, StartY, buttonWidth, buttonWidth), darawTexgture);
+		if(drawTexture != null) {
+			GUI.DrawTexture(new Rect(StartX, StartY, buttonWidth, buttonWidth), drawTexture);
 		}
 	
 
@@ -156,13 +156,13 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 		if(result.IsSucceeded) {
 
 			//destroying old texture
-			Destroy(darawTexgture);
+			Destroy(drawTexture);
 
 			//applaying new texture
-			darawTexgture = result.image;
+			drawTexture = result.image;
 			IOSMessage.Create("Success", "Image Successfully Loaded, Image size: " + result.image.width + "x" + result.image.height);
 		} else {
-			IOSMessage.Create("Success", "Image Load Failed");
+			IOSMessage.Create("ERROR", "Image Load Failed");
 		}
 
 		IOSCamera.instance.OnImagePicked -= OnImage;
@@ -173,16 +173,16 @@ public class NativeIOSActionsExample : BaseIOSFeaturePreview {
 		if(result.IsSucceeded) {
 			IOSMessage.Create("Success", "Image Successfully saved to Camera Roll");
 		} else {
-			IOSMessage.Create("Success", "Image Save Failed");
+			IOSMessage.Create("ERROR", "Image Save Failed");
 		}
 	}
 
-	private void OnUrCheckResultAction (ISN_CheckUrlResult result) {
+	private void OnUrlCheckResultAction (ISN_CheckUrlResult result) {
 
 		if(result.IsSucceeded) {
-			IOSMessage.Create("Url Exists", "The " + result.url + " is registred" );
+			IOSMessage.Create("Success", "The " + result.url + " is registered" );
 		} else {
-			IOSMessage.Create("Url Exists", "The " + result.url + " wasn't registred");
+			IOSMessage.Create("ERROR", "The " + result.url + " wasn't registered");
 		}
 	}
 }

@@ -24,7 +24,7 @@ public class AchievementTemplate  {
 	public float progress {
 		get {
 			if(IOSNativeSettings.Instance.UsePPForAchievements) {
-				return GameCenterManager.getAchievementProgress(id);
+				return GameCenterManager.GetAchievementProgress(id);
 			} else {
 				return _progress;
 			}

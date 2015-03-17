@@ -14,7 +14,8 @@
 static iAdBannerController *sharedHelper = nil;
 static NSMutableDictionary* _banners;
 static ADInterstitialAd *interstitial = nil;
-static BOOL IsShowIntersticialsOnLoad = false;
+static BOOL IsShowInterstitialsOnLoad = false;
+static BOOL IsLoadRequestLaunched = false;
 
 
 
@@ -29,19 +30,23 @@ static BOOL IsShowIntersticialsOnLoad = false;
 
 - (void) StartInterstitialAd {
 
-     if(interstitial == nil) {
+     if(!IsLoadRequestLaunched) {
+         NSLog(@"StartInterstitialAd request");
         [self LoadInterstitialAd];
-        IsShowIntersticialsOnLoad = true;
+        IsShowInterstitialsOnLoad = true;
+        IsLoadRequestLaunched = true;
     }
 }
 
 -(void) LoadInterstitialAd {
    
-    if(interstitial == nil) {
+    if(!IsLoadRequestLaunched) {
+        NSLog(@"LoadInterstitialAd request");
         interstitial = [[ADInterstitialAd alloc] init];
         interstitial.delegate = self;
         
-         IsShowIntersticialsOnLoad = false;
+        IsShowInterstitialsOnLoad = false;
+        IsLoadRequestLaunched = true;
     }
 }
 
@@ -54,7 +59,7 @@ static BOOL IsShowIntersticialsOnLoad = false;
     }
 }
 
--(void) ShowVieoAd {
+-(void) ShowVideoAd {
     
 }
 
@@ -129,7 +134,7 @@ static BOOL IsShowIntersticialsOnLoad = false;
 #endif
     
     interstitial = nil;
-    
+    IsLoadRequestLaunched = false;
      UnitySendMessage("iAdBannerController", "interstitialdidFailWithError", "");
 }
 
@@ -142,15 +147,17 @@ static BOOL IsShowIntersticialsOnLoad = false;
 - (void)interstitialAdDidLoad:(ADInterstitialAd *)interstitialAd {
     NSLog(@"interstitialAdDidLoad");
     
-    if(IsShowIntersticialsOnLoad) {
+    if(IsShowInterstitialsOnLoad) {
         UIViewController *vc =  UnityGetGLViewController();
         [interstitial presentFromViewController:vc];
     }
     
+    IsLoadRequestLaunched = false;
     UnitySendMessage("iAdBannerController", "interstitialAdDidLoad", "");
     
 }
-//- (void)interstitialAdActionDidFinish
+
+
 - (void)interstitialAdActionDidFinish:(ADInterstitialAd *)interstitialAd {
     NSLog(@"interstitialAdActionDidFinish");
     

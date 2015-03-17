@@ -8,13 +8,14 @@ static NSMutableArray *loadedPlayersIds;
 - (id)init {
     self = [super init];
     if (self) {
-        requestedLeaderBordId = NULL;
+        requestedLeaderboardId = NULL;
         isAchievementsWasLoaded = FALSE;
         loadedPlayersIds = [[NSMutableArray alloc] init];
+        #if UNITY_VERSION < 500
         [loadedPlayersIds retain];
-        
+        #endif
         gameCenterManager = [[GameCenterManager alloc] init];
-        NSLog(@"IOSGameCenterManager inited");
+        NSLog(@"IOSGameCenterManager initialized");
     }
     
     return self;
@@ -23,7 +24,9 @@ static NSMutableArray *loadedPlayersIds;
 
 
 - (void)dealloc {
+      #if UNITY_VERSION < 500
     [super dealloc];
+     #endif
 }
 
 -(void) getSignature {
@@ -43,7 +46,10 @@ static NSMutableArray *loadedPlayersIds;
             
             
             
-             NSString *ErrorDataString = [[ErrorData copy] autorelease];
+             NSString *ErrorDataString = [ErrorData copy];
+             #if UNITY_VERSION < 500
+                [ErrorDataString autorelease];
+             #endif
              UnitySendMessage("GameCenterManager", "VerificationSignatureRetrieveFailed", [ISNDataConvertor NSStringToChar:ErrorDataString]);
              return;
         }
@@ -90,7 +96,10 @@ static NSMutableArray *loadedPlayersIds;
         [array appendFormat:@"%llu", timestamp];
         
         
-         NSString *str = [[array copy] autorelease];
+         NSString *str = [array copy];
+#if UNITY_VERSION < 500
+        [str autorelease];
+#endif
         UnitySendMessage("GameCenterManager", "VerificationSignatureRetrieved", [ISNDataConvertor NSStringToChar:str]);
         
         
@@ -107,15 +116,18 @@ static NSMutableArray *loadedPlayersIds;
     
 
     
-    GKScore *scoreReporter = [[[GKScore alloc] initWithCategory:category] autorelease];
+    GKScore *scoreReporter = [[GKScore alloc] initWithCategory:category] ;
+#if UNITY_VERSION < 500
+    [scoreReporter autorelease];
+#endif
     scoreReporter.value = score;
     
     [scoreReporter reportScoreWithCompletionHandler: ^(NSError *error) {
         if (error != nil) {
-            UnitySendMessage("GameCenterManager", "onScoreSubmitedFailed", [ISNDataConvertor NSStringToChar:@""]);
-            NSLog(@"got error while score sibmiting: %@", error.description);
+            UnitySendMessage("GameCenterManager", "onScoreSubmittedFailed", [ISNDataConvertor NSStringToChar:@""]);
+            NSLog(@"Error while submitting score: %@", error.description);
         } else {
-            NSLog(@"new hing score sumbited succsess: %lld", score);
+            NSLog(@"new high score sumbitted success: %lld", score);
             
             
             
@@ -127,11 +139,13 @@ static NSMutableArray *loadedPlayersIds;
             [data appendString:[NSString stringWithFormat: @"%lld", score]];
  
     
-            NSString *str = [[data copy] autorelease];
+            NSString *str = [data copy];
             
+#if UNITY_VERSION < 500
+            [str autorelease];
+#endif
             
-            
-            UnitySendMessage("GameCenterManager", "onScoreSubmitedEvent", [ISNDataConvertor NSStringToChar:str]);
+            UnitySendMessage("GameCenterManager", "onScoreSubmittedEvent", [ISNDataConvertor NSStringToChar:str]);
             
            
         }
@@ -146,24 +160,29 @@ static NSMutableArray *loadedPlayersIds;
 
 
 
--(void) submitAchievement:(double)percentComplete identifier:(NSString *)identifier  notifayComplete: (BOOL) notifayComplete {
-    [gameCenterManager submitAchievement:identifier percentComplete:percentComplete notifayComplete:notifayComplete];
+-(void) submitAchievement:(double)percentComplete identifier:(NSString *)identifier  notifyComplete: (BOOL) notifyComplete {
+    [gameCenterManager submitAchievement:identifier percentComplete:percentComplete notifyComplete:notifyComplete];
 }
 
 
 
 
--(void) showLeaderBoard:(NSString *)leaderBoradrId scope:(int)scope {
+-(void) showLeaderboard:(NSString *)leaderboardId scope:(int)scope {
     
     GKLocalPlayer *localPlayer = [GKLocalPlayer localPlayer];
     if(localPlayer.isAuthenticated) {
-        requestedLeaderBordId = leaderBoradrId;
-        [requestedLeaderBordId retain];
+
+        requestedLeaderboardId = leaderboardId;
+        
+#if UNITY_VERSION < 500
+        [requestedLeaderboardId retain];
+#endif
+
 
         lbscope = scope;
-        [self showLeaderBoardPopUp];
+        [self showLeaderboardPopUp];
     } else {
-        NSLog(@"ISN showLeaderBoard requires player to be authed.  Call ignored");
+        NSLog(@"ISN showLeaderboard requires player to be authenticated.  Call ignored");
     }
 }
 
@@ -175,7 +194,7 @@ static NSMutableArray *loadedPlayersIds;
     if(localPlayer.isAuthenticated) {
         [self showAchievementsPopUp];
     } else {
-       NSLog(@"ISN showAchievements requires player to be authed.  Call ignored");
+       NSLog(@"ISN showAchievements requires player to be authenticated.  Call ignored");
     }
 }
 
@@ -199,11 +218,11 @@ static NSMutableArray *loadedPlayersIds;
     }
 }
 
-- (void) showLeaderBoardsPopUp {
+- (void) showLeaderboardsPopUp {
     GKGameCenterViewController *leaderboardController = [[GKGameCenterViewController alloc] init];
     
     
-    NSLog(@"showLeaderBoardsPopUp");
+    NSLog(@"showLeaderboardsPopUp");
     leaderboardController.gameCenterDelegate = self;
     
     
@@ -219,14 +238,14 @@ static NSMutableArray *loadedPlayersIds;
     
 }
 
-- (void) showLeaderBoardPopUp {
+- (void) showLeaderboardPopUp {
     
     GKGameCenterViewController *leaderboardController = [[GKGameCenterViewController alloc] init];
     if (leaderboardController != NULL)
     {
-        NSLog(@"requested LB: %@", requestedLeaderBordId);
+        NSLog(@"requested LB: %@", requestedLeaderboardId);
         
-        leaderboardController.leaderboardCategory = requestedLeaderBordId;
+        leaderboardController.leaderboardCategory = requestedLeaderboardId;
         
         switch (lbscope) {
             case 2:
@@ -256,12 +275,15 @@ static NSMutableArray *loadedPlayersIds;
         leaderboardController.view.transform = CGAffineTransformMakeRotation(0.0f);
         [leaderboardController.view setCenter:CGPointMake(screenSize.width/2, screenSize.height/2)];
         leaderboardController.view.bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
-        
-        [requestedLeaderBordId release];
+
+#if UNITY_VERSION < 500
+        [requestedLeaderboardId release];
+#endif
+
         
     }
     
-    requestedLeaderBordId = NULL;
+    requestedLeaderboardId = NULL;
 }
 
 
@@ -282,7 +304,11 @@ static NSMutableArray *loadedPlayersIds;
         [vc.view.superview removeFromSuperview];
     }
     
+#if UNITY_VERSION < 500
     [vc release];
+#endif
+    
+    
     UnitySendMessage("GameCenterManager", "OnGameCenterViewDismissed", [ISNDataConvertor NSStringToChar:@""]);
 }
 
@@ -299,7 +325,7 @@ static NSMutableArray *loadedPlayersIds;
             // [localPlayer setAuthenticateHandler:^(UIViewController *viewcontroller, NSError *error) {
             [localPlayer authenticateWithCompletionHandler:^(NSError *error){ //OLD Code
                 if (localPlayer.isAuthenticated){
-                    NSLog(@"PLAYER AUTHENICATED");
+                    NSLog(@"PLAYER AUTHENTICATED");
                     
                     NSMutableString * data = [[NSMutableString alloc] init];
                     
@@ -327,10 +353,16 @@ static NSMutableArray *loadedPlayersIds;
                     
                 
                     
-                    NSString *str = [[data copy] autorelease];
+                    NSString *str = [data copy];
+                    
+#if UNITY_VERSION < 500
+                    [str autorelease];
+#endif
+                    
+                    
                     UnitySendMessage("GameCenterManager", "onAuthenticateLocalPlayer", [ISNDataConvertor NSStringToChar:str]);
                     
-                    NSLog(@"PLAYER AUTHENICATED %@", localPlayer.alias);
+                    NSLog(@"PLAYER AUTHENTICATED %@", localPlayer.alias);
                     
                     [[GCHelper sharedInstance] initNotificationHandler];
                     
@@ -347,12 +379,12 @@ static NSMutableArray *loadedPlayersIds;
                     if(error != nil) {
                         NSLog(@"Error descr: %@", error.description);
                     }
-                    NSLog(@"PLAYER NOT AUTHENICATED");
+                    NSLog(@"PLAYER NOT AUTHENTICATED");
                     UnitySendMessage("GameCenterManager", "onAuthenticationFailed", [ISNDataConvertor NSStringToChar:@""]);
                 }
             }];
         } else {
-            NSLog(@"Do nothing Player is already auntificated");
+            NSLog(@"Do nothing - Player is already authenticated");
         }
     }
 }
@@ -384,7 +416,12 @@ static NSMutableArray *loadedPlayersIds;
                 
             }
             
-            NSString *str = [[data copy] autorelease];
+            NSString *str = [data copy];
+            
+#if UNITY_VERSION < 500
+            [str autorelease];
+#endif
+            
             UnitySendMessage("GameCenterManager", "onAchievementsLoaded", [ISNDataConvertor NSStringToChar:str]);
         } else {
               NSLog(@"loadAchievements failed:  %@", error.description);
@@ -403,7 +440,7 @@ static NSMutableArray *loadedPlayersIds;
 }
 
 -(void) retriveScores:(NSString *)category scope:(int)scope collection: (int) collection from:(int)from to:(int)to {
-    NSLog(@"retriveScores ");
+    NSLog(@"retrieveScores ");
     
     
     GKLeaderboard *board = [[GKLeaderboard alloc] init];
@@ -448,7 +485,7 @@ static NSMutableArray *loadedPlayersIds;
                 // handle the error.
                 NSLog(@"Error retrieving score: %@", error.description);
                 
-                UnitySendMessage("GameCenterManager", "onLeaderBoardScoreListLoadFailed", [ISNDataConvertor NSStringToChar:@""]);
+                UnitySendMessage("GameCenterManager", "onLeaderboardScoreListLoadFailed", [ISNDataConvertor NSStringToChar:@""]);
                 return;
                 
             }
@@ -496,18 +533,29 @@ static NSMutableArray *loadedPlayersIds;
                     
                 }
                 
-                NSString *str = [[data copy] autorelease];
-                UnitySendMessage("GameCenterManager", "onLeaderBoardScoreListLoaded", [ISNDataConvertor NSStringToChar:str]);
+
+                NSString *str = [data copy];
+                
+#if UNITY_VERSION < 500
+                [str autorelease];
+#endif
+                UnitySendMessage("GameCenterManager", "onLeaderboardScoreListLoaded", [ISNDataConvertor NSStringToChar:str]);
+
                 
                 
             } else {
                 NSLog(@"No scores to load");
-                UnitySendMessage("GameCenterManager", "onLeaderBoardScoreListLoadFailed", [ISNDataConvertor NSStringToChar:@""]);
+                UnitySendMessage("GameCenterManager", "onLeaderboardScoreListLoadFailed", [ISNDataConvertor NSStringToChar:@""]);
             }
   
         }];
     }
-    [board release];
+    
+#if UNITY_VERSION < 500
+   [board release];
+#endif
+    
+    
     
 
 }
@@ -575,7 +623,11 @@ static NSMutableArray *loadedPlayersIds;
                 
                 
                 NSLog(@"User Data Loaded for ID:  %@", uid);
-                NSString *str = [[data copy] autorelease];
+                NSString *str = [data copy];
+            
+#if UNITY_VERSION < 500
+            [str autorelease];
+#endif
                 UnitySendMessage("GameCenterManager", "onUserInfoLoaded", [ISNDataConvertor NSStringToChar:str]);
 
             
@@ -588,7 +640,11 @@ static NSMutableArray *loadedPlayersIds;
 
 
 -(void) sendAchievementChallengeWithFriendsPicker:(NSString *)achievementId message:(NSString *)message {
-     GKAchievement *achievement = [[[GKAchievement alloc] initWithIdentifier: achievementId] autorelease];
+     GKAchievement *achievement = [[GKAchievement alloc] initWithIdentifier: achievementId];
+    
+#if UNITY_VERSION < 500
+    [achievement autorelease];
+#endif
     
      UIViewController *composeVC = [achievement challengeComposeControllerWithPlayers:nil message:message completionHandler:^(UIViewController *composeController, BOOL didIssueChallenge, NSArray *sentPlayerIDs) {
         [composeController dismissViewControllerAnimated:YES completion:nil];
@@ -602,28 +658,38 @@ static NSMutableArray *loadedPlayersIds;
 
 
 -(void) sendAchievementChallenge:(NSString *)achievementId message:(NSString *)message playerIds:(NSArray *)playerIds {
-    GKAchievement *achievement = [[[GKAchievement alloc] initWithIdentifier: achievementId] autorelease];
+    GKAchievement *achievement = [[GKAchievement alloc] initWithIdentifier: achievementId];
+#if UNITY_VERSION < 500
+      [achievement autorelease];
+#endif
+    
     [achievement issueChallengeToPlayers:playerIds message:message];
 }
 
 
 
 
-- (void) sendLeaderboardChallengeWithFriendsPicker:(NSString *)leaderBoradrId message:(NSString *)message {
+- (void) sendLeaderboardChallengeWithFriendsPicker:(NSString *)leaderboardId message:(NSString *)message {
     
     
-    GKLeaderboard *leaderboardRequest = [[[GKLeaderboard alloc] init] autorelease];
-    leaderboardRequest.category = leaderBoradrId;
+
+    GKLeaderboard *leaderboardRequest = [[GKLeaderboard alloc] init];
+#if UNITY_VERSION < 500
+    [leaderboardRequest autorelease];
+#endif
+    
+    leaderboardRequest.category = leaderboardId;
+
     leaderboardRequest.timeScope = GKLeaderboardTimeScopeAllTime;
     
-    NSLog(@"leaderBoradrId %@", leaderBoradrId);
+    NSLog(@"leaderboardId %@", leaderboardId);
     
     
     if (leaderboardRequest != nil) {
         
         [leaderboardRequest loadScoresWithCompletionHandler:^(NSArray *scores, NSError *error){
             if (error != nil) {
-                NSLog(@"Error chnalange scores loading %@", error.description);
+                NSLog(@"Error challenge scores loading %@", error.description);
             }  else {
                 
                 UIViewController *composeVC = [leaderboardRequest.localPlayerScore challengeComposeControllerWithPlayers:nil message:message completionHandler:^(UIViewController *composeController, BOOL didIssueChallenge, NSArray *sentPlayerIDs){
@@ -650,11 +716,16 @@ static NSMutableArray *loadedPlayersIds;
 }
 
 
--(void) sendLeaderboardChallenge:(NSString *)leaderBoradrId message:(NSString *)message playerIds:(NSArray *)playerIds {
+-(void) sendLeaderboardChallenge:(NSString *)leaderboardId message:(NSString *)message playerIds:(NSArray *)playerIds {
     
     
-    GKLeaderboard *leaderboardRequest = [[[GKLeaderboard alloc] init] autorelease];
-    leaderboardRequest.category = leaderBoradrId;
+
+    GKLeaderboard *leaderboardRequest = [[GKLeaderboard alloc] init];
+#if UNITY_VERSION < 500
+    [leaderboardRequest autorelease];
+#endif
+    leaderboardRequest.category = leaderboardId;
+
     leaderboardRequest.timeScope = GKLeaderboardTimeScopeAllTime;
     
 
@@ -662,7 +733,7 @@ static NSMutableArray *loadedPlayersIds;
         
         [leaderboardRequest loadScoresWithCompletionHandler:^(NSArray *scores, NSError *error){
             if (error != nil) {
-                NSLog(@"Error chnalange scores loading");
+                NSLog(@"Error challenge scores loading");
             }  else {
                 
                 [leaderboardRequest.localPlayerScore issueChallengeToPlayers:playerIds message:message];
@@ -679,7 +750,10 @@ static NSMutableArray *loadedPlayersIds;
 -(void) retrieveScoreForLocalPlayerWithCategory:(NSString *)category scope:(int)scope collection:(int)collection{
 
 
-    GKLeaderboard *leaderboardRequest = [[[GKLeaderboard alloc] init] autorelease];
+    GKLeaderboard *leaderboardRequest = [[GKLeaderboard alloc] init];
+#if UNITY_VERSION < 500
+    [leaderboardRequest autorelease];
+#endif
     leaderboardRequest.category = category;
 
     
@@ -720,7 +794,7 @@ static NSMutableArray *loadedPlayersIds;
         [leaderboardRequest loadScoresWithCompletionHandler:^(NSArray *scores, NSError *error){
             if (error != nil) {
                 NSLog(@"Error scores loading %@", error.description);
-                UnitySendMessage("GameCenterManager", "onLeaderBoardScoreFailed", "");
+                UnitySendMessage("GameCenterManager", "onLeaderboardScoreFailed", "");
 
             }  else {
                 [data appendString:category];
@@ -736,8 +810,13 @@ static NSMutableArray *loadedPlayersIds;
                 [data appendString:@","];
                 [data appendString:[NSString stringWithFormat:@"%d", collection]];
 
-                NSString *str = [[data copy] autorelease];
-                UnitySendMessage("GameCenterManager", "onLeaderBoardScore", [ISNDataConvertor NSStringToChar:str]);
+
+                NSString *str = [data copy];
+#if UNITY_VERSION < 500
+        [str autorelease];
+#endif
+                UnitySendMessage("GameCenterManager", "onLeaderboardScore", [ISNDataConvertor NSStringToChar:str]);
+
                 
                 
                 
@@ -775,7 +854,10 @@ static NSMutableArray *loadedPlayersIds;
                      
                  }
                  
-                 NSString *str = [[data copy] autorelease];
+                 NSString *str = [data copy];
+#if UNITY_VERSION < 500
+                 [str autorelease];
+#endif
                  UnitySendMessage("GameCenterManager", "onFriendListLoaded", [ISNDataConvertor NSStringToChar:str]);
                  
              } else {
@@ -785,7 +867,7 @@ static NSMutableArray *loadedPlayersIds;
              
          }];
     } else {
-        NSLog(@"User friends can not be loaded before player auth, sending fail event");
+        NSLog(@"User friends cannot be loaded before player auth, sending fail event");
         UnitySendMessage("GameCenterManager", "onFriendListFailedToLoad", [ISNDataConvertor NSStringToChar:@""]);
     }
     
@@ -799,26 +881,27 @@ static NSMutableArray *loadedPlayersIds;
 static IOSGameCenterManager *GCManager = NULL;
 
 extern "C" {
-    void _initGamaCenter ()  {
+    void _initGameCenter ()  {
         GCManager = [[IOSGameCenterManager alloc] init];
         [GCManager authenticateLocalPlayer];
     }
     
     
-    void _showLeaderBoard(char* leaderBoradrId, int scope) {
-        [GCManager showLeaderBoard:[ISNDataConvertor charToNSString:leaderBoradrId] scope:scope];
+    void _showLeaderboard(char* leaderboardId, int scope) {
+        [GCManager showLeaderboard:[ISNDataConvertor charToNSString:leaderboardId] scope:scope];
     }
     
-    void _showLeaderBoards() {
-        [GCManager showLeaderBoardsPopUp];
+    void _showLeaderboards() {
+        [GCManager showLeaderboardsPopUp];
     }
     
-    void _getLeadrBoardScore(char* leaderBoradrId, int scope, int collection) {
-        [GCManager retrieveScoreForLocalPlayerWithCategory:[ISNDataConvertor charToNSString:leaderBoradrId] scope:scope collection:collection];
+    void _getLeaderboardScore(char* leaderboardId, int scope, int collection) {
+        [GCManager retrieveScoreForLocalPlayerWithCategory:[ISNDataConvertor charToNSString:leaderboardId] scope:scope collection:collection];
     }
     
-    void _loadLeadrBoardScore(char* leaderBoradrId, int scope, int collection, int from, int to) {
-        [GCManager retriveScores:[ISNDataConvertor charToNSString:leaderBoradrId] scope:scope  collection: collection from:from to:to];
+    void _loadLeaderboardScore(char* leaderboardId, int scope, int collection, int from, int to) {
+       
+        [GCManager retriveScores:[ISNDataConvertor charToNSString:leaderboardId] scope:scope  collection: collection from:from to:to];
     }
     
     void _showAchievements() {
@@ -826,19 +909,19 @@ extern "C" {
         [GCManager showAchievements];
     }
     
-    void _ISN_issueLeaderboardChallenge(char* leaderBoradrId, char* message, char* playerIds) {
+    void _ISN_issueLeaderboardChallenge(char* leaderboardId, char* message, char* playerIds) {
         
         
         NSString* str = [ISNDataConvertor charToNSString:playerIds];
         NSArray *ids = [str componentsSeparatedByString:@","];
         
-        [GCManager sendLeaderboardChallenge:[ISNDataConvertor charToNSString:leaderBoradrId] message:[ISNDataConvertor charToNSString:message] playerIds:ids];
+        [GCManager sendLeaderboardChallenge:[ISNDataConvertor charToNSString:leaderboardId] message:[ISNDataConvertor charToNSString:message] playerIds:ids];
 
     }
     
-    void _ISN_issueLeaderboardChallengeWithFriendsPicker(char* leaderBoradrId, char* message) {
+    void _ISN_issueLeaderboardChallengeWithFriendsPicker(char* leaderboardId, char* message) {
         
-        NSString* lid = [ISNDataConvertor charToNSString:leaderBoradrId];
+        NSString* lid = [ISNDataConvertor charToNSString:leaderboardId];
         NSString* mes = [ISNDataConvertor charToNSString:message];
         
         [GCManager sendLeaderboardChallengeWithFriendsPicker:lid message:mes];
@@ -854,9 +937,9 @@ extern "C" {
         [GCManager sendAchievementChallenge:[ISNDataConvertor charToNSString:achievementId] message:[ISNDataConvertor charToNSString:message] playerIds:ids];
     }
     
-    void _ISN_issueAchievementChallengeWithFriendsPicker(char* leaderBoradrId, char* message, char* playerIds) {
+    void _ISN_issueAchievementChallengeWithFriendsPicker(char* leaderboardId, char* message, char* playerIds) {
         
-        NSString* lid = [ISNDataConvertor charToNSString:leaderBoradrId];
+        NSString* lid = [ISNDataConvertor charToNSString:leaderboardId];
         NSString* mes = [ISNDataConvertor charToNSString:message];
         
         [GCManager sendAchievementChallengeWithFriendsPicker:lid message:mes];
@@ -865,17 +948,17 @@ extern "C" {
     
   
     
-    void _reportScore(char* score, char* leaderBoradrId) {
+    void _reportScore(char* score, char* leaderboardId) {
  
-        NSString* lid = [ISNDataConvertor charToNSString:leaderBoradrId];
+        NSString* lid = [ISNDataConvertor charToNSString:leaderboardId];
         NSString* scoreValue = [ISNDataConvertor charToNSString:score];
          
         [GCManager reportScore:[scoreValue longLongValue] forCategory:lid];
     }
     
-    void _submitAchievement(float percents, char* achievementID, BOOL notifayComplete) {
+    void _submitAchievement(float percents, char* achievementID, BOOL notifyComplete) {
         double v = (double) percents;
-        [GCManager submitAchievement:v identifier:[ISNDataConvertor charToNSString:achievementID] notifayComplete:notifayComplete];
+        [GCManager submitAchievement:v identifier:[ISNDataConvertor charToNSString:achievementID] notifyComplete:notifyComplete];
     }
     
     void _resetAchievements() {

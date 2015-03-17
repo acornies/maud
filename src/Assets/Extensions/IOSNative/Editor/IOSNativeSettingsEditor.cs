@@ -12,18 +12,18 @@ public class IOSNativeSettingsEditor : Editor {
 
 
 	GUIContent AppleIdLabel = new GUIContent("Apple Id [?]:", "Your Application Apple ID.");
-	GUIContent SdkVersion   = new GUIContent("Plugin Version [?]", "This is Plugin version.  If you have problems or compliments please include this so we know exactly what version to look out for.");
-	GUIContent SupportEmail = new GUIContent("Support [?]", "If you have any technical quastion, feel free to drop an e-mail");
+	GUIContent SdkVersion   = new GUIContent("Plugin Version [?]", "This is the Plugin version.  If you have problems or compliments please include this so that we know exactly which version to look out for.");
+	GUIContent SupportEmail = new GUIContent("Support [?]", "If you have any technical questions, feel free to drop us an e-mail");
 
-	GUIContent SKPVDLabel = new GUIContent("Store Products View [?]:", "YThe SKStoreProductViewController class makes it possible to integrate purchasing from Apple’s iTunes, App and iBooks stores directly into iOS 6 applications with minimal coding work.");
-	GUIContent CheckInternetLabel = new GUIContent("Check Internet Connection[?]:", "If set to true Internet connection will be checked before sending load request. Request will be sent automatically if network became available");
-	GUIContent SendBillingFakeActions = new GUIContent("Send Fake Action In Editor[?]:", "Fake connect and purchase events will be fired in editor, can be useful for testing implementation in Editor");
+	GUIContent SKPVDLabel = new GUIContent("Store Products View [?]:", "The SKStoreProductViewController class makes it possible to integrate purchasing from Apple’s iTunes, App and iBooks stores directly into iOS 6 applications with minimal coding work.");
+	GUIContent CheckInternetLabel = new GUIContent("Check Internet Connection[?]:", "If set to true, the Internet connection will be checked before sending load request. Requests will be sent automatically if network becomes available.");
+	GUIContent SendBillingFakeActions = new GUIContent("Send Fake Action In Editor[?]:", "Fake connect and purchase events will be fired in the editor, can be useful for testing your implementation in Editor.");
 
-	GUIContent UseGCCaching  = new GUIContent("Use Requests Caching[?]:", "Requests to Game Cneter will be cached if no internet connection available. Requests will be resented on next Game Center connect event");
+	GUIContent UseGCCaching  = new GUIContent("Use Requests Caching[?]:", "Requests to Game Center will be cached if no Internet connection is available. Requests will be resent on the next Game Center connect event.");
 
 
 	GUIContent EnablePushNotification  = new GUIContent("Enable Push Notifications API[?]:", "Enables Push Notifications Api");
-	GUIContent DisablePluginLogsNote  = new GUIContent("Disable Plugin Logs[?]:", "All plugins Debug.Log lines will be disabled if this option is enabled");
+	GUIContent DisablePluginLogsNote  = new GUIContent("Disable Plugin Logs[?]:", "All plugins 'Debug.Log' lines will be disabled if this option is enabled.");
 
 
 	private IOSNativeSettings settings;
@@ -36,15 +36,15 @@ public class IOSNativeSettingsEditor : Editor {
 
 	private void UpdatePluginSettings() {
 		string IOSNotificationControllerContent = FileStaticAPI.Read("Extensions/IOSNative/Notifications/IOSNotificationController.cs");
-		string DeviceTokenListnerContent = FileStaticAPI.Read("Extensions/IOSNative/Notifications/DeviceTokenListner.cs");
+		string DeviceTokenListenerContent = FileStaticAPI.Read("Extensions/IOSNative/Notifications/DeviceTokenListener.cs");
 
 
 		int endlineIndex;
-		endlineIndex = DeviceTokenListnerContent.IndexOf(System.Environment.NewLine);
+		endlineIndex = DeviceTokenListenerContent.IndexOf(System.Environment.NewLine);
 		if(endlineIndex == -1) {
-			endlineIndex = DeviceTokenListnerContent.IndexOf("\n");
+			endlineIndex = DeviceTokenListenerContent.IndexOf("\n");
 		}
-		string DTL_Line = DeviceTokenListnerContent.Substring(0, endlineIndex);
+		string DTL_Line = DeviceTokenListenerContent.Substring(0, endlineIndex);
 
 
 
@@ -59,21 +59,21 @@ public class IOSNativeSettingsEditor : Editor {
 
 		if(IOSNativeSettings.Instance.EnablePushNotificationsAPI) {
 			IOSNotificationControllerContent 	= IOSNotificationControllerContent.Replace(INC_Line, "#define PUSH_ENABLED");
-			DeviceTokenListnerContent 			= DeviceTokenListnerContent.Replace(DTL_Line, "#define PUSH_ENABLED");
+			DeviceTokenListenerContent 			= DeviceTokenListenerContent.Replace(DTL_Line, "#define PUSH_ENABLED");
 		} else {
 			IOSNotificationControllerContent 	= IOSNotificationControllerContent.Replace(INC_Line, "//#define PUSH_ENABLED");
-			DeviceTokenListnerContent 			= DeviceTokenListnerContent.Replace(DTL_Line, "//#define PUSH_ENABLED");
+			DeviceTokenListenerContent 			= DeviceTokenListenerContent.Replace(DTL_Line, "//#define PUSH_ENABLED");
 		}
 
 		FileStaticAPI.Write("Extensions/IOSNative/Notifications/IOSNotificationController.cs", IOSNotificationControllerContent);
-		FileStaticAPI.Write("Extensions/IOSNative/Notifications/DeviceTokenListner.cs", DeviceTokenListnerContent);
+		FileStaticAPI.Write("Extensions/IOSNative/Notifications/DeviceTokenListener.cs", DeviceTokenListenerContent);
 	}
 
 	public override void OnInspectorGUI()  {
 
 
 		#if UNITY_WEBPLAYER
-		EditorGUILayout.HelpBox("Editing IOS Native Settings not available with web player platfrom. Please swith to any other platfrom under Build Seting menu", MessageType.Warning);
+		EditorGUILayout.HelpBox("Editing IOS Native Settings not available with web player platfrom. Please switch to any other platform under Build Settings menu", MessageType.Warning);
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.Space();
 		if(GUILayout.Button("Switch To IOS Platfrom",  GUILayout.Width(150))) {
@@ -123,7 +123,7 @@ public class IOSNativeSettingsEditor : Editor {
 		EditorGUILayout.HelpBox("(Required) Application Data", MessageType.None);
 
 		if (settings.AppleId.Length == 0 || settings.AppleId.Equals("XXXXXXXXX")) {
-			EditorGUILayout.HelpBox("Invalid Apple Id", MessageType.Error);
+			EditorGUILayout.HelpBox("Invalid Apple ID", MessageType.Error);
 		}
 
 
@@ -153,11 +153,11 @@ public class IOSNativeSettingsEditor : Editor {
 
 		EditorGUILayout.BeginHorizontal();
 		EditorGUILayout.LabelField("Loaded Image Format");
-		IOSNativeSettings.Instance.GalleryImageFormat	 	= (IOSGallaeryLoadImageFormat) EditorGUILayout.EnumPopup(IOSNativeSettings.Instance.GalleryImageFormat);
+		IOSNativeSettings.Instance.GalleryImageFormat	 	= (IOSGalleryLoadImageFormat) EditorGUILayout.EnumPopup(IOSNativeSettings.Instance.GalleryImageFormat);
 		EditorGUILayout.EndHorizontal();
 
 
-		if(IOSNativeSettings.Instance.GalleryImageFormat == IOSGallaeryLoadImageFormat.JPEG) {
+		if(IOSNativeSettings.Instance.GalleryImageFormat == IOSGalleryLoadImageFormat.JPEG) {
 			GUI.enabled = true;
 		} else {
 			GUI.enabled = false;
@@ -177,21 +177,21 @@ public class IOSNativeSettingsEditor : Editor {
 			EditorGUI.indentLevel++;
 			IOSNativeSettings.Instance.ShowAchievementsParams = EditorGUILayout.Foldout(IOSNativeSettings.Instance.ShowAchievementsParams, "Achievements");
 			if (IOSNativeSettings.Instance.ShowAchievementsParams) {
-				if(IOSNativeSettings.Instance.RegistredAchievementsIds.Count == 0) {
-					EditorGUILayout.HelpBox("No Achievements Ids Registred", MessageType.Info);
+				if(IOSNativeSettings.Instance.RegisteredAchievementsIds.Count == 0) {
+					EditorGUILayout.HelpBox("No Achievement IDs Registered", MessageType.Info);
 				}
 				
 				
 				int i = 0;
-				foreach(string str in IOSNativeSettings.Instance.RegistredAchievementsIds) {
+				foreach(string str in IOSNativeSettings.Instance.RegisteredAchievementsIds) {
 					EditorGUILayout.BeginHorizontal();
-					IOSNativeSettings.Instance.RegistredAchievementsIds[i]	 	= EditorGUILayout.TextField(IOSNativeSettings.Instance.RegistredAchievementsIds[i]);
-					if(IOSNativeSettings.Instance.RegistredAchievementsIds[i].Length > 0) {
-						IOSNativeSettings.Instance.RegistredAchievementsIds[i]		= IOSNativeSettings.Instance.RegistredAchievementsIds[i].Trim();
+					IOSNativeSettings.Instance.RegisteredAchievementsIds[i]	 	= EditorGUILayout.TextField(IOSNativeSettings.Instance.RegisteredAchievementsIds[i]);
+					if(IOSNativeSettings.Instance.RegisteredAchievementsIds[i].Length > 0) {
+						IOSNativeSettings.Instance.RegisteredAchievementsIds[i]		= IOSNativeSettings.Instance.RegisteredAchievementsIds[i].Trim();
 					}
 
 					if(GUILayout.Button("Remove",  GUILayout.Width(80))) {
-						IOSNativeSettings.Instance.RegistredAchievementsIds.Remove(str);
+						IOSNativeSettings.Instance.RegisteredAchievementsIds.Remove(str);
 						break;
 					}
 					EditorGUILayout.EndHorizontal();
@@ -202,19 +202,19 @@ public class IOSNativeSettingsEditor : Editor {
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.Space();
 				if(GUILayout.Button("Add",  GUILayout.Width(80))) {
-					IOSNativeSettings.Instance.RegistredAchievementsIds.Add("");
+					IOSNativeSettings.Instance.RegisteredAchievementsIds.Add("");
 				}
 				EditorGUILayout.EndHorizontal();
 
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.LabelField(UseGCCaching);
-				IOSNativeSettings.Instance.UseGCRequestsCahing = EditorGUILayout.Toggle(IOSNativeSettings.Instance.UseGCRequestsCahing);
+				IOSNativeSettings.Instance.UseGCRequestCaching = EditorGUILayout.Toggle(IOSNativeSettings.Instance.UseGCRequestCaching);
 				EditorGUILayout.EndHorizontal();
 				
 				
 				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.LabelField("Save  progress in PlayerPrefs[?]");
+				EditorGUILayout.LabelField("Save progress in PlayerPrefs[?]");
 				IOSNativeSettings.Instance.UsePPForAchievements = EditorGUILayout.Toggle(IOSNativeSettings.Instance.UsePPForAchievements);
 				EditorGUILayout.EndHorizontal();
 
@@ -237,8 +237,8 @@ public class IOSNativeSettingsEditor : Editor {
 
 	private void OtherSettins() {
 
-		IOSNativeSettings.Instance.ShowCameraAndGallryParams = EditorGUILayout.Foldout(IOSNativeSettings.Instance.ShowCameraAndGallryParams, "Camera And Gallery");
-		if (IOSNativeSettings.Instance.ShowCameraAndGallryParams) {
+		IOSNativeSettings.Instance.ShowCameraAndGalleryParams = EditorGUILayout.Foldout(IOSNativeSettings.Instance.ShowCameraAndGalleryParams, "Camera And Gallery");
+		if (IOSNativeSettings.Instance.ShowCameraAndGalleryParams) {
 		
 			CameraAndGallery();
 		}
@@ -317,7 +317,7 @@ public class IOSNativeSettingsEditor : Editor {
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.LabelField(CheckInternetLabel);
-			settings.checkInternetBeforeLoadRequestl = EditorGUILayout.Toggle(settings.checkInternetBeforeLoadRequestl);
+			settings.checkInternetBeforeLoadRequest = EditorGUILayout.Toggle(settings.checkInternetBeforeLoadRequest);
 			EditorGUILayout.EndHorizontal();
 
 

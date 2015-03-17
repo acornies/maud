@@ -73,7 +73,7 @@ public class GameController : MonoBehaviour
     public float timeBetweenDeaths = 3.0f;
     public Vector3 playerSpawnPosition;
     public bool playerIsDead;
-    public bool initiatingRestart;
+    //public bool initiatingRestart;
     //public bool useAcceleration;
 	//public ControlMode controlMode;
     //public float lifeCost = 5f;
@@ -506,7 +506,7 @@ public class GameController : MonoBehaviour
             _telekinesisControl.SetActive(true);
             _deathTimer = timeBetweenDeaths;
             playerIsDead = false;
-            initiatingRestart = false;
+            //initiatingRestart = false;
 
             if (OnPlayerResurrection != null)
             {
@@ -526,7 +526,7 @@ public class GameController : MonoBehaviour
         {
             _deathTimer = timeBetweenDeaths;
             //movedFromSpawnPosition = false;
-            initiatingRestart = false;
+            //initiatingRestart = false;
         }
     }
 
@@ -715,7 +715,7 @@ public class GameController : MonoBehaviour
     public void ButtonRestart()
     {
         Restart();
-		initiatingRestart = true;
+		//initiatingRestart = true;
 		Time.timeScale = 1;
     }
 
@@ -1055,7 +1055,6 @@ public class GameController : MonoBehaviour
 	void HandleOnPlayerResurrectionOnGameOver(bool fromIAP)
 	{
 		gameState = GameState.Running;
-		initiatingRestart = false;
 		/*_continueButtonImage.enabled = false;
 		_continueButtonText.enabled = false;*/
 		powerMeter += (fromIAP) ? PlayerState.Instance.playerLevel.maxEnergy : continueAdPower;

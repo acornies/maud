@@ -11,7 +11,7 @@ public class IOSDeployPostProcess  {
 	public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject) {
 
 		#if UNITY_IPHONE &&  UNITY_EDITOR_WIN
-		UnityEngine.Debug.LogWarning("ISD Postprocess is not available for Win");
+		UnityEngine.Debug.LogWarning("ISD Postprocess is not available for Windows");
 		#endif
 		
 		
