@@ -17,5 +17,6 @@ namespace LegendPeak.Player
 		public bool viewedTutorialGeneral {get; set;}
 		public int soundTrackSelection { get; set; }
 		public string[] purchasedProductIds { get; set; }
+        public int totalEnergy { get; set; }
     }
 }

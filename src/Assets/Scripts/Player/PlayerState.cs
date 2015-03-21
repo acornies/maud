@@ -40,6 +40,7 @@ public class PlayerState : MonoBehaviour
         GameController.OnGameStart += HandleOnGameStart;
 	    GameController.OnToggleMusic += HandleToggleMusic;
 		GameController.OnMaxHeightIncrease += HandleOnMaxHeightIncrease;
+	    PowerUpBehaviour.OnPowerPickUp += HandleOnPowerPickup;
 	}
 
 	void HandleOnMaxHeightIncrease (int delta, float rotationMultiplier)
@@ -160,7 +161,15 @@ public class PlayerState : MonoBehaviour
         GameController.OnGameStart -= HandleOnGameStart;
         GameController.OnToggleMusic -= HandleToggleMusic;
 		GameController.OnMaxHeightIncrease -= HandleOnMaxHeightIncrease;
+        PowerUpBehaviour.OnPowerPickUp -= HandleOnPowerPickup;
 	}
+
+    private void HandleOnPowerPickup(float powerToAdd)
+    {
+        Data.totalEnergy++;
+        this.Save();
+        Debug.Log("Total energy picked up: " + Data.totalEnergy);
+    }
 
     void Awake()
     {
