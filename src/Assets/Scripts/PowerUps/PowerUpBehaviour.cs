@@ -9,7 +9,9 @@ public class PowerUpBehaviour : MonoBehaviour
     private Light _light;
     private bool _shouldOrbitAroundPlayer;
     private Vector3 _newLocation = Vector3.zero;
-	private AudioSource _powerUpAudio;
+    private AudioSource _powerUpAudio;
+    private Transform _model;
+    private Vector3 _initialSize;
 
     public float pickUpPower = 2f;
     public float lightDimSpeed = 5f;
@@ -21,7 +23,7 @@ public class PowerUpBehaviour : MonoBehaviour
     public float radius = 2.0f;
     public float radiusSpeed = 0.5f;
     public float orbitSpeed = 10.0f;
-	public AudioClip powerUpSound;
+    public AudioClip powerUpSound;
 
     //public Vector3 newLocation = Vector2.zero;
 
@@ -54,18 +56,24 @@ public class PowerUpBehaviour : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _light = transform.FindChild("Light").GetComponent<Light>();
-		_powerUpAudio = GetComponent<AudioSource> ();
+        _powerUpAudio = GetComponent<AudioSource>();
+        _model = transform.FindChild("Egg");
+        _initialSize = _model.localScale;
     }
 
     // Update is called once per frame
     private void Update()
     {
         _light.intensity = Mathf.Lerp(_light.intensity, (_shouldOrbitAroundPlayer || _newLocation != Vector3.zero) ? 0 : lightIntensity, lightDimSpeed * Time.deltaTime);
-        
-		if (_newLocation != Vector3.zero)
+
+        _model.localScale = Vector3.Lerp(_model.localScale, (_shouldOrbitAroundPlayer || _newLocation != Vector3.zero)
+           ? new Vector3(0.001f, 0.001f, 0.001f)
+           : _initialSize, 5f * Time.deltaTime);
+
+        if (_newLocation != Vector3.zero)
         {
-			if (_light.intensity <= 0.01f)
-            {               
+            if (_light.intensity <= 0.01f)
+            {
                 transform.parent.position = _newLocation;
                 Reactivate();
             }
@@ -85,10 +93,10 @@ public class PowerUpBehaviour : MonoBehaviour
 
         _animator.enabled = false;
         particleSystem.Stop();
-		if (powerUpSound != null && powerUpSound.isReadyToPlay)
-		{
-			_powerUpAudio.PlayOneShot(powerUpSound);
-		}
+        if (powerUpSound != null && powerUpSound.isReadyToPlay)
+        {
+            _powerUpAudio.PlayOneShot(powerUpSound);
+        }
         collider.enabled = false;
         if (OnPowerPickUp != null)
         {
@@ -100,17 +108,17 @@ public class PowerUpBehaviour : MonoBehaviour
 
     public void Reactivate()
     {
-		_animator.enabled = true;
+        _animator.enabled = true;
         particleSystem.Play();
         collider.enabled = true;
-		_newLocation = Vector3.zero;
+        _newLocation = Vector3.zero;
     }
 
     private void HandleOnNewPowerUpLocation(Vector3 location, string transformName)
     {
         //Debug.Log("New pick-up position: " + location);
         //transform.parent.position = location;
-		particleSystem.Stop();
+        particleSystem.Stop();
         _shouldOrbitAroundPlayer = false;
         orbitCenter = null;
         _newLocation = (transform.parent.name == transformName) ? location : new Vector3(0, -5.9f, 9.48f); // TODO move to editor
