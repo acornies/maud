@@ -16,7 +16,7 @@ TextureImporter:
     21300022: Heart
     21300024: Share
     21300026: Caution
-    21300028: Facebook
+    21300028: Egg
     21300030: Camera
   serializedVersion: 2
   mipmaps:
@@ -199,13 +199,13 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: Facebook
+    - name: Egg
       rect:
         serializedVersion: 2
         x: 1071
-        y: 27
-        width: 435
-        height: 437
+        y: 7
+        width: 395
+        height: 513
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

@@ -45,6 +45,7 @@ public class GameController : MonoBehaviour
 	private Button _restoreButtonBehaviour;
 	private Image _cloudDownloadImage;
 	private Text _restoreButtonText;
+	private Text _energyCountText;
     //private Image _cartButtonImage;
 	//private Button _cartButtonBehaviour;
     private EnergyBar _powerBar;
@@ -338,6 +339,7 @@ public class GameController : MonoBehaviour
 		//_controlModeImage = controlMode.GetComponent<Image>();
 		//_controlModeBehaviour = controlMode.GetComponent<Button>();
 		_levelsInfoText = GameObject.Find ("LevelInfo").GetComponent<Text>();
+		_energyCountText = GameObject.Find ("TotalEnergy").transform.FindChild("Count").GetComponent<Text>();
 
         gameState = GameState.Started;
         /*gameMode = GameMode.Story; // TODO: change from menu
@@ -398,6 +400,7 @@ public class GameController : MonoBehaviour
         //ToggleControlModeGUI();
         
 		_highestPointText.text = PlayerState.Instance.Data.highestPlatform.ToString();
+		_energyCountText.text = PlayerState.Instance.Data.totalEnergy.ToString ();
 		if (heightCounter.enabled)
         {
 			heightCounter.text = highestPoint.ToString();
@@ -431,6 +434,8 @@ public class GameController : MonoBehaviour
 		{
 			_leaderboardImage.color = Color.Lerp(_leaderboardImage.color, leaderboardActiveColor, 5f * Time.unscaledDeltaTime);
 		}
+
+
     }
 
     /*private void ToggleControlModeGUI()
