@@ -83,7 +83,12 @@ namespace LegendPeak.Native
 			IOSSocialManager.instance.ShareMedia (string.Format("I jumped {0} platforms in Maud. #maudgame maudgame.com", GameController.Instance.highestPoint));
 		}
 
-		private void OnImageSaved (ISN_Result result) {
+	    public void rateUs(string title, string message)
+	    {
+	        IOSRateUsPopUp.Create(title, message);
+	    }
+
+	    private void OnImageSaved (ISN_Result result) {
 			IOSCamera.instance.OnImageSaved -= OnImageSaved;
 			if(result.IsSucceeded) 
 			{

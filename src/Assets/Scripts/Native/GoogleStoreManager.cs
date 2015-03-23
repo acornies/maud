@@ -85,7 +85,13 @@ namespace LegendPeak.Native
 			AndroidSocialGate.StartShareIntent("Share Maud", string.Format("I jumped {0} platforms in Maud. #maudgame maudgame.com", GameController.Instance.highestPoint));
 		}
 
-		void OnImageSaved (GallerySaveResult result) 
+	    public void rateUs(string title, string message)
+	    {
+	        AndroidRateUsPopUp.Create(title, message,
+                "market://details?id=com.AndrewCornies.Maud"); // TODO fix hardcoded
+	    }
+
+	    void OnImageSaved (GallerySaveResult result) 
 		{
 			AndroidCamera.instance.OnImageSaved -= OnImageSaved;
 			if(result.IsSucceeded) 
