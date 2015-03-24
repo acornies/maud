@@ -83,10 +83,32 @@ namespace LegendPeak.Native
 			IOSSocialManager.instance.ShareMedia (string.Format("I jumped {0} platforms in Maud. #maudgame maudgame.com", GameController.Instance.highestPoint));
 		}
 
-	    public void rateUs(string title, string message)
+	    public void rateUs(string title, string message, string rate, string remind, string decline)
 	    {
-	        IOSRateUsPopUp.Create(title, message);
+	        var rating = IOSRateUsPopUp.Create(title, message, rate, remind, decline);
+			rating.OnComplete += onRatePopUpClose;
 	    }
+
+		private void onRatePopUpClose(IOSDialogResult result) {
+			switch(result) {
+			case IOSDialogResult.RATED:
+				Debug.Log ("Rate button pressed");
+				PlayerState.Instance.Data.ratedVersion = TrackedBundleVersion.bundleIdentifier;
+				PlayerState.Instance.Save();
+				break;
+			case IOSDialogResult.REMIND:
+				Debug.Log ("Remind button pressed");
+				GameController.Instance.skipRating = true;
+				break;
+			case IOSDialogResult.DECLINED:
+				Debug.Log ("Decline button pressed");
+				PlayerState.Instance.Data.ratedVersion = TrackedBundleVersion.bundleIdentifier;
+				PlayerState.Instance.Save();
+				break;				
+			}
+			
+			//IOSNativePopUpManager.showMessage("Result", result.ToString() + " button pressed");
+		}
 
 	    private void OnImageSaved (ISN_Result result) {
 			IOSCamera.instance.OnImageSaved -= OnImageSaved;
@@ -99,6 +121,7 @@ namespace LegendPeak.Native
 				IOSMessage.Create("Failed", "Image Save Failed");
 			}
 		}
+
 
 		public event EventHandler OnTransactionComplete;
 		public event EventHandler OnAuthenticationFinished;

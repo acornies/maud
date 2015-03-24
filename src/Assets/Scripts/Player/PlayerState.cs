@@ -209,6 +209,30 @@ public class PlayerState : MonoBehaviour
 		}
 	}
 
+	public bool ShouldShowRateDialog
+	{
+		get
+		{
+			if (string.IsNullOrEmpty(Data.ratedVersion))
+			{
+				return true;
+			}
+			else
+			{
+				var currentVersion = new Version(TrackedBundleVersion.bundleIdentifier);
+				var ratedVersion = new Version(Data.ratedVersion);
+				if (currentVersion > ratedVersion)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+	}
+
     public void Save()
     {
         var binaryFormatter = new BinaryFormatter();

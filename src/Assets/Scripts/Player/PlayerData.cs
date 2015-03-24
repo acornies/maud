@@ -18,5 +18,6 @@ namespace LegendPeak.Player
 		public int soundTrackSelection { get; set; }
 		public string[] purchasedProductIds { get; set; }
         public int totalEnergy { get; set; }
+		public string ratedVersion { get; set; }
     }
 }

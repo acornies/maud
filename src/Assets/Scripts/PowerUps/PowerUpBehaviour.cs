@@ -103,7 +103,7 @@ public class PowerUpBehaviour : MonoBehaviour
             OnPowerPickUp(pickUpPower);
         }
         _shouldOrbitAroundPlayer = true;
-        orbitCenter = otherCollider.transform.root.FindChild("CenterTarget").transform;
+        orbitCenter = otherCollider.transform.root;
     }
 
     public void Reactivate()

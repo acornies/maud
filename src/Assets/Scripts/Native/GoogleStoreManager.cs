@@ -85,7 +85,7 @@ namespace LegendPeak.Native
 			AndroidSocialGate.StartShareIntent("Share Maud", string.Format("I jumped {0} platforms in Maud. #maudgame maudgame.com", GameController.Instance.highestPoint));
 		}
 
-	    public void rateUs(string title, string message)
+		public void rateUs(string title, string message, string rate, string remind, string decline)
 	    {
 	        AndroidRateUsPopUp.Create(title, message,
                 "market://details?id=com.AndrewCornies.Maud"); // TODO fix hardcoded

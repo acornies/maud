@@ -91,6 +91,7 @@ public class GameController : MonoBehaviour
 	public Color heightCounterColor;
 	public float continueAdPower = 50;
 	public Color leaderboardActiveColor;
+	public bool skipRating;
 	
 	//public int gameOverContinues;
 	public int advertisingContinues = 2;
@@ -719,7 +720,7 @@ public class GameController : MonoBehaviour
 
     public void ButtonRestart()
     {
-        Restart();
+		Restart();
 		//initiatingRestart = true;
 		Time.timeScale = 1;
     }
@@ -853,7 +854,7 @@ public class GameController : MonoBehaviour
 				behaviour.interactable = false;
 			}
 			// override get components
-			_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, .6f);
+			_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, 1f);
 			_plusImage.color = new Color(_plusImage.color.r, _plusImage.color.g, _plusImage.color.b, 1f);
 			_storeButtonBehaviour.interactable = true;
 
@@ -944,7 +945,7 @@ public class GameController : MonoBehaviour
 				behaviour.interactable = false;
 			}
 			// override get components
-			_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, .6f);
+			_storeButtonImage.color = new Color(_storeButtonImage.color.r, _storeButtonImage.color.g, _storeButtonImage.color.b, 1f);
 			_plusImage.color = new Color(_plusImage.color.r, _plusImage.color.g, _plusImage.color.b, 1f);
 			_storeButtonBehaviour.interactable = true;
 
@@ -1032,6 +1033,11 @@ public class GameController : MonoBehaviour
 		/*_continueButtonImage.enabled = promptAdContinue;
 		_continueButtonText.enabled = promptAdContinue;
 		_continueButtonBehaviour.enabled = promptAdContinue;*/
+
+		if (PlayerState.Instance.ShouldShowRateDialog && !skipRating)
+		{
+			StoreController.Instance.Native.rateUs ("Having Fun?", "Help support Maud and give it a rating!", "Rate It Now", "Remind Me Later", "No, Thanks");
+		}
 	}
 	
 	private void HandleOnPowerPickUp(float powerToAdd)

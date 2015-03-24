@@ -18,7 +18,7 @@ public class GameOverUI : MonoBehaviour
 	private Image _purchaseContinueCartImage;
 	private Animator _purchaseContinueAnimator;
 
-	private Image _shareButton;
+	//private Image _shareButton;
 
 	public Sprite purchasedContinueIcon;
 	public Sprite purchasedCartIcon;
@@ -67,7 +67,7 @@ public class GameOverUI : MonoBehaviour
 		//ShowBuyOrContinue ();
 		//_purchaseContinueButtonBehaviour.enabled = false;
 
-		_shareButton.rectTransform.anchoredPosition = holdingPosition;
+		//_shareButton.rectTransform.anchoredPosition = holdingPosition;
 
 	}
 
@@ -103,7 +103,7 @@ public class GameOverUI : MonoBehaviour
 		_purchaseContinueText.rectTransform.anchoredPosition = new Vector2 (100f, -160f);
 		ShowBuyOrContinue ();
 		//_purchaseContinueButtonBehaviour.enabled = true;
-		_shareButton.rectTransform.anchoredPosition = new Vector2 (0, -360f);
+		//_shareButton.rectTransform.anchoredPosition = new Vector2 (0, -360f);
 	}
 
 	void HandleAdContinueBehaviour()
@@ -159,7 +159,7 @@ public class GameOverUI : MonoBehaviour
 		_purchaseContinueCartImage = purchaseContinue.FindChild ("Cart").GetComponent<Image>();
 
 		_purchaseContinueAnimator = purchaseContinue.GetComponent<Animator> ();
-		_shareButton = transform.FindChild ("ShareOver").GetComponent<Image>();
+		//_shareButton = transform.FindChild ("ShareOver").GetComponent<Image>();
 	}
 
 	// Use this for initialization
