@@ -126,8 +126,12 @@ public class SceneFadeInOut : MonoBehaviour
             // ... set the colour to clear and disable the GUITexture.
             _black.color = Color.clear;
             _black.enabled = false;
-			EasyTouch.instance.allowUIDetection = true;
-			EasyTouch.instance.enableUIMode = true;
+
+			if (!EasyTouch.instance.allowUIDetection && PlayerState.Instance.Data.viewedTutorialGeneral)
+			{
+				EasyTouch.instance.allowUIDetection = true;
+				EasyTouch.instance.enableUIMode = true;
+			}
 
             // The scene is no longer starting.
             //_sceneStarting = false;

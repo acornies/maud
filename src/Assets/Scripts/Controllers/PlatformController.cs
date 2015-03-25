@@ -268,15 +268,11 @@ public class PlatformController : MonoBehaviour
 
 	private void UpdateMaterial(GameObject newPlatform, int index)
 	{
-		if (index > TutorialHoldPlatform) //TODO: change to Editor
-		{
-			newPlatform.renderer.material = zoneTwoMaterial;
-		}
-
-		if (index > 180) //TODO: change to Editor
-		{
-			newPlatform.renderer.material = zoneThreeMaterial;
-		}
+		Color newColor = GameController.Instance.powerBarRenderer.textureBarColor;
+		var colorKeys = GameController.Instance.powerBarRenderer.textureBarGradient.colorKeys;
+		
+		var randomKey = Random.Range (0, colorKeys.Length);
+		newPlatform.renderer.material.color = colorKeys [randomKey].color;
 	}
 
     private void AdjustProperties(GameObject newPlatform, int index)

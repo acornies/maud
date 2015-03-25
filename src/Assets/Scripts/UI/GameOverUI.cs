@@ -18,6 +18,13 @@ public class GameOverUI : MonoBehaviour
 	private Image _purchaseContinueCartImage;
 	private Animator _purchaseContinueAnimator;
 
+	private Image _energyCount;
+	private Vector2 _originalEnergyCountPosition;
+	private Vector2 _originalEnergyCountAnchorMax;
+	private Vector2 _originalEnergyCountAnchorMin;
+	private Vector2 _originalEnergyCountPivot;
+	private Vector2 _originalEnergyCountScale;
+
 	//private Image _shareButton;
 
 	public Sprite purchasedContinueIcon;
@@ -159,13 +166,18 @@ public class GameOverUI : MonoBehaviour
 		_purchaseContinueCartImage = purchaseContinue.FindChild ("Cart").GetComponent<Image>();
 
 		_purchaseContinueAnimator = purchaseContinue.GetComponent<Animator> ();
+		_energyCount = GameObject.Find ("TotalEnergy").GetComponent<Image>();
 		//_shareButton = transform.FindChild ("ShareOver").GetComponent<Image>();
 	}
 
 	// Use this for initialization
 	void Start () 
 	{
-	
+		_originalEnergyCountPosition = _energyCount.rectTransform.anchoredPosition;
+		_originalEnergyCountAnchorMax = _energyCount.rectTransform.anchorMax;
+		_originalEnergyCountAnchorMin = _energyCount.rectTransform.anchorMin;
+		_originalEnergyCountScale = _energyCount.rectTransform.localScale;
+		_originalEnergyCountPivot = _energyCount.rectTransform.pivot;
 	}
 	
 	// Update is called once per frame
@@ -175,7 +187,26 @@ public class GameOverUI : MonoBehaviour
 	}
 	void OnGUI()
 	{
+		_energyCount.rectTransform.anchoredPosition = Vector2.Lerp (_energyCount.rectTransform.anchoredPosition, 
+		                                                            (GameController.Instance.gameState == LegendPeak.GameState.Over) 
+		                                                            ? new Vector2(-95f, 200f) : _originalEnergyCountPosition, 10f * Time.deltaTime);
+
+		_energyCount.rectTransform.anchorMax = Vector2.Lerp (_energyCount.rectTransform.anchorMax, 
+		                                                     (GameController.Instance.gameState == LegendPeak.GameState.Over) 
+		                                                     ? new Vector2(.5f, .5f) : _originalEnergyCountAnchorMax, 10f * Time.deltaTime);
+
+		_energyCount.rectTransform.anchorMin = Vector2.Lerp (_energyCount.rectTransform.anchorMin, 
+		                                                    (GameController.Instance.gameState == LegendPeak.GameState.Over) 
+		                                                    ? new Vector2(.5f, .5f) : _originalEnergyCountAnchorMin, 10f * Time.deltaTime);
+
+		_energyCount.rectTransform.localScale = Vector2.Lerp (_energyCount.rectTransform.localScale, 
+		                                                    (GameController.Instance.gameState == LegendPeak.GameState.Over) 
+		                                                    ? new Vector2(2f, 2f) : _originalEnergyCountScale, 10f * Time.deltaTime);
+		
+		
 		if (GameController.Instance.gameState != LegendPeak.GameState.Over) return;
 		ShowBuyOrContinue ();
+
+
 	}
 }

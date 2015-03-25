@@ -16,7 +16,7 @@ public class TelekinesisHandler : MonoBehaviour
     private ParticleSystem _smokeEffect;
     private ParticleSystem _stabilizeEffect;
 	private GameObject _flash;
-	private Color _towerColor;
+	private Color? _towerColor;
 	private bool isOnPlatform;
 	
 	private GameObject _objectToDestroy;
@@ -162,10 +162,10 @@ public class TelekinesisHandler : MonoBehaviour
         _smokeEffect = effects.FirstOrDefault(x => x.transform.name == "SmokeEffect");
         _stabilizeEffect = effects.FirstOrDefault(x => x.transform.name == "StabilizeEffect");
 
-		if (renderer != null)
+		/*if (renderer != null)
 		{
 			_towerColor = renderer.material.color;
-		}
+		}*/
 		
 	}
 	
@@ -182,10 +182,10 @@ public class TelekinesisHandler : MonoBehaviour
 
         HandleStabilizePlatforms();
 
-		if (renderer != null && renderer.material.color != _towerColor && !shouldDestroy)
+		if (renderer != null && _towerColor.HasValue && !shouldDestroy)
 		{
 			//Debug.Log ("Change tower color");
-			renderer.material.color = Color.Lerp(renderer.material.color, _towerColor, colorChangeSpeed * Time.deltaTime);
+			renderer.material.color = Color.Lerp(renderer.material.color, _towerColor.Value, colorChangeSpeed * Time.deltaTime);
 		}
         //HandleStabilizeHazzards();
     }

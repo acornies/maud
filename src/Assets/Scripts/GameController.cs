@@ -55,6 +55,7 @@ public class GameController : MonoBehaviour
 	private Text _totalHeightText;
 	private bool _timeDestroyed;
 	private Text _levelsInfoText;
+	private bool _isRewardResurrection;
 
 	public int targetFrameRate = 60;
 	public string advertisingAppIdIOS;
@@ -512,6 +513,7 @@ public class GameController : MonoBehaviour
             _telekinesisControl.SetActive(true);
             _deathTimer = timeBetweenDeaths;
             playerIsDead = false;
+
             //initiatingRestart = false;
 
             if (OnPlayerResurrection != null)
@@ -519,9 +521,14 @@ public class GameController : MonoBehaviour
                 OnPlayerResurrection();
                 if (!inSafeZone)
                 {
-					powerMeter -= PlayerState.Instance.playerLevel.lifeCost;
+					if (!_isRewardResurrection)
+					{
+						powerMeter -= PlayerState.Instance.playerLevel.lifeCost;
+					}
                 }
             }
+
+			_isRewardResurrection = false;
         }
 
 		else if (playerIsDead && powerMeter < PlayerState.Instance.playerLevel.lifeCost)
@@ -1089,6 +1096,8 @@ public class GameController : MonoBehaviour
 		//_totalHeightText.text = string.Empty;
 
 		CloseSettingsAndStore ();
+
+		_isRewardResurrection = true;
 
 		if (OnPlayerReward != null)
 		{

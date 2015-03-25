@@ -81,5 +81,7 @@ public class TutorialUI : MonoBehaviour
 
 		_tutorialOpen = false;
 		Time.timeScale = 1;
+		EasyTouch.instance.allowUIDetection = true;
+		EasyTouch.instance.enableUIMode = true;
 	}
 }
