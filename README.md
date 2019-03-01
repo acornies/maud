@@ -1,7 +1,7 @@
 Maud
 ===========
 
-Initial Launch trailer: https://youtu.be/llEIrnU8Dxo
+Initial launch trailer: https://youtu.be/llEIrnU8Dxo
 
 Maud is a personal game project created in my spare time during parental leave from 2014-2015. 
 
